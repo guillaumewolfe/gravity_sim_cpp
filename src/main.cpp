@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/EngineIncludes.h"
+#include "game/game.h"
 
 
 
@@ -10,10 +11,11 @@ using namespace std;
 
 int main()
 {
-    /*
-    1-Enter loading screen
-    2- Initiate Window
-    3- Start Current State Loop -> Physical Update and Draw() Method
-    */
+    Game myGame;
+    myGame.Init();
+    myGame.getState();
+    myGame.ChangeState(Game::MENU);
+    myGame.getState();
+
     return 0;
 }
