@@ -1,35 +1,42 @@
 #include <iostream>
-#include "game/Game.h"
+#include <game/game.h>
 
 
 
-Game::Game(){
-    currentState = LOADING;
-};
-Game::~Game(){};
+
+Game::Game():currentState(nullptr){};
+Game::~Game() {
+    if (currentState) {
+        currentState->Exit();
+        delete currentState;
+    }
+}
 
 void Game::Init(){};
-void Game::Update(){};
-void Game::Draw(){};
-void Game::ChangeState(GameState newState){
-    currentState = newState;
-};
-void Game::getState(){
-    std::string currentStateString;
-    switch (currentState)
-    {
-    case LOADING:
-        currentStateString = "LOADING";
-        break;
-    case MENU:
-        currentStateString = "MENU";
-        break;
-    case PLAYING:
-        currentStateString = "PLAYING";
-        break;
-    case END:
-        currentStateString = "END";
-        break;
+
+void Game::Update(){
+    if(currentState){
+        currentState -> Update();
     }
-    std::cout << currentStateString << std::endl;
+
+};
+void Game::Draw(){    if(currentState){
+        currentState -> Draw();
+    }};
+
+
+void Game::ChangeState(BaseState* newState) {
+    if (currentState) {
+        currentState->Exit();
+        delete currentState;
+    }
+    currentState = newState;
+    if (currentState) {
+        currentState->Enter();
+    }
+}
+void Game::getState(){
+    if(currentState){
+        std::cout << currentState->getDescription() << std::endl;
+    }
 }

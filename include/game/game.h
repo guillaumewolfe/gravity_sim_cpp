@@ -1,14 +1,13 @@
+#include <states/BaseState.h>
+
 #ifndef GAME_H
 #define GAME_H
 
-class Game{
+class Game {
+private:
+    BaseState* currentState; 
+
 public:
-    enum GameState{
-        LOADING,
-        MENU,
-        PLAYING,
-        END
-    };
     Game();
     ~Game();
     void getState();
@@ -16,9 +15,7 @@ public:
     void Init();
     void Update();
     void Draw();
-    void ChangeState(GameState newState);
-private:
-    GameState currentState;
-
+    void ChangeState(BaseState* newState);
 };
+
 #endif
