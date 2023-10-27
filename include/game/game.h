@@ -17,6 +17,7 @@ public:
 
     void Init();
     void Update();
+    void UpdatePhysics(int dt);
     void Draw();
     void ChangeState(BaseState* newState);
     bool InitOpenGL();

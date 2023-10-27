@@ -23,6 +23,13 @@ void Game::Update(){
     }
 
 };
+
+void Game::UpdatePhysics(int dt){
+    if(currentState){
+        currentState -> UpdatePhysics(dt);
+    }    
+};
+
 void Game::Draw(){    if(currentState){
         currentState -> Draw();
     }};
@@ -49,7 +56,7 @@ bool Game::InitOpenGL() {
         return false;
     }
 
-    window = glfwCreateWindow(800, 600, "Your Game Title", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "Space Query", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return false;

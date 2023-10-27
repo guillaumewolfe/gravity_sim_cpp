@@ -4,11 +4,12 @@
 MenuState::MenuState(GLFWwindow* window) : BaseState(window) {}
 void MenuState::Enter() {
     std::cout << "Entering Menu State" << std::endl;
+    
 }
 
 void MenuState::Update() {
 }
-
+void MenuState::UpdatePhysics(int dt){};
 
 void MenuState::Draw() {
 }

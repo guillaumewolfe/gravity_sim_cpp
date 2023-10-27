@@ -8,6 +8,7 @@ void EndState::Enter() {
 void EndState::Update() {
 }
 
+void EndState::UpdatePhysics(int dt){};
 
 void EndState::Draw() {
 }

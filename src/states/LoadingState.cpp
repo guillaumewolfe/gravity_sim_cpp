@@ -10,7 +10,7 @@ void LoadingState::Enter() {
 void LoadingState::Update() {
 }
 
-
+void LoadingState::UpdatePhysics(int dt){};
 void LoadingState::Draw() {
 }
 
