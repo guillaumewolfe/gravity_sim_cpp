@@ -1,4 +1,5 @@
 #include "states/BaseState.h"
+#include <FTGL/ftgl.h>
 
 
 #ifndef SIMULATIONSTATE_H
@@ -6,12 +7,14 @@
 class SimulationState: public BaseState {
 public:
 
+    SimulationState(GLFWwindow* window);
     void Enter() override;
     void Update() override;
     void Draw() override;
     void Exit() override;
     std::string getDescription() override;
 
-    // Autres méthodes et attributs spécifiques au menu
+private:
+    FTFont* font;
 };
 #endif

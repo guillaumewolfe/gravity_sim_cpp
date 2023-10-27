@@ -9,13 +9,24 @@ using namespace std;
 
 
 
-int main()
-{
+int main() {
     Game myGame;
 
-    myGame.ChangeState(new LoadingState());
-    myGame.getState();
-    myGame.ChangeState(new MenuState());
-    myGame.getState();
+    if (!myGame.InitOpenGL()) {
+        std::cerr << "Failed to initialize OpenGL" << std::endl;
+        return -1;
+    }
+
+    myGame.ChangeState(new LoadingState(myGame.getWindow()));
+    myGame.ChangeState(new SimulationState(myGame.getWindow()));
+    // Boucle principale du jeu
+    while (!glfwWindowShouldClose(myGame.getWindow())) {
+        myGame.Update();
+        myGame.Draw();
+
+        glfwSwapBuffers(myGame.getWindow());
+        glfwPollEvents();
+    }
+
     return 0;
 }

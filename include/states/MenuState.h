@@ -5,7 +5,7 @@
 #define MENUSTATE_H
 class MenuState : public BaseState {
 public:
-
+    MenuState(GLFWwindow* window);
     void Enter() override;
     void Update() override;
     void Draw() override;

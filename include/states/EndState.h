@@ -1,11 +1,12 @@
 #include "states/BaseState.h"
-
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #ifndef ENDSTATE_H
 #define ENDSTATE_H
 class EndState: public BaseState {
 public:
-
+    EndState(GLFWwindow* window);
     void Enter() override;
     void Update() override;
     void Draw() override;

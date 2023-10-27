@@ -1,16 +1,15 @@
 #include "states/EndState.h"
 
+EndState::EndState(GLFWwindow* window) : BaseState(window) {}
 void EndState::Enter() {
     std::cout << "Entering End State" << std::endl;
 }
 
 void EndState::Update() {
-    std::cout << "Updating End State" << std::endl;
 }
 
 
 void EndState::Draw() {
-    std::cout << "Drawing End State" << std::endl;
 }
 
 

@@ -1,16 +1,17 @@
 #include "states/LoadingState.h"
 
+
+LoadingState::LoadingState(GLFWwindow* window) : BaseState(window) {}
+
 void LoadingState::Enter() {
     std::cout << "Entering Loading State" << std::endl;
 }
 
 void LoadingState::Update() {
-    std::cout << "Updating Loading State" << std::endl;
 }
 
 
 void LoadingState::Draw() {
-    std::cout << "Drawing Loading State" << std::endl;
 }
 
 
