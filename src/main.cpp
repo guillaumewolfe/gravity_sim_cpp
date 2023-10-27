@@ -11,14 +11,6 @@ using namespace std;
 
 
 int main() {
-    cout << CV_VERSION << endl;
-    return 0;
-}
-
-
-
-
-/* GAME LOOPP
     //Time accumulator for physical updates:
     double t = 0.0;
     const double dt = 1/60.0;
@@ -60,5 +52,7 @@ int main() {
         glfwSwapBuffers(myGame.getWindow());
         glfwPollEvents();
     }
+}
 
-*/
+
+
