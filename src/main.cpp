@@ -5,6 +5,9 @@
 #include "states/statesIncludes.h"
 #include <game/game.h>
 #include "opencv2/opencv.hpp"
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
 
 using namespace std; 
 
@@ -23,7 +26,7 @@ int main() {
         std::cerr << "Failed to initialize OpenGL" << std::endl;
         return -1;
     }
-
+    myGame.Init();
     myGame.ChangeState(new LoadingState(myGame.getWindow()));
     myGame.ChangeState(new SimulationState(myGame.getWindow()));
 

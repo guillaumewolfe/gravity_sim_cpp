@@ -26,6 +26,7 @@ file(GLOB_RECURSE SOURCES
      src/glad.c
      src/engine/*.cpp
      src/game/*.cpp
+     src/UI/*.cpp
      src/states/*.cpp
      external/imgui/imgui.cpp
      external/imgui/imgui_draw.cpp
