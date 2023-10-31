@@ -135,7 +135,7 @@ bool Game::InitOpenGL()
         return false;
     }
 
-    window = glfwCreateWindow(800, 600, "Space Query", NULL, NULL);
+    window = glfwCreateWindow(1500, 950, "Space Query", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

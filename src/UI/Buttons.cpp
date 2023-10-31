@@ -11,7 +11,9 @@ void Button::Draw() {
     int winWidth, winHeight;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 
-    ImVec2 actualPos = ImVec2(position.x * winWidth, position.y * winHeight);
+    ImVec2 actualPos = ImVec2((position.x * winWidth) - (size.x * 0.5), 
+                          (position.y * winHeight) - (size.y * 0.5));
+
 
     ImGui::SetCursorPos(actualPos);
     ImVec2 cursorPos = ImGui::GetCursorScreenPos();
