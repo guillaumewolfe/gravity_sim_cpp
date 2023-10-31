@@ -7,6 +7,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <filesystem>
+#include "opencv2/opencv.hpp"
 
 Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr) {}
 
@@ -21,6 +22,8 @@ void Game::Init()
                                     [this]()
                                     { if (this->currentState) { this->~Game(); } });
     buttons.push_back(exitButton);
+
+
 }
 
 ImFont *Game::Create_font()

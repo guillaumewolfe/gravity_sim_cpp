@@ -13,5 +13,8 @@ class Vec3{
         double norm() const;
 
         std::tuple<double,double,double> toPolar() const;
+
+        Vec3 operator-(const Vec3& other) const;
+        Vec3 operator+(const Vec3& other) const;
 };
 #endif
