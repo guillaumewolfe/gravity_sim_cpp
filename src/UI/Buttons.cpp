@@ -9,12 +9,13 @@ Button::Button(float xPercent, float yPercent, ImVec2 size, ImVec4 color, ImVec4
 void Button::Draw() {
     // Calculate actual position and size based on window dimensions
     int winWidth, winHeight;
-    glfwGetFramebufferSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 
+    // Calculate the position based on the logical window size
     ImVec2 actualPos = ImVec2((position.x * winWidth) - (size.x * 0.5), 
-                          (position.y * winHeight) - (size.y * 0.5));
+                            (position.y * winHeight) - (size.y * 0.5));
 
-
+    // Set the cursor position
     ImGui::SetCursorPos(actualPos);
     ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 

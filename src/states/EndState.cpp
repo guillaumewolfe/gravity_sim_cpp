@@ -1,6 +1,6 @@
 #include "states/EndState.h"
 
-EndState::EndState(GLFWwindow* window) : BaseState(window) {}
+EndState::EndState(Game* gameObj) : BaseState(gameObj) {}
 void EndState::Enter() {
     std::cout << "Entering End State" << std::endl;
 }

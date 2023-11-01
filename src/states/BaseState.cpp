@@ -1,5 +1,6 @@
 #include "states/BaseState.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "game/game.h"
 
-BaseState::BaseState(GLFWwindow* win) : window(win) {}
+BaseState::BaseState(Game* gameObjParam) : gameObj(gameObjParam) {
+    window = gameObj->getWindow();
+}

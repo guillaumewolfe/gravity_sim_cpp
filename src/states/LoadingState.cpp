@@ -1,7 +1,7 @@
 #include "states/LoadingState.h"
 
 
-LoadingState::LoadingState(GLFWwindow* window) : BaseState(window) {}
+LoadingState::LoadingState(Game* gameObj) : BaseState(gameObj) {}
 
 void LoadingState::Enter() {
     std::cout << "Entering Loading State" << std::endl;

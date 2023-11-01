@@ -1,16 +1,22 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <UI/Buttons.h>
+
 #ifndef BASESTATE_H
 #define BASESTATE_H
 
+class Game; 
 
 class BaseState {
 protected:
+
+    Game* gameObj;
     GLFWwindow* window;
+    std::vector<Button*> buttons;
 
 public:
-    BaseState(GLFWwindow* window);
+    BaseState(Game* gameObjs);
     virtual ~BaseState() {}
     virtual void Enter() = 0;
     virtual void Update() = 0;

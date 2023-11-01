@@ -11,19 +11,24 @@
 
 Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr) {}
 
-void Game::Init()
+Game::~Game()
 {
-    ImFont *myFont = Create_font();
+    Close();
+}
+bool Game::ShouldClose() const { return shouldClose; }
+void Game::setShouldClose(bool value) { shouldClose = value; }
+ImFont* Game::getFont(){return myFont;};
 
+void Game::Init()
+{ ImFont *myFont = Create_font();
+/* 
     Button *exitButton = new Button(0.5f, 0.5f, ImVec2(100, 50),
                                     ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
                                     ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
                                     "Exit", myFont, 0.2f,
                                     [this]()
-                                    { if (this->currentState) { this->~Game(); } });
-    buttons.push_back(exitButton);
-
-
+                                    { if (this->currentState) { this->shouldClose = true; } });
+    buttons.push_back(exitButton);*/
 }
 
 ImFont *Game::Create_font()
@@ -39,11 +44,6 @@ ImFont *Game::Create_font()
     return myFont;
 }
 
-Game::~Game()
-{
-    Close();
-}
-
 void Game::Close()
 {
     if (currentState)
@@ -51,11 +51,11 @@ void Game::Close()
         currentState->Exit();
         delete currentState;
     }
-
+/*
     for (Button *btn : buttons)
     {
         delete btn;
-    }
+    }*/
 
     CleanupOpenGL();
 }
@@ -82,6 +82,7 @@ void Game::Draw()
     {
         currentState->Draw();
     }
+    /*
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // You can set your preferred clear color here
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_BLEND);
@@ -93,6 +94,7 @@ void Game::Draw()
 
     // Set the contrasting background color
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White background
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
     ImGui::PopStyleColor(); // Reset to original style after ImGui::Begin
 
@@ -106,7 +108,7 @@ void Game::Draw()
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glDisable(GL_BLEND);
+    glDisable(GL_BLEND);*/
 }
 
 void Game::ChangeState(BaseState *newState)
@@ -119,7 +121,7 @@ void Game::ChangeState(BaseState *newState)
     currentState = newState;
     if (currentState)
     {
-        currentState->Enter();
+        currentState->Enter(); 
     }
 }
 
@@ -138,7 +140,7 @@ bool Game::InitOpenGL()
         return false;
     }
 
-    window = glfwCreateWindow(1500, 950, "Space Query", NULL, NULL);
+    window = glfwCreateWindow(500, 500, "Space Query", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -158,7 +160,7 @@ bool Game::InitOpenGL()
     ImGuiIO &io = ImGui::GetIO();
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 120");
 
     ImGui::StyleColorsDark();
 

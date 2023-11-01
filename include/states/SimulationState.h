@@ -6,7 +6,7 @@
 #define SIMULATION_H
 class SimulationState : public BaseState {
 public:
-    SimulationState(GLFWwindow* window);
+   SimulationState(Game* gameObj);
     void Enter() override;
     void Update() override;
     void UpdatePhysics(int dt) override;

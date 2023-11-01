@@ -6,7 +6,7 @@
 #define LOADING_H
 class LoadingState : public BaseState {
 public:
-    LoadingState(GLFWwindow* window);
+    LoadingState(Game* gameObj);
     void Enter() override;
     void Update() override;
     void UpdatePhysics(int dt) override;

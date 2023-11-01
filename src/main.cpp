@@ -27,11 +27,10 @@ int main() {
         return -1;
     }
     myGame.Init();
-    myGame.ChangeState(new LoadingState(myGame.getWindow()));
-    myGame.ChangeState(new SimulationState(myGame.getWindow()));
+    myGame.ChangeState(new MenuState(&myGame));
 
 
-    while (!glfwWindowShouldClose(myGame.getWindow())) {
+    while (!myGame.ShouldClose() && !glfwWindowShouldClose(myGame.getWindow())) {
 
         //Time for physical update
         double newTime = glfwGetTime();

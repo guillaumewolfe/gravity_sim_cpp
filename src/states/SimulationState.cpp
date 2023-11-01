@@ -1,7 +1,7 @@
 #include "states/SimulationState.h"
 
 
-SimulationState::SimulationState(GLFWwindow* window) : BaseState(window) {}
+SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj) {}
 
 void SimulationState::Enter() {
     std::cout << "Entering Simulation State" << std::endl;

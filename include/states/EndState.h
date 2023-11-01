@@ -6,7 +6,7 @@
 #define ENDSTATE_H
 class EndState: public BaseState {
 public:
-    EndState(GLFWwindow* window);
+    EndState(Game* gameObj);
     void Enter() override;
     void Update() override;
     void UpdatePhysics(int dt) override;

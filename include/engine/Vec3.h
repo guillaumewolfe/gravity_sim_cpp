@@ -11,6 +11,7 @@ class Vec3{
         Vec3(double x =0, double y = 0, double z = 0);
 
         double norm() const;
+        Vec3 normalize() const;
 
         std::tuple<double,double,double> toPolar() const;
 

@@ -13,12 +13,17 @@ private:
     GLFWwindow* window;
     std::vector<Button*> buttons;
     ImFont* myFont;
+    bool shouldClose = false;
 
 
 public:
     Game();
     ~Game();
+
+    bool ShouldClose() const; 
+    void setShouldClose(bool value);
     void getState();
+    ImFont* getFont();
 
     void Init();
     ImFont* Create_font();
