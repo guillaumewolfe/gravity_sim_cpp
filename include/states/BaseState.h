@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <UI/Buttons.h>
+#include "opencv2/opencv.hpp"
 
 #ifndef BASESTATE_H
 #define BASESTATE_H

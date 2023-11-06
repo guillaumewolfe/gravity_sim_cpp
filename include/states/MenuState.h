@@ -7,10 +7,11 @@
 class MenuState : public BaseState {
 
 private:
-
-    std::vector<Button*> menu_buttons;
-
-
+    // For video:
+    cv::VideoCapture cap;
+    GLuint videoTexture; 
+    bool videoInitialized = false;
+    bool newFrameReady = false;
 
 public:
     MenuState(Game* gameObj);
@@ -21,6 +22,11 @@ public:
     void Draw() override;
     void Exit() override;
     std::string getDescription() override;
+
+    //Video:
+    void generateVideo();
+    void UpdateVideo();
+    void drawVideo();
 
 
     // Autres méthodes et attributs spécifiques au menu

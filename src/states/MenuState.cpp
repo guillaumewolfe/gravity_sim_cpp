@@ -1,74 +1,247 @@
 #include "states/MenuState.h"
+#include "states/SimulationState.h"
 
 
-MenuState::MenuState(Game* gameObj) : BaseState(gameObj) {
-    /*Constructeur :
-        1- Construire les bouttons
-        2- Initialiser le video*/
-    
+MenuState::MenuState(Game* gameObj) : BaseState(gameObj){
+   /*Constructeur :
+       1- Construire les bouttons
+       2- Initialiser le video*/
+  
 }
 void MenuState::Enter() {
-    std::cout << "Entering Menu State" << std::endl;
-    /* Enter menu state:
-        1- Restart video
-        2- Restart button states (If needed)*/
-    buttons = generateButtons();
+   std::cout << "Entering Menu State" << std::endl;
+   /* Enter menu state:
+       1- Restart video
+       2- Restart button states (If needed)*/
+  
+   //Buttons
+   buttons = generateButtons();
+
+
+   //Videos
+   generateVideo();
 }
+
+
 
 
 std::vector<Button*> MenuState::generateButtons(){
-    std::vector<Button*> buttons_list;
-    Button *exitButton = new Button(0.5f, 0.5f, ImVec2(100, 50),
-                                    ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                                    ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
-                                    "Exit", gameObj->getFont(), 0.2f,
-                                    [this]()
-                                    { gameObj->setShouldClose(true);  });
-    buttons_list.push_back(exitButton);
-    return buttons_list;
+   std::vector<Button*> buttons_list;
+   Button *exitButton = new Button(0.5f, 0.5f, ImVec2(100, 50),
+                                   ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                                   ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                                   "Exit", gameObj->getFont(), 0.2f,
+                                   [this]()
+                                   { gameObj->setShouldClose(true);  });
+   Button *SimulationButton = new Button(0.5f, 0.7f, ImVec2(100, 50),
+                               ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                               ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                               "Simulation", gameObj->getFont(), 0.2f,
+                               [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
+   buttons_list.push_back(exitButton);
+   buttons_list.push_back(SimulationButton);
+   return buttons_list;
 }
+
+
+
+
 
 
 
 
 void MenuState::Update() {}
 
+
 void MenuState::UpdatePhysics(int dt){};
 
+
+
+
+
+
 void MenuState::Draw() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // You can set your preferred clear color here
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   // Clear the buffer
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
 
-    // Set the contrasting background color
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White background
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-    ImGui::PopStyleColor(); // Reset to original style after ImGui::Begin
+   // Enable Alpha for buttons
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Draw your custom buttons
-    for (Button *btn : buttons)
-    {
-        btn->Draw();
-    }
 
-    ImGui::End();
+   // Buttons settings
+   ImGui_ImplOpenGL3_NewFrame();
+   ImGui_ImplGlfw_NewFrame();
+   ImGui::NewFrame();
 
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glDisable(GL_BLEND);
+
+   // Video update should be handled here
+
+
+   // Draw the video texture
+   if (videoInitialized) {
+       UpdateVideo();
+       drawVideo();
+   }
+
+
+   // Set the contrasting background color
+   ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White background
+   ImGui::SetNextWindowPos(ImVec2(0, 0));
+   ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+   ImGui::PopStyleColor();
+
+
+   // Draw your custom buttons
+   for (Button *btn : buttons) {
+       btn->Draw();
+   }
+
+
+   ImGui::End();
+
+
+   // Render ImGui
+   ImGui::Render();
+   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
+   // Disable blending
+   glDisable(GL_BLEND);
 }
+
+
 
 
 void MenuState::Exit() {
-    std::cout << "Exiting Menu State" << std::endl;
+   if (cap.isOpened()) {
+       cap.release();
+   }
+   if (videoInitialized) {
+       glDeleteTextures(1, &videoTexture);
+   }
+   std::cout << "Exiting Menu State" << std::endl;
 }
 
+
 std::string MenuState::getDescription() {
-    return "Menu State";
+   return "Menu State";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+////VIDEO////
+
+
+void MenuState::generateVideo() {
+   std::string videoPath = "../assets/animations/intro.mp4";
+   cap.open(videoPath);
+   if (!cap.isOpened()) {
+       std::cerr << "Error opening video file." << std::endl;
+       return;
+   }
+   // Initialize video texture
+   glGenTextures(1, &videoTexture);
+   glBindTexture(GL_TEXTURE_2D, videoTexture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   videoInitialized = true;
+}
+
+
+void MenuState::UpdateVideo(){
+
+   static double lastTime = glfwGetTime();
+   static double accumulator = 0.0; // Time accumulator for frame updates
+
+
+   // Get the video's FPS and calculate the time per frame in seconds
+   double fps = cap.get(cv::CAP_PROP_FPS);
+   double timePerFrame = 1.0 / fps; // Time per frame in seconds
+
+
+   double currentTime = glfwGetTime();
+   double elapsedTime = currentTime - lastTime; // Time elapsed in seconds
+
+
+   accumulator += elapsedTime; // Add elapsed time to the accumulator
+
+
+   if (cap.isOpened() && accumulator >= timePerFrame) {
+       // If enough time has passed, update the frame
+       cv::Mat frame;
+       if (cap.read(frame)) {
+           // Convert frame from BGR to RGB
+           cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+
+
+           // Update texture with the new frame
+           glBindTexture(GL_TEXTURE_2D, videoTexture);
+           glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.cols, frame.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, frame.data);
+           glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
+       } else {
+           // If the video is finished, rewind to start
+           cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+       }
+      
+       accumulator -= timePerFrame; // Subtract one frame worth of time from the accumulator
+   }
+
+
+   lastTime = currentTime; // Update the last time
+}
+
+
+void MenuState::drawVideo() {
+
+
+       ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+       float windowAspectRatio = windowSize.x / windowSize.y;
+       float videoAspectRatio = cap.get(cv::CAP_PROP_FRAME_WIDTH) / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+       ImVec2 imageSize;
+
+
+       // Determine scaling factor based on which dimension needs to be filled
+       float scaleWidth = windowSize.x / (float)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+       float scaleHeight = windowSize.y / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+       float scale = std::max(scaleWidth, scaleHeight); // Choose the larger scale factor
+       scale *= 1.05f;
+       // Apply scaling factor to both width and height
+       imageSize.x = cap.get(cv::CAP_PROP_FRAME_WIDTH) * scale;
+       imageSize.y = cap.get(cv::CAP_PROP_FRAME_HEIGHT) * scale;
+
+
+       // Calculate the position to ensure the video is centered after being cropped
+       ImVec2 imagePos = ImVec2((windowSize.x - imageSize.x) * 0.5f, (windowSize.y - imageSize.y) * 0.5f);
+
+
+       // Draw the texture
+      
+       glBindTexture(GL_TEXTURE_2D, videoTexture);
+       
+       ImGui::SetNextWindowPos(imagePos);
+       ImGui::SetNextWindowSize(imageSize);
+       ImGui::Begin("VideoBackground", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
+       GLint isTexture = glIsTexture(videoTexture);
+        if (isTexture) {
+            ImGui::Image((void*)(intptr_t)videoTexture, imageSize);
+        }
+       ImGui::End();
+
+}
+
+
+
+
+

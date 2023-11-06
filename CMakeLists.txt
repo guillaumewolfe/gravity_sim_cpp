@@ -38,7 +38,7 @@ file(GLOB_RECURSE SOURCES
 
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "app")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Querry")
 
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
