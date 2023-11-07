@@ -145,19 +145,30 @@ std::string MenuState::getDescription() {
 
 
 void MenuState::generateVideo() {
-   std::string videoPath = "../assets/animations/intro.mp4";
-   cap.open(videoPath);
-   if (!cap.isOpened()) {
-       std::cerr << "Error opening video file." << std::endl;
-       return;
-   }
-   // Initialize video texture
-   glGenTextures(1, &videoTexture);
-   glBindTexture(GL_TEXTURE_2D, videoTexture);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   videoInitialized = true;
+    std::string videoPath = "../assets/animations/intro.mp4";
+    cap.open(videoPath);
+    if (!cap.isOpened()) {
+        std::cerr << "Error opening video file." << std::endl;
+        return;
+    }
+
+    // Only generate the texture if it hasn't been generated before
+    if (videoTexture == 0) {
+        glGenTextures(1, &videoTexture);
+        glBindTexture(GL_TEXTURE_2D, videoTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Create a black dummy image
+        unsigned char blackImage[3] = {0, 0, 0};
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, blackImage);
+
+        glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
+    }
+
+    videoInitialized = true;
 }
+
 
 
 void MenuState::UpdateVideo(){
@@ -205,43 +216,25 @@ void MenuState::UpdateVideo(){
 
 void MenuState::drawVideo() {
 
-
-       ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-       float windowAspectRatio = windowSize.x / windowSize.y;
-       float videoAspectRatio = cap.get(cv::CAP_PROP_FRAME_WIDTH) / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-       ImVec2 imageSize;
-
-
-       // Determine scaling factor based on which dimension needs to be filled
-       float scaleWidth = windowSize.x / (float)cap.get(cv::CAP_PROP_FRAME_WIDTH);
-       float scaleHeight = windowSize.y / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-       float scale = std::max(scaleWidth, scaleHeight); // Choose the larger scale factor
-       scale *= 1.05f;
-       // Apply scaling factor to both width and height
-       imageSize.x = cap.get(cv::CAP_PROP_FRAME_WIDTH) * scale;
-       imageSize.y = cap.get(cv::CAP_PROP_FRAME_HEIGHT) * scale;
+    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+    float windowAspectRatio = windowSize.x / windowSize.y;
+    float videoAspectRatio = cap.get(cv::CAP_PROP_FRAME_WIDTH) / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    ImVec2 imageSize;
+    // Determine scaling factor based on which dimension needs to be filled
+    float scaleWidth = windowSize.x / (float)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+    float scaleHeight = windowSize.y / (float)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    float scale = std::max(scaleWidth, scaleHeight); // Choose the larger scale factor
+    scale *= 1.05f;
+    // Apply scaling factor to both width and height
+    imageSize.x = cap.get(cv::CAP_PROP_FRAME_WIDTH) * scale;
+    imageSize.y = cap.get(cv::CAP_PROP_FRAME_HEIGHT) * scale;
 
 
-       // Calculate the position to ensure the video is centered after being cropped
-       ImVec2 imagePos = ImVec2((windowSize.x - imageSize.x) * 0.5f, (windowSize.y - imageSize.y) * 0.5f);
-
-
-       // Draw the texture
-      
-       glBindTexture(GL_TEXTURE_2D, videoTexture);
-       
-       ImGui::SetNextWindowPos(imagePos);
-       ImGui::SetNextWindowSize(imageSize);
-       ImGui::Begin("VideoBackground", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
-       GLint isTexture = glIsTexture(videoTexture);
-        if (isTexture) {
-            ImGui::Image((void*)(intptr_t)videoTexture, imageSize);
-        }
-       ImGui::End();
-
+    // Calculate the position to ensure the video is centered after being cropped
+    ImVec2 imagePos = ImVec2((windowSize.x - imageSize.x) * 0.5f, (windowSize.y - imageSize.y) * 0.5f);
+    ImGui::SetNextWindowPos(imagePos);
+    ImGui::SetNextWindowSize(imageSize);
+    ImGui::Begin("VideoBackground", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
+    ImGui::Image((void*)(intptr_t)videoTexture, imageSize);
+    ImGui::End();
 }
-
-
-
-
-

@@ -12,7 +12,7 @@ private:
     GLuint videoTexture; 
     bool videoInitialized = false;
     bool newFrameReady = false;
-
+    
 public:
     MenuState(Game* gameObj);
     void Enter() override;
