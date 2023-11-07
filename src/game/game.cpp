@@ -36,7 +36,7 @@ ImFont *Game::Create_font()
     ImGuiIO &io = ImGui::GetIO();
 
     // Load the font
-    ImFont *myFont = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 16.0f);
+    ImFont *myFont = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 20.0f);
     if (!myFont)
     {
         std::cerr << "Failed to load font." << std::endl;

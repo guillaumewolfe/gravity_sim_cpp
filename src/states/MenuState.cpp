@@ -27,19 +27,31 @@ void MenuState::Enter() {
 
 std::vector<Button*> MenuState::generateButtons(){
    std::vector<Button*> buttons_list;
-   Button *exitButton = new Button(0.5f, 0.5f, ImVec2(100, 50),
+
+   Button *exitButton = new Button(0.5f, 0.92f, ImVec2(0.12, 0.05),
                                    ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
                                    ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
                                    "Exit", gameObj->getFont(), 0.2f,
                                    [this]()
                                    { gameObj->setShouldClose(true);  });
-   Button *SimulationButton = new Button(0.5f, 0.7f, ImVec2(100, 50),
+
+
+   Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
                                ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
                                "Simulation", gameObj->getFont(), 0.2f,
                                [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
+
+   Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.12, 0.05),
+                               ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                               ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                               "Options", gameObj->getFont(), 0.2f,
+                               [this]() {});
+
+
    buttons_list.push_back(exitButton);
-   buttons_list.push_back(SimulationButton);
+   buttons_list.push_back(OptionButton);
+   buttons_list.push_back(StartButton);
    return buttons_list;
 }
 

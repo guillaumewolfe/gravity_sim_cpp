@@ -11,7 +11,7 @@
 class Button {
 private:
     ImVec2 position; 
-    ImVec2 size;    
+    ImVec2 sizePercent; 
     ImVec4 color;   
     ImVec4 hoverColor; 
     std::function<void()> onClick; 
@@ -20,6 +20,6 @@ private:
     float alpha;
 
 public:
-    Button(float xPercent, float yPercent, ImVec2 size, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
+    Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
     void Draw();
 };
