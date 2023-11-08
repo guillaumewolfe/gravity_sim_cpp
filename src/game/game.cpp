@@ -1,6 +1,5 @@
 #include <iostream>
 #include <game/game.h>
-#include <UI/Buttons.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -17,33 +16,37 @@ Game::~Game()
 }
 bool Game::ShouldClose() const { return shouldClose; }
 void Game::setShouldClose(bool value) { shouldClose = value; }
-ImFont* Game::getFont(){return myFont;};
 
 void Game::Init()
-{ ImFont *myFont = Create_font();
-/* 
-    Button *exitButton = new Button(0.5f, 0.5f, ImVec2(100, 50),
-                                    ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                                    ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
-                                    "Exit", myFont, 0.2f,
-                                    [this]()
-                                    { if (this->currentState) { this->shouldClose = true; } });
-    buttons.push_back(exitButton);*/
+{ 
+LoadFonts(); 
 }
 
-ImFont *Game::Create_font()
-{
-    ImGuiIO &io = ImGui::GetIO();
+void Game::LoadFonts() {
+    ImGuiIO& io = ImGui::GetIO();
+    fonts["Regular"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 20.0f);
+    fonts["Title"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 100.0f);
+    fonts["Main Menu"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 30.0f);
 
-    // Load the font
-    ImFont *myFont = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 20.0f);
-    if (!myFont)
-    {
-        std::cerr << "Failed to load font." << std::endl;
+    // Assurez-vous que toutes les polices ont été chargées correctement
+    for (auto& font : fonts) {
+        if (!font.second) {
+            std::cerr << "Failed to load font: " << font.first << std::endl;
+        }
     }
-    return myFont;
 }
 
+ImFont* Game::getFont(const std::string& fontKey) {
+    auto it = fonts.find(fontKey);
+    if (it != fonts.end()) {
+        return it->second;
+    }
+    return nullptr;
+}
+ImFont* Game::getFont() {
+    // Utilisez une clé par défaut ou un chemin de fichier pour la police "Regular"
+    return getFont("TiltNeon-Regular.ttf"); // ou le chemin relatif selon l'organisation de vos fichiers
+}
 void Game::Close()
 {
     if (currentState)
@@ -51,11 +54,6 @@ void Game::Close()
         currentState->Exit();
         delete currentState;
     }
-/*
-    for (Button *btn : buttons)
-    {
-        delete btn;
-    }*/
 
     CleanupOpenGL();
 }
@@ -68,7 +66,7 @@ void Game::Update()
     }
 }
 
-void Game::UpdatePhysics(int dt)
+void Game::UpdatePhysics(double dt)
 {
     if (currentState)
     {
@@ -82,33 +80,6 @@ void Game::Draw()
     {
         currentState->Draw();
     }
-    /*
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // You can set your preferred clear color here
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    // Set the contrasting background color
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White background
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-    ImGui::PopStyleColor(); // Reset to original style after ImGui::Begin
-
-    // Draw your custom buttons
-    for (Button *btn : buttons)
-    {
-        btn->Draw();
-    }
-
-    ImGui::End();
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glDisable(GL_BLEND);*/
 }
 
 void Game::ChangeState(BaseState *newState)

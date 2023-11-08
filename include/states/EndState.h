@@ -9,7 +9,7 @@ public:
     EndState(Game* gameObj);
     void Enter() override;
     void Update() override;
-    void UpdatePhysics(int dt) override;
+    void UpdatePhysics(double dt) override;
     void Draw() override;
     void Exit() override;
     std::string getDescription() override;

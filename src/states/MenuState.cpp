@@ -16,13 +16,25 @@ void MenuState::Enter() {
   
    //Buttons
    buttons = generateButtons();
+   labbels = generateLabbels();
 
 
    //Videos
    generateVideo();
 }
 
+std::vector<Labbel*> MenuState::generateLabbels(){
+    std::vector<Labbel*> labbel_list;
 
+    Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
+                                "Space Querry",gameObj->getFont("Title"),1.0f);
+    Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
+                                    "Main Menu",gameObj->getFont("Main Menu"),1.0f);
+
+    labbel_list.push_back(GameTitle);
+    labbel_list.push_back(MainMenu);
+    return labbel_list;
+}
 
 
 std::vector<Button*> MenuState::generateButtons(){
@@ -30,7 +42,7 @@ std::vector<Button*> MenuState::generateButtons(){
 
    Button *exitButton = new Button(0.5f, 0.92f, ImVec2(0.12, 0.05),
                                    ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                                   ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                                   ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
                                    "Exit", gameObj->getFont(), 0.2f,
                                    [this]()
                                    { gameObj->setShouldClose(true);  });
@@ -38,13 +50,13 @@ std::vector<Button*> MenuState::generateButtons(){
 
    Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                               ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                               ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
                                "Simulation", gameObj->getFont(), 0.2f,
                                [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                               ImVec4(0.7f, 0.5f, 0.5f, 1.0f),
+                               ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
                                "Options", gameObj->getFont(), 0.2f,
                                [this]() {});
 
@@ -65,7 +77,7 @@ std::vector<Button*> MenuState::generateButtons(){
 void MenuState::Update() {}
 
 
-void MenuState::UpdatePhysics(int dt){};
+void MenuState::UpdatePhysics(double dt){};
 
 
 
@@ -77,12 +89,9 @@ void MenuState::Draw() {
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
    // Enable Alpha for buttons
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
    // Buttons settings
    ImGui_ImplOpenGL3_NewFrame();
    ImGui_ImplGlfw_NewFrame();
@@ -106,10 +115,8 @@ void MenuState::Draw() {
    ImGui::PopStyleColor();
 
 
-   // Draw your custom buttons
-   for (Button *btn : buttons) {
-       btn->Draw();
-   }
+
+    drawUiElements();
 
 
    ImGui::End();
@@ -124,7 +131,15 @@ void MenuState::Draw() {
    glDisable(GL_BLEND);
 }
 
-
+void MenuState::drawUiElements(){
+   // Draw your custom buttons
+   for (Button *btn : buttons) {
+       btn->Draw();
+   }
+   for (Labbel *label : labbels) {
+       label->Draw();
+   }
+}
 
 
 void MenuState::Exit() {

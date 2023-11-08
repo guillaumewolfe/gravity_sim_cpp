@@ -12,8 +12,12 @@ private:
     BaseState* currentState; 
     GLFWwindow* window;
     std::vector<Button*> buttons;
-    ImFont* myFont;
     bool shouldClose = false;
+
+    //Fonts
+    ImFont* myFont;
+    std::map<std::string, ImFont*> fonts;
+    void LoadFonts();
 
 
 public:
@@ -24,11 +28,12 @@ public:
     void setShouldClose(bool value);
     void getState();
     ImFont* getFont();
+    ImFont* getFont(const std::string& fontKey);
 
     void Init();
     ImFont* Create_font();
     void Update();
-    void UpdatePhysics(int dt);
+    void UpdatePhysics(double dt);
     void Draw();
     void Close();
     void ChangeState(BaseState* newState);

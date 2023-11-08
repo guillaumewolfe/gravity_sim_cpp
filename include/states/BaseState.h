@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <UI/Buttons.h>
+#include <UI/Labbel.h>
 #include "opencv2/opencv.hpp"
 
 #ifndef BASESTATE_H
@@ -14,6 +15,7 @@ protected:
 
     Game* gameObj;
     GLFWwindow* window;
+    std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
 
 public:
@@ -21,7 +23,7 @@ public:
     virtual ~BaseState() {}
     virtual void Enter() = 0;
     virtual void Update() = 0;
-    virtual void UpdatePhysics(int dt) = 0;
+    virtual void UpdatePhysics(double dt) = 0;
     virtual void Draw() = 0;
     virtual void Exit() = 0;
     virtual std::string getDescription() = 0;

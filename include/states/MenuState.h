@@ -1,5 +1,6 @@
 #include "states/BaseState.h"
 #include "UI/Buttons.h"
+#include "UI/Labbel.h"
 #include "game/game.h"
 
 #ifndef MENUSTATE_H
@@ -12,14 +13,16 @@ private:
     GLuint videoTexture; 
     bool videoInitialized = false;
     bool newFrameReady = false;
+    std::vector<Button*> generateButtons();
+    std::vector<Labbel*> generateLabbels();    
     
 public:
     MenuState(Game* gameObj);
     void Enter() override;
-    std::vector<Button*> generateButtons();
     void Update() override;
-    void UpdatePhysics(int dt) override;
+    void UpdatePhysics(double dt) override;
     void Draw() override;
+    void drawUiElements();
     void Exit() override;
     std::string getDescription() override;
 
