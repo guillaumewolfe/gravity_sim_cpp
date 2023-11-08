@@ -5,9 +5,19 @@ project(gravity_sim_cpp)
 if(WIN32)
     set(OpenCV_DIR "C:/Users/guill/Documents/opencv/OpenCV-MinGW-Build-OpenCV-4.5.5-x64")
     set(GLFW_LIB "${CMAKE_SOURCE_DIR}/lib/libglfw3dll.a")
+    # Assume SDL2 is installed in a standard location on Windows or specify its path
+    find_package(SDL2 REQUIRED)
 elseif(APPLE)
     # Ajustez le chemin pour OpenCV sur macOS si nécessaire.
     set(GLFW_LIB "/opt/homebrew/lib/libglfw.3.3.dylib")
+    
+    # Manually set SDL2 paths
+    set(SDL2_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
+    set(SDL2_LIBRARIES "/opt/homebrew/lib/libSDL2.dylib") # This is where the SDL2 library is expected
+    
+    # Manually set SDL2_mixer paths
+    set(SDL2_MIXER_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
+    set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
 endif()
 
 # Configuration OpenCV
@@ -18,8 +28,9 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/external/imgui/backends)
+include_directories(${SDL2_INCLUDE_DIRS})
+include_directories(${SDL2_MIXER_INCLUDE_DIRS})
 
-# Source Files
 # Source Files
 file(GLOB_RECURSE SOURCES 
      src/main.cpp
@@ -42,4 +53,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Querry")
 
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES})

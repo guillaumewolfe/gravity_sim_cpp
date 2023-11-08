@@ -2,6 +2,7 @@
 #include "UI/Buttons.h"
 #include "UI/Labbel.h"
 #include "game/game.h"
+#include <SDL_mixer.h>
 
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
@@ -13,9 +14,13 @@ private:
     GLuint videoTexture; 
     bool videoInitialized = false;
     bool newFrameReady = false;
+
+    //Music
+    Mix_Music* bgMusic;
+
+    //UI Elements
     std::vector<Button*> generateButtons();
-    std::vector<Labbel*> generateLabbels();    
-    
+    std::vector<Labbel*> generateLabbels();        
 public:
     MenuState(Game* gameObj);
     void Enter() override;
@@ -28,6 +33,7 @@ public:
 
     //Video:
     void generateVideo();
+    void generateMusic();
     void UpdateVideo();
     void drawVideo();
 

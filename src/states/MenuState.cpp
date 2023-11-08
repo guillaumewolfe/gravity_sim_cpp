@@ -1,7 +1,6 @@
 #include "states/MenuState.h"
 #include "states/SimulationState.h"
 
-
 MenuState::MenuState(Game* gameObj) : BaseState(gameObj){
    /*Constructeur :
        1- Construire les bouttons
@@ -18,11 +17,10 @@ void MenuState::Enter() {
    buttons = generateButtons();
    labbels = generateLabbels();
 
-
-   //Videos
+   //Videos & Music
    generateVideo();
+   generateMusic();
 }
-
 std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
@@ -149,7 +147,17 @@ void MenuState::Exit() {
    if (videoInitialized) {
        glDeleteTextures(1, &videoTexture);
    }
+
    std::cout << "Exiting Menu State" << std::endl;
+    if (Mix_PlayingMusic() == 1) {
+        Mix_HaltMusic();
+    }
+
+    // Free the music
+    if (bgMusic != nullptr) {
+        Mix_FreeMusic(bgMusic);
+        bgMusic = nullptr; // Set to nullptr to indicate it's been freed
+    }
 }
 
 
@@ -264,4 +272,28 @@ void MenuState::drawVideo() {
     ImGui::Begin("VideoBackground", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
     ImGui::Image((void*)(intptr_t)videoTexture, imageSize);
     ImGui::End();
+}
+
+void MenuState::generateMusic(){
+    // Initialize SDL_mixer
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
+
+    // Load music
+    Mix_Music *bgMusic = Mix_LoadMUS("../assets/sounds/music_background.mp3");
+    if (!bgMusic) {
+        std::cerr << "Failed to load background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        Mix_Quit();
+        return;
+    }
+
+    // Play the music
+    if (Mix_PlayMusic(bgMusic, -1) == -1) {
+        std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        Mix_FreeMusic(bgMusic);
+        Mix_Quit();
+        return;
+    }
 }

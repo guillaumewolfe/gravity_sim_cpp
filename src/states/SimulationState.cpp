@@ -2,7 +2,6 @@
 #include <sstream>
 #include <iomanip>
 
-
 SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj) {}
 
 void SimulationState::Enter() {
