@@ -109,7 +109,7 @@ void MenuState::Draw() {
     /*int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));*/
-   ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+   ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
 
 
     ImGui::SetNextWindowFocus();
@@ -119,7 +119,7 @@ void MenuState::Draw() {
    ImGui::End();
 
 
-   // Render ImGui
+
    ImGui::Render();
    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

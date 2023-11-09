@@ -25,6 +25,8 @@ private:
     Mix_Chunk* clickSound = nullptr;
     bool hoverSoundPlayed = false; 
 
+    bool mouseButtonPressed = false;
+
 public:
     Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
     ~Button(); 

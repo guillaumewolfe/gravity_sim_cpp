@@ -73,12 +73,25 @@ void Button::Draw() {
                           label.c_str());
     }
 
-    // Check for button press
-    if (isHovered && ImGui::IsMouseClicked(0)) {
-        if (onClick) {
-            onClick(); // Invoke the action associated with the button
-        }
+if (isHovered && ImGui::IsMouseClicked(0)) {
+    mouseButtonPressed = true;
+}
+if (!isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed){
+    mouseButtonPressed = false;
+}
+if(mouseButtonPressed && isHovered){
+    drawList->AddRectFilled(cursorPos, 
+                            ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
+                            IM_COL32(255, 255, 255, 50));
+}
+// Check for button release
+if (isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
+    if (onClick) {
+        Mix_PlayChannel(-1, clickSound, 0);
+        onClick(); // Invoke the action associated with the button
     }
+    mouseButtonPressed = false; // Réinitialiser le statut du bouton pressé
+}
 
 }
 
@@ -98,9 +111,9 @@ bool Button::InitSoundEffects() {
 
     // Load sound effects (replace with your sound file paths)
     hoverSound = Mix_LoadWAV("../assets/sounds/select.wav");
-    //clickSound = Mix_LoadWAV("../assets/sounds/start.wav");
+    clickSound = Mix_LoadWAV("../assets/sounds/delete.wav");
 
-    if (!hoverSound /* || !clickSound */) {
+    if (!hoverSound  || !clickSound ) {
         std::cerr << "Failed to load sound effects: " << Mix_GetError() << std::endl;
         Mix_CloseAudio(); // Close audio before returning
         return false;

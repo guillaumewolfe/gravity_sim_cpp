@@ -10,6 +10,8 @@ public:
     explicit UITool(RenderContext* renderContext);
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
+    void draw_labbels();
+    void draw_buttons();
 };
 
 #endif // UITOOL_H
