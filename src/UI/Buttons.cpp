@@ -79,6 +79,7 @@ void Button::Draw() {
             onClick(); // Invoke the action associated with the button
         }
     }
+
 }
 
 // Additional methods for Button class could be implemented here (e.g., setters/getters, interaction logic, etc.)

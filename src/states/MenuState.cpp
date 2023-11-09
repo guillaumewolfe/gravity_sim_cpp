@@ -106,10 +106,10 @@ void MenuState::Draw() {
 
 
    // Set the contrasting background color
-   ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // White background
-   ImGui::SetNextWindowPos(ImVec2(0, 0));
+    /*int winWidth, winHeight;
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));*/
    ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-   ImGui::PopStyleColor();
 
 
     ImGui::SetNextWindowFocus();

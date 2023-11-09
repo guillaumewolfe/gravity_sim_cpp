@@ -7,7 +7,7 @@ void SimulationState::Enter() {
     std::cout << "Entering Simulation State" << std::endl;
     labbels = generateLabbels();
     buttons = generateButtons();
-    //renderContext = new RenderContext(&simulation_time, labbels, buttons);
+    renderContext = new RenderContext(&simulation_time, labbels, buttons);
 }
 
 //Labels
