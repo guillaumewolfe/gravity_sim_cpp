@@ -2,8 +2,23 @@
 
 // Constructor
 Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction)
-    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label), font(font), alpha(alpha) {}
-
+    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label), font(font), alpha(alpha) {
+        if (!InitSoundEffects()) {
+            std::cout<<"Failed to load sound at init"<<std::endl;
+        }
+    
+    }
+Button::~Button() {
+    // Free sound effects if they were loaded
+    if (hoverSound) {
+        Mix_FreeChunk(hoverSound);
+        hoverSound = nullptr;
+    }
+    if (clickSound) {
+        Mix_FreeChunk(clickSound);
+        clickSound = nullptr;
+    }
+}
 // Draw method
 void Button::Draw() {
     // Get window dimensions
@@ -26,7 +41,17 @@ void Button::Draw() {
 
     // Check if the button is hovered
     bool isHovered = ImGui::IsMouseHoveringRect(cursorPos, ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y));
-
+    if(!hoverSound){
+        std::cout<<"ERROR"<<std::endl;
+    }
+    if (isHovered && !hoverSoundPlayed) {
+        Mix_PlayChannel(-1, hoverSound, 0); // Play the hover sound effect
+        hoverSoundPlayed = true; // Set the flag to true to indicate sound has been played
+    }else if (!isHovered && hoverSoundPlayed)
+    {
+        hoverSoundPlayed=false;
+    }
+    
     // Draw the button rectangle
     drawList->AddRectFilled(cursorPos, 
                             ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
@@ -57,3 +82,30 @@ void Button::Draw() {
 }
 
 // Additional methods for Button class could be implemented here (e.g., setters/getters, interaction logic, etc.)
+void Button::updateLabel(const std::string& newLabel){
+    label = newLabel;
+}
+
+
+// Initialize sound effects
+bool Button::InitSoundEffects() {
+    // Open audio with desired parameters
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        std::cerr << "SDL_mixer could not initialize audio: " << Mix_GetError() << std::endl;
+        return false;
+    }
+
+    // Load sound effects (replace with your sound file paths)
+    hoverSound = Mix_LoadWAV("../assets/sounds/select.wav");
+    //clickSound = Mix_LoadWAV("../assets/sounds/start.wav");
+
+    if (!hoverSound /* || !clickSound */) {
+        std::cerr << "Failed to load sound effects: " << Mix_GetError() << std::endl;
+        Mix_CloseAudio(); // Close audio before returning
+        return false;
+    }
+
+    return true; // Sound effects initialized successfully
+}
+
+

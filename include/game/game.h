@@ -19,12 +19,14 @@ private:
     std::map<std::string, ImFont*> fonts;
     void LoadFonts();
 
-
+    BaseState* requestedState;
+    bool changeStateRequested;
 public:
     Game();
     ~Game();
 
     bool ShouldClose() const; 
+    void ApplyStateChange();
     void setShouldClose(bool value);
     void getState();
     ImFont* getFont();

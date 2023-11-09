@@ -36,6 +36,7 @@ file(GLOB_RECURSE SOURCES
      src/main.cpp
      src/glad.c
      src/engine/*.cpp
+     src/engine/RenderTools/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
      src/states/*.cpp
@@ -46,7 +47,7 @@ file(GLOB_RECURSE SOURCES
      external/imgui/imgui_tables.cpp
      external/imgui/backends/imgui_impl_glfw.cpp
      external/imgui/backends/imgui_impl_opengl3.cpp)
-
+     message(STATUS "Source files: ${SOURCES}")
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Querry")

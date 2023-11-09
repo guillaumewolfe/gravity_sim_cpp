@@ -8,7 +8,8 @@
 #include <filesystem>
 #include "opencv2/opencv.hpp"
 
-Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr) {}
+Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr), 
+               requestedState(nullptr), changeStateRequested(false) {}
 
 Game::~Game()
 {
@@ -24,7 +25,7 @@ LoadFonts();
 
 void Game::LoadFonts() {
     ImGuiIO& io = ImGui::GetIO();
-    fonts["Regular"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 20.0f);
+    fonts["Regular"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 22.0f);
     fonts["Title"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 100.0f);
     fonts["Main Menu"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 30.0f);
 
@@ -64,6 +65,7 @@ void Game::Update()
     {
         currentState->Update();
     }
+    ApplyStateChange();
 }
 
 void Game::UpdatePhysics(double dt)
@@ -82,20 +84,26 @@ void Game::Draw()
     }
 }
 
-void Game::ChangeState(BaseState *newState)
-{
-    if (currentState)
-    {
-        currentState->Exit();
-        delete currentState;
+void Game::ChangeState(BaseState* newState) {
+    if (requestedState != nullptr) {
+        delete requestedState;
     }
-    currentState = newState;
-    if (currentState)
-    {
-        currentState->Enter(); 
-    }
+    requestedState = newState;
+    changeStateRequested = true;
 }
 
+void Game::ApplyStateChange() {
+    if (changeStateRequested && requestedState != nullptr) {
+        if (currentState) {
+            currentState->Exit();
+            delete currentState;
+        }
+        currentState = requestedState;
+        currentState->Enter();
+        requestedState = nullptr;
+        changeStateRequested = false;
+    }
+}
 void Game::getState()
 {
     if (currentState)

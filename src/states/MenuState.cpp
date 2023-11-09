@@ -16,7 +16,6 @@ void MenuState::Enter() {
    //Buttons
    buttons = generateButtons();
    labbels = generateLabbels();
-
    //Videos & Music
    generateVideo();
    generateMusic();
@@ -25,9 +24,9 @@ std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
-                                "Space Querry",gameObj->getFont("Title"),1.0f);
+                                "Space Querry",gameObj->getFont("Title"),0.8f);
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
-                                    "Main Menu",gameObj->getFont("Main Menu"),1.0f);
+                                    "Main Menu",gameObj->getFont("Main Menu"),0.8f);
 
     labbel_list.push_back(GameTitle);
     labbel_list.push_back(MainMenu);
@@ -49,14 +48,14 @@ std::vector<Button*> MenuState::generateButtons(){
    Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
                                ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
-                               "Simulation", gameObj->getFont(), 0.2f,
+                               "Start", gameObj->getFont(), 0.2f,
                                [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
                                ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
                                "Options", gameObj->getFont(), 0.2f,
-                               [this]() {});
+                               [this]() { gameObj->ChangeState(new MenuState(gameObj)); });
 
 
    buttons_list.push_back(exitButton);
@@ -113,7 +112,7 @@ void MenuState::Draw() {
    ImGui::PopStyleColor();
 
 
-
+    ImGui::SetNextWindowFocus();
     drawUiElements();
 
 
@@ -141,11 +140,9 @@ void MenuState::drawUiElements(){
 
 
 void MenuState::Exit() {
+ 
    if (cap.isOpened()) {
        cap.release();
-   }
-   if (videoInitialized) {
-       glDeleteTextures(1, &videoTexture);
    }
 
    std::cout << "Exiting Menu State" << std::endl;
@@ -158,6 +155,24 @@ void MenuState::Exit() {
         Mix_FreeMusic(bgMusic);
         bgMusic = nullptr; // Set to nullptr to indicate it's been freed
     }
+
+    // Delete buttons and labels
+    for (Button* button : buttons) {
+        delete button;
+    }
+    buttons.clear(); // Clear the vector after deleting the buttons
+
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    labbels.clear(); // Clear the vector after deleting the labels
+
+    // Close SDL_mixer
+    Mix_CloseAudio();
+    Mix_Quit();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 }
 
 

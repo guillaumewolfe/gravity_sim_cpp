@@ -7,6 +7,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_internal.h>
+#include <SDL_mixer.h> 
 
 class Button {
 private:
@@ -19,7 +20,15 @@ private:
     ImFont* font;
     float alpha;
 
+    //Sound
+    Mix_Chunk* hoverSound = nullptr;
+    Mix_Chunk* clickSound = nullptr;
+    bool hoverSoundPlayed = false; 
+
 public:
     Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
+    ~Button(); 
     void Draw();
+    void updateLabel(const std::string& newLabel);
+    bool InitSoundEffects();
 };

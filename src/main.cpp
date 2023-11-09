@@ -46,8 +46,8 @@ int main() {
 
 
         //Update + Drawing
-        myGame.Update();
         myGame.Draw();
+        myGame.Update();
 
 
         //OpenGL refresh window
