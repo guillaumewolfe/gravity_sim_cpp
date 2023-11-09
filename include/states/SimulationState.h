@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/EngineIncludes.h"
+#include "engine/RenderTools/Render.h"
 #include "states/MenuState.h"
 
 #ifndef SIMULATION_H
@@ -17,7 +18,7 @@ private:
     std::vector<Labbel*> generateLabbels();
 
     //RenderTool
-    Render render;
+    Render* render;
 
     //Simulation
     bool isPaused = false;

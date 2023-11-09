@@ -1,13 +1,20 @@
 #include "states/SimulationState.h"
 
 
-SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj),render(*this) {}
+SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){}
 
 void SimulationState::Enter() {
     std::cout << "Entering Simulation State" << std::endl;
+
+    //Constructions des éléments
     labbels = generateLabbels();
     buttons = generateButtons();
+
+
+    //Construction des outils pour le render
     renderContext = new RenderContext(&simulation_time, labbels, buttons);
+    render = new Render(renderContext);
+    render->initTools();
 }
 
 //Labels
@@ -64,7 +71,7 @@ void SimulationState::UpdatePhysics(double dt){
 
 
 void SimulationState::Draw() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    /*glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -79,8 +86,8 @@ void SimulationState::Draw() {
     ImGui::End(); 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    //render.Draw();
+*/
+    render->Draw();
 }
 
 
