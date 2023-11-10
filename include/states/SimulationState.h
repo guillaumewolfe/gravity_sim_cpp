@@ -4,6 +4,7 @@
 #include "engine/EngineIncludes.h"
 #include "engine/RenderTools/Render.h"
 #include "states/MenuState.h"
+#include "UI/MessageTool.h"
 
 #ifndef SIMULATION_H
 #define SIMULATION_H
@@ -16,6 +17,8 @@ private:
 
     std::vector<Button*> generateButtons();
     std::vector<Labbel*> generateLabbels();
+    MessageTool* messageBox;
+    void generateDialogBox(std::function<void()> func, const std::string& message);
 
     //RenderTool
     Render* render;

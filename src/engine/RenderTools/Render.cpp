@@ -12,6 +12,7 @@ Render::Render(RenderContext* Context): Context(Context){}
 
 void Render::initTools(){
     UI_Tool = new UITool(Context);
+    Objects_Tool = new ObjectsTool(Context);
 }
 
 void Render::Draw(){
@@ -25,9 +26,12 @@ void Render::Draw(){
     ImGui::NewFrame();
     //On dessiner les éléments
     UI_Tool->Draw();
+    if (Message_Tool != nullptr) {Message_Tool->Draw();}
+    if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     ImGui::Render();
 
-    
+    Objects_Tool->Draw();
+
 
 
 

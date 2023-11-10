@@ -9,10 +9,11 @@
 class RenderContext {
 public:
     float* simulationTime;
+    float* timeMultiplier;
     std::vector<Labbel*> labels;
     std::vector<Button*> buttons;
 
-    RenderContext(float* time, std::vector<Labbel*>& lbls, std::vector<Button*>& btns);
+    RenderContext(float* time, float* tmul ,std::vector<Labbel*>& lbls, std::vector<Button*>& btns);
 };
 
 #endif // RENDERCONTEXT_H

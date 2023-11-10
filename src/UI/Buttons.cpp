@@ -6,7 +6,7 @@ Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color,
         if (!InitSoundEffects()) {
             std::cout<<"Failed to load sound at init"<<std::endl;
         }
-    
+        cornerRadius = 10.0;
     }
 Button::~Button() {
     // Free sound effects if they were loaded
@@ -55,8 +55,7 @@ void Button::Draw() {
     // Draw the button rectangle
     drawList->AddRectFilled(cursorPos, 
                             ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
-                            isHovered ? IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, alpha * 255)
-                                      : IM_COL32(color.x * 255, color.y * 255, color.z * 255, alpha * 255));
+                            IM_COL32(color.x * 255, color.y * 255, color.z * 255, alpha * 255), cornerRadius);
 
     // Draw the label
     ImVec2 textSize = ImGui::CalcTextSize(label.c_str());
@@ -72,7 +71,12 @@ void Button::Draw() {
                           IM_COL32(255, 255, 255,255), 
                           label.c_str());
     }
-
+    if(isHovered){
+        drawList->AddRectFilled(cursorPos, 
+                            ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
+                            IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, alpha * 255)
+                                      , cornerRadius);
+    }
 if (isHovered && ImGui::IsMouseClicked(0)) {
     mouseButtonPressed = true;
 }
@@ -82,11 +86,11 @@ if (!isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed){
 if(mouseButtonPressed && isHovered){
     drawList->AddRectFilled(cursorPos, 
                             ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
-                            IM_COL32(255, 255, 255, 50));
+                            IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, (alpha*1.5) * 255), cornerRadius);
 }
 // Check for button release
 if (isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
-    if (onClick) {
+    if (onClick && enabled) {
         Mix_PlayChannel(-1, clickSound, 0);
         onClick(); // Invoke the action associated with the button
     }

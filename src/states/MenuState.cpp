@@ -8,7 +8,7 @@ MenuState::MenuState(Game* gameObj) : BaseState(gameObj){
   
 }
 void MenuState::Enter() {
-   std::cout << "Entering Menu State" << std::endl;
+   //std::cout << "Entering Menu State" << std::endl;
    /* Enter menu state:
        1- Restart video
        2- Restart button states (If needed)*/
@@ -39,23 +39,24 @@ std::vector<Button*> MenuState::generateButtons(){
 
    Button *exitButton = new Button(0.5f, 0.92f, ImVec2(0.12, 0.05),
                                    ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                                   ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+                                   ImVec4(1.0f, 0.0f, 0.0f, 1.0f),
                                    "Exit", gameObj->getFont(), 0.2f,
-                                   [this]()
-                                   { gameObj->setShouldClose(true);  });
+                                   [this]() {
+    auto boundFunction = std::bind(&MenuState::closeButton, this);
+    this->generateDialogBox(boundFunction, "Do you want to return to leave?");});
 
 
    Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                               ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+                               ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                "Start", gameObj->getFont(), 0.2f,
                                [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.12, 0.05),
                                ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
-                               ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
+                               ImVec4(1.0f, 1.0f, 0.5f, 1.0f),
                                "Options", gameObj->getFont(), 0.2f,
-                               [this]() { gameObj->ChangeState(new MenuState(gameObj)); });
+                               [this]() {});
 
 
    buttons_list.push_back(exitButton);
@@ -77,7 +78,9 @@ void MenuState::Update() {}
 void MenuState::UpdatePhysics(double dt){};
 
 
-
+void MenuState::generateDialogBox(std::function<void()> func, const std::string& message){
+     messageBox = new MessageTool(message, func);
+}
 
 
 
@@ -118,7 +121,8 @@ void MenuState::Draw() {
 
    ImGui::End();
 
-
+    if (messageBox != nullptr) {messageBox->Draw();}
+    if (messageBox != nullptr && messageBox->shouldClose){delete messageBox;messageBox = nullptr;}
 
    ImGui::Render();
    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -145,7 +149,7 @@ void MenuState::Exit() {
        cap.release();
    }
 
-   std::cout << "Exiting Menu State" << std::endl;
+   //std::cout << "Exiting Menu State" << std::endl;
     if (Mix_PlayingMusic() == 1) {
         Mix_HaltMusic();
     }
@@ -180,7 +184,9 @@ std::string MenuState::getDescription() {
    return "Menu State";
 }
 
-
+void MenuState::closeButton(){
+    gameObj->setShouldClose(true);
+}
 
 
 

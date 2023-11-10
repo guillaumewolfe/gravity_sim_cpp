@@ -15,9 +15,9 @@ ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlag
 draw_labbels();
 draw_buttons();
 
+
 ImGui::End(); 
 
-    
 
 
 }
@@ -37,9 +37,18 @@ void UITool::draw_labbels(){
     std::string rounded_simulation_time_str = stream.str();
     std::string newLabelText = "Simulation time : " + rounded_simulation_time_str;
     if (m_renderContext->labels.size() > 0) {
-            m_renderContext->labels[0]->UpdateText(newLabelText);  
+            m_renderContext->labels[0]->UpdateText(newLabelText); 
+    std::ostringstream stream2;
+    stream2 << std::fixed << std::setprecision(0) << *(m_renderContext->timeMultiplier);
+    std::string rounded_simulation_time_str2 = stream2.str();
+    std::string newLabelText2 = "Speed : x" + rounded_simulation_time_str2 ;
+        m_renderContext->labels[1]->UpdateText(newLabelText2); }
     // Dessinez les labels
+
+
+
     for (Labbel* label : m_renderContext->labels) {
         label->Draw();
-    }}
+    }
+
 }

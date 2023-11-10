@@ -19,6 +19,7 @@ private:
     std::string label;
     ImFont* font;
     float alpha;
+    float cornerRadius;
 
     //Sound
     Mix_Chunk* hoverSound = nullptr;
@@ -26,6 +27,9 @@ private:
     bool hoverSoundPlayed = false; 
 
     bool mouseButtonPressed = false;
+
+    bool enabled = true;
+    bool hidden = false;
 
 public:
     Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
