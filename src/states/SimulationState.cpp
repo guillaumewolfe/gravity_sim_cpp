@@ -66,6 +66,7 @@ std::vector<Button*> SimulationState::generateButtons(){
 
 
 void SimulationState::Update() {
+    if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
 }
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){

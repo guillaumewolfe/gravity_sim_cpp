@@ -20,31 +20,42 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 }
 
 void ObjectsTool::Draw() {
-        glEnable(GL_DEPTH_TEST);
-        
-        // Configuration de la matrice de vue
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
-        float angle = anglePerSecond * *(m_renderContext->simulationTime);
+    glEnable(GL_DEPTH_TEST);
+    
+    // Utilisation du programme shader
+    glUseProgram(shaderProgram);
+    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
+    glUniform3f(lightDirUniform, 0, 10, 0); //Position
 
-        // Utilisation du programme shader
-        glUseProgram(shaderProgram);
 
-        // Activation et liaison de la texture
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glRotatef(angle, 1.0f, 1.0f, 0.0f);
-        // Dessiner la sphère
-        drawSphere(0.5, 40, 40);
-        //glRotatef(-angle, 1.0f, 1.0f, 0.0f);
 
-        // Nettoyage
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-        glUseProgram(0);
-        glDisable(GL_DEPTH_TEST);
+    // Configuration de la matrice de vue
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Appliquer la rotation à la sphère uniquement
+    glPushMatrix(); // Sauvegarder l'état actuel de la matrice de modèle-vue
+    float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
+    float angle = anglePerSecond * *(m_renderContext->simulationTime);
+    glRotatef(angle, 1.0f, 1.0f, 0.0f);
+
+    // Activation et liaison de la texture
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Dessiner la sphère
+    drawSphere(0.5, 40, 40);
+
+    // Restaurer l'état précédent de la matrice de modèle-vue
+    glPopMatrix();
+
+    // Nettoyage
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+    glUseProgram(0);
+    glDisable(GL_DEPTH_TEST);
 }
+
 
 
 GLuint ObjectsTool::loadTexture(const char* filename) {
@@ -71,6 +82,7 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
 
 
 void ObjectsTool::drawSphere(double r, int lats, int longs) {
+    bool drawPoint = false;
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> texCoords;
@@ -155,6 +167,7 @@ void ObjectsTool::drawSphere(double r, int lats, int longs) {
     glDeleteBuffers(1, &vboNormals);
     glDeleteBuffers(1, &vboTexCoords);
 
+    if(drawPoint){
     // Dessiner les points
     glUseProgram(0);
     glPointSize(5.0f); // Taille des points
@@ -171,7 +184,7 @@ void ObjectsTool::drawSphere(double r, int lats, int longs) {
             glVertex3f(x, y, z);
         }
     }
-    glEnd();
+    glEnd();}
 
     glColor3f(1.0f, 1.0f, 1.0f); // Réinitialiser la couleur
 }
