@@ -126,6 +126,12 @@ std::string SimulationState::getDescription() {
 //Buttons :
 
 void SimulationState::Pause(){
+    if (forcePause){
+        isPaused=true;
+        buttons[2]->updateLabel("Resume");
+        forcePause = false;
+        return;        
+    }
     if(isPaused){
         isPaused=false;
         buttons[2]->updateLabel("Pause");
@@ -144,6 +150,18 @@ void SimulationState::MenuButton(){
 }
 
 void SimulationState::generateDialogBox(std::function<void()> func, const std::string& message){
+    forcePause = true;
     Pause();
     render->Message_Tool = new MessageTool(message, func);
+}
+
+void SimulationState::activateButtons(){
+       for (Button *btn : buttons) {
+       btn->enabled = true;
+   }}
+
+void SimulationState::deactivateButtons(){
+       for (Button *btn : buttons) {
+       btn->enabled = false;
+   }
 }

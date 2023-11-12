@@ -32,6 +32,7 @@ public:
     void Draw() override;
     void drawUiElements();
     void closeButton();
+    void startButton();
     void Exit() override;
     std::string getDescription() override;
 

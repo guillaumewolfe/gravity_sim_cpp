@@ -11,9 +11,20 @@ public:
     explicit ObjectsTool(RenderContext* renderContext);
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
-    void drawSphere(float radius, GLuint texture, int slices, int stacks);
-private:
+    void drawSphere(double r, int lats, int longs);
+    void drawCube(float size);
+    void iniShaders();
+    std::string readShaderFile(const std::string& shaderPath);
+    bool fileExists(const std::string& path);
+    void checkCompileErrors(GLuint shader, std::string type) ;
 
+private:
+    GLuint shaderProgram;
+    GLuint textureID;
+
+    void drawBackground();
+    GLuint loadTexture(const char* filename); 
+    GLuint attributeTexCoordLocation;
 };
 
 #endif // OBJECTSTOOL_H

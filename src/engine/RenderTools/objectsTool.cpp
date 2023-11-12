@@ -4,70 +4,312 @@
 #include "engine/RenderTools/objectsTool.h"
 #include <vector>
 #include <cmath>
+#include <string>       // Pour std::string
+#include <fstream>      // Pour std::ifstream
+#include <sstream>      // Pour std::stringstream
+#include <iostream>  
+#include <filesystem>
+#include "opencv2/opencv.hpp"
 
 
 
-ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext){}
 
-void ObjectsTool::Draw() {
-    glEnable(GL_DEPTH_TEST);
-    
-    // Dessiner une sphère
-    // Exemple : sphère de rayon 0.5, sans texture (0), avec 16 tranches et 16 piles
-    drawSphere(0.5, 0, 16, 16);
-
-    glDisable(GL_DEPTH_TEST);
+ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext){
+    iniShaders();
+    textureID = loadTexture("../assets/textures/earth_real.jpg");
 }
 
-void ObjectsTool::drawSphere(float radius, GLuint texture, int slices, int stacks) {
-    std::vector<GLfloat> vertices;
-    std::vector<GLfloat> normals;
+void ObjectsTool::Draw() {
+        glEnable(GL_DEPTH_TEST);
+        
+        // Configuration de la matrice de vue
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
+        float angle = anglePerSecond * *(m_renderContext->simulationTime);
 
-    for (int i = 0; i <= stacks; ++i) {
-        float V = i / (float)stacks;
-        float phi = V * M_PI;
+        // Utilisation du programme shader
+        glUseProgram(shaderProgram);
 
-        for (int j = 0; j <= slices; ++j) {
-            float U = j / (float)slices;
-            float theta = U * (M_PI * 2);
+        // Activation et liaison de la texture
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glRotatef(angle, 1.0f, 1.0f, 0.0f);
+        // Dessiner la sphère
+        drawSphere(0.5, 40, 40);
+        //glRotatef(-angle, 1.0f, 1.0f, 0.0f);
 
-            float x = cos(theta) * sin(phi);
-            float y = cos(phi);
-            float z = sin(theta) * sin(phi);
-
-            vertices.push_back(x * radius);
-            vertices.push_back(y * radius);
-            vertices.push_back(z * radius);
-
-            normals.push_back(x);
-            normals.push_back(y);
-            normals.push_back(z);
-        }
-    }   
-
-    if (texture != 0) {
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
-
-    glColor3f(1.0f, 1.0f, 1.0f); // Couleur blanche pour la sphère
-    for (int i = 0; i < stacks; ++i) {
-        glBegin(GL_TRIANGLE_STRIP);
-        for (int j = 0; j <= slices; ++j) {
-            int idx1 = (i + j) * (slices + 1);
-            int idx2 = idx1 + slices + 1;
-
-            glNormal3fv(&normals[3 * idx1]);
-            glVertex3fv(&vertices[3 * idx1]);
-
-            glNormal3fv(&normals[3 * idx2]);
-            glVertex3fv(&vertices[3 * idx2]);
-        }
-        glEnd();
-    }
-
-    if (texture != 0) {
+        // Nettoyage
         glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+        glUseProgram(0);
+        glDisable(GL_DEPTH_TEST);
+}
+
+
+GLuint ObjectsTool::loadTexture(const char* filename) {
+    cv::Mat image = cv::imread(filename);
+    if (image.empty()) {
+        std::cerr << "Erreur: Image non trouvée " << filename << std::endl;
+        return 0;
     }
+    cv::flip(image, image, 0); // Inversion verticale de l'image
+
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return textureID;
+}
+
+
+void ObjectsTool::drawSphere(double r, int lats, int longs) {
+    std::vector<float> vertices;
+    std::vector<float> normals;
+    std::vector<float> texCoords;
+
+    for (int i = 0; i <= lats; ++i) {
+        for (int j = 0; j <= longs; ++j) {
+            double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
+            double z0  = sin(lat0);
+            double zr0 = cos(lat0);
+
+            double lat1 = M_PI * (-0.5 + (double) i / lats);
+            double z1 = sin(lat1);
+            double zr1 = cos(lat1);
+
+            double lng = 2 * M_PI * (double) j / longs;
+            double x = cos(lng);
+            double y = sin(lng);
+
+            double u = (double)j / longs;
+            double v = (double)i / lats;
+
+            // Normals and vertices for the first point
+            normals.push_back(x * zr0);
+            normals.push_back(y * zr0);
+            normals.push_back(z0);
+            vertices.push_back(x * zr0 * r);
+            vertices.push_back(y * zr0 * r);
+            vertices.push_back(z0 * r);
+            texCoords.push_back(u);
+            texCoords.push_back(v);
+
+            // Normals and vertices for the second point
+            normals.push_back(x * zr1);
+            normals.push_back(y * zr1);
+            normals.push_back(z1);
+            vertices.push_back(x * zr1 * r);
+            vertices.push_back(y * zr1 * r);
+            vertices.push_back(z1 * r);
+            texCoords.push_back(u);
+            texCoords.push_back(v + 1.0f / lats);
+        }
+    }
+
+    // Create and populate VBOs
+    GLuint vboVertices, vboNormals, vboTexCoords;
+    glGenBuffers(1, &vboVertices);
+    glGenBuffers(1, &vboNormals);
+    glGenBuffers(1, &vboTexCoords);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboNormals);
+    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboTexCoords);
+    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+
+    // Set up vertex attribute pointers
+    glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboNormals);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vboTexCoords);
+    glVertexAttribPointer(attributeTexCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(attributeTexCoordLocation);
+
+    // Draw the sphere
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size() / 3);
+
+    // Cleanup
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(attributeTexCoordLocation);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &vboVertices);
+    glDeleteBuffers(1, &vboNormals);
+    glDeleteBuffers(1, &vboTexCoords);
+
+    // Dessiner les points
+    glUseProgram(0);
+    glPointSize(5.0f); // Taille des points
+    glColor3f(1.0f, 0.0f, 0.0f); // Couleur rouge pour les points
+    glBegin(GL_POINTS);
+    for (int i = 0; i <= lats; i++) {
+        for (int j = 0; j <= longs; j++) {
+            double lat = M_PI * (-0.5 + (double) i / lats);
+            double lng = 2 * M_PI * (double) j / longs;
+            double x = r * cos(lng) * cos(lat);
+            double y = r * sin(lng) * cos(lat);
+            double z = r * sin(lat);
+
+            glVertex3f(x, y, z);
+        }
+    }
+    glEnd();
+
+    glColor3f(1.0f, 1.0f, 1.0f); // Réinitialiser la couleur
+}
+
+
+
+
+void ObjectsTool::drawCube(float size) {
+    float halfSize = size / 2.0f;
+
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    // Face avant
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+
+    // Face arrière
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(-halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, -halfSize);
+
+    // Face supérieure
+    glVertex3f(-halfSize, halfSize, -halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+
+    // Face inférieure
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    glVertex3f(-halfSize, -halfSize, halfSize);
+
+    // Face droite
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+
+    // Face gauche
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, -halfSize);
+
+    glEnd();
+    // Définir la couleur des points
+    glColor3f(1.0f, 0.0f, 0.0f); // Rouge, par exemple
+    glPointSize(20.0f);
+    // Dessiner les points aux sommets
+    glBegin(GL_POINTS);
+    glVertex3f(-halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, -halfSize, halfSize);
+    glVertex3f(halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, halfSize, halfSize);
+    glVertex3f(-halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, -halfSize, -halfSize);
+    glVertex3f(halfSize, halfSize, -halfSize);
+    glVertex3f(-halfSize, halfSize, -halfSize);
+    glEnd();
+    glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+
+void ObjectsTool::iniShaders() {
+    std::string vertexCode = readShaderFile("../src/engine/RenderTools/Shaders/vertex_shader.glsl");
+    std::string fragmentCode = readShaderFile("../src/engine/RenderTools/Shaders/fragment_shader.glsl");
+    const char* vertexShaderSource = vertexCode.c_str();
+    const char* fragmentShaderSource = fragmentCode.c_str();
+
+    // Compiler le vertex shader
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    checkCompileErrors(vertexShader, "VERTEX");
+
+    // Compiler le fragment shader
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    checkCompileErrors(fragmentShader, "FRAGMENT");
+
+    // Créer le programme shader
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    checkCompileErrors(shaderProgram, "PROGRAM");
+
+    // Supprimer les shaders; ils ne sont plus nécessaires
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    attributeTexCoordLocation = glGetAttribLocation(shaderProgram, "texCoord");
+}
+void ObjectsTool::checkCompileErrors(GLuint shader, std::string type) {
+    GLint success;
+    GLchar infoLog[1024];
+    if (type != "PROGRAM") {
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+            std::cerr << "ERREUR::SHADER_COMPILATION_ERROR de type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    } else {
+        glGetProgramiv(shader, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+            std::cerr << "ERREUR::PROGRAM_LINKING_ERROR de type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+        }
+    }
+}
+std::string ObjectsTool::readShaderFile(const std::string& shaderPath) {
+    if (!fileExists(shaderPath)) {
+        std::cerr << "ERREUR: Le fichier " << shaderPath << " n'existe pas." << std::endl;
+        return "";
+    }
+
+    std::ifstream shaderFile(shaderPath);
+    std::stringstream shaderStream;
+
+    if (shaderFile) {
+        shaderStream << shaderFile.rdbuf();
+        shaderFile.close();
+        return shaderStream.str();
+    } else {
+        std::cerr << "ERREUR: Impossible d'ouvrir le fichier " << shaderPath << std::endl;
+        return "";
+    }
+}
+
+bool ObjectsTool::fileExists(const std::string& path) {
+
+    // Pour les versions antérieures de C++, vous pouvez essayer d'ouvrir le fichier
+    std::ifstream file(path);
+    return file.good();
 }
 
 

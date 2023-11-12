@@ -25,6 +25,7 @@ private:
 
     //Simulation
     bool isPaused = false;
+    bool forcePause = false;
 
     RenderContext* renderContext;
 
@@ -42,5 +43,8 @@ public:
     void Pause();
     void Restart();
     void MenuButton();
+
+    void deactivateButtons();
+    void activateButtons();
 };
 #endif

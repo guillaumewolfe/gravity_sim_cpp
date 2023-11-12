@@ -30,7 +30,8 @@ void MessageTool::Draw() {
 
 void MessageTool::draw_rectangles(){
     // Calculer la position centrale de l'écran
-    float longueur = winWidth * 0.275; // Exemple de taille
+    ImVec2 textSize = ImGui::CalcTextSize(phrase.c_str());
+    float longueur = textSize.x * 1.3; // Exemple de taille
     float hauteur = winHeight * 0.125; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
@@ -50,7 +51,7 @@ void MessageTool::draw_rectangles(){
     // Dessiner le premier rectangle avec coins arrondis
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(100, 151, 154, 50), // Couleur
+                            IM_COL32(53, 88, 87, 150), // Couleur
                             cornerRadius);
 
     // Définir la taille du deuxième rectangle (10% plus grand)
@@ -67,6 +68,9 @@ void MessageTool::draw_rectangles(){
                             ImVec2(largerTopLeft.x + largerSquareSizeLongueur, largerTopLeft.y + largerSquareSizeHauteur), 
                             IM_COL32(255, 255, 255, 10), // Couleur
                             cornerRadius);
+    
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {OkButtonPressed();}
+    else if(ImGui::IsKeyPressed(ImGuiKey_Escape)) {CancelButtonPressed();}
 }
 
 
@@ -83,13 +87,13 @@ void MessageTool::draw_labels(){
 
 
 void MessageTool::generate_buttons(){
-   Button *OKButton = new Button(0.455f, 0.52f, ImVec2(0.05, 0.045),
+   Button *OKButton = new Button(0.465f, 0.52f, ImVec2(0.05, 0.045),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                ImVec4(0.1f, 1.0f, 0.1f, 1.0f),
                                "Yes", ImGui::GetFont(), 0.25f,
                                std::bind(&MessageTool::OkButtonPressed, this));  
 
-   Button *CancelButton = new Button(0.545f, 0.52f, ImVec2(0.05, 0.04),
+   Button *CancelButton = new Button(0.535f, 0.52f, ImVec2(0.05, 0.04),
                                ImVec4(1.0f, 0.5f, 0.5f, 1.0f),
                                ImVec4(1.0f, 0.1f, 0.1f, 1.0f),
                                "Cancel", ImGui::GetFont(), 0.25f,

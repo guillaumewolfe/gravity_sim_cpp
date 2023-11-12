@@ -36,24 +36,24 @@ std::vector<Labbel*> MenuState::generateLabbels(){
 
 std::vector<Button*> MenuState::generateButtons(){
    std::vector<Button*> buttons_list;
-
+    ImVec4 color = ImVec4(53/255, 88/255, 87/255, 150/255);
    Button *exitButton = new Button(0.5f, 0.92f, ImVec2(0.12, 0.05),
-                                   ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                                   ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                    ImVec4(1.0f, 0.0f, 0.0f, 1.0f),
                                    "Exit", gameObj->getFont(), 0.2f,
                                    [this]() {
     auto boundFunction = std::bind(&MenuState::closeButton, this);
-    this->generateDialogBox(boundFunction, "Do you want to return to leave?");});
+    this->generateDialogBox(boundFunction, "Do you want to leave?");});
 
 
    Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.12, 0.05),
-                               ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                               ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                "Start", gameObj->getFont(), 0.2f,
-                               [this]() { gameObj->ChangeState(new SimulationState(gameObj)); });
+                               [this]() {startButton();});
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.12, 0.05),
-                               ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                               ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(1.0f, 1.0f, 0.5f, 1.0f),
                                "Options", gameObj->getFont(), 0.2f,
                                [this]() {});
@@ -120,10 +120,14 @@ void MenuState::Draw() {
 
 
    ImGui::End();
-
+    //Message Box
     if (messageBox != nullptr) {messageBox->Draw();}
     if (messageBox != nullptr && messageBox->shouldClose){delete messageBox;messageBox = nullptr;}
 
+    //Start or exit with buttons
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {startButton();}
+    else if(ImGui::IsKeyPressed(ImGuiKey_Escape)) { auto boundFunction = std::bind(&MenuState::closeButton, this);
+    this->generateDialogBox(boundFunction, "Do you want to leave?");}
    ImGui::Render();
    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -186,6 +190,10 @@ std::string MenuState::getDescription() {
 
 void MenuState::closeButton(){
     gameObj->setShouldClose(true);
+}
+
+void MenuState::startButton(){
+    gameObj->ChangeState(new SimulationState(gameObj));
 }
 
 
