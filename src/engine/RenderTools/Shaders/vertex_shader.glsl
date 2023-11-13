@@ -7,11 +7,11 @@
     
     attribute vec3 vertexNormal;
     attribute vec2 texCoord; // Attribut d'entrée pour les coordonnées de texture
-
+    uniform mat3 normalMatrix;
 
     void main() {
         //FragPos = gl_Vertex.xyz;
-        Normal = normalize(vertexNormal);
+        Normal = normalize(normalMatrix * vertexNormal);
         TexCoord = texCoord; // Passer les coordonnées de texture
         FragPos = vec3(gl_ModelViewMatrix * gl_Vertex);
         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

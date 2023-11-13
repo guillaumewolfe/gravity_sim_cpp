@@ -9,6 +9,8 @@ public:
     Vec3 position;
     Vec3 target;
     Vec3 up;
+    GLfloat modelViewMatrix[16];
+    GLfloat normalMatrix[9];
 
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
 
@@ -16,7 +18,8 @@ public:
     void updateViewMatrix();
     void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
     
-
+    void calculateNormalMatrix();
+    const GLfloat* getNormalMatrix() const;
 
 };
 

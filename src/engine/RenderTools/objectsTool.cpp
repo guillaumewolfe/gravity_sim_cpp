@@ -10,6 +10,9 @@
 #include <iostream>  
 #include <filesystem>
 #include "opencv2/opencv.hpp"
+#include <glm/glm.hpp> // Ceci inclut les types de vecteurs et de matrices de base.
+#include <glm/gtc/matrix_transform.hpp> // Pour les transformations comme glm::translate, glm::rotate, glm::scale.
+#include <glm/gtc/type_ptr.hpp> // Pour convertir les types de GLM en pointeurs pour OpenGL.
 
 
 
@@ -28,17 +31,25 @@ void ObjectsTool::Draw() {
     // Utilisation du programme shader
     glUseProgram(shaderProgram);
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
-    glUniform3f(lightDirUniform, 1000, 0, 0); //Position
+    glUniform3f(lightDirUniform, 0, 100, 0); //Position
+    glm::mat4 modelViewMatrix;
 
-    glPushMatrix();
+
     // Activation et liaison de la texture
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
-
-    glRotatef(angle,0,0,1);
     // Dessiner la sphère
+    glPushMatrix();
+    glRotatef(angle,1.0,0.0,0.0);
     drawSphere(0.5, 40, 40);
+        // Récupérez la matrice de modèle-vue actuelle d'OpenGL
+    glGetFloatv(GL_MODELVIEW_MATRIX, &modelViewMatrix[0][0]);
+    glm::mat3 normalMatrix = glm::mat3(modelViewMatrix);
+    normalMatrix = glm::transpose(glm::inverse(normalMatrix));
+    glUniformMatrix3fv(glGetUniformLocation(shaderProgram, "normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+
     glPopMatrix();
+
     // Nettoyage
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);

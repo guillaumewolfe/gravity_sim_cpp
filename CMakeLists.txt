@@ -18,11 +18,14 @@ elseif(APPLE)
     # Manually set SDL2_mixer paths
     set(SDL2_MIXER_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
     set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
+    include_directories("/opt/homebrew/Cellar/glm/0.9.9.8/include")
+
 endif()
 
 # Configuration OpenCV
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
 
 # Include Directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
@@ -47,7 +50,6 @@ file(GLOB_RECURSE SOURCES
      external/imgui/imgui_tables.cpp
      external/imgui/backends/imgui_impl_glfw.cpp
      external/imgui/backends/imgui_impl_opengl3.cpp)
-     message(STATUS "Source files: ${SOURCES}")
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Querry")

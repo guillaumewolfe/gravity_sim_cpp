@@ -25,6 +25,7 @@ for (int i = 0; i < 16; ++i) {
     mFloat[i] = static_cast<float>(m[i]);
 }
     glMultMatrixf(mFloat);
+    glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
 }
 
 void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
@@ -42,4 +43,38 @@ void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdo
 
     // Revenir à la matrice de modèle-vue
     glMatrixMode(GL_MODELVIEW);
+}
+
+void Camera::calculateNormalMatrix() {
+    GLfloat subMatrix[9] = {
+        modelViewMatrix[0], modelViewMatrix[1], modelViewMatrix[2],
+        modelViewMatrix[4], modelViewMatrix[5], modelViewMatrix[6],
+        modelViewMatrix[8], modelViewMatrix[9], modelViewMatrix[10]
+    };
+
+    GLfloat det = subMatrix[0] * (subMatrix[4] * subMatrix[8] - subMatrix[7] * subMatrix[5]) -
+                  subMatrix[1] * (subMatrix[3] * subMatrix[8] - subMatrix[5] * subMatrix[6]) +
+                  subMatrix[2] * (subMatrix[3] * subMatrix[7] - subMatrix[4] * subMatrix[6]);
+
+    if (det != 0) {
+        GLfloat inverse[9] = {
+            (subMatrix[4] * subMatrix[8] - subMatrix[5] * subMatrix[7]) / det,
+            -(subMatrix[1] * subMatrix[8] - subMatrix[2] * subMatrix[7]) / det,
+            (subMatrix[1] * subMatrix[5] - subMatrix[2] * subMatrix[4]) / det,
+            -(subMatrix[3] * subMatrix[8] - subMatrix[5] * subMatrix[6]) / det,
+            (subMatrix[0] * subMatrix[8] - subMatrix[2] * subMatrix[6]) / det,
+            -(subMatrix[0] * subMatrix[5] - subMatrix[2] * subMatrix[3]) / det,
+            (subMatrix[3] * subMatrix[7] - subMatrix[4] * subMatrix[6]) / det,
+            -(subMatrix[0] * subMatrix[7] - subMatrix[1] * subMatrix[6]) / det,
+            (subMatrix[0] * subMatrix[4] - subMatrix[1] * subMatrix[3]) / det
+        };
+
+        normalMatrix[0] = inverse[0]; normalMatrix[1] = inverse[3]; normalMatrix[2] = inverse[6];
+        normalMatrix[3] = inverse[1]; normalMatrix[4] = inverse[4]; normalMatrix[5] = inverse[7];
+        normalMatrix[6] = inverse[2]; normalMatrix[7] = inverse[5]; normalMatrix[8] = inverse[8];
+    }
+}
+
+const GLfloat* Camera::getNormalMatrix() const {
+    return normalMatrix;
 }
