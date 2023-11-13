@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <tuple>
+#include <glm/glm.hpp>
 
 class Vec3{
 public:
@@ -17,8 +18,10 @@ public:
 
     Vec3 operator-(const Vec3& other) const;
     Vec3 operator+(const Vec3& other) const;
+    Vec3 operator*=(float scalar);
     double dot(const Vec3& other) const;
     Vec3 cross(const Vec3& other) const;
+
 
 };
 #endif

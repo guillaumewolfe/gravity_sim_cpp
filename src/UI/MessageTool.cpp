@@ -22,7 +22,8 @@ void MessageTool::Draw() {
     draw_rectangles();
     draw_labels();
     draw_buttons();
-    
+    if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {OkButtonPressed();}
+    if(ImGui::IsKeyPressed(ImGuiKey_Escape)) {CancelButtonPressed();}
     ImGui::End();
     ImGui::PopStyleColor();
 }
@@ -31,7 +32,7 @@ void MessageTool::Draw() {
 void MessageTool::draw_rectangles(){
     // Calculer la position centrale de l'écran
     ImVec2 textSize = ImGui::CalcTextSize(phrase.c_str());
-    float longueur = textSize.x * 1.3; // Exemple de taille
+    float longueur = textSize.x * 1.5; // Exemple de taille
     float hauteur = winHeight * 0.125; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
@@ -69,8 +70,6 @@ void MessageTool::draw_rectangles(){
                             IM_COL32(255, 255, 255, 10), // Couleur
                             cornerRadius);
     
-    if (ImGui::IsKeyPressed(ImGuiKey_Enter)) {OkButtonPressed();}
-    else if(ImGui::IsKeyPressed(ImGuiKey_Escape)) {CancelButtonPressed();}
 }
 
 

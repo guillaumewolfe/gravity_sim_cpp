@@ -12,6 +12,8 @@ public:
     void Draw() override;
     void draw_labbels();
     void draw_buttons();
+
+    float lastScroll = 0.0f;
 };
 
 #endif // UITOOL_H

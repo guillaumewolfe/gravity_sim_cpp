@@ -33,6 +33,7 @@ Render(RenderContext* Context);
 void Draw();
 void initTools();
 void updateCamera();
+void initCamera();
 };
 
 

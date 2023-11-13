@@ -17,6 +17,7 @@ public:
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     void drawSphere(double r, int lats, int longs);
+    void updateLumiere();
     void iniShaders();
     bool fileExists(const std::string& path);
     void checkCompileErrors(GLuint shader, std::string type) ;

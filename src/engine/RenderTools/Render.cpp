@@ -14,6 +14,8 @@ void Render::initTools(){
     UI_Tool = new UITool(Context);
     Objects_Tool = new ObjectsTool(Context);
     Background_Tool = new BackgroundTool(Context);
+
+    initCamera();
 }
 
 void Render::Draw(){
@@ -51,4 +53,8 @@ void Render::updateCamera(){
     glLoadIdentity();
     Context->currentCamera->lookAt();
     glPopMatrix();
+}
+
+void Render::initCamera(){
+    Context->currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 }

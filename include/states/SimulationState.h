@@ -12,6 +12,8 @@ class SimulationState : public BaseState {
 private:
     float simulation_time = 0.0f;
     float time_multiplier = 1.0f;
+
+    float previousMouseWheel = 0.0f;
     
     //UI ELEMENTS
 

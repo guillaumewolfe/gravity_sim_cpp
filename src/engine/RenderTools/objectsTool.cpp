@@ -30,8 +30,7 @@ void ObjectsTool::Draw() {
     glEnable(GL_DEPTH_TEST);
     // Utilisation du programme shader
     glUseProgram(shaderProgram);
-    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
-    glUniform3f(lightDirUniform, 0, 100, 0); //Position
+    updateLumiere();
     glm::mat4 modelViewMatrix;
 
 
@@ -41,7 +40,7 @@ void ObjectsTool::Draw() {
     // Dessiner la sphère
     glPushMatrix();
     glRotatef(angle,1.0,0.0,0.0);
-    drawSphere(0.5, 40, 40);
+    drawSphere(0.5, 100, 100);
         // Récupérez la matrice de modèle-vue actuelle d'OpenGL
     glGetFloatv(GL_MODELVIEW_MATRIX, &modelViewMatrix[0][0]);
     glm::mat3 normalMatrix = glm::mat3(modelViewMatrix);
@@ -55,6 +54,25 @@ void ObjectsTool::Draw() {
     glDisable(GL_TEXTURE_2D);
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
+}
+
+void ObjectsTool::updateLumiere(){
+        // Position de la lumière
+    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
+    float time = *(m_renderContext->simulationTime);
+    glUniform3f(lightDirUniform, 0, -100+2*time, 0); //Position
+
+    // Position de la caméra
+    GLint viewPosUniform = glGetUniformLocation(shaderProgram, "viewPosition");
+    glUniform3f(viewPosUniform, m_renderContext->currentCamera->position.x, 
+                              m_renderContext->currentCamera->position.y, 
+                              m_renderContext->currentCamera->position.z);
+
+    // Force spéculaire et facteur de brillance
+    GLint specStrengthUniform = glGetUniformLocation(shaderProgram, "specularStrength");
+    glUniform1f(specStrengthUniform, 0.5f); // Ajustez selon vos besoins
+    GLint shininessUniform = glGetUniformLocation(shaderProgram, "shininess");
+    glUniform1f(shininessUniform, 32.0f); // Ajustez selon vos besoins
 }
 
 

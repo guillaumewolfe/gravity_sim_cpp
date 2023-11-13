@@ -11,9 +11,9 @@ void UITool::Draw() {
 
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-
 draw_labbels();
 draw_buttons();
+
 ImGui::End(); 
 
 

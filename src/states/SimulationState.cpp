@@ -12,11 +12,11 @@ void SimulationState::Enter() {
 
 
     //Construction des outils pour le render
-    currentCamera = new Camera(Vec3(0.0, 0.0, 3.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
+    currentCamera = new Camera(Vec3(-2.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
     renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons);
     render = new Render(renderContext);
     render->initTools();
-    currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
+    //currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 
 }
 
@@ -70,8 +70,19 @@ std::vector<Button*> SimulationState::generateButtons(){
 
 void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
+    this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");}
     if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {time_multiplier+=1;}
     if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {time_multiplier-=1;}
+    
+
+    if (ImGui::IsKeyPressed(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
+    if (ImGui::IsKeyPressed(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
+    if (ImGui::IsKeyPressed(ImGuiKey_W)) {currentCamera->rotateAround(Vec3(0, 0, 0), 0.25f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_S)) {currentCamera->rotateAround(Vec3(0, 0, 0), -0.25f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_A)) {currentCamera->rotateAround(Vec3(0, 0, 0), 0.25f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_D)) {currentCamera->rotateAround(Vec3(0, 0, 0), -0.25f, Vec3(0, 1, 0));}
+
 }
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){
@@ -149,6 +160,7 @@ void SimulationState::Pause(){
 
 void SimulationState::Restart(){
     simulation_time = 0;
+    currentCamera->resetPosition();
 }
 
 void SimulationState::MenuButton(){
