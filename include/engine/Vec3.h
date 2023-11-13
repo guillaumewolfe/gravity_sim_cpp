@@ -5,17 +5,20 @@
 #include <tuple>
 
 class Vec3{
-    public:
-        double x, y, z;
+public:
+    double x, y, z;
 
-        Vec3(double x =0, double y = 0, double z = 0);
+    Vec3(double x =0, double y = 0, double z = 0);
 
-        double norm() const;
-        Vec3 normalize() const;
+    double norm() const;
+    Vec3 normalize() const;
 
-        std::tuple<double,double,double> toPolar() const;
+    std::tuple<double,double,double> toPolar() const;
 
-        Vec3 operator-(const Vec3& other) const;
-        Vec3 operator+(const Vec3& other) const;
+    Vec3 operator-(const Vec3& other) const;
+    Vec3 operator+(const Vec3& other) const;
+    double dot(const Vec3& other) const;
+    Vec3 cross(const Vec3& other) const;
+
 };
 #endif

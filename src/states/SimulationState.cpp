@@ -12,9 +12,12 @@ void SimulationState::Enter() {
 
 
     //Construction des outils pour le render
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, labbels, buttons);
+    currentCamera = new Camera(Vec3(0.0, 0.0, 3.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons);
     render = new Render(renderContext);
     render->initTools();
+    currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
+
 }
 
 //Labels
@@ -67,6 +70,8 @@ std::vector<Button*> SimulationState::generateButtons(){
 
 void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
+    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {time_multiplier+=1;}
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {time_multiplier-=1;}
 }
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){

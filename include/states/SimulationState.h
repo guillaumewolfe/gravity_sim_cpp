@@ -29,6 +29,8 @@ private:
 
     RenderContext* renderContext;
 
+    Camera* currentCamera;
+
 public:
    SimulationState(Game* gameObj);
     void Enter() override;

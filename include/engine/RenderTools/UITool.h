@@ -6,7 +6,7 @@
 
 class UITool : public RenderComponent {
 public:
-
+    float sliderVariable;
     explicit UITool(RenderContext* renderContext);
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;

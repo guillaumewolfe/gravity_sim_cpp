@@ -13,42 +13,32 @@
 
 
 
-
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext){
     iniShaders();
     textureID = loadTexture("../assets/textures/earth_real.jpg");
 }
 
+
+
 void ObjectsTool::Draw() {
+    float time = *(m_renderContext->simulationTime);
+    float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
+    float angle = anglePerSecond * time;
     glEnable(GL_DEPTH_TEST);
-    
     // Utilisation du programme shader
     glUseProgram(shaderProgram);
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
-    glUniform3f(lightDirUniform, 0, 10, 0); //Position
+    glUniform3f(lightDirUniform, 1000, 0, 0); //Position
 
-
-
-    // Configuration de la matrice de vue
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // Appliquer la rotation à la sphère uniquement
-    glPushMatrix(); // Sauvegarder l'état actuel de la matrice de modèle-vue
-    float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
-    float angle = anglePerSecond * *(m_renderContext->simulationTime);
-    glRotatef(angle, 1.0f, 1.0f, 0.0f);
-
+    glPushMatrix();
     // Activation et liaison de la texture
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
+    glRotatef(angle,0,0,1);
     // Dessiner la sphère
     drawSphere(0.5, 40, 40);
-
-    // Restaurer l'état précédent de la matrice de modèle-vue
     glPopMatrix();
-
     // Nettoyage
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
@@ -70,7 +60,6 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -190,68 +179,6 @@ void ObjectsTool::drawSphere(double r, int lats, int longs) {
 }
 
 
-
-
-void ObjectsTool::drawCube(float size) {
-    float halfSize = size / 2.0f;
-
-    glBegin(GL_QUADS);
-    glColor3f(1.0f, 1.0f, 1.0f);
-    // Face avant
-    glVertex3f(-halfSize, -halfSize, halfSize);
-    glVertex3f(halfSize, -halfSize, halfSize);
-    glVertex3f(halfSize, halfSize, halfSize);
-    glVertex3f(-halfSize, halfSize, halfSize);
-
-    // Face arrière
-    glVertex3f(-halfSize, -halfSize, -halfSize);
-    glVertex3f(-halfSize, halfSize, -halfSize);
-    glVertex3f(halfSize, halfSize, -halfSize);
-    glVertex3f(halfSize, -halfSize, -halfSize);
-
-    // Face supérieure
-    glVertex3f(-halfSize, halfSize, -halfSize);
-    glVertex3f(-halfSize, halfSize, halfSize);
-    glVertex3f(halfSize, halfSize, halfSize);
-    glVertex3f(halfSize, halfSize, -halfSize);
-
-    // Face inférieure
-    glVertex3f(-halfSize, -halfSize, -halfSize);
-    glVertex3f(halfSize, -halfSize, -halfSize);
-    glVertex3f(halfSize, -halfSize, halfSize);
-    glVertex3f(-halfSize, -halfSize, halfSize);
-
-    // Face droite
-    glVertex3f(halfSize, -halfSize, -halfSize);
-    glVertex3f(halfSize, halfSize, -halfSize);
-    glVertex3f(halfSize, halfSize, halfSize);
-    glVertex3f(halfSize, -halfSize, halfSize);
-
-    // Face gauche
-    glVertex3f(-halfSize, -halfSize, -halfSize);
-    glVertex3f(-halfSize, -halfSize, halfSize);
-    glVertex3f(-halfSize, halfSize, halfSize);
-    glVertex3f(-halfSize, halfSize, -halfSize);
-
-    glEnd();
-    // Définir la couleur des points
-    glColor3f(1.0f, 0.0f, 0.0f); // Rouge, par exemple
-    glPointSize(20.0f);
-    // Dessiner les points aux sommets
-    glBegin(GL_POINTS);
-    glVertex3f(-halfSize, -halfSize, halfSize);
-    glVertex3f(halfSize, -halfSize, halfSize);
-    glVertex3f(halfSize, halfSize, halfSize);
-    glVertex3f(-halfSize, halfSize, halfSize);
-    glVertex3f(-halfSize, -halfSize, -halfSize);
-    glVertex3f(halfSize, -halfSize, -halfSize);
-    glVertex3f(halfSize, halfSize, -halfSize);
-    glVertex3f(-halfSize, halfSize, -halfSize);
-    glEnd();
-    glColor3f(1.0f, 1.0f, 1.0f);
-}
-
-
 void ObjectsTool::iniShaders() {
     std::string vertexCode = readShaderFile("../src/engine/RenderTools/Shaders/vertex_shader.glsl");
     std::string fragmentCode = readShaderFile("../src/engine/RenderTools/Shaders/fragment_shader.glsl");
@@ -277,7 +204,7 @@ void ObjectsTool::iniShaders() {
     glLinkProgram(shaderProgram);
     checkCompileErrors(shaderProgram, "PROGRAM");
 
-    // Supprimer les shaders; ils ne sont plus nécessaires
+    //Delete Shaders 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     attributeTexCoordLocation = glGetAttribLocation(shaderProgram, "texCoord");
@@ -324,5 +251,4 @@ bool ObjectsTool::fileExists(const std::string& path) {
     std::ifstream file(path);
     return file.good();
 }
-
 

@@ -109,9 +109,9 @@ void MenuState::Draw() {
 
 
    // Set the contrasting background color
-    /*int winWidth, winHeight;
+    int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));*/
+    ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
    ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
 
 

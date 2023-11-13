@@ -16,12 +16,12 @@ private:
 
     /// Methodes
     RenderContext* Context;
-    void setBackground();
 
     //Tools
 
     UITool* UI_Tool;
     ObjectsTool* Objects_Tool;
+    BackgroundTool* Background_Tool;
 
 
 //Background:
@@ -32,6 +32,7 @@ MessageTool* Message_Tool;
 Render(RenderContext* Context);
 void Draw();
 void initTools();
+void updateCamera();
 };
 
 

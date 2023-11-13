@@ -13,6 +13,7 @@ Render::Render(RenderContext* Context): Context(Context){}
 void Render::initTools(){
     UI_Tool = new UITool(Context);
     Objects_Tool = new ObjectsTool(Context);
+    Background_Tool = new BackgroundTool(Context);
 }
 
 void Render::Draw(){
@@ -29,8 +30,12 @@ void Render::Draw(){
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     ImGui::Render();
-
+    
+    updateCamera();
+    Background_Tool->Draw();
     Objects_Tool->Draw();
+
+
 
 
 
@@ -41,3 +46,9 @@ void Render::Draw(){
 }
 
 
+void Render::updateCamera(){
+    glMatrixMode(GL_MODELVIEW); 
+    glLoadIdentity();
+    Context->currentCamera->lookAt();
+    glPopMatrix();
+}
