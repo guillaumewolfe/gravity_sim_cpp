@@ -19,6 +19,8 @@ public:
     Vec3 operator-(const Vec3& other) const;
     Vec3 operator+(const Vec3& other) const;
     Vec3 operator*=(float scalar);
+    Vec3 operator*(float scalar);
+
     double dot(const Vec3& other) const;
     Vec3 cross(const Vec3& other) const;
 

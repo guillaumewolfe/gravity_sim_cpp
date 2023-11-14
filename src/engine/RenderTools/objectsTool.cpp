@@ -18,40 +18,29 @@
 
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext){
     iniShaders();
-    textureID = loadTexture("../assets/textures/earth_real.jpg");
+    textureID = m_renderContext->systemeSolaire->objects[0]->textureID;
 }
 
 
 
 void ObjectsTool::Draw() {
-    float time = *(m_renderContext->simulationTime);
-    float anglePerSecond = 360.0f * 2 / 60; // 360 degrés fois 2 par minute
-    float angle = anglePerSecond * time;
     glEnable(GL_DEPTH_TEST);
-    // Utilisation du programme shader
     glUseProgram(shaderProgram);
-    updateLumiere();
-    glm::mat4 modelViewMatrix;
 
-
-    // Activation et liaison de la texture
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    // Dessiner la sphère
-    glPushMatrix();
-    glRotatef(angle,1.0,0.0,0.0);
-    drawSphere(0.5, 100, 100);
-        // Récupérez la matrice de modèle-vue actuelle d'OpenGL
-    glGetFloatv(GL_MODELVIEW_MATRIX, &modelViewMatrix[0][0]);
-    glm::mat3 normalMatrix = glm::mat3(modelViewMatrix);
-    normalMatrix = glm::transpose(glm::inverse(normalMatrix));
-    glUniformMatrix3fv(glGetUniformLocation(shaderProgram, "normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
-
-    glPopMatrix();
-
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        glLoadIdentity();
+        m_renderContext->currentCamera->lookAt();
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D,object->getTexture());
+        glPushMatrix();
+        glTranslatef(object->position_simulation.x,object->position_simulation.y,object->position_simulation.z);
+        glRotatef(45,1.0,0.5,0.2);
+        drawSphere(object->real_radius, 20, 20);
+        glPopMatrix();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    }
     // Nettoyage
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
     glUseProgram(0);
     glDisable(GL_DEPTH_TEST);
 }
@@ -60,22 +49,8 @@ void ObjectsTool::updateLumiere(){
         // Position de la lumière
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
     float time = *(m_renderContext->simulationTime);
-    glUniform3f(lightDirUniform, 0, -100+2*time, 0); //Position
-
-    // Position de la caméra
-    GLint viewPosUniform = glGetUniformLocation(shaderProgram, "viewPosition");
-    glUniform3f(viewPosUniform, m_renderContext->currentCamera->position.x, 
-                              m_renderContext->currentCamera->position.y, 
-                              m_renderContext->currentCamera->position.z);
-
-    // Force spéculaire et facteur de brillance
-    GLint specStrengthUniform = glGetUniformLocation(shaderProgram, "specularStrength");
-    glUniform1f(specStrengthUniform, 0.5f); // Ajustez selon vos besoins
-    GLint shininessUniform = glGetUniformLocation(shaderProgram, "shininess");
-    glUniform1f(shininessUniform, 32.0f); // Ajustez selon vos besoins
+    glUniform3f(lightDirUniform, 0, -100, 0); //Position
 }
-
-
 
 GLuint ObjectsTool::loadTexture(const char* filename) {
     cv::Mat image = cv::imread(filename);
@@ -85,9 +60,9 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
     }
     cv::flip(image, image, 0); // Inversion verticale de l'image
 
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -95,7 +70,7 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    return textureID;
+    return texture;
 }
 
 

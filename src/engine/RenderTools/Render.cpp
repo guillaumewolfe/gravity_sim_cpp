@@ -8,19 +8,23 @@
 #include "engine/RenderTools/Render.h"
 
 
-Render::Render(RenderContext* Context): Context(Context){}
+Render::Render(RenderContext* Context): Context(Context){
+    SystemeSolaire_Tool = Context->systemeSolaire;
+    initTools();
+}
 
 void Render::initTools(){
     UI_Tool = new UITool(Context);
     Objects_Tool = new ObjectsTool(Context);
     Background_Tool = new BackgroundTool(Context);
+    Axes_Tool = new AxesTool(Context);
 
     initCamera();
 }
 
 void Render::Draw(){
     //Clear Buffer
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.05f, 0.05f, 0.07f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //New frame pour les éléments GUI
@@ -36,6 +40,9 @@ void Render::Draw(){
     updateCamera();
     Background_Tool->Draw();
     Objects_Tool->Draw();
+    if(*(Context->showAxes)){Axes_Tool->Draw();}
+    SystemeSolaire_Tool->Draw();
+    //Context->currentCamera->DrawUp();
 
 
 
@@ -56,5 +63,7 @@ void Render::updateCamera(){
 }
 
 void Render::initCamera(){
+    Vec3 position_initiale = Vec3(0,0,50);
+    Context->currentCamera->setPosition(position_initiale);
     Context->currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 }

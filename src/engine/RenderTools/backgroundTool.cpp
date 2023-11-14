@@ -39,7 +39,7 @@ void BackgroundTool::Draw() {
 
 void BackgroundTool::initStars(int numberOfStars) {
     this->numberOfStars = numberOfStars;
-    float radius = 100.0f; // Ajuster si nécessaire
+    float radius = *(m_renderContext->maxSize); // Ajuster si nécessaire
 
     for (int i = 0; i < numberOfStars; i++) {
         Star star;

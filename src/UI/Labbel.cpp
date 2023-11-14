@@ -29,7 +29,7 @@ void Labbel::Draw(){
     drawList->AddText(
         font, font->FontSize,
         actualPos,
-        IM_COL32(255, 255, 255, 255 * alpha),  // Utilisez alpha pour la transparence
+        IM_COL32(color.x, color.y, color.z, 255 * alpha),  // Utilisez alpha pour la transparence
         label.c_str()
     );
 }
@@ -46,4 +46,8 @@ bool Labbel::shouldUpdatePosition(const ImVec2& newTextSize) {
 
 void Labbel::UpdateText(const std::string& newText) {
     label = newText;
+}
+
+void Labbel::UpdateAlpha(const float opp) {
+    alpha = opp;
 }

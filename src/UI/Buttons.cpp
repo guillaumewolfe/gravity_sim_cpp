@@ -51,7 +51,6 @@ void Button::Draw() {
     {
         hoverSoundPlayed=false;
     }
-    
     // Draw the button rectangle
     drawList->AddRectFilled(cursorPos, 
                             ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 

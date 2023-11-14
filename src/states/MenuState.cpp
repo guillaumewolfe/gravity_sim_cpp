@@ -1,7 +1,7 @@
 #include "states/MenuState.h"
 #include "states/SimulationState.h"
 
-MenuState::MenuState(Game* gameObj) : BaseState(gameObj){
+MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
    /*Constructeur :
        1- Construire les bouttons
        2- Initialiser le video*/
@@ -24,10 +24,12 @@ std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
-                                "Space Querry",gameObj->getFont("Title"),0.8f);
+                                "Space Querry",gameObj->getFont("Title"),0.7f);
+    Labbel *GameTitle2 = new Labbel(0.505f,0.207f,ImVec4(0,0,0,255),
+                            "Space Querry",gameObj->getFont("Title"),0.4f);
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
-                                    "Main Menu",gameObj->getFont("Main Menu"),0.8f);
-
+                                    "Main Menu",gameObj->getFont("Main Menu"),0.9f);
+labbel_list.push_back(GameTitle2);
     labbel_list.push_back(GameTitle);
     labbel_list.push_back(MainMenu);
     return labbel_list;
@@ -72,10 +74,12 @@ std::vector<Button*> MenuState::generateButtons(){
 
 
 
-void MenuState::Update() {}
+void MenuState::Update() {
+}
 
 
-void MenuState::UpdatePhysics(double dt){};
+void MenuState::UpdatePhysics(double dt){
+};
 
 
 void MenuState::generateDialogBox(std::function<void()> func, const std::string& message){

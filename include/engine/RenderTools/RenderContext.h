@@ -11,11 +11,15 @@ class RenderContext {
 public:
     float* simulationTime;
     float* timeMultiplier;
+    float* maxSize;
+    bool* showAxes;
     std::vector<Labbel*> labels;
     std::vector<Button*> buttons;
     Camera* currentCamera;
+    SystemeSolaire* systemeSolaire;
 
-    RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns);
+
+    RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns, float* maxsize, bool* showaxe, SystemeSolaire* sysSol);
 };
 
 #endif // RENDERCONTEXT_H

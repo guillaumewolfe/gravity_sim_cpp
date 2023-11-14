@@ -25,4 +25,5 @@ public:
     Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, ImFont* font, float alpha);
     void Draw();
     void UpdateText(const std::string& newText);
+    void UpdateAlpha(const float opp);
 };

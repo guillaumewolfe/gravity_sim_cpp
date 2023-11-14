@@ -11,7 +11,8 @@
 
     void main() {
         //FragPos = gl_Vertex.xyz;
-        Normal = normalize(normalMatrix * vertexNormal);
+        //Normal = normalize(normalMatrix * vertexNormal);
+        Normal = normalize(vertexNormal);
         TexCoord = texCoord; // Passer les coordonnées de texture
         FragPos = vec3(gl_ModelViewMatrix * gl_Vertex);
         gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;

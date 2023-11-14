@@ -19,7 +19,6 @@ elseif(APPLE)
     set(SDL2_MIXER_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
     set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
     include_directories("/opt/homebrew/Cellar/glm/0.9.9.8/include")
-
 endif()
 
 # Configuration OpenCV
@@ -40,6 +39,7 @@ file(GLOB_RECURSE SOURCES
      src/glad.c
      src/engine/*.cpp
      src/engine/RenderTools/*.cpp
+     src/engine/Planets/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
      src/states/*.cpp

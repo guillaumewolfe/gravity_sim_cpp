@@ -6,6 +6,7 @@
 #include "states/MenuState.h"
 #include "UI/MessageTool.h"
 
+
 #ifndef SIMULATION_H
 #define SIMULATION_H
 class SimulationState : public BaseState {
@@ -20,6 +21,7 @@ private:
     std::vector<Button*> generateButtons();
     std::vector<Labbel*> generateLabbels();
     MessageTool* messageBox;
+    SystemeSolaire* systemeSolaire;
     void generateDialogBox(std::function<void()> func, const std::string& message);
 
     //RenderTool
@@ -28,6 +30,7 @@ private:
     //Simulation
     bool isPaused = false;
     bool forcePause = false;
+    bool showAxes = false;
 
     RenderContext* renderContext;
 
@@ -47,6 +50,7 @@ public:
     void Pause();
     void Restart();
     void MenuButton();
+    void ShowAxesButton();
 
     void deactivateButtons();
     void activateButtons();

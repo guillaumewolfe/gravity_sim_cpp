@@ -38,6 +38,7 @@ int main() {
         currentTime = newTime;
         accumulator += frameTime;
 
+
         //Loop for Physical udate
         while (accumulator>= dt){
             myGame.UpdatePhysics(dt);

@@ -10,12 +10,12 @@ void SimulationState::Enter() {
     labbels = generateLabbels();
     buttons = generateButtons();
 
-
+    float maxSize = 200;
     //Construction des outils pour le render
-    currentCamera = new Camera(Vec3(-2.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons);
+    systemeSolaire = new SystemeSolaire();
+    currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire);
     render = new Render(renderContext);
-    render->initTools();
     //currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 
 }
@@ -57,10 +57,16 @@ std::vector<Button*> SimulationState::generateButtons(){
                                "Pause", gameObj->getFont(), 0.25f,
                                std::bind(&SimulationState::Pause, this));  
 
+    Button *ShowAxes = new Button(0.92f, 1-(0.045f+3*diff), ImVec2(0.12, 0.05),
+                            ImVec4(0.5f, 0.5f, 0.7f, 1.0f),
+                            ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
+                            "Show Axes", gameObj->getFont(), 0.25f,
+                            std::bind(&SimulationState::ShowAxesButton, this));  
 
     buttons_list.push_back(MenuButton);
     buttons_list.push_back(RestartButton);
     buttons_list.push_back(PauseButton);
+    buttons_list.push_back(ShowAxes);
     return buttons_list;
 }
 
@@ -78,16 +84,17 @@ void SimulationState::Update() {
 
     if (ImGui::IsKeyPressed(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
     if (ImGui::IsKeyPressed(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
-    if (ImGui::IsKeyPressed(ImGuiKey_W)) {currentCamera->rotateAround(Vec3(0, 0, 0), 0.25f, Vec3(1, 0, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_S)) {currentCamera->rotateAround(Vec3(0, 0, 0), -0.25f, Vec3(1, 0, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_A)) {currentCamera->rotateAround(Vec3(0, 0, 0), 0.25f, Vec3(0, 1, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_D)) {currentCamera->rotateAround(Vec3(0, 0, 0), -0.25f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_W)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.5f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_S)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.5f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_A)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.5f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyPressed(ImGuiKey_D)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.5f, Vec3(0, 1, 0));}
 
 }
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){
         simulation_time += dt * time_multiplier;
     }
+    systemeSolaire->updatePhysics(dt);
 };
 
 
@@ -182,4 +189,10 @@ void SimulationState::deactivateButtons(){
        for (Button *btn : buttons) {
        btn->enabled = false;
    }
+}
+
+void SimulationState::ShowAxesButton(){
+    if(showAxes){
+        showAxes = false;
+    }else{showAxes = true;}
 }

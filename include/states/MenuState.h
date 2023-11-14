@@ -15,6 +15,7 @@ private:
     GLuint videoTexture; 
     bool videoInitialized = false;
     bool newFrameReady = false;
+    double elapsedTime;
 
     MessageTool* messageBox;
 
