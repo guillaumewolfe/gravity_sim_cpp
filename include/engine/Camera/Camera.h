@@ -28,6 +28,7 @@ public:
     void rotateAround(const Vec3& center, float angle, const Vec3& axis);
     void resetPosition();
     void setPosition(Vec3 newPos);
+    void setInitPosition(Vec3 newPos);
     void DrawUp();
 
 

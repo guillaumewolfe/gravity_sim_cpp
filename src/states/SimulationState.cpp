@@ -16,6 +16,7 @@ void SimulationState::Enter() {
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
     renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire);
     render = new Render(renderContext);
+    physics = new Physics(renderContext);
     //currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 
 }
@@ -78,8 +79,8 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");}
-    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {time_multiplier+=1;}
-    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {time_multiplier-=1;}
+    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {time_multiplier+=10000;}
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {time_multiplier-=10000;}
     
 
     if (ImGui::IsKeyPressed(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
@@ -93,8 +94,8 @@ void SimulationState::Update() {
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){
         simulation_time += dt * time_multiplier;
+        physics->Update(dt* time_multiplier);
     }
-    systemeSolaire->updatePhysics(dt);
 };
 
 
@@ -167,7 +168,7 @@ void SimulationState::Pause(){
 
 void SimulationState::Restart(){
     simulation_time = 0;
-    currentCamera->resetPosition();
+    render->initCamera();
 }
 
 void SimulationState::MenuButton(){

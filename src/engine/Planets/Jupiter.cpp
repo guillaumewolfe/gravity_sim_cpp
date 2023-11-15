@@ -11,10 +11,24 @@ Jupiter::Jupiter() : CelestialObject() {
     type = 2;
     textureID = loadTexture(path_sub.c_str());
 
+    //Physics:
+    distance_initiale = 778340821e3;
+    real_radius = 69911e3;
+    weight = 1.898e27;
+    Vec3 initialVelocity = Vec3(0,0,-13.07e3);
+    inclinaison = 3.13;
+    rotationSid = 0;
+    rotationSidSpeed = 0.0101;
+    rotationSidDirection = Vec3(0,1,0);
+
+
+
     setName(name_sub);
     setPath(path_sub);
     setRayon(rayon_sub);
-    updatePositionSimulation(position_initiale_sub);
+    updateVelocity(initialVelocity);
+    updatePositionReal(Vec3(distance_initiale,0,0));
+    updatePositionSimulation();
 }
 
 

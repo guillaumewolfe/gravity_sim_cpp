@@ -16,14 +16,19 @@ public:
     std::string texture_path;
     double real_radius = 1;
     double weight = 1;
-    int object_type = 1; 
-    int distance_initiale = 1;
+    double distance_initiale = 1;
     double rayon_simulation = 1;
+    float inclinaison;
+    float rotationSid;
+    double rotationSidSpeed;
+    Vec3 rotationSidDirection;
+
     int type;
     GLuint textureID;
 
     //SCALE
     double radiusScale = 1;
+    double distanceScale = 1/(149597870e3/2);
 
 
     Vec3 position_real = {0,0,0};
@@ -39,7 +44,7 @@ public:
 
     //Update methodes to change their values
     virtual void updatePositionReal(const Vec3& newPosReal);
-    virtual void updatePositionSimulation(const Vec3& newPosSimul);
+    virtual void updatePositionSimulation();
     virtual void updateVelocity(const Vec3& newVel);
     virtual void updateAccel(const Vec3& newAcel);
     virtual void updateForce(const Vec3& newForce);
@@ -55,6 +60,7 @@ public:
     virtual void setRayon(double rayon);
     virtual double getRayon();
     virtual void realRadiusToSimRadius();
+
 
 
 };

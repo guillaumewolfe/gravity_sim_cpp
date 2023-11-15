@@ -38,7 +38,7 @@ void Render::Draw(){
     ImGui::Render();
     
     updateCamera();
-    Background_Tool->Draw();
+    //Background_Tool->Draw();
     Objects_Tool->Draw();
     if(*(Context->showAxes)){Axes_Tool->Draw();}
     SystemeSolaire_Tool->Draw();
@@ -64,6 +64,6 @@ void Render::updateCamera(){
 
 void Render::initCamera(){
     Vec3 position_initiale = Vec3(0,0,50);
-    Context->currentCamera->setPosition(position_initiale);
+    Context->currentCamera->setInitPosition(position_initiale);
     Context->currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 }

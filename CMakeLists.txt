@@ -40,6 +40,7 @@ file(GLOB_RECURSE SOURCES
      src/engine/*.cpp
      src/engine/RenderTools/*.cpp
      src/engine/Planets/*.cpp
+     src/engine/PhysicsTools/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
      src/states/*.cpp

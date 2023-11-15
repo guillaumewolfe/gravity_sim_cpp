@@ -35,9 +35,9 @@ void UITool::draw_buttons(){
 void UITool::draw_labbels(){
     // Update the text of the second label}
     std::ostringstream stream;
-    stream << std::fixed << std::setprecision(2) << *(m_renderContext->simulationTime);
+    stream << std::fixed << std::setprecision(2) << *(m_renderContext->simulationTime)/86400;
     std::string rounded_simulation_time_str = stream.str();
-    std::string newLabelText = "Simulation time : " + rounded_simulation_time_str;
+    std::string newLabelText = "Simulation time : " + rounded_simulation_time_str + " days";
     if (m_renderContext->labels.size() > 0) {
             m_renderContext->labels[0]->UpdateText(newLabelText); 
     std::ostringstream stream2;

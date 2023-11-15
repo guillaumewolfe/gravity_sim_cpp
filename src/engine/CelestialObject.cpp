@@ -14,14 +14,16 @@ CelestialObject::CelestialObject(){}
 CelestialObject::CelestialObject(std::string name, std::string texture_path, double real_radius, double weight, int object_type, int distance_initiale, double rayon_simulation,
     const Vec3& pos_real, const Vec3& velocity, const Vec3& force ,const Vec3& accel ,const Vec3& pos_simul)
 : position_real(pos_real),velocity(velocity),force(force),accel(accel),position_simulation(pos_simul),
-name(name),texture_path(texture_path),real_radius(real_radius),weight(weight),object_type(object_type),distance_initiale(distance_initiale),rayon_simulation(rayon_simulation){}
+name(name),texture_path(texture_path),real_radius(real_radius),weight(weight),distance_initiale(distance_initiale),rayon_simulation(rayon_simulation){}
 
 
 void CelestialObject::updatePositionReal(const Vec3& newPosReal){
     position_real = newPosReal;
 };
-void CelestialObject::updatePositionSimulation(const Vec3& newPosSimul){
-    position_simulation = newPosSimul;
+void CelestialObject::updatePositionSimulation(){
+    position_simulation.x = position_real.x * distanceScale;
+    position_simulation.y = position_real.y * distanceScale;
+    position_simulation.z = position_real.z * distanceScale;
 };
 void CelestialObject::updateVelocity(const Vec3& newVel){
     velocity = newVel;
@@ -40,7 +42,7 @@ void CelestialObject::setName(std::string nm){name = nm;};
 std::string CelestialObject::getPath(){return texture_path;};
 void CelestialObject::setPath(std::string path){texture_path = path;};
 //RAYON
-void CelestialObject::setRayon(double rayon){rayon_simulation = rayon;}
+void CelestialObject::setRayon(double rayon){rayon_simulation = 0.3;}
 double CelestialObject::getRayon(){return rayon_simulation;}
 void CelestialObject::realRadiusToSimRadius(){
     rayon_simulation= radiusScale*real_radius;}

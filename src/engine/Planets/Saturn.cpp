@@ -12,10 +12,22 @@ Saturn::Saturn() : CelestialObject() {
     type = 2;
     textureID = loadTexture(path_sub.c_str());
 
+    distance_initiale = 1426666422e3;
+    real_radius = 58232e3;
+    weight = 5.683e26;
+    Vec3 initialVelocity = Vec3(0,0,-9.68e3);
+    inclinaison = 26.73;
+    rotationSid = 0;
+    rotationSidSpeed = 0.0093;
+    rotationSidDirection = Vec3(0,1,0);
+
+
     setName(name_sub);
     setPath(path_sub);
     setRayon(rayon_sub);
-    updatePositionSimulation(position_initiale_sub);
+    updateVelocity(initialVelocity);
+    updatePositionReal(Vec3(distance_initiale,0,0));
+    updatePositionSimulation();
 }
 
 

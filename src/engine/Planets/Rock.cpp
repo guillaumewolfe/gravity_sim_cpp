@@ -14,7 +14,7 @@ Rock::Rock() : CelestialObject() {
     setName(name_sub);
     setPath(path_sub);
     setRayon(rayon_sub);
-    updatePositionSimulation(position_initiale_sub);
+    updatePositionSimulation();
 }
 
 

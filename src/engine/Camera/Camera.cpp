@@ -119,9 +119,12 @@ void Camera::resetPosition() {
 
 void Camera::setPosition(Vec3 newPos){
     position = newPos;
-
 }
 
+void Camera::setInitPosition(Vec3 newPos){
+    position = newPos;
+    originalPosition = newPos;
+}
 
 
 

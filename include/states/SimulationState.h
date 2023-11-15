@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/EngineIncludes.h"
+#include "engine/Physics/Physics.h"
 #include "engine/RenderTools/Render.h"
 #include "states/MenuState.h"
 #include "UI/MessageTool.h"
@@ -22,6 +23,7 @@ private:
     std::vector<Labbel*> generateLabbels();
     MessageTool* messageBox;
     SystemeSolaire* systemeSolaire;
+    Physics* physics;
     void generateDialogBox(std::function<void()> func, const std::string& message);
 
     //RenderTool
