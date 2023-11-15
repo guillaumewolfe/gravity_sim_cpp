@@ -13,10 +13,14 @@ public:
 SystemeSolaire();
 std::vector<CelestialObject*> objects;
 std::vector<CelestialObject*> initSystem();
+double getScale();
+double maxSize = 1200;
+double scale;
 //methods
 void Draw();
 
 void updatePhysics(double dt);
+void setRayon();
 
 
 private:

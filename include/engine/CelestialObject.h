@@ -19,7 +19,7 @@ public:
     double distance_initiale = 1;
     double rayon_simulation = 1;
     float inclinaison;
-    float rotationSid;
+    double rotationSid;
     double rotationSidSpeed;
     Vec3 rotationSidDirection;
 
@@ -57,7 +57,7 @@ public:
     virtual void setPath(std::string);
     virtual std::string getPath();
 
-    virtual void setRayon(double rayon);
+    virtual void setRayonSim(double scale);
     virtual double getRayon();
     virtual void realRadiusToSimRadius();
 

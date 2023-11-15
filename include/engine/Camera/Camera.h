@@ -21,6 +21,7 @@ public:
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
     glm::mat4 globalRotationMatrix;
+    double angle_perspective;
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
 
     void lookAt(); 

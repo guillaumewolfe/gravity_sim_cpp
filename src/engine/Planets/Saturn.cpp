@@ -24,7 +24,6 @@ Saturn::Saturn() : CelestialObject() {
 
     setName(name_sub);
     setPath(path_sub);
-    setRayon(rayon_sub);
     updateVelocity(initialVelocity);
     updatePositionReal(Vec3(distance_initiale,0,0));
     updatePositionSimulation();

@@ -63,7 +63,7 @@ void Render::updateCamera(){
 }
 
 void Render::initCamera(){
-    Vec3 position_initiale = Vec3(0,0,50);
+    Vec3 position_initiale = Vec3(-50,10,-15);
     Context->currentCamera->setInitPosition(position_initiale);
-    Context->currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
+    Context->currentCamera->setPerspective(40.0, 1, 0.5, 1200.0);
 }

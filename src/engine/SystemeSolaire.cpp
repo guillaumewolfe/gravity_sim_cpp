@@ -3,6 +3,8 @@
 
 SystemeSolaire::SystemeSolaire(){
     objects = initSystem();
+    scale = getScale();
+    setRayon();
 }
 
 void SystemeSolaire::Draw(){
@@ -36,3 +38,18 @@ std::vector<CelestialObject*> SystemeSolaire::initSystem(){
 }
 
 void SystemeSolaire::updatePhysics(double dt){}
+
+double SystemeSolaire::getScale(){
+    double maxLength = 0;
+    for (auto& object : objects){
+        if(object->position_real.norm()>maxLength){maxLength = object->position_real.norm();}
+    }
+    scale = maxSize/maxLength;
+    return scale;
+}
+
+void SystemeSolaire::setRayon(){
+    for (auto& object : objects){
+        object->setRayonSim(10*scale);
+    }   
+}

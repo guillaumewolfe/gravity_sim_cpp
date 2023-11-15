@@ -83,12 +83,13 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {time_multiplier-=10000;}
     
 
-    if (ImGui::IsKeyPressed(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
-    if (ImGui::IsKeyPressed(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
-    if (ImGui::IsKeyPressed(ImGuiKey_W)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.5f, Vec3(1, 0, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_S)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.5f, Vec3(1, 0, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_A)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.5f, Vec3(0, 1, 0));}
-    if (ImGui::IsKeyPressed(ImGuiKey_D)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.5f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyDown(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
+    if (ImGui::IsKeyDown(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
+    if (ImGui::IsKeyDown(ImGuiKey_W)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.0f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyDown(ImGuiKey_S)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.0f, Vec3(1, 0, 0));}
+    if (ImGui::IsKeyDown(ImGuiKey_A)) {currentCamera->rotateAround(Vec3(0, 0, 0), 1.0f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyDown(ImGuiKey_D)) {currentCamera->rotateAround(Vec3(0, 0, 0), -1.0f, Vec3(0, 1, 0));}
+    if (ImGui::IsKeyDown(ImGuiKey_R)) {currentCamera->resetPosition();}
 
 }
 void SimulationState::UpdatePhysics(double dt){

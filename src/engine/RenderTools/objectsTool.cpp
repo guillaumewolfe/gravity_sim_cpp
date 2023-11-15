@@ -35,7 +35,9 @@ void ObjectsTool::Draw() {
         glPushMatrix();
         //if(object->getName()=="Terre"){std::cout<<object->position_simulation.print()<<std::endl;}
         glTranslatef(object->position_simulation.x,object->position_simulation.y,object->position_simulation.z);
-        glRotatef(45,1.0,0.5,0.2);
+        glRotatef(-90,1,0,0);
+        glRotatef(object->inclinaison,1,0,0);
+        glRotatef(object->rotationSid,0,0,1);
         drawSphere(object->rayon_simulation, 20, 20);
         glPopMatrix();
         glBindTexture(GL_TEXTURE_2D, 0);

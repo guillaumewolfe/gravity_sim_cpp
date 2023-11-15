@@ -33,17 +33,21 @@ for (int i = 0; i < 16; ++i) {
 
 void Camera::zoom(bool in) {
     
-    if (in){zoomFactor = 0.9;}
-        else{zoomFactor = 1.1;}
-    // Calculez le vecteur entre la position et la cible actuelle
-    Vec3 viewVector = target - position;
-    // Modifiez la distance entre la caméra et la cible en fonction du facteur de zoom
-    viewVector *= zoomFactor;
-    // Mettez à jour la position et la cible
-    Vec3 newPosition = target - viewVector;
+    if (in){zoomFactor = 0.99;}
+        else{zoomFactor = 1.01;}
 
-    if (in && Vec3(newPosition-target).norm()>3.2){position = newPosition;}
-    else if (!in){position = newPosition;}
+    angle_perspective *= zoomFactor;
+    setPerspective(angle_perspective,0,0.5,1200);
+
+    // // Calculez le vecteur entre la position et la cible actuelle
+    // Vec3 viewVector = target - position;
+    // // Modifiez la distance entre la caméra et la cible en fonction du facteur de zoom
+    // viewVector *= zoomFactor;
+    // // Mettez à jour la position et la cible
+    // Vec3 newPosition = target - viewVector;
+
+    // if (in && Vec3(newPosition-target).norm()>3.2){position = newPosition;}
+    // else if (!in){position = newPosition;}
     
 
 }
@@ -84,7 +88,7 @@ void Camera::rotateAround(const Vec3& center, float angle, const Vec3& axis) {
     // Mettez à jour la matrice de rotation globale
     globalRotationMatrix = rotationMatrix * globalRotationMatrix;
 
-    // Réinitialisez la matrice de vue à l'identité
+    // Réinitialisez la matrice de vue à l'identité_real
     glLoadIdentity();
 
     // Appliquez la matrice de rotation globale à la vue
@@ -92,8 +96,8 @@ void Camera::rotateAround(const Vec3& center, float angle, const Vec3& axis) {
 }
 
 
-
 void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
+    angle_perspective = fovY;
     const GLdouble pi = 3.1415926535897932384626433832795;
     GLdouble fW, fH;
     int winWidth, winHeight;
@@ -115,6 +119,8 @@ void Camera::resetPosition() {
     position = originalPosition;
     target = originalTarget;
     up = originalUp;
+    angle_perspective=45;
+    setPerspective(45,0,0.5,1200);
 }
 
 void Camera::setPosition(Vec3 newPos){

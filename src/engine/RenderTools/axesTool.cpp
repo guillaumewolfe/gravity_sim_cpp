@@ -3,7 +3,7 @@
 #include "engine/RenderTools/AxesTool.h"
 
 AxesTool::AxesTool(RenderContext* renderContext) : RenderComponent(renderContext){
-    lineLength = *(m_renderContext->maxSize);
+    lineLength = m_renderContext->systemeSolaire->maxSize;
 }
 
 
