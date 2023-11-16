@@ -70,7 +70,7 @@ void Button::Draw() {
                           IM_COL32(255, 255, 255,255), 
                           label.c_str());
     }
-    if(isHovered){
+    if(isHovered&&enabled){
         drawList->AddRectFilled(cursorPos, 
                             ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y), 
                             IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, alpha * 255)

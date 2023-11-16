@@ -10,8 +10,9 @@ AxesTool::AxesTool(RenderContext* renderContext) : RenderComponent(renderContext
 
 void AxesTool::Draw() {
     glUseProgram(0); // Utiliser le shader par défaut
-    glEnable(GL_LINE_SMOOTH);
     glLineWidth(1.0f);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glColor3f(1.0f, 0.0f, 0.0f); // Axe X en rouge
     glBegin(GL_LINES);
     glVertex3f(-lineLength, 0.0f, 0.0f);

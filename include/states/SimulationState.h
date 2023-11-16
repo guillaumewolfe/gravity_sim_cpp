@@ -72,6 +72,12 @@ public:
     void changeFollowedObject();
     void resetView();
 
+    bool firstMouse = true;
+    bool isRotatingWithMouse = false;
+    bool isTranslating=false;
+    ImVec2 lastMousePos = ImVec2(0, 0);
+    void rotateCamWithMouse();
+
     void deactivateButtons();
     void activateButtons();
 };

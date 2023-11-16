@@ -90,38 +90,75 @@ std::vector<Button*> SimulationState::generateButtons(){
 
 
 
+void SimulationState::rotateCamWithMouse(){
+        float speed = 0.025; // Ajustez ce paramètre selon la sensibilité souhaitée
+    if (firstMouse) {
+        deactivateButtons();
+        lastMousePos = ImGui::GetMousePos();
+        firstMouse = false;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    } else {
+        ImVec2 currentMousePos = ImGui::GetMousePos();
+        ImVec2 mouseDelta = ImVec2(currentMousePos.x - lastMousePos.x, currentMousePos.y - lastMousePos.y);
+        lastMousePos = currentMousePos;
 
+        currentCamera->rotateHorizontal(-mouseDelta.x * speed);
+        currentCamera->rotateVertical(-mouseDelta.y * speed);
+    }
+}
 
 void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");}
+
     
 
+    static ImVec2 lastMousePos = ImVec2(0, 0);
+
+    if (!ImGui::IsKeyDown(ImGuiKey_W) && !ImGui::IsKeyDown(ImGuiKey_A) &&
+        !ImGui::IsKeyDown(ImGuiKey_S) && !ImGui::IsKeyDown(ImGuiKey_D) &&
+        !ImGui::IsKeyDown(ImGuiKey_R)) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        if(!firstMouse){
+            activateButtons();
+            firstMouse = true;
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            glfwSetCursorPos(window, width / 2, height / 2);
+            }
+    }
+
+    if (ImGui::IsKeyDown(ImGuiKey_W)) { currentCamera->moveForward(0.1); }
+    if (ImGui::IsKeyDown(ImGuiKey_S)) { currentCamera->moveForward(-0.1); }
+    if (ImGui::IsKeyDown(ImGuiKey_D)) { currentCamera->moveRight(0.1); }
+    if (ImGui::IsKeyDown(ImGuiKey_A)) { currentCamera->moveRight(-0.1); }
+
+    // Gestion de la rotation
+    if ((ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_S) ||
+        ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_A) ||
+        ImGui::IsKeyDown(ImGuiKey_R))& !currentCamera->followedObject) {
+        isTranslating=true;
+        rotateCamWithMouse();
+    }
+    
     if (ImGui::IsKeyDown(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
     if (ImGui::IsKeyDown(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
 
-    if (ImGui::IsKeyDown(ImGuiKey_A)) {currentCamera->rotateHorizontal(0.5);}
-    if (ImGui::IsKeyDown(ImGuiKey_D)) {currentCamera->rotateHorizontal(-0.5);}
-    if (ImGui::IsKeyDown(ImGuiKey_W)) {currentCamera->rotateVertical(0.5);}
-    if (ImGui::IsKeyDown(ImGuiKey_S)) {currentCamera->rotateVertical(-0.5);}
 
-    if (ImGui::IsKeyDown(ImGuiKey_UpArrow)) {currentCamera->moveForward(1);}
-    if (ImGui::IsKeyDown(ImGuiKey_DownArrow)) {currentCamera->moveForward(-1);}
-    if (ImGui::IsKeyDown(ImGuiKey_RightArrow)) {currentCamera->moveRight(1);}
-    if (ImGui::IsKeyDown(ImGuiKey_LeftArrow)) {currentCamera->moveRight(-1);}
+    if (ImGui::IsKeyDown(ImGuiKey_W) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0,0.01);}
+    if (ImGui::IsKeyDown(ImGuiKey_S)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0,-0.01);}
+    if (ImGui::IsKeyDown(ImGuiKey_D)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0.01,0);}
+    if (ImGui::IsKeyDown(ImGuiKey_A)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(-0.01,0);}
 
-    if (ImGui::IsKeyDown(ImGuiKey_I)) {currentCamera->orbitAroundObject(0,0.01);}
-    if (ImGui::IsKeyDown(ImGuiKey_K)) {currentCamera->orbitAroundObject(0,-0.01);}
-    if (ImGui::IsKeyDown(ImGuiKey_L)) {currentCamera->orbitAroundObject(0.01,0);}
-    if (ImGui::IsKeyDown(ImGuiKey_J)) {currentCamera->orbitAroundObject(-0.01,0);}
-
-
+    if ((!ImGui::IsKeyDown(ImGuiKey_W) && !ImGui::IsKeyDown(ImGuiKey_A) &&
+            !ImGui::IsKeyDown(ImGuiKey_S) && !ImGui::IsKeyDown(ImGuiKey_D) &&
+            !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}
 
 
     if (ImGui::IsKeyPressed(ImGuiKey_F)) {changeFollowedObject();}
 
-    if (ImGui::IsKeyDown(ImGuiKey_R)) {resetView();}
+    if (ImGui::IsKeyDown(ImGuiKey_T)) {resetView();}
 
 }
 void SimulationState::UpdatePhysics(double dt){
@@ -201,7 +238,7 @@ void SimulationState::Pause(){
 
 void SimulationState::Restart(){
     simulation_time = 0;
-    render->initCamera();
+    currentCamera->resetPosition();
 
     //Time multiplier
     currentSpeedIndex = 0;
@@ -223,12 +260,14 @@ void SimulationState::generateDialogBox(std::function<void()> func, const std::s
 void SimulationState::activateButtons(){
        for (Button *btn : buttons) {
        btn->enabled = true;
-   }}
+       }std::cout<<"Enabled"<<std::endl;
+   }
 
 void SimulationState::deactivateButtons(){
        for (Button *btn : buttons) {
        btn->enabled = false;
-   }
+       
+   }std::cout<<"Disabled"<<std::endl;
 }
 
 void SimulationState::ShowAxesButton(){

@@ -68,11 +68,19 @@ void Camera::zoom(bool in) {
 
 void Camera::rotateHorizontal(float angle) {
     Vec3 forward = (target - position).normalize();
-    Vec3 right = forward.cross(up).normalize();
-    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(up.x, up.y, up.z));
-    glm::vec3 rotatedForward = glm::vec3(rotation * glm::vec4(forward.x,forward.y,forward.z, 0.0));
-    forward = Vec3(rotatedForward.x,rotatedForward.y,rotatedForward.z);
+    
+    // Utiliser l'axe Y global pour la rotation
+    Vec3 globalUp(0, 1, 0);
+
+    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(globalUp.x, globalUp.y, globalUp.z));
+    glm::vec3 rotatedForward = glm::vec3(rotation * glm::vec4(forward.x, forward.y, forward.z, 0.0));
+
+    forward = Vec3(rotatedForward.x, rotatedForward.y, rotatedForward.z);
     target = position + forward;
+
+    // Recalculer 'up' pour s'assurer qu'il est perpendiculaire au plan XZ
+    Vec3 right = forward.cross(globalUp).normalize();
+    up = right.cross(forward).normalize();
 }
 
 void Camera::rotateVertical(float angle) {
@@ -153,6 +161,7 @@ void Camera::resetPosition() {
     orbitalHorizontalAngle = 0;
     orbitalVerticalAngle = 0;
     setPerspective(45,0,0.5,1200);
+    lookAt();
 }
 
 void Camera::setPosition(Vec3 newPos){
