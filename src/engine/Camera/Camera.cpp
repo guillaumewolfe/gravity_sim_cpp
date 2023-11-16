@@ -2,23 +2,38 @@
 #include <GLFW/glfw3.h>
 #include "engine/Camera/Camera.h"
 #include "iostream"
+#include <algorithm>
 
 Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
         : position(pos), target(tgt), up(up), originalPosition(pos), originalTarget(tgt), originalUp(up)  {
             globalRotationMatrix = glm::mat4(1.0f); // Ajout de la variable membre
         }
 
-void Camera::lookAt() {
+void Camera::Update(){
     if (followedObject) {
         Vec3 objectPosition = followedObject->getPositionSimulation();
 
-        // Exemple de positionnement : positionner la caméra derrière et au-dessus de l'objet
-        Vec3 cameraOffset = Vec3(-10, 5, -10); // Ajustez selon le besoin
-        position = objectPosition + cameraOffset;
+        // Mettez à jour la position de la caméra pour orbiter autour de l'objet
+        // Les angles orbitaux doivent être mis à jour ailleurs dans votre code (par exemple, à l'aide des entrées utilisateur)
+        float distanceToObject = (position - objectPosition).norm();
+
+        Vec3 offset;
+        offset.x = distanceToObject * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
+        offset.y = distanceToObject * sin(orbitalVerticalAngle);
+        offset.z = distanceToObject * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+
+        position = objectPosition + offset;
 
         // Cibler la caméra sur l'objet
         target = objectPosition;
+
     }
+    lookAt();
+}
+
+
+
+void Camera::lookAt() {
     Vec3 f = (target - position).normalize();
     Vec3 u = up.normalize();
 
@@ -90,6 +105,22 @@ void Camera::moveRight(float distance) {
     target.y = target.y+right.y * distance;
     target.z = target.z+right.z * distance;
 }
+
+void Camera::orbitAroundObject(float horizontalAngle, float verticalAngle) {
+    if (!followedObject) {
+        return;
+    }
+
+    orbitalHorizontalAngle += horizontalAngle;
+    orbitalVerticalAngle += verticalAngle;
+    if (orbitalVerticalAngle>M_PI/2){orbitalVerticalAngle = M_PI/2;}
+    if (orbitalVerticalAngle<-M_PI/2){orbitalVerticalAngle = -M_PI/2;}
+}
+
+
+
+
+
 void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
     angle_perspective = fovY;
     const GLdouble pi = 3.1415926535897932384626433832795;
@@ -109,6 +140,7 @@ void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdo
 }
 
 void Camera::followObject(CelestialObject* obj) {
+    resetPosition();
     followedObject = obj;
 }
 
@@ -118,6 +150,8 @@ void Camera::resetPosition() {
     up = originalUp;
     angle_perspective=45;
     followedObject = nullptr;
+    orbitalHorizontalAngle = 0;
+    orbitalVerticalAngle = 0;
     setPerspective(45,0,0.5,1200);
 }
 

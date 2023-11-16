@@ -25,7 +25,10 @@ public:
     glm::mat4 globalRotationMatrix;
     double angle_perspective;
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
+    double orbitalVerticalAngle = 0;
+    double orbitalHorizontalAngle =0;
 
+    void Update();
     void lookAt(); 
     void zoom(bool in);
 
@@ -33,6 +36,7 @@ public:
     void rotateVertical(float angle);
     void moveForward(float distance);
     void moveRight(float distance);
+    void orbitAroundObject(float horizontalAngle, float verticalAngle);
 
     void followObject(CelestialObject* obj);
 

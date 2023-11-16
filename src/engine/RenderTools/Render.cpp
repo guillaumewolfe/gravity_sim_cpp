@@ -59,7 +59,7 @@ void Render::Draw(){
 void Render::updateCamera(){
     glMatrixMode(GL_MODELVIEW); 
     glLoadIdentity();
-    Context->currentCamera->lookAt();
+    Context->currentCamera->Update();
     glPopMatrix();
 }
 

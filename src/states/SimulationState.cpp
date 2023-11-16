@@ -111,6 +111,14 @@ void SimulationState::Update() {
     if (ImGui::IsKeyDown(ImGuiKey_RightArrow)) {currentCamera->moveRight(1);}
     if (ImGui::IsKeyDown(ImGuiKey_LeftArrow)) {currentCamera->moveRight(-1);}
 
+    if (ImGui::IsKeyDown(ImGuiKey_I)) {currentCamera->orbitAroundObject(0,0.01);}
+    if (ImGui::IsKeyDown(ImGuiKey_K)) {currentCamera->orbitAroundObject(0,-0.01);}
+    if (ImGui::IsKeyDown(ImGuiKey_L)) {currentCamera->orbitAroundObject(0.01,0);}
+    if (ImGui::IsKeyDown(ImGuiKey_J)) {currentCamera->orbitAroundObject(-0.01,0);}
+
+
+
+
     if (ImGui::IsKeyPressed(ImGuiKey_F)) {changeFollowedObject();}
 
     if (ImGui::IsKeyDown(ImGuiKey_R)) {resetView();}
