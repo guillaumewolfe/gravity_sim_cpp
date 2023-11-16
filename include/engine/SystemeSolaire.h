@@ -21,6 +21,7 @@ void Draw();
 
 void updatePhysics(double dt);
 void setRayon();
+void resetPosition();
 
 
 private:

@@ -22,6 +22,9 @@ public:
     double rotationSid;
     double rotationSidSpeed;
     Vec3 rotationSidDirection;
+    
+    const int MAX_HISTORY_SIZE = 500;
+    std::vector<Vec3> positionHistory;
 
     int type;
     GLuint textureID;
@@ -45,6 +48,7 @@ public:
     //Update methodes to change their values
     virtual void updatePositionReal(const Vec3& newPosReal);
     virtual void updatePositionSimulation();
+    virtual Vec3 getPositionSimulation();
     virtual void updateVelocity(const Vec3& newVel);
     virtual void updateAccel(const Vec3& newAcel);
     virtual void updateForce(const Vec3& newForce);
@@ -61,6 +65,9 @@ public:
     virtual double getRayon();
     virtual void realRadiusToSimRadius();
 
+    void addPositionHistory(const Vec3& point);
+    const std::vector<Vec3>& getPositionHistory();
+    void clearPositionHistory();
 
 
 };

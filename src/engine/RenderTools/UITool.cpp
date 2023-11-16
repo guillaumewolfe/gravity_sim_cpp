@@ -40,10 +40,9 @@ void UITool::draw_labbels(){
     std::string newLabelText = "Simulation time : " + rounded_simulation_time_str + " days";
     if (m_renderContext->labels.size() > 0) {
             m_renderContext->labels[0]->UpdateText(newLabelText); 
-    std::ostringstream stream2;
-    stream2 << std::fixed << std::setprecision(0) << *(m_renderContext->timeMultiplier);
-    std::string rounded_simulation_time_str2 = stream2.str();
-    std::string newLabelText2 = "Speed : x" + rounded_simulation_time_str2 ;
+
+
+    std::string newLabelText2 = "Speed : " + m_renderContext->speedSettings[*(m_renderContext->currentSpeedIndex)].second;
         m_renderContext->labels[1]->UpdateText(newLabelText2); }
     // Dessinez les labels
 

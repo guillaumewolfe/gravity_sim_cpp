@@ -25,10 +25,10 @@ std::vector<CelestialObject*> SystemeSolaire::initSystem(){
     Neptune* neptune = new Neptune();
 
 
-    celestialObjects.push_back(earth);
     celestialObjects.push_back(sun);
     celestialObjects.push_back(mercure);
     celestialObjects.push_back(venus);
+    celestialObjects.push_back(earth);
     celestialObjects.push_back(mars);
     celestialObjects.push_back(jupiter);
     celestialObjects.push_back(saturn);
@@ -50,6 +50,13 @@ double SystemeSolaire::getScale(){
 
 void SystemeSolaire::setRayon(){
     for (auto& object : objects){
-        object->setRayonSim(10*scale);
+        object->setRayonSim(15*scale);
     }   
+}
+
+void SystemeSolaire::resetPosition(){
+    for (auto& object : objects){
+        object->position_real = Vec3(object->distance_initiale,0,0);
+        object->clearPositionHistory();
+    }
 }

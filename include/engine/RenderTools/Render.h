@@ -6,6 +6,7 @@
 #include "engine/RenderTools/objectsTool.h"
 #include "engine/RenderTools/UITool.h"
 #include "engine/RenderTools/AxesTool.h"
+#include "engine/RenderTools/PathTool.h"
 #include "engine/EngineIncludes.h"
 #include "UI/MessageTool.h"
 
@@ -27,6 +28,7 @@ private:
     BackgroundTool* Background_Tool;
     AxesTool* Axes_Tool;
     SystemeSolaire* SystemeSolaire_Tool;
+    PathTool* Path_Tool;
 
 
 //Background:

@@ -47,7 +47,9 @@ double CelestialObject::getRayon(){return rayon_simulation;}
 void CelestialObject::realRadiusToSimRadius(){
     rayon_simulation= radiusScale*real_radius;}
 
-
+Vec3 CelestialObject::getPositionSimulation(){
+    return Vec3(position_simulation.x,position_simulation.y,position_simulation.z);
+}
 
 GLuint CelestialObject::getTexture(){return textureID;}
 
@@ -79,3 +81,20 @@ GLuint CelestialObject::loadTexture(const char* filename) {
 
     return texture;
 }
+
+
+void CelestialObject::addPositionHistory(const Vec3& point) {
+    positionHistory.push_back(point);
+    if (positionHistory.size() > MAX_HISTORY_SIZE) {
+        positionHistory.erase(positionHistory.begin());
+    }
+}
+
+const std::vector<Vec3>& CelestialObject::getPositionHistory(){
+    return positionHistory;
+}
+
+void CelestialObject::clearPositionHistory() {
+    positionHistory.clear();
+}
+

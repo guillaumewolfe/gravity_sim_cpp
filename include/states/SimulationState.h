@@ -39,6 +39,21 @@ private:
     Camera* currentCamera;
 
 public:
+    int currentSpeedIndex = 2;
+    int followedObjectIndex = 0;
+    std::vector<std::pair<int, std::string>> speedSettings = {
+            {1, "Normal"},
+            {3600, "1 hour/second"},
+            {86400/2, "0.5 day/second"},
+            {86400, "1 day/second"},
+            {604800 , "1 week/second"},
+            {2592000, "1 month/second"},
+            // Ajoutez d'autres vitesses ici
+        };
+
+
+
+
    SimulationState(Game* gameObj);
     void Enter() override;
     void Update() override;
@@ -53,6 +68,9 @@ public:
     void Restart();
     void MenuButton();
     void ShowAxesButton();
+    void changeSimulationSpeed(bool increase);
+    void changeFollowedObject();
+    void resetView();
 
     void deactivateButtons();
     void activateButtons();

@@ -9,6 +9,16 @@ Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
         }
 
 void Camera::lookAt() {
+    if (followedObject) {
+        Vec3 objectPosition = followedObject->getPositionSimulation();
+
+        // Exemple de positionnement : positionner la caméra derrière et au-dessus de l'objet
+        Vec3 cameraOffset = Vec3(-10, 5, -10); // Ajustez selon le besoin
+        position = objectPosition + cameraOffset;
+
+        // Cibler la caméra sur l'objet
+        target = objectPosition;
+    }
     Vec3 f = (target - position).normalize();
     Vec3 u = up.normalize();
 
@@ -39,63 +49,47 @@ void Camera::zoom(bool in) {
     angle_perspective *= zoomFactor;
     setPerspective(angle_perspective,0,0.5,1200);
 
-    // // Calculez le vecteur entre la position et la cible actuelle
-    // Vec3 viewVector = target - position;
-    // // Modifiez la distance entre la caméra et la cible en fonction du facteur de zoom
-    // viewVector *= zoomFactor;
-    // // Mettez à jour la position et la cible
-    // Vec3 newPosition = target - viewVector;
-
-    // if (in && Vec3(newPosition-target).norm()>3.2){position = newPosition;}
-    // else if (!in){position = newPosition;}
-    
-
 }
 
-void Camera::DrawUp(){
-    // Activer le mode de dessin de lignes
-    glBegin(GL_LINES);
-    Vec3 end = Vec3(position + (up * 2));
-        // Définir la couleur de la ligne (par exemple, rouge)
-        glColor3f(1.0f, 0.0f, 0.0f);
-
-        // Définir les points de la ligne
-        glVertex3f(0,0,0);
-        glVertex3f(end.x, end.y, end.z);
-    glEnd();
-
-    // Revenir à la couleur par défaut
-    glColor3f(1.0f, 1.0f, 1.0f);    
-}
-
-void Camera::rotateAround(const Vec3& center, float angle, const Vec3& axis) {
-    // Créez une matrice de rotation en utilisant glm
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(axis.x, axis.y, axis.z));
-    glm::quat rotationQuat = glm::angleAxis(glm::radians(angle), glm::vec3(axis.x, axis.y, axis.z));
-
-    // Appliquez la rotation à la position de la caméra par rapport au centre de rotation
-    glm::vec4 relativePosition = glm::vec4(position.x - center.x, position.y - center.y, position.z - center.z, 1.0f);
-    relativePosition = rotationMatrix * relativePosition;
-
-    // Translatez la caméra de retour au centre d'origine
-    position = Vec3(center.x + relativePosition.x, center.y + relativePosition.y, center.z + relativePosition.z);
-
-    // Mettez à jour la cible pour qu'elle pointe vers le centre
-    target = center;
+void Camera::rotateHorizontal(float angle) {
     Vec3 forward = (target - position).normalize();
     Vec3 right = forward.cross(up).normalize();
-    up = right.cross(forward).normalize();
-    // Mettez à jour la matrice de rotation globale
-    globalRotationMatrix = rotationMatrix * globalRotationMatrix;
-
-    // Réinitialisez la matrice de vue à l'identité_real
-    glLoadIdentity();
-
-    // Appliquez la matrice de rotation globale à la vue
-    glMultMatrixf(glm::value_ptr(globalRotationMatrix));
+    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(up.x, up.y, up.z));
+    glm::vec3 rotatedForward = glm::vec3(rotation * glm::vec4(forward.x,forward.y,forward.z, 0.0));
+    forward = Vec3(rotatedForward.x,rotatedForward.y,rotatedForward.z);
+    target = position + forward;
 }
 
+void Camera::rotateVertical(float angle) {
+    Vec3 forward = (target - position).normalize();
+    Vec3 right = forward.cross(up).normalize();
+    glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(right.x, right.y, right.z));
+    glm::vec3 rotatedForward = glm::vec3(rotation * glm::vec4(forward.x, forward.y, forward.z, 0.0));
+    forward = Vec3(rotatedForward.x, rotatedForward.y, rotatedForward.z);
+    target = position + forward;
+    up = right.cross(forward).normalize();
+}
 
+void Camera::moveForward(float distance) {
+    Vec3 forward = (target - position).normalize();
+    position.x = position.x + forward.x * distance;
+    position.y = position.y + forward.y * distance;
+    position.z = position.z + forward.z * distance;
+    target.x = target.x + forward.x * distance;
+    target.y = target.y + forward.y * distance;
+    target.z = target.z + forward.z * distance;
+}
+
+void Camera::moveRight(float distance) {
+    Vec3 forward = (target - position).normalize();
+    Vec3 right = forward.cross(up).normalize();
+    position.x = position.x +right.x * distance;
+    position.y = position.y+right.y * distance;
+    position.z = position.z+right.z * distance;
+    target.x = target.x+right.x * distance;
+    target.y = target.y+right.y * distance;
+    target.z = target.z+right.z * distance;
+}
 void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar) {
     angle_perspective = fovY;
     const GLdouble pi = 3.1415926535897932384626433832795;
@@ -114,12 +108,16 @@ void Camera::setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdo
     glMatrixMode(GL_MODELVIEW);
 }
 
+void Camera::followObject(CelestialObject* obj) {
+    followedObject = obj;
+}
 
 void Camera::resetPosition() {
     position = originalPosition;
     target = originalTarget;
     up = originalUp;
     angle_perspective=45;
+    followedObject = nullptr;
     setPerspective(45,0,0.5,1200);
 }
 

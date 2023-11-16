@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include "engine/CelestialObject.h"
 
 class Camera{
 public:
@@ -17,6 +18,7 @@ public:
     Vec3 originalPosition;
     Vec3 originalTarget;
     Vec3 originalUp;
+    CelestialObject* followedObject;
     float zoomFactor;
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
@@ -26,8 +28,17 @@ public:
 
     void lookAt(); 
     void zoom(bool in);
-    void rotateAround(const Vec3& center, float angle, const Vec3& axis);
+
+    void rotateHorizontal(float angle);
+    void rotateVertical(float angle);
+    void moveForward(float distance);
+    void moveRight(float distance);
+
+    void followObject(CelestialObject* obj);
+
+
     void resetPosition();
+
     void setPosition(Vec3 newPos);
     void setInitPosition(Vec3 newPos);
     void DrawUp();

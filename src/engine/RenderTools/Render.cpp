@@ -18,6 +18,7 @@ void Render::initTools(){
     Objects_Tool = new ObjectsTool(Context);
     Background_Tool = new BackgroundTool(Context);
     Axes_Tool = new AxesTool(Context);
+    Path_Tool = new PathTool(Context);
 
     initCamera();
 }
@@ -42,7 +43,7 @@ void Render::Draw(){
     Objects_Tool->Draw();
     if(*(Context->showAxes)){Axes_Tool->Draw();}
     SystemeSolaire_Tool->Draw();
-    //Context->currentCamera->DrawUp();
+    Path_Tool->Draw();
 
 
 

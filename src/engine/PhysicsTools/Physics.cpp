@@ -46,6 +46,7 @@ void Physics::updatePosition(CelestialObject* obj, double dt){
     obj->position_simulation.x = obj->position_real.x * m_renderContext->systemeSolaire->scale;
     obj->position_simulation.y = obj->position_real.y * m_renderContext->systemeSolaire->scale;
     obj->position_simulation.z = obj->position_real.z * m_renderContext->systemeSolaire->scale;
+    obj->addPositionHistory(obj->position_simulation);
 }
 
 void Physics::updateRotation(CelestialObject* obj, double dt){
