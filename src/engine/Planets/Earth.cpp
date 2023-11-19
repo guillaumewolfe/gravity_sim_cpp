@@ -27,7 +27,7 @@ Earth::Earth() : CelestialObject() {
     setPath(path_sub);
     updateVelocity(initialVelocity);
     updatePositionReal(Vec3(distance_initiale,0,0));
-    updatePositionSimulation();
+    //updatePositionSimulation();
 }
 
 

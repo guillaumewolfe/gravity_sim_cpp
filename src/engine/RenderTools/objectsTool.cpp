@@ -26,8 +26,8 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 void ObjectsTool::Draw() {
     glEnable(GL_DEPTH_TEST);
     glUseProgram(shaderProgram);
-
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        updateLumiere(object);
         glLoadIdentity();
         m_renderContext->currentCamera->lookAt();
         glEnable(GL_TEXTURE_2D);
@@ -35,9 +35,9 @@ void ObjectsTool::Draw() {
         glPushMatrix();
         //if(object->getName()=="Terre"){std::cout<<object->position_simulation.print()<<std::endl;}
         glTranslatef(object->position_simulation.x,object->position_simulation.y,object->position_simulation.z);
-        glRotatef(-90,1,0,0);
-        glRotatef(object->inclinaison,1,0,0);
-        glRotatef(object->rotationSid,0,0,1);
+        //glRotatef(-90,1,0,0);
+        //glRotatef(object->inclinaison,1,0,0);
+        //glRotatef(object->rotationSid,0,1,0);
         drawSphere(object->rayon_simulation, 20, 20);
         glPopMatrix();
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -48,11 +48,34 @@ void ObjectsTool::Draw() {
     glDisable(GL_DEPTH_TEST);
 }
 
-void ObjectsTool::updateLumiere(){
-        // Position de la lumière
-    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightPosition");
-    float time = *(m_renderContext->simulationTime);
-    glUniform3f(lightDirUniform, 0, -100, 0); //Position
+
+void ObjectsTool::computeNormals(CelestialObject* object) {
+    glm::mat4 modelViewMatrix;
+    glGetFloatv(GL_MODELVIEW_MATRIX, &modelViewMatrix[0][0]);
+
+    // Extraire uniquement la partie de la matrice concernant les transformations de modèle
+    // En supprimant la partie de translation de la vue de la caméra
+    modelViewMatrix[3][0] = 0.0f;
+    modelViewMatrix[3][1] = 0.0f;
+    modelViewMatrix[3][2] = 0.0f;
+
+    glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelViewMatrix)));
+
+    glUniformMatrix3fv(glGetUniformLocation(shaderProgram, "normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
+}
+
+
+void ObjectsTool::updateLumiere(CelestialObject* object){
+    // Supposons que vous ayez une méthode pour obtenir la position du soleil
+    glm::vec3 positionSoleil = glm::vec3(0,0,0);
+    glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
+
+    // Calculer la direction de la lumière
+    glm::vec3 lightDir = glm::normalize(positionSoleil-positionObjet);
+    //if(object->getName()=="Terre"){std::cout<<"X: "<<lightDir.x<<" Y: "<<lightDir.y<<" Z: "<<lightDir.z <<std::endl;}
+    // Passer la direction de la lumière au shader
+    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection"); // Assurez-vous que le nom est correct
+    glUniform3f(lightDirUniform, lightDir.x, lightDir.y, lightDir.z);
 }
 
 GLuint ObjectsTool::loadTexture(const char* filename) {

@@ -17,12 +17,11 @@ struct Star {
 };
 
 
+
 class BackgroundTool : public RenderComponent {
 public:
-
     explicit BackgroundTool(RenderContext* renderContext);
     void Draw() override;
-
 
 
 private:
@@ -30,6 +29,7 @@ private:
     std::vector<Star> stars;  // Liste des étoiles
     int numberOfStars;
     void initStars(int numberOfStars);
+    int drawIterations;
 
 };
 

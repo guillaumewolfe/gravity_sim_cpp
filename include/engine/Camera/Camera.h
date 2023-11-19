@@ -23,33 +23,56 @@ public:
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
     glm::mat4 globalRotationMatrix;
+    bool zoomChanged = false;
     double angle_perspective;
+    float distanceToFollowedObject; 
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
     double orbitalVerticalAngle = 0;
     double orbitalHorizontalAngle =0;
+    float accumulatedHorizontalAngle = 0.0f;
+
+
+    void startTransition(CelestialObject* newObject, int steps);
+    void updateTransition();
+    void transitionToFollowObject();
+
+    //Transition
+    bool isTransiting= false;
+    double followingDistance;
+
+    Vec3 lerp(const Vec3& start, const Vec3& end, float t);
+    float transitionProgress;
+
+    int transitionStep = 0;
+    const int transitionThreshold = 200; // Ajustez selon la douceur souhaitée
+
+
+
+
 
     void Update();
     void lookAt(); 
     void zoom(bool in);
+    void checkDistance();
 
     void rotateHorizontal(float angle);
     void rotateVertical(float angle);
     void moveForward(float distance);
     void moveRight(float distance);
     void orbitAroundObject(float horizontalAngle, float verticalAngle);
-
-    void followObject(CelestialObject* obj);
+    void adjustDistanceToTarget();
+    void newFollowObject(CelestialObject* obj);
+    void followObject();
 
 
     void resetPosition();
 
     void setPosition(Vec3 newPos);
     void setInitPosition(Vec3 newPos);
-    void DrawUp();
 
 
     void updateViewMatrix();
-    void setPerspective(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
+    void setPerspective();
     
     void calculateNormalMatrix();
     const GLfloat* getNormalMatrix() const;

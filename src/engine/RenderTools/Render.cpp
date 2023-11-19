@@ -25,7 +25,7 @@ void Render::initTools(){
 
 void Render::Draw(){
     //Clear Buffer
-    glClearColor(0.05f, 0.05f, 0.07f, 1.0f);
+    glClearColor(0.00f, 0.00f, 0.00f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //New frame pour les éléments GUI
@@ -39,7 +39,7 @@ void Render::Draw(){
     ImGui::Render();
     
     updateCamera();
-    //Background_Tool->Draw();
+    Background_Tool->Draw();
     Objects_Tool->Draw();
     if(*(Context->showAxes)){Axes_Tool->Draw();}
     SystemeSolaire_Tool->Draw();
@@ -64,7 +64,6 @@ void Render::updateCamera(){
 }
 
 void Render::initCamera(){
-    Vec3 position_initiale = Vec3(-50,10,-15);
+    Vec3 position_initiale = Vec3(-60,10,15);
     Context->currentCamera->setInitPosition(position_initiale);
-    Context->currentCamera->setPerspective(40.0, 1, 0.5, 1200.0);
 }

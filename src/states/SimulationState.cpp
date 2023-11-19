@@ -12,9 +12,9 @@ void SimulationState::Enter() {
 
     changeSimulationSpeed(true);
 
-    float maxSize = 200;
     //Construction des outils pour le render
     systemeSolaire = new SystemeSolaire();
+    float maxSize = systemeSolaire->maxSize;
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
     renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings);
     render = new Render(renderContext);
@@ -129,10 +129,10 @@ void SimulationState::Update() {
             }
     }
 
-    if (ImGui::IsKeyDown(ImGuiKey_W)) { currentCamera->moveForward(0.1); }
-    if (ImGui::IsKeyDown(ImGuiKey_S)) { currentCamera->moveForward(-0.1); }
-    if (ImGui::IsKeyDown(ImGuiKey_D)) { currentCamera->moveRight(0.1); }
-    if (ImGui::IsKeyDown(ImGuiKey_A)) { currentCamera->moveRight(-0.1); }
+    if (ImGui::IsKeyDown(ImGuiKey_W)& !currentCamera->followedObject) { currentCamera->moveForward(0.25); }
+    if (ImGui::IsKeyDown(ImGuiKey_S)& !currentCamera->followedObject) { currentCamera->moveForward(-0.25); }
+    if (ImGui::IsKeyDown(ImGuiKey_D)& !currentCamera->followedObject) { currentCamera->moveRight(0.25); }
+    if (ImGui::IsKeyDown(ImGuiKey_A)& !currentCamera->followedObject) { currentCamera->moveRight(-0.25); }
 
     // Gestion de la rotation
     if ((ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_S) ||
@@ -145,15 +145,18 @@ void SimulationState::Update() {
     if (ImGui::IsKeyDown(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
     if (ImGui::IsKeyDown(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
 
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {changeSimulationSpeed(false);} 
+    if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {changeSimulationSpeed(true);}
+
 
     if (ImGui::IsKeyDown(ImGuiKey_W) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0,0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_S)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0,-0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_D)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0.01,0);}
     if (ImGui::IsKeyDown(ImGuiKey_A)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(-0.01,0);}
 
-    if ((!ImGui::IsKeyDown(ImGuiKey_W) && !ImGui::IsKeyDown(ImGuiKey_A) &&
+    /*if ((!ImGui::IsKeyDown(ImGuiKey_W) && !ImGui::IsKeyDown(ImGuiKey_A) &&
             !ImGui::IsKeyDown(ImGuiKey_S) && !ImGui::IsKeyDown(ImGuiKey_D) &&
-            !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}
+            !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}*/
 
 
     if (ImGui::IsKeyPressed(ImGuiKey_F)) {changeFollowedObject();}
@@ -259,15 +262,12 @@ void SimulationState::generateDialogBox(std::function<void()> func, const std::s
 
 void SimulationState::activateButtons(){
        for (Button *btn : buttons) {
-       btn->enabled = true;
-       }std::cout<<"Enabled"<<std::endl;
+       btn->enabled = true;}
    }
 
 void SimulationState::deactivateButtons(){
        for (Button *btn : buttons) {
-       btn->enabled = false;
-       
-   }std::cout<<"Disabled"<<std::endl;
+       btn->enabled = false;}
 }
 
 void SimulationState::ShowAxesButton(){
@@ -292,7 +292,7 @@ void SimulationState::changeSimulationSpeed(bool increase) {
 
 
 void SimulationState::changeFollowedObject(){
-        currentCamera->followObject(systemeSolaire->objects[followedObjectIndex]);
+        currentCamera->newFollowObject(systemeSolaire->objects[followedObjectIndex]);
         followedObjectIndex+=1;
         if (followedObjectIndex > systemeSolaire->objects.size()-1){followedObjectIndex=0;}
 }

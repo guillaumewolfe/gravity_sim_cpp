@@ -4,7 +4,7 @@
 
 BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(renderContext){
     srand(static_cast<unsigned>(time(nullptr)));
-    initStars(30000);
+    initStars(10000);
 }
 
 
@@ -16,31 +16,39 @@ void BackgroundTool::Draw() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    float time = *(m_renderContext->simulationTime);
+    // Utiliser drawIterations au lieu du temps de simulation
+    float iterationFactor = drawIterations * 0.01f; // Modifier 0.1f au besoin pour ajuster la vitesse de scintillement
 
     glBegin(GL_POINTS);
     for (Star& star : stars) {
         // Scintillement avec décalage aléatoire
         float flickerFrequency = 1.0f; // Ralentir le scintillement
-        float flicker = (sin(time * flickerFrequency + star.flickerOffset) + 1.0f) * 0.5f;
+        float flicker = (sin(iterationFactor * flickerFrequency + star.flickerOffset) + 1.0f) * 0.5f;
         star.size = star.originalSize + flicker * 0.1f; // Réduire l'amplitude du scintillement
-        star.alpha = star.originalAlpha + flicker * 0.5f;
+        star.alpha = star.originalAlpha + flicker;
 
         glPointSize(star.size);
         glColor4f(star.r, star.g, star.b, star.alpha);
-        glVertex3f(star.x, star.y, star.z);
+        glColor4f(star.r, star.g, star.b, star.alpha);
+
+    float camX = m_renderContext->currentCamera->position.x;
+    float camY = m_renderContext->currentCamera->position.y;
+    float camZ = m_renderContext->currentCamera->position.z;
+
+    glVertex3f(star.x + camX, star.y + camY, star.z + camZ);
     }
     glEnd();
-
     glDisable(GL_BLEND);
+
 }
 
 
 
 void BackgroundTool::initStars(int numberOfStars) {
     this->numberOfStars = numberOfStars;
-    float radius = *(m_renderContext->maxSize); // Ajuster si nécessaire
-
+    float radius = *(m_renderContext->maxSize)/2; // Ajuster si nécessaire
+    
+    radius = 1000;
     for (int i = 0; i < numberOfStars; i++) {
         Star star;
         star.indice = i;
@@ -71,13 +79,28 @@ void BackgroundTool::initStars(int numberOfStars) {
         star.r = 0.8f + 0.2f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
         star.g = 0.8f + 0.2f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
         star.b = 0.8f + 0.2f * static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-        star.alpha = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+        star.alpha = 0.5*static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
         star.originalSize = star.size;
         star.originalAlpha = star.alpha * 0.1;
         star.flickerOffset = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f * M_PI;
-
+        int colorChoice = rand() % 100; // Générer un nombre aléatoire entre 0 et 99
+        if (colorChoice < 90) {
+            // 90% de chance d'être blanc
+            star.r = 1.0f;
+            star.g = 1.0f;
+            star.b = 1.0f;
+        } else if (colorChoice < 95) {
+            // 5% de chance d'être légèrement rouge
+            star.r = 1.0f;
+            star.g = 0.8f;
+            star.b = 0.8f;
+        } else {
+            // 5% de chance d'être légèrement bleu
+            star.r = 0.7f;
+            star.g = 0.7f;
+            star.b = 1.0f;
+        }
         stars.push_back(star);
     }
 }
-
 

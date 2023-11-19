@@ -42,7 +42,10 @@ void CelestialObject::setName(std::string nm){name = nm;};
 std::string CelestialObject::getPath(){return texture_path;};
 void CelestialObject::setPath(std::string path){texture_path = path;};
 //RAYON
-void CelestialObject::setRayonSim(double scale){rayon_simulation = real_radius*scale;}
+void CelestialObject::setRayonSim(double scale){
+    rayon_simulation = real_radius*scale;
+    //rayon_simulation=3;
+    }
 double CelestialObject::getRayon(){return rayon_simulation;}
 void CelestialObject::realRadiusToSimRadius(){
     rayon_simulation= radiusScale*real_radius;}

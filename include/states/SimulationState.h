@@ -39,7 +39,7 @@ private:
     Camera* currentCamera;
 
 public:
-    int currentSpeedIndex = 2;
+    int currentSpeedIndex = 0;
     int followedObjectIndex = 0;
     std::vector<std::pair<int, std::string>> speedSettings = {
             {1, "Normal"},
