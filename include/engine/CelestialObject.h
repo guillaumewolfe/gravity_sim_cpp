@@ -39,6 +39,11 @@ public:
     Vec3 force = {0,0,0};
     Vec3 accel = {0,0,0};
     Vec3 position_simulation = {0,0,0};
+    
+    GLuint vao;
+    GLuint vboVertices, vboNormals, vboTexCoords;
+    int vertexCount;
+    // Autres données nécessaires...
 
     // Constructeur avec tout
     CelestialObject(std::string name, std::string texture_path, double real_radius, double weight, int object_type, int distance_initiale, double rayon_simulation,
@@ -68,6 +73,7 @@ public:
     void addPositionHistory(const Vec3& point);
     const std::vector<Vec3>& getPositionHistory();
     void clearPositionHistory();
+
 
 
 };

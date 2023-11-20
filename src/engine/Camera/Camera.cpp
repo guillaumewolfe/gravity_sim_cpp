@@ -24,6 +24,12 @@ void Camera::Update() {
 
 
 Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
+    t = glm::clamp(t, 0.0f, 1.0f); // Assurez-vous que t reste dans la plage [0, 1]
+
+    // Réduisez la vitesse de changement de t en multipliant par un facteur de ralentissement
+    float slowdownFactor = 1.0f; // Réglez cette valeur pour contrôler la vitesse de transition
+    t = glm::pow(t, slowdownFactor);
+
     Vec3 newVec;
     newVec.x = start.x + (end.x - start.x) * t;
     newVec.y = start.y + (end.y - start.y) * t;
@@ -43,11 +49,6 @@ void Camera::transitionToFollowObject() {
 
     this->followingDistance = desiredDistance;
 
-    // Calculer les angles orbitaux finaux
-    // Ici, vous devez définir la logique pour calculer ces angles en fonction de la position actuelle
-    this->orbitalHorizontalAngle = 0; // Calculer en fonction de la position actuelle
-    this->orbitalVerticalAngle = 0; // Calculer en fonction de la position actuelle
-
     // Calculer la position finale
     Vec3 finalOffset;
     finalOffset.x = desiredDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
@@ -61,6 +62,12 @@ void Camera::transitionToFollowObject() {
     target = lerp(target, objectPosition, t);
 
 
+    if (glm::abs((position-finalPosition).norm()-desiredDistance)<0.1){
+        //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
+        isTransiting = false;
+        transitionStep = 0;
+        return;
+    }
 
     transitionStep++;
 
@@ -169,6 +176,16 @@ void Camera::moveRight(float distance) {
     target.z = target.z+right.z * distance;
 }
 
+void Camera::moveUp(float distance) {
+    Vec3 upDirection = up.normalize();
+    position.x = position.x + upDirection.x * distance;
+    position.y = position.y + upDirection.y * distance;
+    position.z = position.z + upDirection.z * distance;
+    target.x = target.x + upDirection.x * distance;
+    target.y = target.y + upDirection.y * distance;
+    target.z = target.z + upDirection.z * distance;
+}
+
 void Camera::orbitAroundObject(float horizontalAngle, float verticalAngle) {
     if (!followedObject) {
         return;
@@ -212,8 +229,9 @@ void Camera::newFollowObject(CelestialObject* obj) {
     Vec3 objectPosition = followedObject->getPositionSimulation();
     float initialDistance = 10.0f; // Ou toute autre valeur logique
     Vec3 initialOffset = Vec3(0, 0, initialDistance); // Modifier selon les besoins
-    orbitalHorizontalAngle = 0;
-    orbitalVerticalAngle = 0;
+    transitionStep = 0;
+    angle_perspective = 45;
+    setPerspective();
 
 }
 

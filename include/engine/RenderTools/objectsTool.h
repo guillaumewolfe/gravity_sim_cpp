@@ -16,16 +16,19 @@ public:
     explicit ObjectsTool(RenderContext* renderContext);
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
-    void drawSphere(double r, int lats, int longs);
+    void initSphere(CelestialObject& object, int lats, int longs);
+    void drawPlanets(CelestialObject* object);
+    void drawStars(CelestialObject* object);
     void computeNormals(CelestialObject* object);
     void updateLumiere(CelestialObject* object);
-    void iniShaders();
+    void initPlanetsShaders();
+    void initStarShaders(); 
     bool fileExists(const std::string& path);
     void checkCompileErrors(GLuint shader, std::string type) ;
 
 private:
     GLuint shaderProgram;
-    GLuint textureID;
+    GLuint starShaderProgram;
 
     GLuint loadTexture(const char* filename); 
     GLuint attributeTexCoordLocation;

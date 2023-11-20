@@ -44,7 +44,7 @@ public:
     float transitionProgress;
 
     int transitionStep = 0;
-    const int transitionThreshold = 200; // Ajustez selon la douceur souhaitée
+    const int transitionThreshold = 1000; // Ajustez selon la douceur souhaitée
 
 
 
@@ -59,6 +59,7 @@ public:
     void rotateVertical(float angle);
     void moveForward(float distance);
     void moveRight(float distance);
+    void moveUp(float distance);
     void orbitAroundObject(float horizontalAngle, float verticalAngle);
     void adjustDistanceToTarget();
     void newFollowObject(CelestialObject* obj);

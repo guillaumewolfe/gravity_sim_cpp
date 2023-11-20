@@ -4,7 +4,7 @@
 
 BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(renderContext){
     srand(static_cast<unsigned>(time(nullptr)));
-    initStars(10000);
+    initStars(20000);
 }
 
 
@@ -84,16 +84,16 @@ void BackgroundTool::initStars(int numberOfStars) {
         star.originalAlpha = star.alpha * 0.1;
         star.flickerOffset = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f * M_PI;
         int colorChoice = rand() % 100; // Générer un nombre aléatoire entre 0 et 99
-        if (colorChoice < 90) {
+        if (colorChoice < 20) {
             // 90% de chance d'être blanc
             star.r = 1.0f;
             star.g = 1.0f;
             star.b = 1.0f;
-        } else if (colorChoice < 95) {
+        } else if (colorChoice > 80) {
             // 5% de chance d'être légèrement rouge
             star.r = 1.0f;
-            star.g = 0.8f;
-            star.b = 0.8f;
+            star.g = 0.7f;
+            star.b = 0.7f;
         } else {
             // 5% de chance d'être légèrement bleu
             star.r = 0.7f;
