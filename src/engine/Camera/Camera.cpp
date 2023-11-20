@@ -42,10 +42,12 @@ void Camera::transitionToFollowObject() {
     
     Vec3 objectPosition = followedObject->getPositionSimulation();
     float objectRadius = followedObject->getRayon();
+    //objectRadius = 0.11656;
+    float pourcentOfScreen = 0.25f;
 
     // Calculer la distance de suivi désirée
     float verticalFOV = angle_perspective * (M_PI / 180.0f);
-    float desiredDistance = objectRadius / (tan(verticalFOV / 2) * 0.20f); // 20% occupation
+    float desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
 
     this->followingDistance = desiredDistance;
 

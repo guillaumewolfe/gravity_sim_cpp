@@ -20,7 +20,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
     initPlanetsShaders();
     initStarShaders();
     for (auto& object : m_renderContext->systemeSolaire->objects) {
-        initSphere(*object, 40, 40); 
+        initSphere(*object, 100, 100); 
     }
 }
 
@@ -37,7 +37,7 @@ void ObjectsTool::Draw() {
     }
     }
 
-    // Nettoyage
+    // Nettoyage*/
     glDisable(GL_DEPTH_TEST);
 }
 
@@ -47,6 +47,8 @@ void ObjectsTool::drawStars(CelestialObject* object){
         glUseProgram(starShaderProgram);
         // Mise à jour des matrices de transformation
         glMatrixMode(GL_MODELVIEW);
+
+        glPushMatrix();
         glLoadIdentity();
         m_renderContext->currentCamera->lookAt();
         glTranslatef(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
@@ -72,6 +74,7 @@ void ObjectsTool::drawStars(CelestialObject* object){
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
 
+        glPopMatrix();
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
@@ -85,6 +88,7 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         // Mise à jour des matrices de transformation
         updateLumiere(object);
         glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
         glLoadIdentity();
         m_renderContext->currentCamera->lookAt();
         glTranslatef(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
@@ -110,6 +114,7 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
 
+        glPopMatrix();
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
@@ -329,4 +334,3 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
 
     return texture;
 }
-

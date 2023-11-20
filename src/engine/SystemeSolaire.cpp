@@ -4,7 +4,8 @@
 SystemeSolaire::SystemeSolaire(){
     objects = initSystem();
     scale = getScale();
-    setRayon();}
+    setRayon();
+    }
 
 void SystemeSolaire::Draw(){
 }

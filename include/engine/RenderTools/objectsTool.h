@@ -23,12 +23,16 @@ public:
     void updateLumiere(CelestialObject* object);
     void initPlanetsShaders();
     void initStarShaders(); 
+    void initFrameBufferStar();
     bool fileExists(const std::string& path);
     void checkCompileErrors(GLuint shader, std::string type) ;
 
 private:
     GLuint shaderProgram;
     GLuint starShaderProgram;
+
+    GLuint framebufferSoleil;
+    GLuint textureFramebufferSoleil;
 
     GLuint loadTexture(const char* filename); 
     GLuint attributeTexCoordLocation;
