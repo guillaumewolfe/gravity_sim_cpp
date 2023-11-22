@@ -34,6 +34,7 @@ public:
     void drawUiElements();
     void closeButton();
     void startButton();
+    void RestartState() override;
     void Exit() override;
     std::string getDescription() override;
 
@@ -45,6 +46,11 @@ public:
     void generateMusic();
     void UpdateVideo();
     void drawVideo();
+
+    double lastTime;
+    double accumulator = 0.0;
+
+
 
 
 

@@ -19,6 +19,7 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext) {
     initPlanetsShaders();
     initStarShaders();
+    initFrameBuffer();
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         initSphere(*object, 100, 100); 
     }
@@ -42,6 +43,9 @@ void ObjectsTool::Draw() {
 }
 
 
+void ObjectsTool::initFrameBuffer(){
+
+}
 
 void ObjectsTool::drawStars(CelestialObject* object){
         glUseProgram(starShaderProgram);
@@ -79,7 +83,6 @@ void ObjectsTool::drawStars(CelestialObject* object){
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
 }
-
 
 
 

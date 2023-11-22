@@ -5,6 +5,7 @@ MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
    /*Constructeur :
        1- Construire les bouttons
        2- Initialiser le video*/
+    Enter();
   
 }
 void MenuState::Enter() {
@@ -25,11 +26,11 @@ std::vector<Labbel*> MenuState::generateLabbels(){
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
                                 "Space Querry",gameObj->getFont("Title"),0.7f);
-    Labbel *GameTitle2 = new Labbel(0.505f,0.207f,ImVec4(0,0,0,255),
-                            "Space Querry",gameObj->getFont("Title"),0.4f);
+    /*Labbel *GameTitle2 = new Labbel(0.501f,0.201f,ImVec4(0,0,0,255),
+                            "Space Querry",gameObj->getFont("Title"),0.4f);*/
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
                                     "Main Menu",gameObj->getFont("Main Menu"),0.9f);
-labbel_list.push_back(GameTitle2);
+
     labbel_list.push_back(GameTitle);
     labbel_list.push_back(MainMenu);
     return labbel_list;
@@ -197,11 +198,15 @@ void MenuState::closeButton(){
 }
 
 void MenuState::startButton(){
-    gameObj->ChangeState(new SimulationState(gameObj));
+    std::string newstate = "simulation";
+    gameObj->ChangeState(newstate);
 }
 
 
-
+void MenuState::RestartState(){
+    accumulator = 0.0;
+    lastTime = glfwGetTime();
+}
 
 
 
@@ -240,46 +245,31 @@ void MenuState::generateVideo() {
 
 
 void MenuState::UpdateVideo(){
-
-   static double lastTime = glfwGetTime();
-   static double accumulator = 0.0; // Time accumulator for frame updates
-
-
-   // Get the video's FPS and calculate the time per frame in seconds
-   double fps = cap.get(cv::CAP_PROP_FPS);
-   double timePerFrame = 1.0 / fps; // Time per frame in seconds
-
-
    double currentTime = glfwGetTime();
-   double elapsedTime = currentTime - lastTime; // Time elapsed in seconds
-
+   double elapsedTime = currentTime - lastTime; // Time elapsed since last update
 
    accumulator += elapsedTime; // Add elapsed time to the accumulator
 
+   // Get the video's FPS and calculate the time per frame in seconds
+   double fps = cap.get(cv::CAP_PROP_FPS);
+   double timePerFrame = 1.0 / fps;
 
    if (cap.isOpened() && accumulator >= timePerFrame) {
-       // If enough time has passed, update the frame
        cv::Mat frame;
        if (cap.read(frame)) {
-           // Convert frame from BGR to RGB
            cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-
-
-           // Update texture with the new frame
            glBindTexture(GL_TEXTURE_2D, videoTexture);
            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame.cols, frame.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, frame.data);
-           glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
+           glBindTexture(GL_TEXTURE_2D, 0);
        } else {
-           // If the video is finished, rewind to start
-           cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+           cap.set(cv::CAP_PROP_POS_FRAMES, 0); // Rewind if the video is finished
        }
-      
-       accumulator -= timePerFrame; // Subtract one frame worth of time from the accumulator
+       accumulator -= timePerFrame; // Subtract one frame worth of time
    }
-
 
    lastTime = currentTime; // Update the last time
 }
+
 
 
 void MenuState::drawVideo() {
@@ -321,7 +311,6 @@ void MenuState::generateMusic(){
         Mix_Quit();
         return;
     }
-
     // Play the music
     if (Mix_PlayMusic(bgMusic, -1) == -1) {
         std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;

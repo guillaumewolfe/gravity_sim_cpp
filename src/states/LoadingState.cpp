@@ -22,3 +22,4 @@ void LoadingState::Exit() {
 std::string LoadingState::getDescription() {
     return "Loading State";
 }
+void LoadingState::RestartState(){}

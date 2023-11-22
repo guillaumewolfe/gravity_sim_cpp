@@ -61,6 +61,7 @@ public:
     void Draw() override;
     void drawUiElements();
     void Exit() override;
+    void RestartState() override;
     std::string getDescription() override;
 
     // Bouttons:

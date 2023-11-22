@@ -12,6 +12,7 @@ public:
     void UpdatePhysics(double dt) override;
     void Draw() override;
     void Exit() override;
+    void RestartState() override;
     std::string getDescription() override;
 
     // Autres méthodes et attributs spécifiques au menu

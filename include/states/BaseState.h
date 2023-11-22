@@ -27,5 +27,6 @@ public:
     virtual void Draw() = 0;
     virtual void Exit() = 0;
     virtual std::string getDescription() = 0;
+    virtual void RestartState() = 0;
 };
 #endif

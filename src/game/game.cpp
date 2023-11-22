@@ -7,6 +7,9 @@
 #include <imgui_impl_glfw.h>
 #include <filesystem>
 #include "opencv2/opencv.hpp"
+#include <states/LoadingState.h>
+#include <states/MenuState.h>
+#include <states/SimulationState.h>
 
 Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr), 
                requestedState(nullptr), changeStateRequested(false) {}
@@ -20,8 +23,13 @@ void Game::setShouldClose(bool value) { shouldClose = value; }
 
 void Game::Init()
 { 
-LoadFonts(); 
+LoadFonts();
+
+states["menu"] = new MenuState(this);
+states["loading"] = new LoadingState(this);
+states["simulation"] = new SimulationState(this);
 }
+
 
 void Game::LoadFonts() {
     ImGuiIO& io = ImGui::GetIO();
@@ -51,10 +59,9 @@ ImFont* Game::getFont() {
 void Game::Close()
 {
     if (currentState)
-    {
-        currentState->Exit();
-        delete currentState;
-    }
+        for (auto& state : states) {
+            delete state.second;
+        }
 
     CleanupOpenGL();
 }
@@ -84,13 +91,11 @@ void Game::Draw()
     }
 }
 
-void Game::ChangeState(BaseState* newState) {
-    if (requestedState != nullptr) {
-        delete requestedState;
-    }
-    requestedState = newState;
-    changeStateRequested = true;
-}
+void Game::ChangeState(const std::string& stateKey) {
+    auto it = states.find(stateKey);
+        currentState = it->second;
+        currentState->RestartState();
+        }
 
 void Game::ApplyStateChange() {
     if (changeStateRequested && requestedState != nullptr) {

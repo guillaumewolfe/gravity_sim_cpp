@@ -13,9 +13,9 @@ void SystemeSolaire::Draw(){
 
 std::vector<CelestialObject*> SystemeSolaire::initSystem(){
     std::vector<CelestialObject*> celestialObjects;
+    
     Earth* earth = new Earth();
     Sun* sun = new Sun();
-
     Mercure* mercure = new Mercure();
     Venus* venus = new Venus();
     Mars* mars = new Mars();
@@ -55,6 +55,7 @@ void SystemeSolaire::setRayon(){
 }
 
 void SystemeSolaire::resetPosition(){
+    return;
         for (auto& object : objects){
         std::cout<<object->getName()<<": "<<object->getPositionSimulation().print()<<" Rayon: "<<object->getRayon()<<std::endl;
 }

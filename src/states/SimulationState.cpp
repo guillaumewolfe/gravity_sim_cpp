@@ -1,10 +1,11 @@
 #include "states/SimulationState.h"
 
 
-SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){}
+SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
+    Enter();
+}
 
 void SimulationState::Enter() {
-    //std::cout << "Entering Simulation State" << std::endl;
 
     //Constructions des éléments
     labbels = generateLabbels();
@@ -19,7 +20,6 @@ void SimulationState::Enter() {
     renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
-    //currentCamera->setPerspective(40.0, 1, 0.5, 300.0);
 
 }
 
@@ -251,7 +251,8 @@ void SimulationState::Restart(){
 }
 
 void SimulationState::MenuButton(){
-    gameObj->ChangeState(new MenuState(gameObj));
+    std::string newstate = "menu";
+    gameObj->ChangeState(newstate);
 }
 
 void SimulationState::generateDialogBox(std::function<void()> func, const std::string& message){
@@ -287,7 +288,6 @@ void SimulationState::changeSimulationSpeed(bool increase) {
     time_multiplier = speedSettings[currentSpeedIndex].first;
     std::string speedLabel = speedSettings[currentSpeedIndex].second;
 
-    // Vous pouvez utiliser speedLabel ici pour afficher ou logger
 }
 
 
@@ -303,3 +303,8 @@ void SimulationState::resetView(){
     currentCamera->resetPosition();
 }
 
+void SimulationState::RestartState(){
+    render->Message_Tool = nullptr;
+    Restart();
+
+}

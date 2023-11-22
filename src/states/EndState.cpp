@@ -21,3 +21,5 @@ void EndState::Exit() {
 std::string EndState::getDescription() {
     return "End State";
 }
+
+void EndState::RestartState(){}

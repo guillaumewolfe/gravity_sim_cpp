@@ -27,7 +27,7 @@ int main() {
         return -1;
     }
     myGame.Init();
-    myGame.ChangeState(new MenuState(&myGame));
+    myGame.ChangeState("menu");
 
 
     while (!myGame.ShouldClose() && !glfwWindowShouldClose(myGame.getWindow())) {

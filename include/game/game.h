@@ -4,6 +4,8 @@
 #include "UI/Buttons.h"
 #include <vector>
 
+
+
 #ifndef GAME_H
 #define GAME_H
 
@@ -25,6 +27,9 @@ public:
     Game();
     ~Game();
 
+    std::unordered_map<std::string, BaseState*> states;
+
+
     bool ShouldClose() const; 
     void ApplyStateChange();
     void setShouldClose(bool value);
@@ -38,7 +43,7 @@ public:
     void UpdatePhysics(double dt);
     void Draw();
     void Close();
-    void ChangeState(BaseState* newState);
+    void ChangeState(const std::string& stateKey);
     bool InitOpenGL();
     GLFWwindow* getWindow();
     void CleanupOpenGL();
