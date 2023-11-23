@@ -5,6 +5,7 @@
 #include "RenderComponent.h"
 #include "engine/Camera/Camera.h"
 #include "engine/Vec3.h"
+#include "engine/RenderTools/particules.h"
 
 class ObjectsTool : public RenderComponent {
 public:
@@ -30,7 +31,7 @@ private:
     GLuint shaderProgram;
     GLuint starShaderProgram;
 
-    GLuint framebuffer;
+    GLuint framebuffer, texColorBuffer, rbo;
 
 
     GLuint loadTexture(const char* filename); 

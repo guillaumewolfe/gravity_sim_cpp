@@ -25,11 +25,11 @@ std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
-                                "Space Querry",gameObj->getFont("Title"),0.7f);
+                                "Space Querry",100.0f,0.7f);
     /*Labbel *GameTitle2 = new Labbel(0.501f,0.201f,ImVec4(0,0,0,255),
                             "Space Querry",gameObj->getFont("Title"),0.4f);*/
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
-                                    "Main Menu",gameObj->getFont("Main Menu"),0.9f);
+                                    "Main Menu",30.0f,0.9f);
 
     labbel_list.push_back(GameTitle);
     labbel_list.push_back(MainMenu);
@@ -312,10 +312,11 @@ void MenuState::generateMusic(){
         return;
     }
     // Play the music
+    /*
     if (Mix_PlayMusic(bgMusic, -1) == -1) {
         std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
         Mix_FreeMusic(bgMusic);
         Mix_Quit();
         return;
-    }
+    }*/
 }

@@ -17,7 +17,7 @@ void SimulationState::Enter() {
     systemeSolaire = new SystemeSolaire();
     float maxSize = systemeSolaire->maxSize;
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings);
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
 
@@ -28,9 +28,9 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *TimeLabel = new Labbel(0.5f,0.90f,ImVec4(255,255,255,255),
-                                "Simulation time : ",gameObj->getFont("Main Menu"),1.0f);
+                                "Simulation time : ",30.0f,1.0f);
     Labbel *TimeMultiplier = new Labbel(0.5f,0.94f,ImVec4(255,255,255,255),
-                                "Time speed: x ",gameObj->getFont("Main Menu"),1.0f);
+                                "Time speed: x ",30.0f,1.0f);
 
     labbel_list.push_back(TimeLabel);
     labbel_list.push_back(TimeMultiplier);
@@ -39,10 +39,13 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
 //Butons
 std::vector<Button*> SimulationState::generateButtons(){
     std::vector<Button*> buttons_list;
-    float diff = 0.057;
+    float diff = 0.050;
+    float position_x = 0.046f;
+    float taille_x = 0.075f;
+    float taille_y = 0.045f;
     ImVec4 button_color = ImVec4(0.5f, 0.5f, 0.7f, 1.0f);
 
-   Button *MenuButton = new Button(0.08f, 1-(0.045f), ImVec2(0.12, 0.05),
+   Button *MenuButton = new Button(position_x, 1-(0.045f), ImVec2(taille_x, taille_y),
                                button_color,
                                ImVec4(1.0f, 0.1f, 0.1f, 1.0f),
                                "Menu", gameObj->getFont(), 0.25f,
@@ -50,23 +53,28 @@ std::vector<Button*> SimulationState::generateButtons(){
     auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");});
 
-   Button *RestartButton = new Button(0.08f, 1-(0.045f+diff), ImVec2(0.12, 0.05),
+   Button *RestartButton = new Button(position_x, 1-(0.045f+diff), ImVec2(taille_x, taille_y),
                                button_color,
                                ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
                                "Restart", gameObj->getFont(), 0.25f,
                                std::bind(&SimulationState::Restart, this));   
 
-   Button *PauseButton = new Button(0.08f, 1-(0.045f+2*diff), ImVec2(0.12, 0.05),
+   Button *PauseButton = new Button(position_x, 1-(0.045f+2*diff), ImVec2(taille_x, taille_y),
                                button_color,
                                ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
                                "Pause", gameObj->getFont(), 0.25f,
                                std::bind(&SimulationState::Pause, this));  
 
-    Button *ShowAxes = new Button(0.08f, 1-(0.045f+3*diff), ImVec2(0.12, 0.05),
+    Button *ShowAxes = new Button(position_x, 1-(0.045f+3*diff), ImVec2(taille_x, taille_y),
                             button_color,
                             ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
                             "Show Axes", gameObj->getFont(), 0.25f,
                             std::bind(&SimulationState::ShowAxesButton, this));  
+    Button *CreateObject = new Button(position_x, 1-(0.045f+4*diff), ImVec2(taille_x, taille_y),
+                        button_color,
+                        ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
+                        "Add object", gameObj->getFont(), 0.25f,
+                        std::bind(&SimulationState::CreateObjectButton, this));  
     Button *increaseSpeed = new Button(0.61f, 1-(0.060f), ImVec2(0.02, 0.03),
                             button_color,
                             ImVec4(0.5f, 0.7f, 1.0f, 1.0f),
@@ -83,6 +91,7 @@ std::vector<Button*> SimulationState::generateButtons(){
     buttons_list.push_back(RestartButton);
     buttons_list.push_back(PauseButton);
     buttons_list.push_back(ShowAxes);
+    buttons_list.push_back(CreateObject);
     buttons_list.push_back(increaseSpeed);
     buttons_list.push_back(decreaseSpeed);
     return buttons_list;
@@ -108,8 +117,9 @@ void SimulationState::rotateCamWithMouse(){
 }
 
 void SimulationState::Update() {
+    if (isCreating){return;}
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
-    if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape) && render->Message_Tool == nullptr) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");}
 
     
@@ -275,6 +285,19 @@ void SimulationState::ShowAxesButton(){
     if(showAxes){
         showAxes = false;
     }else{showAxes = true;}
+}
+
+void SimulationState::CreateObjectButton(){
+    if(isCreating){
+        isCreating = false;
+        render->Creator_Tool->End();
+        buttons[4]->updateLabel("Add object");
+        buttons[4]->changeColor(ImVec4(0.5f, 0.5f, 0.7f, 1.0f));
+    }else{
+        isCreating = true;
+        buttons[4]->updateLabel("Close");
+        buttons[4]->changeColor(ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+    }
 }
 
 

@@ -9,6 +9,7 @@
 #include "engine/RenderTools/PathTool.h"
 #include "engine/EngineIncludes.h"
 #include "UI/MessageTool.h"
+#include "engine/RenderTools/creatorTool.h"
 
 
 #ifndef RENDER_H
@@ -18,23 +19,23 @@
 class Render {
 private:
 
-    /// Methodes
-    RenderContext* Context;
-
-    //Tools
-
-    UITool* UI_Tool;
-    ObjectsTool* Objects_Tool;
-    BackgroundTool* Background_Tool;
-    AxesTool* Axes_Tool;
-    SystemeSolaire* SystemeSolaire_Tool;
-    PathTool* Path_Tool;
 
 
 //Background:
 
 public:
+/// Methodes
+RenderContext* Context;
 
+//Tools
+
+UITool* UI_Tool;
+ObjectsTool* Objects_Tool;
+BackgroundTool* Background_Tool;
+AxesTool* Axes_Tool;
+SystemeSolaire* SystemeSolaire_Tool;
+PathTool* Path_Tool;
+CreatorTool* Creator_Tool;
 MessageTool* Message_Tool;
 Render(RenderContext* Context);
 void Draw();

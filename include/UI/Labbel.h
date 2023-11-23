@@ -11,7 +11,7 @@
 class Labbel {
 private:
     ImFont* font;
-    ImFont* myFont;
+    float fontSize;
     ImVec2 position; 
     ImVec4 color;   
     float alpha;
@@ -22,7 +22,7 @@ private:
     bool shouldUpdatePosition(const ImVec2& newTextSize);
 
 public:
-    Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, ImFont* font, float alpha);
+    Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha);
     void Draw();
     void UpdateText(const std::string& newText);
     void UpdateAlpha(const float opp);

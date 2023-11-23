@@ -37,4 +37,5 @@ public:
     bool InitSoundEffects();
     bool enabled = true;
     bool hidden = false;
+    void changeColor(ImVec4 newColor);
 };

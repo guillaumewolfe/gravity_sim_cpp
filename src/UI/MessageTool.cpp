@@ -32,7 +32,7 @@ void MessageTool::Draw() {
 void MessageTool::draw_rectangles(){
     // Calculer la position centrale de l'écran
     ImVec2 textSize = ImGui::CalcTextSize(phrase.c_str());
-    float longueur = textSize.x * 1.5; // Exemple de taille
+    float longueur = winWidth * 0.2; // Exemple de taille
     float hauteur = winHeight * 0.125; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
@@ -52,8 +52,12 @@ void MessageTool::draw_rectangles(){
     // Dessiner le premier rectangle avec coins arrondis
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(53, 88, 87, 150), // Couleur
+                            IM_COL32(43, 78, 77, 250), // Couleur
                             cornerRadius);
+    drawList->AddRect(topLeft, 
+                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                        IM_COL32(20, 20, 20, 130), // Couleur
+                        cornerRadius,0,3.0f);
 
     // Définir la taille du deuxième rectangle (10% plus grand)
     float enlargementFactor = 1.01f; 
@@ -64,18 +68,14 @@ void MessageTool::draw_rectangles(){
     // Calculer le coin supérieur gauche du deuxième rectangle
     ImVec2 largerTopLeft = ImVec2(centerPos.x - largerSquareSizeLongueur * 0.5f, centerPos.y - largerSquareSizeHauteur * 0.5f);
 
-    // Dessiner le deuxième rectangle avec coins arrondis
-    drawList->AddRectFilled(largerTopLeft, 
-                            ImVec2(largerTopLeft.x + largerSquareSizeLongueur, largerTopLeft.y + largerSquareSizeHauteur), 
-                            IM_COL32(255, 255, 255, 10), // Couleur
-                            cornerRadius);
+
     
 }
 
 
 void MessageTool::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.5f,0.47f,ImVec4(255,255,255,255),
-                            phrase,ImGui::GetFont(),1.0f);
+                            phrase,0,1.0f);
     labbels.push_back(MessageLabel);
 }
 void MessageTool::draw_labels(){

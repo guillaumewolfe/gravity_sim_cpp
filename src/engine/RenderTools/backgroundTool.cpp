@@ -84,7 +84,7 @@ void BackgroundTool::initStars(int numberOfStars) {
         star.originalAlpha = star.alpha * 0.1;
         star.flickerOffset = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 2.0f * M_PI;
         int colorChoice = rand() % 100; // Générer un nombre aléatoire entre 0 et 99
-        if (colorChoice < 40) {
+        if (colorChoice < 70) {
             // 90% de chance d'être blanc
             star.r = 1.0f;
             star.g = 1.0f;

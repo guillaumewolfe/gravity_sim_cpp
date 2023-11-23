@@ -33,6 +33,7 @@ private:
     bool isPaused = false;
     bool forcePause = false;
     bool showAxes = false;
+    bool isCreating = false;
 
     RenderContext* renderContext;
 
@@ -69,6 +70,7 @@ public:
     void Restart();
     void MenuButton();
     void ShowAxesButton();
+    void CreateObjectButton();
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();

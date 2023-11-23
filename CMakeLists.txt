@@ -7,7 +7,7 @@ if(WIN32)
     set(GLFW_LIB "${CMAKE_SOURCE_DIR}/lib/libglfw3dll.a")
     # Assume SDL2 is installed in a standard location on Windows or specify its path
     find_package(SDL2 REQUIRED)
-elseif(APPLE)
+    elseif(APPLE)
     # Ajustez le chemin pour OpenCV sur macOS si nécessaire.
     set(GLFW_LIB "/opt/homebrew/lib/libglfw.3.3.dylib")
     
@@ -19,7 +19,11 @@ elseif(APPLE)
     set(SDL2_MIXER_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
     set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
     include_directories("/opt/homebrew/Cellar/glm/0.9.9.8/include")
-    include_directories(/opt/homebrew/Cellar/opencv/4.8.1_4/include/opencv4)
+    include_directories("/opt/homebrew/Cellar/opencv/4.8.1_4/include/opencv4")
+    
+    # Recherchez GLEW
+    find_package(GLEW REQUIRED)
+    set(GLEW_INCLUDE_DIRS "/opt/homebrew/opt/glew/include")
 endif()
 
 # Configuration OpenCV
@@ -57,5 +61,5 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Querry")
 
 # Link Directories and Libraries
-link_directories(${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
+link_directories(${CMAKE_SOURCE_DIR}/lib ${GLEW_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} GLEW::GLEW)

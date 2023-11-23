@@ -28,6 +28,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 
 
 
+
 void ObjectsTool::Draw() {
     glEnable(GL_DEPTH_TEST);
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
@@ -44,7 +45,25 @@ void ObjectsTool::Draw() {
 
 
 void ObjectsTool::initFrameBuffer(){
+PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffersEXT = NULL;
+PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT = NULL;
+PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT = NULL;
+PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT = NULL;
+PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT = NULL;
 
+// Chargement des fonctions
+glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)glfwGetProcAddress("glGenFramebuffersEXT");
+glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC)glfwGetProcAddress("glBindFramebufferEXT");
+glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)glfwGetProcAddress("glFramebufferTexture2DEXT");
+glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)glfwGetProcAddress("glCheckFramebufferStatusEXT");
+glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)glfwGetProcAddress("glDeleteFramebuffersEXT");
+
+// Vérifier si les fonctions ont été chargées correctement
+if (!glGenFramebuffersEXT || !glBindFramebufferEXT || !glFramebufferTexture2DEXT ||
+    !glCheckFramebufferStatusEXT || !glDeleteFramebuffersEXT) {
+    std::cerr << "Erreur lors du chargement des fonctions d'extension FBO." << std::endl;
+    // Gérer l'erreur...
+}
 }
 
 void ObjectsTool::drawStars(CelestialObject* object){

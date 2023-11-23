@@ -21,6 +21,7 @@ Button::~Button() {
 }
 // Draw method
 void Button::Draw() {
+    if (!hidden){
     // Get window dimensions
     int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
@@ -96,13 +97,16 @@ if (isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
     mouseButtonPressed = false; // Réinitialiser le statut du bouton pressé
 }
 
-}
+}}
 
 // Additional methods for Button class could be implemented here (e.g., setters/getters, interaction logic, etc.)
 void Button::updateLabel(const std::string& newLabel){
     label = newLabel;
 }
 
+void Button::changeColor(ImVec4 newColor){
+    color = newColor;
+}
 
 // Initialize sound effects
 bool Button::InitSoundEffects() {

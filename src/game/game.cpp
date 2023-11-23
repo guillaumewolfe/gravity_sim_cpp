@@ -132,6 +132,7 @@ bool Game::InitOpenGL()
     }
 
     glfwMakeContextCurrent(window);
+    gladLoadGL();
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
