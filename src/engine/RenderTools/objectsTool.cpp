@@ -144,66 +144,66 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
 
 
 void ObjectsTool::initSphere(CelestialObject& object, int lats, int longs) {
-    std::vector<float> vertices;
-    std::vector<float> normals;
-    std::vector<float> texCoords;
+        std::vector<float> vertices;
+        std::vector<float> normals;
+        std::vector<float> texCoords;
 
-    for (int i = 0; i <= lats; ++i) {
+            for (int i = 0; i <= lats; ++i) {
+        double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
+        double lat1 = M_PI * (-0.5 + (double) i / lats);
+
         for (int j = 0; j <= longs; ++j) {
-            double lat0 = M_PI * (-0.5 + (double) (i - 1) / lats);
-            double z0  = sin(lat0);
-            double zr0 = cos(lat0);
-
-            double lat1 = M_PI * (-0.5 + (double) i / lats);
-            double z1 = sin(lat1);
-            double zr1 = cos(lat1);
-
             double lng = 2 * M_PI * (double) j / longs;
             double x = cos(lng);
             double y = sin(lng);
+
+            // Ici, nous allons ajuster la manière dont z0, zr0, z1 et zr1 sont calculés
+            double z0  = sin(lat0);
+            double zr0 = cos(lat0);
+            double z1 = sin(lat1);
+            double zr1 = cos(lat1);
 
             double u = (double)j / longs;
             double v = (double)i / lats;
 
             // Normals and vertices for the first point
             normals.push_back(x * zr0);
-            normals.push_back(y * zr0);
-            normals.push_back(z0);
+            normals.push_back(z0);  // Échange y * zr0 avec z0
+            normals.push_back(y * zr0);  // Échange z0 avec y * zr0
             vertices.push_back(x * zr0 * object.rayon_simulation);
-            vertices.push_back(y * zr0 * object.rayon_simulation);
             vertices.push_back(z0 * object.rayon_simulation);
+            vertices.push_back(y * zr0 * object.rayon_simulation);
             texCoords.push_back(u);
             texCoords.push_back(v);
 
             // Normals and vertices for the second point
             normals.push_back(x * zr1);
-            normals.push_back(y * zr1);
-            normals.push_back(z1);
+            normals.push_back(z1);  // Échange y * zr1 avec z1
+            normals.push_back(y * zr1);  // Échange z1 avec y * zr1
             vertices.push_back(x * zr1 * object.rayon_simulation);
-            vertices.push_back(y * zr1 * object.rayon_simulation);
             vertices.push_back(z1 * object.rayon_simulation);
+            vertices.push_back(y * zr1 * object.rayon_simulation);
             texCoords.push_back(u);
             texCoords.push_back(v + 1.0f / lats);
         }
     }
 
-    // Create and populate VBOs
-    glGenBuffers(1, &object.vboVertices);
-    glBindBuffer(GL_ARRAY_BUFFER, object.vboVertices);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+        // Create and populate VBOs
+        glGenBuffers(1, &object.vboVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, object.vboVertices);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &object.vboNormals);
-    glBindBuffer(GL_ARRAY_BUFFER, object.vboNormals);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+        glGenBuffers(1, &object.vboNormals);
+        glBindBuffer(GL_ARRAY_BUFFER, object.vboNormals);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
 
-    glGenBuffers(1, &object.vboTexCoords);
-    glBindBuffer(GL_ARRAY_BUFFER, object.vboTexCoords);
-    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
+        glGenBuffers(1, &object.vboTexCoords);
+        glBindBuffer(GL_ARRAY_BUFFER, object.vboTexCoords);
+        glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
 
-    // Pas besoin de créer ou de lier un VAO ici
+        object.vertexCount = vertices.size() / 3;
+    }
 
-    object.vertexCount = vertices.size() / 3;
-}
 
 
 
