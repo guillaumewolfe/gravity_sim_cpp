@@ -169,7 +169,7 @@ void SimulationState::Update() {
             !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}*/
 
 
-    if (ImGui::IsKeyPressed(ImGuiKey_F)) {changeFollowedObject();}
+    if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeFollowedObject();}
 
     if (ImGui::IsKeyDown(ImGuiKey_T)) {resetView();}
 

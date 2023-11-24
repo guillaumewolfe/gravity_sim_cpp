@@ -1,12 +1,14 @@
 #version 120
 
-attribute vec3 aPos;
-uniform mat4 modelMatrix;
+varying vec3 Normal;
+varying vec3 FragPos;
 
-varying vec3 fragPosition;
+attribute vec3 vertexPosition;
+attribute vec3 vertexNormal;
 
-void main()
-{
-    gl_Position = modelMatrix * vec4(aPos, 1.0);
-    fragPosition = gl_Position.xyz;
+void main() {
+    Normal = normalize(vertexNormal);
+    FragPos = vec3(gl_ModelViewMatrix * vec4(vertexPosition, 1.0));
+    gl_Position = gl_ModelViewProjectionMatrix * vec4(vertexPosition, 1.0);
+    gl_FrontColor = vec4((Normal + 1.0) / 2.0, 1.0);
 }

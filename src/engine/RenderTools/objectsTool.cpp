@@ -19,9 +19,11 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext) {
     initPlanetsShaders();
     initStarShaders();
-    initFrameBuffer();
+    glowTool = new GlowTool(m_renderContext->systemeSolaire->objects[0]);
+
+
     for (auto& object : m_renderContext->systemeSolaire->objects) {
-        initSphere(*object, 100, 100); 
+        initSphere(*object, 150, 150); 
     }
 }
 
@@ -31,6 +33,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 
 void ObjectsTool::Draw() {
     glEnable(GL_DEPTH_TEST);
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
         if(object->type==1){
             drawStars(object);
@@ -38,33 +41,11 @@ void ObjectsTool::Draw() {
         drawPlanets(object);
     }
     }
-
+    glowTool->drawGlow();
     // Nettoyage*/
     glDisable(GL_DEPTH_TEST);
 }
 
-
-void ObjectsTool::initFrameBuffer(){
-PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffersEXT = NULL;
-PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebufferEXT = NULL;
-PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT = NULL;
-PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT = NULL;
-PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffersEXT = NULL;
-
-// Chargement des fonctions
-glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)glfwGetProcAddress("glGenFramebuffersEXT");
-glBindFramebufferEXT = (PFNGLBINDFRAMEBUFFEREXTPROC)glfwGetProcAddress("glBindFramebufferEXT");
-glFramebufferTexture2DEXT = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)glfwGetProcAddress("glFramebufferTexture2DEXT");
-glCheckFramebufferStatusEXT = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)glfwGetProcAddress("glCheckFramebufferStatusEXT");
-glDeleteFramebuffersEXT = (PFNGLDELETEFRAMEBUFFERSEXTPROC)glfwGetProcAddress("glDeleteFramebuffersEXT");
-
-// Vérifier si les fonctions ont été chargées correctement
-if (!glGenFramebuffersEXT || !glBindFramebufferEXT || !glFramebufferTexture2DEXT ||
-    !glCheckFramebufferStatusEXT || !glDeleteFramebuffersEXT) {
-    std::cerr << "Erreur lors du chargement des fonctions d'extension FBO." << std::endl;
-    // Gérer l'erreur...
-}
-}
 
 void ObjectsTool::drawStars(CelestialObject* object){
         glUseProgram(starShaderProgram);
@@ -104,7 +85,6 @@ void ObjectsTool::drawStars(CelestialObject* object){
 }
 
 
-
 void ObjectsTool::drawPlanets(CelestialObject* object){
         glUseProgram(shaderProgram);
         // Mise à jour des matrices de transformation
@@ -141,10 +121,6 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
 }
-
-
-
-
 
 void ObjectsTool::updateLumiere(CelestialObject* object){
     glm::vec3 positionSoleil = glm::vec3(0,0,0);
@@ -263,6 +239,7 @@ void ObjectsTool::initPlanetsShaders() {
 
 
 }
+
 void ObjectsTool::initStarShaders() {
     std::string vertexCode = readShaderFile("../src/engine/RenderTools/Shaders/vertex_star.glsl");
     std::string fragmentCode = readShaderFile("../src/engine/RenderTools/Shaders/fragment_star.glsl");
@@ -292,6 +269,9 @@ void ObjectsTool::initStarShaders() {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
+
+
+
 
 
 void ObjectsTool::checkCompileErrors(GLuint shader, std::string type) {
@@ -356,3 +336,7 @@ GLuint ObjectsTool::loadTexture(const char* filename) {
 
     return texture;
 }
+
+
+
+
