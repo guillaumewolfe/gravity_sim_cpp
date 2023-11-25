@@ -67,3 +67,7 @@ std::string Vec3::print()
 {
     return "Vec: (" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
 }
+
+glm::vec3 Vec3::toGlm() {
+    return glm::vec3(x, y, z);
+}

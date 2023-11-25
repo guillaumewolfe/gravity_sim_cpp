@@ -27,8 +27,8 @@ public:
 
 private:
     CelestialObject* m_celestialObject; 
-    int nbreSphere = 250;
-    float sizeOfGlow = 6.00;
+    int nbreSphere = 50;
+    float sizeOfGlow = 1.00;
     std::vector<GlowSphere> glowSpheres;
     
 

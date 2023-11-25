@@ -26,4 +26,5 @@ public:
     void Draw();
     void UpdateText(const std::string& newText);
     void UpdateAlpha(const float opp);
+    void UpdatePosition(float xPercent, float yPercent);
 };

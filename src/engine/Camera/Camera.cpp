@@ -117,6 +117,7 @@ for (int i = 0; i < 16; ++i) {
 }
     glMultMatrixf(mFloat);
     glGetFloatv(GL_MODELVIEW_MATRIX, modelViewMatrix);
+    viewMatrix = glm::lookAt(position.toGlm(), target.toGlm(), up.toGlm());
 }
 
 
@@ -220,6 +221,7 @@ void Camera::setPerspective() {
 
     // Revenir à la matrice de modèle-vue
     glMatrixMode(GL_MODELVIEW);
+    projectionMatrix = glm::frustum(static_cast<float>(-fW), static_cast<float>(fW), static_cast<float>(-fH), static_cast<float>(fH), static_cast<float>(zNear), static_cast<float>(zFar));
 }
 
 void Camera::newFollowObject(CelestialObject* obj) {
@@ -307,4 +309,12 @@ void Camera::calculateNormalMatrix() {
 
 const GLfloat* Camera::getNormalMatrix() const {
     return normalMatrix;
+}
+
+
+glm::mat4 Camera::getViewMatrix() {
+        return viewMatrix;}
+
+glm::mat4 Camera::getProjectionMatrix() {
+    return projectionMatrix;
 }

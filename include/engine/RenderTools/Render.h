@@ -10,6 +10,7 @@
 #include "engine/EngineIncludes.h"
 #include "UI/MessageTool.h"
 #include "engine/RenderTools/creatorTool.h"
+#include "engine/RenderTools/namesTool.h"
 
 
 #ifndef RENDER_H
@@ -37,6 +38,9 @@ SystemeSolaire* SystemeSolaire_Tool;
 PathTool* Path_Tool;
 CreatorTool* Creator_Tool;
 MessageTool* Message_Tool;
+NameTool* Name_Tool;
+
+
 Render(RenderContext* Context);
 void Draw();
 void initTools();

@@ -30,6 +30,8 @@ public:
     double orbitalVerticalAngle = 0;
     double orbitalHorizontalAngle =0;
     float accumulatedHorizontalAngle = 0.0f;
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
 
 
     void startTransition(CelestialObject* newObject, int steps);
@@ -64,6 +66,9 @@ public:
     void adjustDistanceToTarget();
     void newFollowObject(CelestialObject* obj);
     void followObject();
+
+    glm::mat4 getViewMatrix();
+    glm::mat4 getProjectionMatrix();
 
 
     void resetPosition();

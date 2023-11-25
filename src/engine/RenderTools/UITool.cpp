@@ -4,6 +4,7 @@
 #include <iomanip>
 #include "UI/Buttons.h"
 #include "UI/Labbel.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 UITool::UITool(RenderContext* renderContext) : RenderComponent(renderContext){}
 
@@ -17,10 +18,7 @@ draw_buttons();
 ImGui::End(); 
 
 
-//Slider for testing
-// ImGui::SetNextWindowPos(ImVec2(0, 0));
-// if (ImGui::SliderFloat("Variable", &sliderVariable, 0.0f, 1.0f))
-// {}
+
 
 }
 

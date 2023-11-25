@@ -20,6 +20,7 @@ void Render::initTools(){
     Axes_Tool = new AxesTool(Context);
     Path_Tool = new PathTool(Context);
     Creator_Tool = new CreatorTool(Context);
+    Name_Tool = new NameTool(Context);
 
     initCamera();
 }
@@ -38,6 +39,7 @@ void Render::Draw(){
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(*(Context->isCreating)){Creator_Tool->Draw();}
+    Name_Tool->Draw();
     ImGui::Render();
     
     updateCamera();

@@ -59,3 +59,9 @@ void Labbel::UpdateText(const std::string& newText) {
 void Labbel::UpdateAlpha(const float opp) {
     alpha = opp;
 }
+
+
+void Labbel::UpdatePosition(float xPercent, float yPercent){
+    ImVec2 newposition = ImVec2(xPercent,yPercent);
+    position = newposition;
+}

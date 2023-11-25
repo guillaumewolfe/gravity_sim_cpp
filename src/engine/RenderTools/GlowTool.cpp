@@ -27,7 +27,7 @@ void GlowTool::initGlow() {
         sphere.rayon = rayonSphere;
 
         // Utiliser une fonction exponentielle inversée pour l'alpha
-        sphere.alpha =0.001* exp(-progression * 20.0f+4); // Ajustez le facteur 5.0f selon vos besoins
+        sphere.alpha =0.1* exp(-progression * 6); // Ajustez le facteur 5.0f selon vos besoins
         
         // Ajustement des couleurs
         glm::vec3 yellowColor = glm::vec3(1.0, 1.0, 0.2); // Jaune
