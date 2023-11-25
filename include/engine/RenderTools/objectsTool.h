@@ -6,6 +6,7 @@
 #include "engine/Camera/Camera.h"
 #include "engine/Vec3.h"
 #include "engine/RenderTools/GlowTool.h"
+#include "engine/RenderTools/athmosphereTool.h"
 
 class ObjectsTool : public RenderComponent {
 public:
@@ -30,6 +31,7 @@ private:
     GLuint starShaderProgram;
 
     GlowTool* glowTool;
+    AthmosphereTool* athmoTool;
 
     void initPlanetsShaders();
     void initStarShaders(); 

@@ -20,6 +20,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
     initPlanetsShaders();
     initStarShaders();
     glowTool = new GlowTool(m_renderContext->systemeSolaire->objects[0]);
+    athmoTool = new AthmosphereTool(m_renderContext->systemeSolaire->objects[3], m_renderContext);
 
 
     for (auto& object : m_renderContext->systemeSolaire->objects) {
@@ -42,6 +43,7 @@ void ObjectsTool::Draw() {
     }
     }
     glowTool->drawGlow();
+    athmoTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
     // Nettoyage*/
     glDisable(GL_DEPTH_TEST);
 }

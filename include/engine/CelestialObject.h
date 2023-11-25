@@ -22,6 +22,7 @@ public:
     double rotationSid;
     double rotationSidSpeed;
     Vec3 rotationSidDirection;
+    bool shouldBeDrawn = true;
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;
