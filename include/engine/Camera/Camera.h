@@ -69,6 +69,7 @@ public:
 
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix();
+    Vec3 getPosition();
 
 
     void resetPosition();

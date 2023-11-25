@@ -4,7 +4,7 @@
 
 
 Earth::Earth() : CelestialObject() {
-    std::string name_sub = "Terre";
+    std::string name_sub = "Earth";
     std::string path_sub = "../assets/textures/earth_real.jpg";
     type = 2;
     textureID = loadTexture(path_sub.c_str());

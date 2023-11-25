@@ -39,8 +39,8 @@ ImGui::End();
 
 
 void NameTool::updateLabelPositions() {
-    if (labbels.size() != m_renderContext->systemeSolaire->objects.size()) {
-        return; // Assurez-vous qu'il y a un label pour chaque objet planétaire
+    if (labbels.empty() || m_renderContext->systemeSolaire->objects.empty()) {
+        return; // Vérifiez qu'il y a au moins un label et un objet planétaire
     }
 
     glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();
@@ -51,7 +51,6 @@ void NameTool::updateLabelPositions() {
     for (size_t i = 0; i < m_renderContext->systemeSolaire->objects.size(); ++i) {
         auto& object = m_renderContext->systemeSolaire->objects[i];
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
-        float planetRadius = object->getRayon();
 
         // Convertir les coordonnées 3D en coordonnées de clip
         glm::vec4 clipCoords = projectionMatrix * viewMatrix * glm::vec4(planetPos3D, 1.0f);
@@ -62,17 +61,16 @@ void NameTool::updateLabelPositions() {
         // Convertir en coordonnées d'écran
         float xPercent = (ndc.x + 1.0f) / 2.0f;
         float yPercent = (1.0f - ndc.y) / 2.0f;
+        float planetRadius = object->getRayon();
 
         // Calculer une position approximative du haut de la planète
-        glm::vec4 topOfPlanetPos = glm::vec4(planetPos3D, 1.0f) + glm::vec4(0, planetRadius, 0, 0);
-        topOfPlanetPos = projectionMatrix * viewMatrix * topOfPlanetPos;
+        glm::vec4 topOfPlanetPos = projectionMatrix * viewMatrix * glm::vec4(planetPos3D + glm::vec3(0, planetRadius, 0), 1.0f);
         topOfPlanetPos /= topOfPlanetPos.w;
-
         float topYPercent = (1.0f - topOfPlanetPos.y) / 2.0f;
-        topYPercent -= 0.02f; // Ajustement pour monter le label
+        topYPercent -= 0.02f; // Ajuster légèrement vers le haut
 
         // Vérifier si le label devrait être visible
-        if (xPercent >= 0.0f && xPercent <= 1.0f) {
+        if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
             labbels[i]->UpdateAlpha(1.0f); // L'objet est visible à l'écran
             labbels[i]->UpdatePosition(xPercent, topYPercent);
         } else {
@@ -80,4 +78,3 @@ void NameTool::updateLabelPositions() {
         }
     }
 }
-

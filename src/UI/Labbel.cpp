@@ -65,3 +65,7 @@ void Labbel::UpdatePosition(float xPercent, float yPercent){
     ImVec2 newposition = ImVec2(xPercent,yPercent);
     position = newposition;
 }
+
+ImVec2 Labbel::getPosition(){
+    return position;
+}

@@ -209,7 +209,7 @@ void Camera::setPerspective() {
     GLdouble fW, fH;
     int winWidth, winHeight;
     float zNear = 0.01;
-    float zFar = 1500;
+    float zFar = 1600;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     // Calculer la hauteur et la largeur de la fenêtre à la distance de clipping près
     fH = tan(angle_perspective / 360 * pi) * zNear;
@@ -317,4 +317,8 @@ glm::mat4 Camera::getViewMatrix() {
 
 glm::mat4 Camera::getProjectionMatrix() {
     return projectionMatrix;
+}
+
+Vec3 Camera::getPosition(){
+    return position;
 }
