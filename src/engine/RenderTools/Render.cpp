@@ -21,6 +21,7 @@ void Render::initTools(){
     Path_Tool = new PathTool(Context);
     Creator_Tool = new CreatorTool(Context);
     Name_Tool = new NameTool(Context);
+    PlaneteInfo_Tool = new PlaneteInfoTool(Context);
 
     initCamera();
 }
@@ -40,6 +41,7 @@ void Render::Draw(){
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(*(Context->isCreating)){Creator_Tool->Draw();}
     Name_Tool->Draw();
+    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
     ImGui::Render();
     
     updateCamera();
@@ -52,11 +54,11 @@ void Render::Draw(){
 
 
 
+    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
 
-
-
-    //On dessine les éléments du GUI à la fin
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 }
 
 
@@ -68,6 +70,6 @@ void Render::updateCamera(){
 }
 
 void Render::initCamera(){
-    Vec3 position_initiale = Vec3(-60,10,15);
+    Vec3 position_initiale = Vec3(-100,20.5236,23.6161);
     Context->currentCamera->setInitPosition(position_initiale);
 }

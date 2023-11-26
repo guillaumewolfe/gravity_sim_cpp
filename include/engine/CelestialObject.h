@@ -23,6 +23,9 @@ public:
     double rotationSidSpeed;
     Vec3 rotationSidDirection;
     bool shouldBeDrawn = true;
+    std::string orbitalString;
+    Vec3 initialVelocity;
+    double distanceFromPlanet; //For satelite
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;

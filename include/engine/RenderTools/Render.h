@@ -11,6 +11,7 @@
 #include "UI/MessageTool.h"
 #include "engine/RenderTools/creatorTool.h"
 #include "engine/RenderTools/namesTool.h"
+#include "engine/RenderTools/planeteInfoTool.h"
 
 
 #ifndef RENDER_H
@@ -39,6 +40,7 @@ PathTool* Path_Tool;
 CreatorTool* Creator_Tool;
 MessageTool* Message_Tool;
 NameTool* Name_Tool;
+PlaneteInfoTool* PlaneteInfo_Tool;
 
 
 Render(RenderContext* Context);

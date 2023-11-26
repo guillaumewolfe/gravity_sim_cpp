@@ -42,7 +42,6 @@ void Camera::transitionToFollowObject() {
     
     Vec3 objectPosition = followedObject->getPositionSimulation();
     float objectRadius = followedObject->getRayon();
-    //objectRadius = 0.11656;
     float pourcentOfScreen = 0.25f;
 
     // Calculer la distance de suivi désirée
@@ -120,14 +119,41 @@ for (int i = 0; i < 16; ++i) {
     viewMatrix = glm::lookAt(position.toGlm(), target.toGlm(), up.toGlm());
 }
 
+void Camera::updateObjectVisibility(CelestialObject* object) {
+    if (!object) {
+        return;
+    }
+
+    // Obtenir la position de l'objet et son rayon
+    Vec3 objectPosition = object->getPositionSimulation();
+    float objectRadius = object->getRayon();
+
+    // Calculer la distance entre la caméra et l'objet
+    float distance = (objectPosition - this->position).norm();
+
+    // Calculer la taille angulaire de l'objet (en radians)
+    float angularSize = 2 * atan(objectRadius / distance);
+
+    // Calculer le FOV vertical de la caméra (en radians)
+    float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
+
+    // Déterminer si l'objet occupe au moins 1% de l'écran
+    // (comparer la taille angulaire de l'objet avec le FOV)
+    float screenOccupation = angularSize / verticalFOV;
+    object->shouldBeDrawn = (screenOccupation >= 0.00025);
+}
+
+
+
 
 void Camera::zoom(bool in) {
-    
+
     if (in){zoomFactor = 0.99;}
         else{zoomFactor = 1.01;}
 
     angle_perspective *= zoomFactor;
     if(angle_perspective>150){angle_perspective = 150;}
+
     setPerspective();
 }
 
@@ -234,7 +260,7 @@ void Camera::newFollowObject(CelestialObject* obj) {
     float initialDistance = 10.0f; // Ou toute autre valeur logique
     Vec3 initialOffset = Vec3(0, 0, initialDistance); // Modifier selon les besoins
     transitionStep = 0;
-    angle_perspective = 45;
+    angle_perspective = 40;
     setPerspective();
 
 }

@@ -41,7 +41,7 @@ void AthmosphereTool::initAthmosphere() {
 }
 
 void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
-    if (m_celestialObject == nullptr) {
+    if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn)) {
         return;
     }
 

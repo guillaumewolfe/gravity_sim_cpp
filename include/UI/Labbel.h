@@ -28,4 +28,5 @@ public:
     void UpdateAlpha(const float opp);
     void UpdatePosition(float xPercent, float yPercent);
     ImVec2 getPosition();
+    void UpdateColor(ImVec4 newColor);
 };

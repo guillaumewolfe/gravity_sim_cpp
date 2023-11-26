@@ -20,7 +20,8 @@ private:
     ImFont* font;
     float alpha;
     float cornerRadius;
-
+    bool isRound;
+    float fontSize;
     //Sound
     Mix_Chunk* hoverSound = nullptr;
     Mix_Chunk* clickSound = nullptr;
@@ -30,7 +31,7 @@ private:
 
 
 public:
-    Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, ImFont* font, float alpha, std::function<void()> onClickAction);
+    Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, float alpha,float fontsize, std::function<void()> onClickAction, float cornerRadius = 10.0f, bool isRound = false);
     ~Button(); 
     void Draw();
     void updateLabel(const std::string& newLabel);

@@ -15,11 +15,12 @@ Mercure::Mercure() : CelestialObject() {
     distance_initiale = 57909175e3;
     real_radius = 2439.7e3;
     weight = 3.301e23;
-    Vec3 initialVelocity = Vec3(0,0,-47.87e3);
+    initialVelocity = Vec3(0,0,-47.87e3);
     inclinaison = 0.034;
     rotationSid = 0;
-    rotationSidSpeed = 1/5064;
+    rotationSidSpeed = 0.000000198;
     rotationSidDirection = Vec3(0,1,0);
+    orbitalString = "88 days";
 
     setName(name_sub);
     setPath(path_sub);

@@ -74,6 +74,8 @@ public:
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();
+    void showInfos();
+    bool showInfo=false;
 
     bool firstMouse = true;
     bool isRotatingWithMouse = false;

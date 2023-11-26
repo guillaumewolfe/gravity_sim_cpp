@@ -22,6 +22,8 @@ private:
 std::vector<Labbel*> labbels;
 float maxDelta = 0.05f;
 float verticalOffset = 0.01;
+float alpha;
+
 
 
 };

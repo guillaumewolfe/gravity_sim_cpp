@@ -4,6 +4,7 @@
 
 #include "RenderComponent.h"
 
+
 class UITool : public RenderComponent {
 public:
     float sliderVariable;
@@ -12,8 +13,14 @@ public:
     void Draw() override;
     void draw_labbels();
     void draw_buttons();
+    void draw_rect();
+    GLuint backgroundTexture;
 
     float lastScroll = 0.0f;
+
+private:
+    int winWidth, winHeight;
+    ImFont* myFont;
 };
 
 #endif // UITOOL_H

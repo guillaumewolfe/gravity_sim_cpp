@@ -8,17 +8,18 @@ Uranus::Uranus() : CelestialObject() {
     std::string path_sub = "../assets/textures/uranus.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(21,0,0);
-    type = 2;
+    type = 4;
     textureID = loadTexture(path_sub.c_str());
 
     distance_initiale = 2870658186e3;
     real_radius = 25362e3;
     weight = 8.681e25;
-    Vec3 initialVelocity = Vec3(0,0,-6.8e3);
+    initialVelocity = Vec3(0,0,-6.8e3);
     inclinaison = 97.77;
     rotationSid = 0;
-    rotationSidSpeed = 0.0058;
+    rotationSidSpeed = 0.0000161;
     rotationSidDirection = Vec3(0,1,0);
+    orbitalString = "84.01 years";
 
 
     setName(name_sub);

@@ -80,6 +80,7 @@ public:
 
     void updateViewMatrix();
     void setPerspective();
+    void updateObjectVisibility(CelestialObject* object);
     
     void calculateNormalMatrix();
     const GLfloat* getNormalMatrix() const;

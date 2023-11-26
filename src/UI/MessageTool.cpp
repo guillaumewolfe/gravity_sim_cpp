@@ -52,11 +52,11 @@ void MessageTool::draw_rectangles(){
     // Dessiner le premier rectangle avec coins arrondis
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(43, 78, 77, 250), // Couleur
+                            IM_COL32(0, 0, 0, 250), // Couleur
                             cornerRadius);
     drawList->AddRect(topLeft, 
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(20, 20, 20, 130), // Couleur
+                        IM_COL32(60, 60, 60, 130), // Couleur
                         cornerRadius,0,3.0f);
 
     // Définir la taille du deuxième rectangle (10% plus grand)
@@ -86,16 +86,16 @@ void MessageTool::draw_labels(){
 
 
 void MessageTool::generate_buttons(){
-   Button *OKButton = new Button(0.465f, 0.52f, ImVec2(0.05, 0.045),
+   Button *OKButton = new Button(0.465f, 0.52f, ImVec2(0.0355, 0.0375),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                ImVec4(0.1f, 1.0f, 0.1f, 1.0f),
-                               "Yes", ImGui::GetFont(), 0.25f,
+                               "Yes", 0.15f,0,
                                std::bind(&MessageTool::OkButtonPressed, this));  
 
-   Button *CancelButton = new Button(0.535f, 0.52f, ImVec2(0.05, 0.04),
+   Button *CancelButton = new Button(0.535f, 0.52f, ImVec2(0.0355, 0.0375),
                                ImVec4(1.0f, 0.5f, 0.5f, 1.0f),
                                ImVec4(1.0f, 0.1f, 0.1f, 1.0f),
-                               "Cancel", ImGui::GetFont(), 0.25f,
+                               "Cancel", 0.15,0,
                                std::bind(&MessageTool::CancelButtonPressed, this));  
     buttons.push_back(OKButton);
     buttons.push_back(CancelButton);

@@ -16,11 +16,12 @@ Venus::Venus() : CelestialObject() {
     distance_initiale = 108208930e3;
     real_radius = 6051.8e3;
     weight = 4.867e24;
-    Vec3 initialVelocity = Vec3(0,0,-35.02e3);
+    initialVelocity = Vec3(0,0,-35.02e3);
     inclinaison = 177.4;
     rotationSid = 0;
-    rotationSidSpeed = 1/5832;
+    rotationSidSpeed = 0.0000000476;
     rotationSidDirection = Vec3(0,-1,0);
+    orbitalString = "255 days";
 
 
     setName(name_sub);

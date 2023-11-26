@@ -5,7 +5,7 @@
 Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha)
 :position(xPercent, yPercent),color(color),label(label), fontSize(fontsize), alpha(alpha){
     if(fontSize==0){font = ImGui::GetFont(); }
-    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", fontSize);}
+    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto-Medium.ttf", fontSize);}
     if (!font) {
         // Gérer le cas où le chargement de la police échoue
         std::cerr << "Erreur lors du chargement de la police." << std::endl;
@@ -68,4 +68,8 @@ void Labbel::UpdatePosition(float xPercent, float yPercent){
 
 ImVec2 Labbel::getPosition(){
     return position;
+}
+
+void Labbel::UpdateColor(ImVec4 newColor){
+    color = newColor;
 }

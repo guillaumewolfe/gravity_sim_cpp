@@ -19,7 +19,7 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext) {
     initPlanetsShaders();
     initStarShaders();
-    glowTool = new GlowTool(m_renderContext->systemeSolaire->objects[0]);
+    glowTool = new GlowTool(m_renderContext->systemeSolaire->objects[0], m_renderContext);
     athmoTool = new AthmosphereTool(m_renderContext->systemeSolaire->objects[3], m_renderContext);
 
 
@@ -33,15 +33,20 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 
 
 void ObjectsTool::Draw() {
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+            m_renderContext->currentCamera->updateObjectVisibility(object);
+        }
+
     glEnable(GL_DEPTH_TEST);
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        if (object->shouldBeDrawn) {
         if(object->type==1){
             drawStars(object);
-        }else if(object->type==2){
+        }else if(object->type>1){
         drawPlanets(object);
     }
-    }
+    }}
     glowTool->drawGlow();
     athmoTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
     // Nettoyage*/

@@ -8,7 +8,7 @@
 
 
 // Constructeur
-GlowTool::GlowTool(CelestialObject* celestialObject) : m_celestialObject(celestialObject) {
+GlowTool::GlowTool(CelestialObject* celestialObject, RenderContext* renderContext) : m_celestialObject(celestialObject),m_renderContext(renderContext) {
     initGlow();
     initShaders();
 }
@@ -27,10 +27,10 @@ void GlowTool::initGlow() {
         sphere.rayon = rayonSphere;
 
         // Utiliser une fonction exponentielle inversée pour l'alpha
-        sphere.alpha =0.1* exp(-progression * 6); // Ajustez le facteur 5.0f selon vos besoins
+        sphere.alpha =0.015* exp(-progression * 2); // Ajustez le facteur 5.0f selon vos besoins
         
         // Ajustement des couleurs
-        glm::vec3 yellowColor = glm::vec3(1.0, 1.0, 0.2); // Jaune
+        glm::vec3 yellowColor = glm::vec3(1.0, 0.6, 0.2); // Jaune
         glm::vec3 whiteColor = glm::vec3(1.0, 1.0, 1.0); // Blanc
         float colorProgression = pow(progression, 0.5);
         sphere.color = glm::mix(whiteColor, yellowColor, colorProgression);
@@ -56,8 +56,11 @@ void GlowTool::drawGlow() {
     glUseProgram(shaderProgram); // Assurez-vous d'avoir un shader pour le glow
     GLint alphaLoc = glGetUniformLocation(shaderProgram, "alpha");
     GLint colorLoc = glGetUniformLocation(shaderProgram, "sphereColor");
-
-
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
+    m_renderContext->currentCamera->lookAt();
     for (const auto& sphere : glowSpheres) {
         glUniform1f(alphaLoc, sphere.alpha);
         glUniform3fv(colorLoc, 1, glm::value_ptr(sphere.color));
@@ -88,6 +91,7 @@ void GlowTool::drawGlow() {
     glDisable(GL_BLEND);
 
     // Désactiver le shader
+    glPopMatrix();
     glUseProgram(0);
 }
 

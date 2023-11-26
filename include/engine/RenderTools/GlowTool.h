@@ -3,6 +3,7 @@
 
 #include "engine/CelestialObject.h" // Assurez-vous d'inclure le bon fichier pour CelestialObject
 #include <vector>
+#include "engine/RenderTools/RenderContext.h"
 
 
 
@@ -18,7 +19,7 @@ struct GlowSphere {
 class GlowTool {
 public:
     // Constructeur
-    GlowTool(CelestialObject* celestialObject);
+    GlowTool(CelestialObject* celestialObject,RenderContext* renderContext);
 
     // Méthodes pour gérer le glow
     void initGlow();
@@ -26,9 +27,10 @@ public:
     void initSphere(GlowSphere& sphere, int lats, int longs, float rayon);
 
 private:
+    RenderContext* m_renderContext;
     CelestialObject* m_celestialObject; 
-    int nbreSphere = 50;
-    float sizeOfGlow = 1.00;
+    int nbreSphere = 75;
+    float sizeOfGlow = 0.4;
     std::vector<GlowSphere> glowSpheres;
     
 

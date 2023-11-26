@@ -23,26 +23,14 @@ void Game::setShouldClose(bool value) { shouldClose = value; }
 
 void Game::Init()
 { 
-LoadFonts();
 
 states["menu"] = new MenuState(this);
 states["loading"] = new LoadingState(this);
 states["simulation"] = new SimulationState(this);
 }
 
-
 void Game::LoadFonts() {
-    ImGuiIO& io = ImGui::GetIO();
-    fonts["Regular"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 22.0f);
-    fonts["Title"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 100.0f);
-    fonts["Main Menu"] = io.Fonts->AddFontFromFileTTF("../assets/fonts/TiltNeon-Regular.ttf", 30.0f);
 
-    // Assurez-vous que toutes les polices ont été chargées correctement
-    for (auto& font : fonts) {
-        if (!font.second) {
-            std::cerr << "Failed to load font: " << font.first << std::endl;
-        }
-    }
 }
 
 ImFont* Game::getFont(const std::string& fontKey) {
@@ -54,7 +42,7 @@ ImFont* Game::getFont(const std::string& fontKey) {
 }
 ImFont* Game::getFont() {
     // Utilisez une clé par défaut ou un chemin de fichier pour la police "Regular"
-    return getFont("TiltNeon-Regular.ttf"); // ou le chemin relatif selon l'organisation de vos fichiers
+    return getFont("Roboto-Medium.ttf"); // ou le chemin relatif selon l'organisation de vos fichiers
 }
 void Game::Close()
 {

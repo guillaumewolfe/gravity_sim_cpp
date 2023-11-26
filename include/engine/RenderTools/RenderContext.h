@@ -14,6 +14,7 @@ public:
     float* maxSize;
     bool* showAxes;
     bool* isCreating;
+    bool* showInfo;
     int* currentSpeedIndex;
     std::vector<std::pair<int, std::string>> speedSettings;
     std::vector<Labbel*> labels;
@@ -23,7 +24,7 @@ public:
 
 
     RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns, float* maxsize, bool* showaxe, 
-    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating );
+    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo );
 };
 
 #endif // RENDERCONTEXT_H

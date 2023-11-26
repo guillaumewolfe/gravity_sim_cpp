@@ -16,11 +16,12 @@ Earth::Earth() : CelestialObject() {
     distance_initiale = 149597870e3;
     real_radius = 6371e3;
     weight = 5.972e24;
-    Vec3 initialVelocity = Vec3(0,0,-29.78e3);
+    initialVelocity = Vec3(0,0,-29.78e3);
     inclinaison = 23.5;
     rotationSid = 0;
-    rotationSidSpeed = 360/86400;
+    rotationSidSpeed = 0.0000116;
     rotationSidDirection = Vec3(0,1,0);
+    orbitalString = "1 year";
 
 
     setName(name_sub);

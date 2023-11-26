@@ -5,6 +5,7 @@ SystemeSolaire::SystemeSolaire(){
     objects = initSystem();
     scale = getScale();
     setRayon();
+    //for (auto& object : objects){std::cout<<object->getName()<<" : "<<object->getRayon()<<std::endl;}
     }
 
 void SystemeSolaire::Draw(){
@@ -53,17 +54,15 @@ double SystemeSolaire::getScale(){
 
 void SystemeSolaire::setRayon(){
     for (auto& object : objects){
-        object->setRayonSim(5*scale);
+        object->setRayonSim(3*scale);
     }   
 }
 
 void SystemeSolaire::resetPosition(){
-    return;
         for (auto& object : objects){
-        std::cout<<object->getName()<<": "<<object->getPositionSimulation().print()<<" Rayon: "<<object->getRayon()<<std::endl;
-}
-    for (auto& object : objects){
-        object->position_real = Vec3(object->distance_initiale,0,0);
+        object->updatePositionReal(Vec3(object->distance_initiale,0,0));
+        object->updateVelocity(object->initialVelocity);
         object->clearPositionHistory();
-    }
+
+}
 }

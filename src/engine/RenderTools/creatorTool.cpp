@@ -68,13 +68,13 @@ void CreatorTool::generate_buttons(){
                                 ImVec4(1.0f, 0.5f, 0.5f, 1.0f),
                                 ImVec4(1.0f, 0.6f, 0.6f, 1.0f),
                                
-                               "Précédant", ImGui::GetFont(), 0.50f,
+                               "Précédant", 0.50f,22.0f,
                                std::bind(&CreatorTool::CloseButtonPressed, this));  
 
    Button *CloseButton = new Button(0.55f, 0.8125, ImVec2(0.05, 0.04),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                ImVec4(0.6f, 1.0f, 0.6f, 1.0f),
-                               "Suivant", ImGui::GetFont(), 0.55f,
+                               "Suivant", 0.55f,22.0f,
                                std::bind(&CreatorTool::CloseButtonPressed, this));  
     buttons.push_back(OKButton);
     buttons.push_back(CloseButton);

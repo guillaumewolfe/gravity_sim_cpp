@@ -8,18 +8,19 @@ Neptune::Neptune() : CelestialObject() {
     std::string path_sub = "../assets/textures/neptune.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(24,0,0);
-    type = 2;
+    type = 4;
     textureID = loadTexture(path_sub.c_str());
 
     //Physics:
     distance_initiale = 4498396441e3;
     real_radius = 24622e3;
     weight = 1.024e26;
-    Vec3 initialVelocity = Vec3(0,0,-5.43e3);
+    initialVelocity = Vec3(0,0,-5.43e3);
     inclinaison = 28.32;
     rotationSid = 0;
-    rotationSidSpeed = 0.0062;
+    rotationSidSpeed = 0.0000172;
     rotationSidDirection = Vec3(0,1,0);
+    orbitalString = "164.8 years";
 
     
     setName(name_sub);

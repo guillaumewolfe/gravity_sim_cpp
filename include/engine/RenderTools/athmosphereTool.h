@@ -44,7 +44,7 @@ private:
     std::string readShaderFile(const std::string& shaderPath);
     bool fileExists(const std::string& path);
 
-
+    
 
 };
 

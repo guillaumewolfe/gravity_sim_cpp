@@ -5,6 +5,7 @@
 
 NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext){
     initLabbels();
+    alpha = 0.9f;
 }
 
 void NameTool::initLabbels() {
@@ -16,7 +17,6 @@ void NameTool::initLabbels() {
         float yPercent = 0.5f; // Exemple de position Y
         ImVec4 color = ImVec4(255, 255, 255, 255); // Couleur blanche
         float fontSize = 20.0f; // Taille de police
-        float alpha = 1.0f; // Opacité
 
         // Créez un nouveau Labbel
         Labbel* newLabel = new Labbel(xPercent, yPercent, color, planetName, fontSize, alpha);
@@ -24,6 +24,7 @@ void NameTool::initLabbels() {
         // Ajoutez-le au vecteur
         labbels.push_back(newLabel);
     }
+    
 }
 
 
@@ -46,8 +47,8 @@ void NameTool::updateLabelPositions() {
     glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();
     glm::mat4 projectionMatrix = m_renderContext->currentCamera->getProjectionMatrix();
     int screenWidth, screenHeight;
+    auto followedObject = m_renderContext->currentCamera->followedObject;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
-
     for (size_t i = 0; i < m_renderContext->systemeSolaire->objects.size(); ++i) {
         auto& object = m_renderContext->systemeSolaire->objects[i];
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
@@ -69,9 +70,14 @@ void NameTool::updateLabelPositions() {
         float topYPercent = (1.0f - topOfPlanetPos.y) / 2.0f;
         topYPercent -= 0.02f; // Ajuster légèrement vers le haut
 
+
+        //if(object->getName()=="Earth"){std::cout<<"XY: "<<xPercent<<" "<<topYPercent<<std::endl;}
         // Vérifier si le label devrait être visible
-        if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
-            labbels[i]->UpdateAlpha(1.0f); // L'objet est visible à l'écran
+        if(object == followedObject){
+            labbels[i]->UpdateAlpha(0.0f);
+        }
+        else if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
+            labbels[i]->UpdateAlpha(alpha); // L'objet est visible à l'écran
             labbels[i]->UpdatePosition(xPercent, topYPercent);
         } else {
             labbels[i]->UpdateAlpha(0.0f); // L'objet n'est pas visible à l'écran
