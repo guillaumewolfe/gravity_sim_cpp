@@ -13,11 +13,11 @@ void main() {
     float dotProduct = dot(norm, lightDir);
 
     // Couleurs pour la diffusion de Rayleigh et le coucher de soleil
-    vec3 baseBlue = vec3(0.0, 0.30, 1.0); // Bleu de base
+    vec3 baseBlue = vec3(0.0, 0.10, 1.0); // Bleu de base
     vec3 baseRed = vec3(1.0, 0.1, 0.0); // Rouge orangé de base
 
     // Mélange des couleurs de base avec du blanc pour les adoucir
-    vec3 rayleighColor = mix(baseBlue, vec3(1.0, 1.0, 1.0), 0.25); // Bleu moins intense
+    vec3 rayleighColor = mix(baseBlue, vec3(1.0, 1.0, 1.0), 0.5); // Bleu moins intense
     vec3 sunsetColor =baseRed; // Rouge moins intense
 
     // Adoucissement de la transition

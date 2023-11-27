@@ -9,7 +9,7 @@ Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color,
             std::cout<<"Failed to load sound at init"<<std::endl;
         }
     if(fontSize==0){font = ImGui::GetFont(); }
-    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto-Medium.ttf", fontSize);}
+    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);}
     if (!font) {
         // Gérer le cas où le chargement de la police échoue
         std::cerr << "Erreur lors du chargement de la police." << std::endl;

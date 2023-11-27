@@ -38,6 +38,7 @@ private:
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
     std::map<int, std::pair<std::string, ImVec4>> typeDict;
+    double Rotation=0;
 
 
     

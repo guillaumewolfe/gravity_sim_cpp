@@ -217,15 +217,18 @@ void PlaneteInfoTool::drawTexturedSphere(float radius, int numSegments, int numS
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glDisable(GL_DEPTH_TEST);
 
 
     // Positionnement de la sphère en fonction de la distance calculée
     glTranslatef(winWidth * 0.875f, winHeight * 0.32f,0);
     glRotatef(90,1,0,0);
-    //if(Rotation==360){Rotation=0;}
+    glRotatef(Rotation,0,0,-1);
+    Rotation+=0.2;
+    if(Rotation==360){Rotation-=360;}
 
     glBindTexture(GL_TEXTURE_2D, m_object->getTexture());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glEnable(GL_TEXTURE_2D);
 
 
@@ -265,7 +268,6 @@ void PlaneteInfoTool::drawTexturedSphere(float radius, int numSegments, int numS
     }
 
     glDisable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();

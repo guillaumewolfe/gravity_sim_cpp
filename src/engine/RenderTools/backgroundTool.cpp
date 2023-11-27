@@ -4,7 +4,7 @@
 
 BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(renderContext){
     srand(static_cast<unsigned>(time(nullptr)));
-    initStars(10000);
+    initStars(15000);
 }
 
 
@@ -26,7 +26,6 @@ void BackgroundTool::Draw() {
         float flicker = (sin(iterationFactor * flickerFrequency + star.flickerOffset) + 1.0f) * 0.5f;
         star.size = star.originalSize + flicker * 0.1f; // Réduire l'amplitude du scintillement
         star.alpha = star.originalAlpha + flicker;
-        star.alpha *= 0.8;
 
         glPointSize(star.size);
         glColor4f(star.r, star.g, star.b, star.alpha);

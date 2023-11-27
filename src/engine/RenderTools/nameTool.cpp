@@ -5,7 +5,7 @@
 
 NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext){
     initLabbels();
-    alpha = 0.9f;
+    alpha = 0.6f;
 }
 
 void NameTool::initLabbels() {

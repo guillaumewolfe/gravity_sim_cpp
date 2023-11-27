@@ -50,7 +50,7 @@ void Physics::updatePosition(CelestialObject* obj, double dt){
 }
 
 void Physics::updateRotation(CelestialObject* obj, double dt){
-    obj->rotationSid += (obj->rotationSidSpeed*dt*60);
+    obj->rotationSid += (obj->rotationSidSpeed*dt*360);
     //if(obj->getName()=="Earth"){
     //std::cout<<"rorationSid: "<<obj->rotationSid<<" Speed: "<<obj->rotationSidSpeed<<" dt:"<<dt*60<<std::endl;}
 } 

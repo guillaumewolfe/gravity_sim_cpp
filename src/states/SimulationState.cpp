@@ -28,11 +28,11 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *TimeLabel = new Labbel(0.5f,0.97f,ImVec4(255,255,255,255),
-                                "Simulation time : ",20.0f,1.0f);
+                                "Simulation time : ",20.0f,0.8f);
     Labbel *TimeMultiplier = new Labbel(0.61f,0.98f,ImVec4(200,200,200,200),
-                                "Time speed: x ",17.0f,1.0f);
+                                "Time speed: x ",17.0f,0.8f);
     Labbel *Speed = new Labbel(0.61f,0.96f,ImVec4(255,255,255,255),
-                                "Speed",20.0f,1.0f);
+                                "Speed",20.0f,0.8f);
     labbel_list.push_back(TimeLabel);
     labbel_list.push_back(TimeMultiplier);
     labbel_list.push_back(Speed);
