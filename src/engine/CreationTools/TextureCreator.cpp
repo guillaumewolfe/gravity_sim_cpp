@@ -1,9 +1,9 @@
 #define GL_SILENCE_DEPRECATION
 #include "glad/glad.h"
-#include "engine/RenderTools/creatorTool.h"
+#include "engine/CreationTools/TextureCreator.h"
 
 
-CreatorTool::CreatorTool(RenderContext* renderContext) : RenderComponent(renderContext){
+TextureCreator::TextureCreator(RenderContext* renderContext) : RenderComponent(renderContext){
     generate_buttons();
     generate_labels();
     objects = initSystem();
@@ -11,7 +11,7 @@ CreatorTool::CreatorTool(RenderContext* renderContext) : RenderComponent(renderC
     generatePlanetLabels();
 }
 
-std::vector<CelestialObject*> CreatorTool::initSystem(){
+std::vector<CelestialObject*> TextureCreator::initSystem(){
     std::vector<CelestialObject*> celestialObjects;
 
     Sun* sun = new Sun();
@@ -46,7 +46,7 @@ std::vector<CelestialObject*> CreatorTool::initSystem(){
     return celestialObjects;
 }
 
-void CreatorTool::Draw() {
+void TextureCreator::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
@@ -65,7 +65,7 @@ void CreatorTool::Draw() {
     ImGui::PopStyleColor();
 }
 
-void CreatorTool::drawBackground(){
+void TextureCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     float cornerRadius = 30.0f;
@@ -86,12 +86,12 @@ void CreatorTool::drawBackground(){
 }
 
 
-void CreatorTool::generate_labels(){
+void TextureCreator::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.5f,0.20f,ImVec4(255,255,255,255),
                             "Choose type of object",30.0f,0.7f);
     labbels.push_back(MessageLabel);
 }
-void CreatorTool::updateClickStatus() {
+void TextureCreator::updateClickStatus() {
     float detectionWidth = radius*2.3; // Largeur de la zone de détection en pixels
     float detectionHeight = radius*2.3; // Hauteur de la zone de détection en pixels
     for (size_t i = 0; i < objectPositions.size(); ++i) {
@@ -116,18 +116,18 @@ void CreatorTool::updateClickStatus() {
         }
     }
 }
-void CreatorTool::resetLabelColor(){
+void TextureCreator::resetLabelColor(){
     for (size_t i = 0; i < objectPositions.size(); ++i){
         planeteNames[i]->UpdateColor(ImVec4(255, 255, 255, 255));
     }
 }
-void CreatorTool::drawSelectionSphere(){
+void TextureCreator::drawSelectionSphere(){
     draw2DSphereClicked();
     draw2DSphereHover();
 
 }
 
-void CreatorTool::draw2DSphereClicked() {
+void TextureCreator::draw2DSphereClicked() {
     if(!drawSphereClick){return;}
     float posX = selectionSphereClick.posX;
     float posY = selectionSphereClick.posY;
@@ -176,7 +176,7 @@ void CreatorTool::draw2DSphereClicked() {
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
 }
-void CreatorTool::updateHoverStatus() {
+void TextureCreator::updateHoverStatus() {
     float detectionWidth = radius*2.3; // Largeur de la zone de détection en pixels
     float detectionHeight = radius*2.3; // Hauteur de la zone de détection en pixels
     drawSphereHover = false;
@@ -199,7 +199,7 @@ void CreatorTool::updateHoverStatus() {
     }
 }
 
-void CreatorTool::draw2DSphereHover() {
+void TextureCreator::draw2DSphereHover() {
     if(!drawSphereHover){return;}
     float posX = selectionSphereHover.posX;
     float posY = selectionSphereHover.posY;
@@ -249,7 +249,7 @@ void CreatorTool::draw2DSphereHover() {
     glPopMatrix();
 }
 
-void CreatorTool::draw_labels(){
+void TextureCreator::draw_labels(){
         for (Labbel* label : labbels) {
         label->Draw();
     }
@@ -258,36 +258,37 @@ void CreatorTool::draw_labels(){
     }
 }
 
-void CreatorTool::generate_buttons(){
+void TextureCreator::generate_buttons(){
    Button *ReturnButton = new Button(0.5f, 0.8225, ImVec2(0.05, 0.045),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
                                 ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
                                
                                "Close", 0.00f,22.0f,
-                               std::bind(&CreatorTool::CloseButtonPressed, this));  
+                               std::bind(&TextureCreator::CloseButtonPressed, this));  
 
    Button *NextButton = new Button(0.55f, 0.8225, ImVec2(0.05, 0.04),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
                                "Select", 0.0f,23.0f,
-                               std::bind(&CreatorTool::NextButtonPressed, this));  
+                               std::bind(&TextureCreator::NextButtonPressed, this));  
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
     buttons[1]->hidden=true;
     buttons[1]->UpdateLabelColor(100,255,150,200);
+    buttons[0]->UpdateLabelColor(255,125,100,200);
 }
-void CreatorTool::draw_buttons(){
+void TextureCreator::draw_buttons(){
         for (Button* btn : buttons) {
         btn->Draw();
     }
 }
 
-void CreatorTool::CloseButtonPressed(){
+void TextureCreator::CloseButtonPressed(){
     *(m_renderContext->isCreating)=false;
     reset();
 }
 
-void CreatorTool::NextButtonPressed(){
+void TextureCreator::NextButtonPressed(){
     CelestialObject* clickedObject = objects[selectedIndex];
     std::cout<<clickedObject->getName()<<std::endl;
     reset();
@@ -295,7 +296,7 @@ void CreatorTool::NextButtonPressed(){
 
 
 
-void CreatorTool::generatePlanetLabels() {
+void TextureCreator::generatePlanetLabels() {
     planeteNames.clear(); // Vider la liste existante
 
     float labelOffsetY = -(winHeight * 0.045f); // Décalage vertical pour les étiquettes
@@ -318,7 +319,7 @@ void CreatorTool::generatePlanetLabels() {
 
 
 
-void CreatorTool::drawCelestialObjects() {
+void TextureCreator::drawCelestialObjects() {
     radius = winHeight * 0.025;
 
     for (const auto& info : objectPositions) {
@@ -327,7 +328,7 @@ void CreatorTool::drawCelestialObjects() {
 }
 
 
-void CreatorTool::calculateObjectPositions() {
+void TextureCreator::calculateObjectPositions() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     longueur = winWidth* 0.30; // Exemple de taille
     hauteur = winHeight * 0.75; // Exemple de taille
@@ -358,7 +359,7 @@ void CreatorTool::calculateObjectPositions() {
         objectPositions.push_back(info);
     }
 }
-void CreatorTool::drawTexturedSphere(float radius, int numSegments, int numSlices, float offsetX, float offsetY,GLuint texture) {
+void TextureCreator::drawTexturedSphere(float radius, int numSegments, int numSlices, float offsetX, float offsetY,GLuint texture) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -427,7 +428,7 @@ void CreatorTool::drawTexturedSphere(float radius, int numSegments, int numSlice
     glPopMatrix();
 }
 
-void CreatorTool::reset(){
+void TextureCreator::reset(){
     drawSphereHover = false;
     drawSphereClick = false;
     Rotation=0;

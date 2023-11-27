@@ -19,7 +19,7 @@ void Render::initTools(){
     Background_Tool = new BackgroundTool(Context);
     Axes_Tool = new AxesTool(Context);
     Path_Tool = new PathTool(Context);
-    Creator_Tool = new CreatorTool(Context);
+    Creator_Tool = new TextureCreator(Context);
     Name_Tool = new NameTool(Context);
     PlaneteInfo_Tool = new PlaneteInfoTool(Context);
 

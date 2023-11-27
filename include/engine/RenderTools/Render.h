@@ -9,7 +9,7 @@
 #include "engine/RenderTools/PathTool.h"
 #include "engine/EngineIncludes.h"
 #include "UI/MessageTool.h"
-#include "engine/RenderTools/creatorTool.h"
+#include "engine/CreationTools/TextureCreator.h"
 #include "engine/RenderTools/namesTool.h"
 #include "engine/RenderTools/planeteInfoTool.h"
 
@@ -37,7 +37,7 @@ BackgroundTool* Background_Tool;
 AxesTool* Axes_Tool;
 SystemeSolaire* SystemeSolaire_Tool;
 PathTool* Path_Tool;
-CreatorTool* Creator_Tool;
+TextureCreator* Creator_Tool;
 MessageTool* Message_Tool;
 NameTool* Name_Tool;
 PlaneteInfoTool* PlaneteInfo_Tool;

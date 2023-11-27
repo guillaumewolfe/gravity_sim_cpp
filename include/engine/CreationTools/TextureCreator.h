@@ -1,8 +1,8 @@
 // UITool.h
-#ifndef CreatorTOOL_H
-#define CreatorTOOL_H
+#ifndef TextureCreator_H
+#define TextureCreator_H
 
-#include "RenderComponent.h"
+#include "../RenderTools/RenderComponent.h"
 struct CelestialObjectInfo {
     float posX;
     float posY;
@@ -18,14 +18,14 @@ struct drawSphereComp{
     ImVec4 color;
     float radius;
 };
-class CreatorTool : public RenderComponent {
+class TextureCreator : public RenderComponent {
 public:
 
     bool drawSphereHover = false;
     bool drawSphereClick = false;
 
 
-    explicit CreatorTool(RenderContext* renderContext);
+    explicit TextureCreator(RenderContext* renderContext);
     void Draw() override;
     void drawBackground();
     void End();
@@ -73,4 +73,4 @@ private:
 
 };
 
-#endif // CreatorTool_H
+#endif // TextureCreator_H
