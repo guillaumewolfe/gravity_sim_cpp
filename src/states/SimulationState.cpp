@@ -6,7 +6,6 @@ SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
 }
 
 void SimulationState::Enter() {
-
     //Constructions des éléments
     labbels = generateLabbels();
     buttons = generateButtons();
@@ -20,7 +19,6 @@ void SimulationState::Enter() {
     renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
-
 }
 
 //Labels
@@ -120,7 +118,9 @@ void SimulationState::rotateCamWithMouse(){
 }
 
 void SimulationState::Update() {
-    if (isCreating){return;}
+    if (isCreating){
+        return;}
+    else{if(!buttonsActivated)activateButtons();}
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyPressed(ImGuiKey_Escape) && render->Message_Tool == nullptr) {auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");}
@@ -282,11 +282,13 @@ void SimulationState::generateDialogBox(std::function<void()> func, const std::s
 void SimulationState::activateButtons(){
        for (Button *btn : buttons) {
        btn->enabled = true;}
+       buttonsActivated = true;
    }
 
 void SimulationState::deactivateButtons(){
        for (Button *btn : buttons) {
        btn->enabled = false;}
+       buttonsActivated = false;
 }
 
 void SimulationState::ShowAxesButton(){
@@ -298,9 +300,11 @@ void SimulationState::ShowAxesButton(){
 void SimulationState::CreateObjectButton(){
     if(isCreating){
         isCreating = false;
+        render->Creator_Tool->reset();
+        activateButtons();
     }else{
         isCreating = true;
-
+        deactivateButtons();
     }
 }
 

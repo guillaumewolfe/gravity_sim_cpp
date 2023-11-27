@@ -76,6 +76,7 @@ public:
     void resetView();
     void showInfos();
     bool showInfo=false;
+    bool buttonsActivated = true;
 
     bool firstMouse = true;
     bool isRotatingWithMouse = false;

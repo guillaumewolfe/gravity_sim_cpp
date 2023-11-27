@@ -58,6 +58,11 @@ void Render::Draw(){
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+    if(*(Context->isCreating)){
+        Creator_Tool->drawCelestialObjects();
+        Creator_Tool->drawSelectionSphere();
+        }
+
 
 }
 

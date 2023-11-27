@@ -2,7 +2,21 @@
 #include "engine/Planets/Ice.h"
 
 
-std::string path_ice = "../assets/textures/fictionnal_ice.jpg";
-
 Ice::Ice() : CelestialObject() {
+    std::string name_sub = "Ice";
+    std::string path_sub = "../assets/textures/fictionnal_ice.jpg";
+    type = 4;
+    textureID = loadTexture(path_sub.c_str());
+    
+
+    setName(name_sub);
+    setPath(path_sub);
+
+    //updatePositionSimulation();
 }
+
+
+
+
+
+

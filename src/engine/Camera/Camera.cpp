@@ -222,8 +222,8 @@ void Camera::orbitAroundObject(float horizontalAngle, float verticalAngle) {
 
     orbitalHorizontalAngle += horizontalAngle;
     orbitalVerticalAngle += verticalAngle;
-    if (orbitalVerticalAngle>M_PI/2){orbitalVerticalAngle = M_PI/2;}
-    if (orbitalVerticalAngle<-M_PI/2){orbitalVerticalAngle = -M_PI/2;}
+    if (orbitalVerticalAngle>1.57){orbitalVerticalAngle = 1.57;}
+    if (orbitalVerticalAngle<-1.57){orbitalVerticalAngle = -1.57;}
 }
 
 

@@ -3,10 +3,27 @@
 #define CreatorTOOL_H
 
 #include "RenderComponent.h"
+struct CelestialObjectInfo {
+    float posX;
+    float posY;
+    std::string name;
+    GLuint texture;
+    float hoverRadius;
+};
 
 
+struct drawSphereComp{
+    float posX;
+    float posY;
+    ImVec4 color;
+    float radius;
+};
 class CreatorTool : public RenderComponent {
 public:
+
+    bool drawSphereHover = false;
+    bool drawSphereClick = false;
+
 
     explicit CreatorTool(RenderContext* renderContext);
     void Draw() override;
@@ -21,11 +38,38 @@ public:
 
     void CloseButtonPressed();
 
+    void drawTextures();
+    void generatePlanetLabels();
+    void drawCelestialObjects();
+    void draw2DSphereHover();
+    void draw2DSphereClicked();
+    void updateClickStatus();
+    void drawSelectionSphere();
+    void reset();
+    void NextButtonPressed();
+    void resetLabelColor();
+
 
 private:
+    drawSphereComp selectionSphereHover;
+    drawSphereComp selectionSphereClick;
     int winWidth, winHeight;
     std::vector<Labbel*> labbels;
+    std::vector<Labbel*> planeteNames;
     std::vector<Button*> buttons;
+    std::vector<CelestialObject*> objects;
+    std::vector<CelestialObject*> initSystem();
+
+    void drawTexturedSphere(float radius, int numSegments, int numSlices, float offsetX, float offsetY,GLuint texture);
+    double Rotation=0;
+
+    ImVec2 topLeft;
+    float hauteur, longueur;
+    std::vector<CelestialObjectInfo> objectPositions;
+    void calculateObjectPositions();
+    void updateHoverStatus();
+    float radius;
+    size_t selectedIndex;
 
 };
 

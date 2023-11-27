@@ -15,4 +15,5 @@
 #include "engine/Planets/Ice.h"
 #include "engine/Planets/Rock.h"
 #include "engine/Planets/Volcanic.h"
+#include "engine/Planets/BlackHole.h"
 

@@ -55,10 +55,8 @@ void NameTool::updateLabelPositions() {
 
         // Convertir les coordonnées 3D en coordonnées de clip
         glm::vec4 clipCoords = projectionMatrix * viewMatrix * glm::vec4(planetPos3D, 1.0f);
-
         // Convertir en NDC
         glm::vec3 ndc = glm::vec3(clipCoords) / clipCoords.w;
-
         // Convertir en coordonnées d'écran
         float xPercent = (ndc.x + 1.0f) / 2.0f;
         float yPercent = (1.0f - ndc.y) / 2.0f;
