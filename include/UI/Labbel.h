@@ -22,7 +22,7 @@ private:
     bool shouldUpdatePosition(const ImVec2& newTextSize);
 
 public:
-    Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha);
+    Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha, ImFont* customFont = nullptr);
     void Draw();
     void UpdateText(const std::string& newText);
     void UpdateAlpha(const float opp);

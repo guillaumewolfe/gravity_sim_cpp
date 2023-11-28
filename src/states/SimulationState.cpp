@@ -300,11 +300,15 @@ void SimulationState::ShowAxesButton(){
 void SimulationState::CreateObjectButton(){
     if(isCreating){
         isCreating = false;
-        render->Creator_Tool->reset();
         activateButtons();
+        Pause();
     }else{
+        resetView();
+        showInfo = false;
         isCreating = true;
         deactivateButtons();
+        forcePause = true;
+        Pause();
     }
 }
 

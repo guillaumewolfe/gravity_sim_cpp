@@ -143,7 +143,14 @@ void Camera::updateObjectVisibility(CelestialObject* object) {
     object->shouldBeDrawn = (screenOccupation >= 0.00025);
 }
 
-
+void Camera::chosePositionMode(){
+    followedObject=nullptr;
+    position=Vec3(0,100,0);
+    target=Vec3(0,0,0);   
+    up=Vec3(0,0,-1);
+    angle_perspective = 100;
+    setPerspective();
+}
 
 
 void Camera::zoom(bool in) {

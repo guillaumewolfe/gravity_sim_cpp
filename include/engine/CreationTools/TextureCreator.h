@@ -2,7 +2,8 @@
 #ifndef TextureCreator_H
 #define TextureCreator_H
 
-#include "../RenderTools/RenderComponent.h"
+#include "engine/CreationTools/StateCreator.h"
+
 struct CelestialObjectInfo {
     float posX;
     float posY;
@@ -18,17 +19,21 @@ struct drawSphereComp{
     ImVec4 color;
     float radius;
 };
-class TextureCreator : public RenderComponent {
+class TextureCreator : public StateCreator {
 public:
 
     bool drawSphereHover = false;
     bool drawSphereClick = false;
 
 
-    explicit TextureCreator(RenderContext* renderContext);
+    explicit TextureCreator(RenderContext* renderContext, CreatorManager* manager);
     void Draw() override;
+    void Enter() override;
+    void DrawOpenGL() override;
+    void Exit() override;
+
+
     void drawBackground();
-    void End();
 
 
     void generate_buttons();

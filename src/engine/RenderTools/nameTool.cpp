@@ -6,6 +6,7 @@
 NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext){
     initLabbels();
     alpha = 0.6f;
+    customFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", 20.0f);
 }
 
 void NameTool::initLabbels() {
@@ -19,7 +20,7 @@ void NameTool::initLabbels() {
         float fontSize = 20.0f; // Taille de police
 
         // Créez un nouveau Labbel
-        Labbel* newLabel = new Labbel(xPercent, yPercent, color, planetName, fontSize, alpha);
+        Labbel* newLabel = new Labbel(xPercent, yPercent, color, planetName, fontSize, alpha, customFont);
 
         // Ajoutez-le au vecteur
         labbels.push_back(newLabel);
@@ -38,19 +39,36 @@ for (Labbel* label : labbels) {
 ImGui::End(); 
 }
 
+void NameTool::synchronizeLabels() {
+    auto& objects = m_renderContext->systemeSolaire->objects;
+
+    // Supprimer tous les labels existants
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    labbels.clear();
+    initLabbels();
+}
+
+
 
 void NameTool::updateLabelPositions() {
     if (labbels.empty() || m_renderContext->systemeSolaire->objects.empty()) {
         return; // Vérifiez qu'il y a au moins un label et un objet planétaire
     }
+    auto& objects = m_renderContext->systemeSolaire->objects;
+    if (labbels.size() != objects.size()) {
+        synchronizeLabels();
+    }
+
 
     glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();
     glm::mat4 projectionMatrix = m_renderContext->currentCamera->getProjectionMatrix();
     int screenWidth, screenHeight;
     auto followedObject = m_renderContext->currentCamera->followedObject;
     glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
-    for (size_t i = 0; i < m_renderContext->systemeSolaire->objects.size(); ++i) {
-        auto& object = m_renderContext->systemeSolaire->objects[i];
+    for (size_t i = 0; i < objects.size(); ++i) {
+        auto& object = objects[i];
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
 
         // Convertir les coordonnées 3D en coordonnées de clip

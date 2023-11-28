@@ -14,6 +14,7 @@ public:
     void Draw() override;
     void initLabbels();
     void updateLabelPositions();
+    void synchronizeLabels();
 
 
 
@@ -23,6 +24,7 @@ std::vector<Labbel*> labbels;
 float maxDelta = 0.05f;
 float verticalOffset = 0.01;
 float alpha;
+ImFont* customFont;
 
 
 

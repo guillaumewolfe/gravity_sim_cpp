@@ -1,15 +1,27 @@
 #define GL_SILENCE_DEPRECATION
 #include "glad/glad.h"
 #include "engine/CreationTools/TextureCreator.h"
+#include "engine/CreationTools/CreatorManager.h"
 
 
-TextureCreator::TextureCreator(RenderContext* renderContext) : RenderComponent(renderContext){
+TextureCreator::TextureCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
     generate_buttons();
     generate_labels();
     objects = initSystem();
     calculateObjectPositions();
     generatePlanetLabels();
 }
+
+void TextureCreator::Enter(){
+    reset();
+}
+
+void TextureCreator::DrawOpenGL(){
+    drawCelestialObjects();
+    drawSelectionSphere();
+}
+
+void TextureCreator::Exit(){}
 
 std::vector<CelestialObject*> TextureCreator::initSystem(){
     std::vector<CelestialObject*> celestialObjects;
@@ -110,9 +122,9 @@ void TextureCreator::updateClickStatus() {
             selectionSphereClick.posX = info.posX;
             selectionSphereClick.posY = info.posY;
             selectionSphereClick.radius = radius * 1.25f;
-            selectionSphereClick.color = ImVec4(50, 225, 255, 120);
+            selectionSphereClick.color = ImVec4(200,255,225,85);
             resetLabelColor();
-            planeteNames[i]->UpdateColor(ImVec4(50, 225, 255, 255)); 
+            planeteNames[i]->UpdateColor(ImVec4(100,255,150,240)); 
         }
     }
 }
@@ -193,7 +205,7 @@ void TextureCreator::updateHoverStatus() {
             selectionSphereHover.posX = info.posX;
             selectionSphereHover.posY = info.posY;
             selectionSphereHover.radius = radius * 1.25f;
-            selectionSphereHover.color = ImVec4(50, 225, 255, 50);
+            selectionSphereHover.color = ImVec4(100,255,150,50);
         } else {
         }
     }
@@ -269,7 +281,7 @@ void TextureCreator::generate_buttons(){
    Button *NextButton = new Button(0.55f, 0.8225, ImVec2(0.05, 0.04),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Select", 0.0f,23.0f,
+                               "Select", 0.0f,20.0f,
                                std::bind(&TextureCreator::NextButtonPressed, this));  
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
@@ -284,14 +296,13 @@ void TextureCreator::draw_buttons(){
 }
 
 void TextureCreator::CloseButtonPressed(){
-    *(m_renderContext->isCreating)=false;
-    reset();
+    m_manager->Exit();
 }
 
 void TextureCreator::NextButtonPressed(){
     CelestialObject* clickedObject = objects[selectedIndex];
-    std::cout<<clickedObject->getName()<<std::endl;
-    reset();
+    m_manager->newCreatedObject = clickedObject;
+    m_manager->ChangeState("PositionCreator");
 }
 
 
@@ -434,5 +445,6 @@ void TextureCreator::reset(){
     Rotation=0;
     buttons[1]->hidden=true;
     buttons[0]->UpdatePosition(0.5f, 0.8225);
+    resetLabelColor();
 
 }

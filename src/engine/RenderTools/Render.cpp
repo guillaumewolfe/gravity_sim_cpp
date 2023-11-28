@@ -9,7 +9,6 @@
 
 
 Render::Render(RenderContext* Context): Context(Context){
-    SystemeSolaire_Tool = Context->systemeSolaire;
     initTools();
 }
 
@@ -19,7 +18,7 @@ void Render::initTools(){
     Background_Tool = new BackgroundTool(Context);
     Axes_Tool = new AxesTool(Context);
     Path_Tool = new PathTool(Context);
-    Creator_Tool = new TextureCreator(Context);
+    Creator_Manager = new CreatorManager(Context);
     Name_Tool = new NameTool(Context);
     PlaneteInfo_Tool = new PlaneteInfoTool(Context);
 
@@ -39,7 +38,7 @@ void Render::Draw(){
     UI_Tool->Draw();
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
-    if(*(Context->isCreating)){Creator_Tool->Draw();}
+    if(*(Context->isCreating)){Creator_Manager->Draw();}
     Name_Tool->Draw();
     if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
     ImGui::Render();
@@ -48,7 +47,6 @@ void Render::Draw(){
     Background_Tool->Draw();
     Objects_Tool->Draw();
     if(*(Context->showAxes)){Axes_Tool->Draw();}
-    SystemeSolaire_Tool->Draw();
     Path_Tool->Draw();
 
 
@@ -58,11 +56,7 @@ void Render::Draw(){
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-    if(*(Context->isCreating)){
-        Creator_Tool->drawCelestialObjects();
-        Creator_Tool->drawSelectionSphere();
-        }
-
+    if(*(Context->isCreating)){Creator_Manager->DrawOpenGL();}
 
 }
 

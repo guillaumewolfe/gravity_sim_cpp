@@ -14,7 +14,7 @@ protected:
 public:
     std::string name;
     std::string texture_path;
-    double real_radius = 1;
+    double real_radius = 5000;
     double weight = 1;
     double distance_initiale = 1;
     double rayon_simulation = 1;

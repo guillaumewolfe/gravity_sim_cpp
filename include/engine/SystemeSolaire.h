@@ -20,8 +20,11 @@ double scale;
 void Draw();
 
 void updatePhysics(double dt);
-void setRayon();
+void setRayonInit();
+void setRayon(CelestialObject* obj);
 void resetPosition();
+void addObject(CelestialObject* newObj);
+void removeObject(CelestialObject* objToRemove);
 
 
 private:

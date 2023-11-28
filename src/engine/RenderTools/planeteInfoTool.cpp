@@ -23,40 +23,40 @@ PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent
 }
 
 void PlaneteInfoTool::initLabels(){
-    float diff = 0.05f;
+    float diff = 0.04f;
     float beg = 0.40f;
     float titleX = 0.82f;
     float middleX = 0.92;
     Labbel *nameLabbel = new Labbel(0.875,0.26f,ImVec4(255,255,255,255),
-                            "Name",40.0f,0.9f);    
+                            "Name",35.0f,0.9f);    
 
     Labbel *typeLabbel = new Labbel(0.875,0.30f,ImVec4(255,255,255,255),
-                            "Type",25.0f,0.9f);  
+                            "Type",23.0f,0.7f);  
 
     Labbel *masseStaticLabbel = new Labbel(titleX ,beg,ImVec4(255,255,255,255),
-                        "Mass",25.0f,0.9f);  
+                        "Mass",20.0f,0.9f);  
     Labbel *masseLabbel = new Labbel(middleX,beg,ImVec4(255,255,255,255),
-                    "Mass",20.0f,0.9f);  
+                    "Mass",18.0f,0.7f);  
 
     Labbel *radiusStaticLabbel = new Labbel(titleX ,beg+diff,ImVec4(255,255,255,255),
-                    "Radius",25.0f,0.9f); 
+                    "Radius",20.0f,0.9f); 
     Labbel *radiusLabbel = new Labbel(middleX,beg+diff,ImVec4(255,255,255,255),
-                "Radius",20.0f,0.9f); 
+                "Radius",18.0f,0.7f); 
     
     Labbel *orbitalStaticLabbel = new Labbel(titleX ,beg+2*diff,ImVec4(255,255,255,255),
-                    "Orbital period",22.0f,0.9f); 
+                    "Orbital period",20.0f,0.9f); 
     Labbel *orbitalLabbel = new Labbel(middleX,beg+2*diff,ImVec4(255,255,255,255),
-                "Orbital",20.0f,0.9f); 
+                "Orbital",18.0f,0.7f); 
 
      Labbel *sideralStaticLabbel = new Labbel(titleX ,beg+3*diff,ImVec4(255,255,255,255),
-                    "Sideral period",22.0f,0.9f); 
+                    "Sideral period",20.0f,0.9f); 
     Labbel *sideralLabbel = new Labbel(middleX,beg+3*diff,ImVec4(255,255,255,255),
-                "Sideral",20.0f,0.9f);    
+                "Sideral",18.0f,0.7f);    
     
     Labbel *distanceStaticLabbel = new Labbel(titleX ,beg+4*diff,ImVec4(255,255,255,255),
                     "Distance from star",20.0f,0.9f); 
     Labbel *distanceLabbel = new Labbel(middleX,beg+4*diff,ImVec4(255,255,255,255),
-                "distance",20.0f,0.9f); 
+                "distance",18.0f,0.7f); 
 
 
     labbels.push_back(nameLabbel);

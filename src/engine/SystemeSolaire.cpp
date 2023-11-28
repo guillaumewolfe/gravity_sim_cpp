@@ -1,15 +1,14 @@
 #include "engine/SystemeSolaire.h"
 #include <iostream>
+#include "engine/RenderTools/objectsTool.h"
 
 SystemeSolaire::SystemeSolaire(){
     objects = initSystem();
     scale = getScale();
-    setRayon();
+    setRayonInit();
     //for (auto& object : objects){std::cout<<object->getName()<<" : "<<object->getRayon()<<std::endl;}
     }
 
-void SystemeSolaire::Draw(){
-}
 
 
 std::vector<CelestialObject*> SystemeSolaire::initSystem(){
@@ -52,11 +51,17 @@ double SystemeSolaire::getScale(){
     return scale;
 }
 
-void SystemeSolaire::setRayon(){
+void SystemeSolaire::setRayonInit(){
     for (auto& object : objects){
         object->setRayonSim(3*scale);
     }   
 }
+void SystemeSolaire::setRayon(CelestialObject* obj){
+    obj->setRayonSim(3*scale);
+    ObjectsTool::initSphere(*obj, 150, 150);
+
+}
+
 
 void SystemeSolaire::resetPosition(){
         for (auto& object : objects){
@@ -65,4 +70,29 @@ void SystemeSolaire::resetPosition(){
         object->clearPositionHistory();
 
 }
+}
+
+
+
+void SystemeSolaire::addObject(CelestialObject* newObj){
+    if(newObj->real_radius){
+    setRayon(newObj);
+    }else{
+        std::cout<<"NO RAYON"<<std::endl;
+    }
+    objects.push_back(newObj);
+}
+
+void SystemeSolaire::removeObject(CelestialObject* objToRemove){
+    auto it = std::find(objects.begin(), objects.end(), objToRemove);
+
+    if (it != objects.end()) {
+        objects.erase(it); // Enlever l'objet de la liste
+    } else {
+        std::cout << "Objet non trouvé." << std::endl;
+    }
+        for (CelestialObject* obj : objects) {
+        std::cout << obj->getName() << "-";
+    }
+    std::cout<<std::endl;
 }

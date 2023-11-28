@@ -51,6 +51,7 @@ void ObjectsTool::Draw() {
     athmoTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
     // Nettoyage*/
     glDisable(GL_DEPTH_TEST);
+    //std::cout<<"-----"<<std::endl;
 }
 
 

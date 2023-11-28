@@ -2,14 +2,18 @@
 #include <filesystem>
 #include <iostream>
 
-Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha)
-:position(xPercent, yPercent),color(color),label(label), fontSize(fontsize), alpha(alpha){
-    if(fontSize==0){font = ImGui::GetFont(); }
-    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);}
+Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& label, float fontsize, float alpha, ImFont* customFont)
+: position(xPercent, yPercent), color(color), label(label), fontSize(fontsize), alpha(alpha), font(customFont) {
     if (!font) {
-        // Gérer le cas où le chargement de la police échoue
-        std::cerr << "Erreur lors du chargement de la police." << std::endl;
-        font = ImGui::GetFont(); // Utilisez la police par défaut comme solution de repli
+        if (fontSize == 0) {
+            font = ImGui::GetFont();
+        } else {
+            font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);
+        }
+        if (!font) {
+            std::cerr << "Erreur lors du chargement de la police." << std::endl;
+            font = ImGui::GetFont(); // Utilisez la police par défaut comme solution de repli
+        }
     }
 }
 
