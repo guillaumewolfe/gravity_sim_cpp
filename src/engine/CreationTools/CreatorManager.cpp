@@ -8,10 +8,13 @@ InitStates();
 void CreatorManager::InitStates(){
 std::unique_ptr<StateCreator> textureCreator(new TextureCreator(m_renderContext,this));
 std::unique_ptr<StateCreator> positionCreator(new PositionCreator(m_renderContext,this));
-
+std::unique_ptr<StateCreator> velocityCreator(new VelocityCreator(m_renderContext,this));
+std::unique_ptr<StateCreator> parametersCreator(new ParametersCreator(m_renderContext,this));
 
 AddState("TextureCreator", std::move(textureCreator));
 AddState("PositionCreator", std::move(positionCreator));
+AddState("VelocityCreator", std::move(velocityCreator));
+AddState("ParametersCreator", std::move(parametersCreator));
 }
 
 
@@ -70,4 +73,6 @@ void CreatorManager::Exit(){
     currentState->Exit();
     *(m_renderContext->isCreating)=false;
     newCreatedObject = nullptr;
+    ChangeState("TextureCreator");
+    
 }

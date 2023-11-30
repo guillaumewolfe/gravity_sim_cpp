@@ -145,10 +145,10 @@ void Camera::updateObjectVisibility(CelestialObject* object) {
 
 void Camera::chosePositionMode(){
     followedObject=nullptr;
-    position=Vec3(0,100,0);
+    position=Vec3(0,125,0);
     target=Vec3(0,0,0);   
     up=Vec3(0,0,-1);
-    angle_perspective = 100;
+    angle_perspective = 70;
     setPerspective();
 }
 
@@ -242,7 +242,7 @@ void Camera::setPerspective() {
     GLdouble fW, fH;
     int winWidth, winHeight;
     float zNear = 0.01;
-    float zFar = 1600;
+    float zFar = 3000;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     // Calculer la hauteur et la largeur de la fenêtre à la distance de clipping près
     fH = tan(angle_perspective / 360 * pi) * zNear;
@@ -354,4 +354,11 @@ glm::mat4 Camera::getProjectionMatrix() {
 
 Vec3 Camera::getPosition(){
     return position;
+}
+
+Vec3 Camera::getTarget(){
+    return target;
+}
+void Camera::setTarget(Vec3 newTarget){
+    target = newTarget;
 }

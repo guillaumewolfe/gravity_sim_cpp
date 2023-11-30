@@ -26,6 +26,7 @@ public:
     std::string orbitalString;
     Vec3 initialVelocity;
     double distanceFromPlanet; //For satelite
+    bool isCreated = false;
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;
@@ -35,7 +36,7 @@ public:
 
     //SCALE
     double radiusScale = 1;
-    double distanceScale = 1/(149597870e3/2);
+    double distanceScale;
 
 
     Vec3 position_real = {0,0,0};
@@ -77,10 +78,16 @@ public:
     void addPositionHistory(const Vec3& point);
     const std::vector<Vec3>& getPositionHistory();
     void clearPositionHistory();
-
+    void updatePositionSimulation(const Vec3& newPosSimulation);
+    Vec3 getRealPosition();
+    double getDistanceFromOrigin();
+    double getWeight();
+    void setWeight(double newWeight);
 
 
 };
+
+
 
 #endif
 

@@ -70,6 +70,8 @@ public:
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix();
     Vec3 getPosition();
+    Vec3 getTarget();
+    void setTarget(Vec3 newTarget);
 
     void chosePositionMode();
 

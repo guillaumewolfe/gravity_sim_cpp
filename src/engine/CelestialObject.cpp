@@ -51,8 +51,7 @@ void CelestialObject::realRadiusToSimRadius(){
     rayon_simulation= radiusScale*real_radius;}
 
 Vec3 CelestialObject::getPositionSimulation(){
-    return Vec3(position_simulation.x,position_simulation.y,position_simulation.z);
-}
+    return Vec3(position_simulation.x,position_simulation.y,position_simulation.z);}
 
 GLuint CelestialObject::getTexture(){return textureID;}
 
@@ -101,3 +100,33 @@ void CelestialObject::clearPositionHistory() {
     positionHistory.clear();
 }
 
+
+void CelestialObject::updatePositionSimulation(const Vec3& newPosSimulation){
+    position_simulation = newPosSimulation;
+
+    if (distanceScale != 0) {
+        position_real.x = position_simulation.x / distanceScale;
+        position_real.y = position_simulation.y / distanceScale;
+        position_real.z = position_simulation.z / distanceScale;
+    }
+}
+
+Vec3 CelestialObject::getRealPosition(){
+    return position_real;
+}
+
+
+
+double CelestialObject::getDistanceFromOrigin() {
+    return position_real.norm();
+}
+
+double CelestialObject::getWeight(){
+    return weight;
+}
+
+
+
+void CelestialObject::setWeight(double newWeight){
+    weight = newWeight;
+}

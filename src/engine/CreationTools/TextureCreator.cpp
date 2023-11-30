@@ -13,12 +13,14 @@ TextureCreator::TextureCreator(RenderContext* renderContext, CreatorManager* man
 }
 
 void TextureCreator::Enter(){
+    m_manager->isCreated=false;
     reset();
 }
 
 void TextureCreator::DrawOpenGL(){
     drawCelestialObjects();
     drawSelectionSphere();
+
 }
 
 void TextureCreator::Exit(){}
@@ -80,7 +82,7 @@ void TextureCreator::Draw() {
 void TextureCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 30.0f;
+    float cornerRadius = 10.0f;
 
 
 
@@ -301,7 +303,8 @@ void TextureCreator::CloseButtonPressed(){
 
 void TextureCreator::NextButtonPressed(){
     CelestialObject* clickedObject = objects[selectedIndex];
-    m_manager->newCreatedObject = clickedObject;
+    CelestialObject* clickedObjectCopy = new CelestialObject(*clickedObject); // Copie de l'objet
+    m_manager->newCreatedObject = clickedObjectCopy;
     m_manager->ChangeState("PositionCreator");
 }
 

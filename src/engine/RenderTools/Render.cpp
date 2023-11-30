@@ -47,15 +47,15 @@ void Render::Draw(){
     Background_Tool->Draw();
     Objects_Tool->Draw();
     if(*(Context->showAxes)){Axes_Tool->Draw();}
+    //if(!*(Context->isCreating)){Path_Tool->Draw();}
     Path_Tool->Draw();
 
 
 
 
-    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
     if(*(Context->isCreating)){Creator_Manager->DrawOpenGL();}
 
 }

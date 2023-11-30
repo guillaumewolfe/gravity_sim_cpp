@@ -31,7 +31,9 @@ void PlaneteInfoTool::initLabels(){
                             "Name",35.0f,0.9f);    
 
     Labbel *typeLabbel = new Labbel(0.875,0.30f,ImVec4(255,255,255,255),
-                            "Type",23.0f,0.7f);  
+                            "Type",23.0f,0.9f);  
+    Labbel *typeLabbelBO = new Labbel(0.875,0.30f,ImVec4(255,255,255,255),
+                        "Type",23.0f,1.0f);  
 
     Labbel *masseStaticLabbel = new Labbel(titleX ,beg,ImVec4(255,255,255,255),
                         "Mass",20.0f,0.9f);  
@@ -60,6 +62,7 @@ void PlaneteInfoTool::initLabels(){
 
 
     labbels.push_back(nameLabbel);
+    labbels.push_back(typeLabbelBO);
     labbels.push_back(typeLabbel);
     labbels.push_back(masseStaticLabbel);
     labbels.push_back(masseLabbel);
@@ -78,16 +81,19 @@ void PlaneteInfoTool::updateLabels(){
     labbels[0]->UpdateText(m_object->getName());
 
     //Object type
+    labbels[2]->UpdateText(getTypeName(m_object->type));
+    labbels[2]->UpdateColor(getTypeColor(m_object->type));
+    if(m_object->type==0){
     labbels[1]->UpdateText(getTypeName(m_object->type));
-    labbels[1]->UpdateColor(getTypeColor(m_object->type));
-
+    labbels[1]->UpdateAlpha(0.6);}
+    else{labbels[1]->UpdateAlpha(0);}
     //Masse
     std::string massString = formatScientific(m_object->weight)+ " kg";
-    labbels[3]->UpdateText(massString);
+    labbels[4]->UpdateText(massString);
 
     //Radius
     std::string radiusString = formatScientific(m_object->real_radius/1000)+ " km";
-    labbels[5]->UpdateText(radiusString);
+    labbels[6]->UpdateText(radiusString);
 
     //Orbital
     std::string orbitalString;
@@ -95,7 +101,7 @@ void PlaneteInfoTool::updateLabels(){
     else if(!m_object->orbitalString.empty()){
         orbitalString = m_object->orbitalString;
     }
-    labbels[7]->UpdateText(orbitalString);
+    labbels[8]->UpdateText(orbitalString);
 
 
     //Sideral period
@@ -104,12 +110,12 @@ void PlaneteInfoTool::updateLabels(){
     std::ostringstream sideralString;
     sideralString << std::fixed << std::setprecision(2) << period << " days";
     std::string periodString = sideralString.str();
-    labbels[9]->UpdateText(periodString);
+    labbels[10]->UpdateText(periodString);
 
     //Distance from star
     if(m_object->type==1){
         std::string st = "-";
-        labbels[11]->UpdateText(st);}
+        labbels[12]->UpdateText(st);}
  //Soleil empty
 
     if (m_object->type == 2 || m_object->type == 3 || m_object->type == 4){//Planets
@@ -118,12 +124,12 @@ void PlaneteInfoTool::updateLabels(){
     std::ostringstream distanceString;
     distanceString << std::fixed << std::setprecision(2) << distance << " AU";
     std::string distance2String = distanceString.str();
-    labbels[11]->UpdateText(distance2String);}    
+    labbels[12]->UpdateText(distance2String);}    
 
     if(m_object->type==5){//Satelites
         std::string distanceString = formatScientific(m_object->distanceFromPlanet)+ " km";
-        labbels[11]->UpdateText(distanceString);
-        labbels[10]->UpdateText("Distance from planet");
+        labbels[12]->UpdateText(distanceString);
+        labbels[11]->UpdateText("Distance from planet");
         }
     
 

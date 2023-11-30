@@ -26,6 +26,9 @@ public:
     void createNewObject();
     void removeNewObject();
     void DrawOrbits();
+    void updatePositionWithMouse();
+    void updateDistanceLabel();
+    void AdjustPosition();
 
 
 
@@ -33,8 +36,27 @@ private:
     int winWidth, winHeight;
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
-    ImVec2 topLeft;
     float hauteur, longueur;
+    bool positionSelected = false;
+    bool shouldUpdate = true;
+    void checkClick();
+    void checkInputs();
+
+    ImVec2 bottomRight;
+    ImVec2 topLeft;
+    ImVec2 centerPos;
+    ImVec2 bottomRightCamera;
+    ImVec2 topLeftCamera;
+    Vec3 calculateIntersection(const glm::vec3& rayDirection, const glm::vec3& cameraPosition);
+    void zoomIn();
+    void zoomOut();
+    void moveUp(bool up);
+    void moveRight(bool right);
+    void resetCamPos();
+    bool isHoveringRectangle();
+
+    double maxZoomOut = 2476.94;
+    double maxZoomIn;
 
 
 };

@@ -43,7 +43,7 @@ void ObjectsTool::Draw() {
         if (object->shouldBeDrawn) {
         if(object->type==1){
             drawStars(object);
-        }else if(object->type>1){
+        }else if(object->type>1 || object->type==0){
         drawPlanets(object);
     }
     }}

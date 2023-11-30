@@ -54,21 +54,21 @@ double SystemeSolaire::getScale(){
 void SystemeSolaire::setRayonInit(){
     for (auto& object : objects){
         object->setRayonSim(3*scale);
+        object->distanceScale = scale;
     }   
 }
 void SystemeSolaire::setRayon(CelestialObject* obj){
     obj->setRayonSim(3*scale);
     ObjectsTool::initSphere(*obj, 150, 150);
-
 }
 
 
 void SystemeSolaire::resetPosition(){
         for (auto& object : objects){
+        if(object->isCreated){removeObject(object);continue;}
         object->updatePositionReal(Vec3(object->distance_initiale,0,0));
         object->updateVelocity(object->initialVelocity);
         object->clearPositionHistory();
-
 }
 }
 
@@ -91,8 +91,5 @@ void SystemeSolaire::removeObject(CelestialObject* objToRemove){
     } else {
         std::cout << "Objet non trouvé." << std::endl;
     }
-        for (CelestialObject* obj : objects) {
-        std::cout << obj->getName() << "-";
-    }
-    std::cout<<std::endl;
+
 }

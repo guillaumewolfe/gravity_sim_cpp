@@ -9,7 +9,8 @@
 #include "../RenderTools/RenderComponent.h"
 #include "engine/CreationTools/TextureCreator.h"
 #include "engine/CreationTools/PositionCreator.h"
-
+#include "engine/CreationTools/VelocityCreator.h"
+#include "engine/CreationTools/ParametersCreator.h"
 #include "engine/CelestialObject.h"
 
 
@@ -26,6 +27,7 @@ public:
     void Exit();
 
     CelestialObject* newCreatedObject;
+    bool isCreated = false;
 
 private:
     std::map<std::string, std::unique_ptr<StateCreator>> states;
