@@ -20,6 +20,8 @@ void VelocityCreator::Enter(){
     velocityValue =0;
     velocityAngle = 0;
     computeEscapeVelocitySpeed();
+    m_renderContext->currentCamera->creationMode();
+    m_manager->updateCamera();
 } 
 
 void VelocityCreator::computeEscapeVelocitySpeed(){
@@ -108,7 +110,7 @@ void VelocityCreator::generate_labels(){
 void VelocityCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = 2.0f;
 
 
     float longueur = winWidth* 0.14; // Exemple de taille
@@ -122,13 +124,13 @@ void VelocityCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
+                            IM_COL32(7.5, 7.5, 7.5, 255), // Couleur
                             cornerRadius);
 
     float cornerRadiusAdjustment = 10.0f;
     drawList->AddRect(topLeft,
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(100, 100, 100, 150), // Couleur de remplissage
+                        IM_COL32(50, 50, 50, 150), // Couleur de remplissage
                         cornerRadius,0,3.0f); // Ajustez le rayon ici
 
 }

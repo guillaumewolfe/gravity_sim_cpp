@@ -70,13 +70,16 @@ public:
     void Restart();
     void MenuButton();
     void ShowAxesButton();
+    void ShowCameraOptionsButton();
     void CreateObjectButton();
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();
     void showInfos();
-    bool showInfo=false;
+    bool showInfo=true;
     bool buttonsActivated = true;
+    bool isOrbiting = true;
+    bool showCameraOptions = false;
 
     bool firstMouse = true;
     bool isRotatingWithMouse = false;

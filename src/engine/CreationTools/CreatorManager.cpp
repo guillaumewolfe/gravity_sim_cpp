@@ -76,3 +76,17 @@ void CreatorManager::Exit(){
     ChangeState("TextureCreator");
     
 }
+
+
+void CreatorManager::resetCamera(){
+    m_renderContext->currentCamera->creationMode();
+    m_renderContext->currentCamera->setPosition(cameraCreationPositionInit);
+    m_renderContext->currentCamera->setTarget(cameraCreationTargetInit);
+    cameraCreationTarget = cameraCreationTargetInit;
+    cameraCreationPosition = cameraCreationPositionInit;
+}
+
+void CreatorManager::updateCamera(){
+    m_renderContext->currentCamera->setPosition(cameraCreationPosition);
+    m_renderContext->currentCamera->setTarget(cameraCreationTarget);
+}

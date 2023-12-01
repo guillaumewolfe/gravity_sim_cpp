@@ -31,7 +31,7 @@ private:
     RenderContext* m_renderContext;
     CelestialObject* m_celestialObject; 
     int nbreSphere = 50;
-    float sizeOfAthmosphere = 0.25;
+    float sizeOfAthmosphere = 0.3;
     std::vector<AthmosphereSphere> AthmosphereSpheres;
     
 

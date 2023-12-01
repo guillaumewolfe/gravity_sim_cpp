@@ -15,6 +15,7 @@ public:
     void initLabbels();
     void updateLabelPositions();
     void synchronizeLabels();
+    float calculateCircleRadius(float planetRadius, float distanceToCamera, const glm::mat4& projectionMatrix);
 
 
 

@@ -3,13 +3,17 @@
 #include "opencv2/opencv.hpp"
 
 // Constructor
-Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label,  float alpha,float fontsize, std::function<void()> onClickAction,float cornerRadius, bool isRound, ImVec4 labelColor)
-    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label),  alpha(alpha),fontSize(fontsize),cornerRadius(cornerRadius), isRound(isRound), labelColor(labelColor)  {
+Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label,  float alpha,float fontsize, std::function<void()> onClickAction,float cornerRadius, bool isRound, ImVec4 labelColor, bool isContinuedClick)
+    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label),  alpha(alpha),fontSize(fontsize),cornerRadius(cornerRadius), isRound(isRound), labelColor(labelColor), isContinuedClick(isContinuedClick)  {
         if (!InitSoundEffects()) {
             std::cout<<"Failed to load sound at init"<<std::endl;
         }
     if(fontSize==0){font = ImGui::GetFont(); }
-    else{font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);}
+    else{
+        int winWidth, winHeight;
+        glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+        //fontSize = fontSize * winWidth / 1980;
+        font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);}
     if (!font) {
         // Gérer le cas où le chargement de la police échoue
         std::cerr << "Erreur lors du chargement de la police." << std::endl;
@@ -146,16 +150,26 @@ if (font) {
         }
     }
 
-    // Check for button release
-    if (isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
-        if (onClick && enabled) {
-            Mix_PlayChannel(-1, clickSound, 0);
-            onClick(); // Invoke the action associated with the button
+
+    if (isContinuedClick) {
+        if (isHovered && ImGui::IsMouseDown(0)) {
+            // Si le bouton est survolé et que le bouton de la souris est enfoncé
+            if (onClick && enabled) {
+                onClick(); // Appel répété de la fonction onClick
+            }
+            // Ajoutez ici la logique d'affichage pour le clic maintenu, si nécessaire
         }
-        mouseButtonPressed = false; // Reset button pressed status
+    } else {
+        // Logique existante pour le mode non continu
+        if (isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
+            if (onClick && enabled) {
+                Mix_PlayChannel(-1, clickSound, 0);
+                onClick(); // Invocation de l'action associée au bouton
+            }
+            mouseButtonPressed = false; // Réinitialiser le statut du bouton pressé
+        }
     }
 }
-
 
 
 

@@ -29,6 +29,14 @@ public:
     CelestialObject* newCreatedObject;
     bool isCreated = false;
 
+    Vec3 cameraCreationPosition;
+    Vec3 cameraCreationPositionInit = Vec3(0,125,0);
+    Vec3 cameraCreationTarget;
+    Vec3 cameraCreationTargetInit = Vec3(0,0,0);
+    void resetCamera();
+    void updateCamera();
+
+
 private:
     std::map<std::string, std::unique_ptr<StateCreator>> states;
     StateCreator* currentState = nullptr;

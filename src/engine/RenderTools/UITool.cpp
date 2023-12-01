@@ -41,7 +41,7 @@ void UITool::draw_rect(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
+                            IM_COL32(10,10,10,255), // Couleur
                             cornerRadius);
 
     drawList->AddRect(topLeft, 

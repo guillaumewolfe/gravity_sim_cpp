@@ -59,8 +59,8 @@ void GlowTool::drawGlow() {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
     m_renderContext->currentCamera->lookAt();
+    glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
     for (const auto& sphere : glowSpheres) {
         glUniform1f(alphaLoc, sphere.alpha);
         glUniform3fv(colorLoc, 1, glm::value_ptr(sphere.color));

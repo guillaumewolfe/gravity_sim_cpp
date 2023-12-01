@@ -4,9 +4,9 @@
 
 
 NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext){
+    alpha = 0.55f;
+    customFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Ubuntu.ttf", 14.0f);
     initLabbels();
-    alpha = 0.6f;
-    customFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", 20.0f);
 }
 
 void NameTool::initLabbels() {
@@ -17,7 +17,7 @@ void NameTool::initLabbels() {
         float xPercent = 0.5f; // Exemple de position X (en pourcentage de l'écran)
         float yPercent = 0.5f; // Exemple de position Y
         ImVec4 color = ImVec4(255, 255, 255, 255); // Couleur blanche
-        float fontSize = 20.0f; // Taille de police
+        float fontSize = 15.0f; // Taille de police
 
         // Créez un nouveau Labbel
         Labbel* newLabel = new Labbel(xPercent, yPercent, color, planetName, fontSize, alpha, customFont);
@@ -86,17 +86,39 @@ void NameTool::updateLabelPositions() {
         float topYPercent = (1.0f - topOfPlanetPos.y) / 2.0f;
         topYPercent -= 0.02f; // Ajuster légèrement vers le haut
 
-
-        //if(object->getName()=="Earth"){std::cout<<"XY: "<<xPercent<<" "<<topYPercent<<std::endl;}
-        // Vérifier si le label devrait être visible
-        if(object == followedObject){
+if(object == followedObject) {
             labbels[i]->UpdateAlpha(0.0f);
         }
         else if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
-            labbels[i]->UpdateAlpha(alpha); // L'objet est visible à l'écran
+            labbels[i]->UpdateAlpha(alpha); // Object is visible on screen
             labbels[i]->UpdatePosition(xPercent, topYPercent);
         } else {
-            labbels[i]->UpdateAlpha(0.0f); // L'objet n'est pas visible à l'écran
+            labbels[i]->UpdateAlpha(0.0f); // Object is not visible on screen
+        }
+    }
+    constexpr float minDistance = 0.02f; // Distance minimale pour éviter la superposition (à ajuster selon vos besoins)
+    constexpr float verticalShiftAmount = 0.02f; // Quantité de déplacement vertical pour éviter la superposition
+    for (size_t i = 0; i < labbels.size(); ++i) {
+        for (size_t j = i + 1; j < labbels.size(); ++j) {
+            ImVec2 pos1 = labbels[i]->getPosition();
+            ImVec2 pos2 = labbels[j]->getPosition();
+
+            // Calculer la distance euclidienne entre les étiquettes
+            float distance = std::sqrt(std::pow(pos2.x - pos1.x, 2) + std::pow(pos2.y - pos1.y, 2));
+
+            // Vérifier si les étiquettes se superposent
+            if (distance < minDistance) {
+                // Déplacer l'étiquette la plus basse vers le haut
+                if (pos1.y < pos2.y) {
+                    labbels[j]->UpdatePosition(pos2.x, pos2.y - verticalShiftAmount);
+                } else {
+                    labbels[i]->UpdatePosition(pos1.x, pos1.y - verticalShiftAmount);
+                }
+            }
         }
     }
 }
+
+
+
+

@@ -88,14 +88,14 @@ void TextureCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
+                            IM_COL32(7.5, 7.5, 7.5, 175), // Couleur
                             cornerRadius);
 
     float cornerRadiusAdjustment = 10.0f;
     drawList->AddRect(topLeft,
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(100, 100, 100, 150), // Couleur de remplissage
-                        cornerRadius,0,3.0f); // Ajustez le rayon ici
+                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
+                        cornerRadius,0,2.0f); // Ajustez le rayon ici
 
 }
 
@@ -124,15 +124,16 @@ void TextureCreator::updateClickStatus() {
             selectionSphereClick.posX = info.posX;
             selectionSphereClick.posY = info.posY;
             selectionSphereClick.radius = radius * 1.25f;
-            selectionSphereClick.color = ImVec4(200,255,225,85);
+            selectionSphereClick.color = ImVec4(255,255,255,100);
             resetLabelColor();
-            planeteNames[i]->UpdateColor(ImVec4(100,255,150,240)); 
+            planeteNames[i]->UpdateAlpha(1);
         }
     }
 }
 void TextureCreator::resetLabelColor(){
     for (size_t i = 0; i < objectPositions.size(); ++i){
         planeteNames[i]->UpdateColor(ImVec4(255, 255, 255, 255));
+        planeteNames[i]->UpdateAlpha(0.7);
     }
 }
 void TextureCreator::drawSelectionSphere(){
@@ -207,7 +208,7 @@ void TextureCreator::updateHoverStatus() {
             selectionSphereHover.posX = info.posX;
             selectionSphereHover.posY = info.posY;
             selectionSphereHover.radius = radius * 1.25f;
-            selectionSphereHover.color = ImVec4(100,255,150,50);
+            selectionSphereHover.color = ImVec4(255,255,255,50);
         } else {
         }
     }
@@ -273,18 +274,17 @@ void TextureCreator::draw_labels(){
 }
 
 void TextureCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.5f, 0.8225, ImVec2(0.05, 0.045),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-                               
-                               "Close", 0.00f,22.0f,
-                               std::bind(&TextureCreator::CloseButtonPressed, this));  
+   Button *ReturnButton = new Button(0.5f, 0.8225, ImVec2(0.045, 0.03),
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
+                               "Close", 0.0,22.0f,
+                               std::bind(&TextureCreator::CloseButtonPressed, this),3); 
 
-   Button *NextButton = new Button(0.55f, 0.8225, ImVec2(0.05, 0.04),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Select", 0.0f,20.0f,
-                               std::bind(&TextureCreator::NextButtonPressed, this));  
+   Button *NextButton = new Button(0.55f, 0.8225, ImVec2(0.04, 0.03),
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
+                               "Select", 0.0,20.0f,
+                               std::bind(&TextureCreator::NextButtonPressed, this),3); 
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
     buttons[1]->hidden=true;
@@ -298,6 +298,7 @@ void TextureCreator::draw_buttons(){
 }
 
 void TextureCreator::CloseButtonPressed(){
+    m_renderContext->currentCamera->resetPosition();
     m_manager->Exit();
 }
 

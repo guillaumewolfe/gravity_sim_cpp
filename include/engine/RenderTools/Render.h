@@ -12,6 +12,7 @@
 #include "engine/CreationTools/CreatorManager.h"
 #include "engine/RenderTools/namesTool.h"
 #include "engine/RenderTools/planeteInfoTool.h"
+#include "engine/RenderTools/CameraOptionsTool.h"
 
 
 #ifndef RENDER_H
@@ -40,6 +41,8 @@ CreatorManager* Creator_Manager;
 MessageTool* Message_Tool;
 NameTool* Name_Tool;
 PlaneteInfoTool* PlaneteInfo_Tool;
+CameraOptionsTool* CameraOptions_Tool;
+
 
 
 Render(RenderContext* Context);

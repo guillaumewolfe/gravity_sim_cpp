@@ -21,10 +21,11 @@ public:
     std::vector<Button*> buttons;
     Camera* currentCamera;
     SystemeSolaire* systemeSolaire;
+    bool* showCameraOptions;
 
 
     RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns, float* maxsize, bool* showaxe, 
-    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo );
+    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions );
 };
 
 #endif // RENDERCONTEXT_H

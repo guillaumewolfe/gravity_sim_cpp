@@ -21,6 +21,7 @@ void Render::initTools(){
     Creator_Manager = new CreatorManager(Context);
     Name_Tool = new NameTool(Context);
     PlaneteInfo_Tool = new PlaneteInfoTool(Context);
+    CameraOptions_Tool = new CameraOptionsTool(Context);
 
     initCamera();
 }
@@ -36,13 +37,13 @@ void Render::Draw(){
     ImGui::NewFrame();
     //On dessiner les éléments
     UI_Tool->Draw();
+    if(*(Context->showCameraOptions)){CameraOptions_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(*(Context->isCreating)){Creator_Manager->Draw();}
     Name_Tool->Draw();
     if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
     ImGui::Render();
-    
     updateCamera();
     Background_Tool->Draw();
     Objects_Tool->Draw();

@@ -73,7 +73,7 @@ public:
     Vec3 getTarget();
     void setTarget(Vec3 newTarget);
 
-    void chosePositionMode();
+    void creationMode();
 
 
     void resetPosition();

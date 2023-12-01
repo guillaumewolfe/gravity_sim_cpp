@@ -16,7 +16,7 @@ PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* m
 }
 
 void PositionCreator::Enter(){
-    m_renderContext->currentCamera->chosePositionMode();
+    m_manager->resetCamera();
     if(!(m_manager->isCreated)){createNewObject();}
 } 
 
@@ -45,76 +45,77 @@ void PositionCreator::DrawOpenGL(){}
 
 void PositionCreator::checkInputs(){
     if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {previous_state();}
-    if (ImGui::IsKeyPressed(ImGuiKey_E)) {zoomIn();}
-    if (ImGui::IsKeyPressed(ImGuiKey_Q)) {zoomOut();}
+    if (ImGui::IsKeyDown(ImGuiKey_E)) {zoomIn();}
+    if (ImGui::IsKeyDown(ImGuiKey_Q)) {zoomOut();}
     if (ImGui::IsKeyDown(ImGuiKey_D)) {moveRight(true);}
     if (ImGui::IsKeyDown(ImGuiKey_A)) {moveRight(false);}
     if (ImGui::IsKeyDown(ImGuiKey_W)) {moveUp(true);}
     if (ImGui::IsKeyDown(ImGuiKey_S)) {moveUp(false);}
 }
 void PositionCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.05f, 0.57, ImVec2(0.05, 0.045),
+   Button *ReturnButton = new Button(0.05f, 0.57, ImVec2(0.045, 0.03),
                                 ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-                               
-                               "Previous", 0.00f,19.0f,
-                               std::bind(&PositionCreator::previous_state, this));  
+                                ImVec4(0.27f, 0.17f, 0.17f, 1.0f),
+                               "Previous", 0.0,19.0f,
+                               std::bind(&PositionCreator::previous_state, this),3); 
 
-   Button *NextButton = new Button(0.1f, 0.57, ImVec2(0.05, 0.04),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Select", 0.0f,19.0f,
-                               std::bind(&PositionCreator::next_state, this));  
+   Button *NextButton = new Button(0.1f, 0.57, ImVec2(0.04, 0.03),
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                               "Select", 0.0,19.0f,
+                               std::bind(&PositionCreator::next_state, this),3);  
 
-   Button *AdjustPositionButton = new Button(0.075f, 0.43, ImVec2(0.05, 0.04),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Adjust", 0.0f,18.0f,
-                               std::bind(&PositionCreator::AdjustPosition, this));  
+   Button *AdjustPositionButton = new Button(0.075f, 0.5, ImVec2(0.04, 0.03),
+                                ImVec4(0.05f, 0.05f, 0.05f, 1.0f),
+                                ImVec4(0.27f, 0.27f, 0.17f, 1.0f),
+                               "Adjust", 0.0,18.0f,
+                               std::bind(&PositionCreator::AdjustPosition, this),3);
    Button *ZoomInButton = new Button(0.105f, 0.9, ImVec2(0.02, 0.02),
-                                ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "+", 0.0f,25.0f,
-                               std::bind(&PositionCreator::zoomIn, this));  
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
+                               "+", 0.0,25.0f,
+                               std::bind(&PositionCreator::zoomIn, this),3,false,ImVec4(255,255,255,255),true);  
     Button *ZoomOutButton = new Button(0.045f, 0.9, ImVec2(0.02, 0.02),
-                            ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
-                            ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                            "-", 0.0f,28.0f,
-                            std::bind(&PositionCreator::zoomOut, this)); 
-    Button *ResetPosButton = new Button(0.075f, 0.97, ImVec2(0.07, 0.02),
-                        ImVec4(1.0f, 1.0f, 1.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        "Reset", 0.0f,18.0f,
-                        std::bind(&PositionCreator::resetCamPos, this)); 
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
+                            "-", 0.0,28.0f,
+                            std::bind(&PositionCreator::zoomOut, this),3,false,ImVec4(255,255,255,255),true); 
+    Button *ResetPosButton = new Button(0.075f, 0.97, ImVec2(0.04, 0.03),
+                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
+                                ImVec4(0.27f, 0.27f, 0.17f, 1.0f),
+                        "Reset", 0.0,19.0f,
+                        std::bind(&PositionCreator::resetCamPos, this),3);
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
     buttons.push_back(AdjustPositionButton);
     buttons.push_back(ZoomInButton);
     buttons.push_back(ZoomOutButton);
     buttons.push_back(ResetPosButton);
-    buttons[1]->UpdateLabelColor(100,255,150,200);
-    buttons[0]->UpdateLabelColor(255,125,100,200);
-    buttons[2]->UpdateLabelColor(255,255,150,200);
+    buttons[1]->UpdateLabelColor(75,230,125,200);
+    buttons[0]->UpdateLabelColor(230,100,75,200);
+    buttons[2]->UpdateLabelColor(230,230,125,200);
     buttons[0]->UpdatePosition(0.075,0.57);
     buttons[1]->hidden=true;
     buttons[2]->hidden=true;
-    buttons[5]->UpdateLabelColor(255,255,150,200);
+    buttons[5]->UpdateLabelColor(230,230,125,200);
 }
 
 void PositionCreator::resetCamPos(){
-    m_renderContext->currentCamera->chosePositionMode();
+    m_manager->resetCamera();
 }
 void PositionCreator::zoomIn(){
     Vec3 actualPos = m_renderContext->currentCamera->getPosition();
     if(actualPos.y>31.25){
-    actualPos.y /= 2;}
-    m_renderContext->currentCamera->setPosition(actualPos);
+    actualPos.y /= 1.01;}
+    m_manager->cameraCreationPosition = actualPos;
+    m_manager->updateCamera();
 }
 void PositionCreator::zoomOut(){
     Vec3 actualPos = m_renderContext->currentCamera->getPosition();
     if(actualPos.y<2000){
-    actualPos.y *= 2;}
-    m_renderContext->currentCamera->setPosition(actualPos);
+    actualPos.y *= 1.01;}
+    m_manager->cameraCreationPosition = actualPos;
+    m_manager->updateCamera();
 }
 void PositionCreator::moveUp(bool up){
 Vec3 actualPos = m_renderContext->currentCamera->getPosition();
@@ -126,8 +127,9 @@ Vec3 actualTarget = m_renderContext->currentCamera->getTarget();
         actualPos.z += 0.5;
         actualTarget.z += 0.5;
     }
-m_renderContext->currentCamera->setPosition(actualPos);
-m_renderContext->currentCamera->setTarget(actualTarget);
+m_manager->cameraCreationPosition = actualPos;
+m_manager->cameraCreationTarget = actualTarget;
+m_manager->updateCamera();
 }
 void PositionCreator::moveRight(bool right){
 Vec3 actualPos = m_renderContext->currentCamera->getPosition();
@@ -139,8 +141,9 @@ Vec3 actualTarget = m_renderContext->currentCamera->getTarget();
         actualPos.x -= 0.5;
         actualTarget.x -= 0.5;
     }
-m_renderContext->currentCamera->setPosition(actualPos);
-m_renderContext->currentCamera->setTarget(actualTarget);
+m_manager->cameraCreationPosition = actualPos;
+m_manager->cameraCreationTarget = actualTarget;
+m_manager->updateCamera();
 }
 
 void PositionCreator::generate_labels(){
@@ -176,12 +179,12 @@ void PositionCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
+                            IM_COL32(7.5, 7.5, 7.5, 175), // Couleur
                             cornerRadius);
 
     drawList->AddRect(topLeft,
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(100, 100, 100, 150), // Couleur de remplissage
+                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
                         cornerRadius,0,1.5f); // Ajustez le rayon ici
     
  //Camera
@@ -192,12 +195,12 @@ void PositionCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeftCamera, 
                         ImVec2(topLeftCamera.x + longueur, topLeftCamera.y + hauteur), 
-                        IM_COL32(0, 0, 0, 255), // Couleur
-                        cornerRadius);
+                            IM_COL32(7.5, 7.5, 7.5, 175), // Couleur
+                            cornerRadius);
 
     drawList->AddRect(topLeftCamera,
                         ImVec2(topLeftCamera.x + longueur, topLeftCamera.y + hauteur),
-                        IM_COL32(100, 100, 100, 150), // Couleur de remplissage
+                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
                         cornerRadius,0,1.5f); // Ajustez le rayon ici
 }
 bool PositionCreator::isHoveringRectangle(){
@@ -299,7 +302,7 @@ void PositionCreator::DrawOrbits() {
         ImVec2 planetScreenPos = ImVec2(xPercent * winWidth, yPercent * winHeight);
         float radius = std::sqrt(std::pow(center.x - planetScreenPos.x, 2) + std::pow(center.y - planetScreenPos.y, 2));
 
-        ImU32 color = (object == m_manager->newCreatedObject) ? IM_COL32(100, 255, 150, 120) : IM_COL32(255, 255, 255, 80);
+        ImU32 color = (object == m_manager->newCreatedObject) ? IM_COL32(100,255,150,130) : IM_COL32(255, 255, 255, 80);
         float tickness = (object == m_manager->newCreatedObject) ? winWidth * 0.002 : winWidth * 0.00075;
         int num_segments = 300; // Qualité du cercle
         if (object != m_manager->newCreatedObject) {
@@ -308,10 +311,10 @@ void PositionCreator::DrawOrbits() {
 
         if (object == m_manager->newCreatedObject && (!isHoveringRectangle() || positionSelected)) {
             drawList->AddCircle(center, radius, color, num_segments, tickness);
-            ImU32 arrowColor = IM_COL32(100, 255, 150, 120);
+            ImU32 arrowColor = IM_COL32(100,255,150,130);
             ImVec2 objectScreenPos = ImVec2(xPercent * winWidth, yPercent * winHeight);
             drawList->AddLine(center, objectScreenPos, arrowColor, winWidth * 0.002);
-            ImU32 color = IM_COL32(100, 255, 150, 200);
+            ImU32 color = IM_COL32(100,255,150,255);
             drawList->AddCircleFilled(objectScreenPos, winWidth * 0.0025, color);
         }
     }

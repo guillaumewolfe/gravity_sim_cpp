@@ -52,7 +52,8 @@ private:
     int indexRadius;
     std::unordered_map<std::string, double> itemsWeightDictionary;
     std::unordered_map<std::string, double> itemsRadiusDictionary;
-    std::vector<std::string> itemNames;
+    std::vector<std::string> itemNamesWeight;
+    std::vector<std::string> itemNamesRadius;
     std::string currentItemWeight = "";
     std::string currentItemRadius = "";
 

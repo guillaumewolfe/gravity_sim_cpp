@@ -12,7 +12,7 @@
 
 
 PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent(renderContext){
-    typeDict[0] = std::make_pair("Black Hole", ImVec4(0, 0, 0, 1));
+    typeDict[0] = std::make_pair("Black Hole", ImVec4(60, 60, 60, 1));
     typeDict[1] = std::make_pair("Star", ImVec4(250,237,97, 1)); // Jaune pour une étoile par exemple
     typeDict[2] = std::make_pair("Terrestrial Planet", ImVec4(169, 94, 43, 1));
     typeDict[3] = std::make_pair("Gas Giant", ImVec4(204, 153, 204, 1)); // Bleu pour une planète
@@ -56,9 +56,11 @@ void PlaneteInfoTool::initLabels(){
                 "Sideral",18.0f,0.7f);    
     
     Labbel *distanceStaticLabbel = new Labbel(titleX ,beg+4*diff,ImVec4(255,255,255,255),
-                    "Distance from star",20.0f,0.9f); 
+                    "Distance from star",15.0f,0.9f); 
     Labbel *distanceLabbel = new Labbel(middleX,beg+4*diff,ImVec4(255,255,255,255),
                 "distance",18.0f,0.7f); 
+    Labbel *creationLabbel = new Labbel(0.875,0.34,ImVec4(150,255,175,255),
+                "Created",18.0f,0.7f); 
 
 
     labbels.push_back(nameLabbel);
@@ -74,6 +76,7 @@ void PlaneteInfoTool::initLabels(){
     labbels.push_back(sideralLabbel);
     labbels.push_back(distanceStaticLabbel);
     labbels.push_back(distanceLabbel);
+    labbels.push_back(creationLabbel);
 }
 
 void PlaneteInfoTool::updateLabels(){
@@ -115,24 +118,30 @@ void PlaneteInfoTool::updateLabels(){
     //Distance from star
     if(m_object->type==1){
         std::string st = "-";
-        labbels[12]->UpdateText(st);}
+        labbels[12]->UpdateText("");
+        labbels[11]->UpdateText("");}
  //Soleil empty
 
-    if (m_object->type == 2 || m_object->type == 3 || m_object->type == 4){//Planets
+    else if (m_object->type == 2 || m_object->type == 3 || m_object->type == 4){//Planets
     auto distance = (m_object->position_real-m_renderContext->systemeSolaire->objects[0]->position_real).norm();
     distance = distance/149597870e3;
     std::ostringstream distanceString;
     distanceString << std::fixed << std::setprecision(2) << distance << " AU";
     std::string distance2String = distanceString.str();
-    labbels[12]->UpdateText(distance2String);}    
+    labbels[12]->UpdateText(distance2String);    
+    labbels[11]->UpdateText("Distance from star");}
 
-    if(m_object->type==5){//Satelites
+    else if(m_object->type==5){//Satelites
         std::string distanceString = formatScientific(m_object->distanceFromPlanet)+ " km";
         labbels[12]->UpdateText(distanceString);
         labbels[11]->UpdateText("Distance from planet");
-        }
+    }
     
-
+    if(m_object->isCreated){
+        labbels[13]->UpdateAlpha(0.7);
+    }else{
+        labbels[13]->UpdateAlpha(0);
+    }
 
 }
 

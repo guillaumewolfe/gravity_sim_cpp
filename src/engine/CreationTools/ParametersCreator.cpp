@@ -29,7 +29,7 @@ void ParametersCreator::initDictionnaries(){
     itemsWeightDictionary["Neptune Mass"] = 1.024e26; 
     itemsWeightDictionary["Moon Mass"] = 7.34767309e22; 
     for (const auto& item : itemsWeightDictionary) {
-        itemNames.insert(itemNames.begin(), item.first);
+        itemNamesWeight.insert(itemNamesWeight.begin(), item.first);
     }
 
     //Dict for radius
@@ -44,7 +44,7 @@ void ParametersCreator::initDictionnaries(){
     itemsRadiusDictionary["Neptune Radius"] = 24622e3;  // Rayon de Neptune en m
     itemsRadiusDictionary["Moon Radius"] = 1737.1e3;    // Rayon de la Lune en m
     for (const auto& item : itemsRadiusDictionary) {
-        itemNames.insert(itemNames.begin(), item.first);
+        itemNamesRadius.insert(itemNamesRadius.begin(), item.first);
     }
 }
 
@@ -59,7 +59,10 @@ std::string searchKeyRadius = objectName + " Radius";
 if (itemsWeightDictionary.find(searchKeyWeight) != itemsWeightDictionary.end()) {
     currentItemWeight = searchKeyWeight;
     currentItemRadius = searchKeyRadius;
-} else {
+} else if(m_manager->newCreatedObject->type==0){
+    currentItemWeight = "Sun Mass";
+    currentItemRadius = "Sun Radius";
+}else {
     currentItemWeight = "Earth Mass";
     currentItemRadius = "Earth Radius";
 }
@@ -83,6 +86,7 @@ void ParametersCreator::Enter(){
 
 void ParametersCreator::Draw(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    std::cout<<winWidth<<std::endl;
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
 
@@ -132,15 +136,15 @@ void ParametersCreator::generate_labels(){
     float space = ImGui::GetTextLineHeightWithSpacing();
     Labbel *MessageLabel = new Labbel(0.095f,0.135f,ImVec4(255,255,255,255),
                             "Choose Parameters",22.0f,0.9f);
-    Labbel *NameLabel = new Labbel(0.075f-0.045, 0.20f,ImVec4(255,255,255,255),
+    Labbel *NameLabel = new Labbel(0.075f-0.030, 0.20f,ImVec4(255,255,255,255),
                             "Name",18.0f,0.7f);
-    Labbel *MassLabel = new Labbel(0.075f-0.045, 0.325f,ImVec4(255,255,255,255),
+    Labbel *MassLabel = new Labbel(0.095f, 0.300f,ImVec4(255,255,255,255),
                             "Mass",18.0f,0.7f);    
-    Labbel *RadiusLabel = new Labbel(0.075f-0.045, 0.45f,ImVec4(255,255,255,255),
+    Labbel *RadiusLabel = new Labbel(0.095f, 0.425f,ImVec4(255,255,255,255),
                             "Radius",18.0f,0.7f);    
-    Labbel *SideralLabel = new Labbel(0.075f-0.045, 0.575f,ImVec4(255,255,255,255),
+    Labbel *SideralLabel = new Labbel(0.095f, 0.545f,ImVec4(255,255,255,255),
                             "Rotation",18.0f,0.7f);    
-    Labbel *PerDayLabel = new Labbel(0.15, 0.575f,ImVec4(255,255,255,255),
+    Labbel *PerDayLabel = new Labbel(0.125, 0.575f,ImVec4(255,255,255,255),
                             "per day",18.0f,0.7f);    
 
 
@@ -156,7 +160,7 @@ void ParametersCreator::generate_labels(){
 void ParametersCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = 2.0f;
 
 
     float longueur = winWidth * 0.18; // Exemple de taille
@@ -170,13 +174,13 @@ void ParametersCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
+                            IM_COL32(7.5, 7.5, 7.5, 255), // Couleur
                             cornerRadius);
 
     float cornerRadiusAdjustment = 10.0f;
     drawList->AddRect(topLeft,
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(100, 100, 100, 150), // Couleur de remplissage
+                        IM_COL32(50, 50, 50, 150), // Couleur de remplissage
                         cornerRadius,0,3.0f); // Ajustez le rayon ici
 
 }
@@ -270,8 +274,8 @@ void ParametersCreator::draw_input_name(){
 
 void ParametersCreator::draw_input_weight(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.06;
-    float offsetX = winWidth * 0.05 ;
+    float longueurBox = winWidth*0.1;
+    float offsetX = winWidth * 0.025 ;
     float offsetY = -winHeight * 0.085f;
     ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
     ImGui::SetCursorPos(cursorPos);
@@ -285,11 +289,11 @@ void ParametersCreator::draw_input_weight(){
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // Texte
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Ajustez ces valeurs selon vos besoins
-    if (ImGui::BeginCombo("##Choose an Item", currentItemWeight.c_str(),ImGuiComboFlags_NoArrowButton)) { // currentItemWeight est une std::string pour stocker l'élément sélectionné
-        for (int i = 0; i < itemNames.size(); i++) {
-            bool isSelected = (currentItemWeight == itemNames[i]);
-            if (ImGui::Selectable(itemNames[i].c_str(), isSelected)) {
-                currentItemWeight = itemNames[i];
+    if (ImGui::BeginCombo("##Choose mass", currentItemWeight.c_str(),ImGuiComboFlags_NoArrowButton)) { // currentItemWeight est une std::string pour stocker l'élément sélectionné
+        for (int i = 0; i < itemNamesWeight.size(); i++) {
+            bool isSelected = (currentItemWeight == itemNamesWeight[i]);
+            if (ImGui::Selectable(itemNamesWeight[i].c_str(), isSelected)) {
+                currentItemWeight = itemNamesWeight[i];
                 // Vous pouvez ici mettre à jour d'autres variables ou états en fonction de l'élément sélectionné
             }
             if (isSelected) {
@@ -300,15 +304,16 @@ void ParametersCreator::draw_input_weight(){
     }
     ImGui::PopStyleVar();
     ImGui::SetCursorPos(ImVec2(cursorPos.x-0.04*winWidth, cursorPos.y));
-    ImGui::InputFloat("##Planete Weight", &massMultiplicator, 0.0f, 0.0f, "%.1f");
+    ImGui::SetNextItemWidth(longueurBox/2);
+    ImGui::InputFloat("##Planete Weight", &massMultiplicator, 0.0f, 0.0f, "%.1f  x");
 
     ImGui::PopStyleColor(8);
 }
 
 void ParametersCreator::draw_input_radius(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.07;
-    float offsetX = winWidth * 0.05 ;
+    float longueurBox = winWidth*0.1;
+    float offsetX = winWidth * 0.025 ;
     float offsetY = winHeight * 0.04f;
     ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
     ImGui::SetCursorPos(cursorPos);
@@ -323,10 +328,10 @@ void ParametersCreator::draw_input_radius(){
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // Texte
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Ajustez ces valeurs selon vos besoins
     if (ImGui::BeginCombo("##Choose radius", currentItemRadius.c_str(),ImGuiComboFlags_NoArrowButton)) { // currentItemRadius est une std::string pour stocker l'élément sélectionné
-        for (int i = 0; i < itemNames.size(); i++) {
-            bool isSelected = (currentItemRadius == itemNames[i]);
-            if (ImGui::Selectable(itemNames[i].c_str(), isSelected)) {
-                currentItemRadius = itemNames[i];
+        for (int i = 0; i < itemNamesRadius.size(); i++) {
+            bool isSelected = (currentItemRadius == itemNamesRadius[i]);
+            if (ImGui::Selectable(itemNamesRadius[i].c_str(), isSelected)) {
+                currentItemRadius = itemNamesRadius[i];
                 // Vous pouvez ici mettre à jour d'autres variables ou états en fonction de l'élément sélectionné
             }
             if (isSelected) {
@@ -335,17 +340,17 @@ void ParametersCreator::draw_input_radius(){
         }
         ImGui::EndCombo();
     }
-    ImGui::PopStyleVar();
     ImGui::SetCursorPos(ImVec2(cursorPos.x-0.04*winWidth, cursorPos.y));
-    ImGui::InputFloat("##Planete Radius", &radiusMultiplicator, 0.0f, 0.0f, "%.1f");
-
+    ImGui::SetNextItemWidth(longueurBox/2);
+    ImGui::InputFloat("##Planete Radius", &radiusMultiplicator, 0.0f, 0.0f, "%.1f  x");
+    ImGui::PopStyleVar();
     ImGui::PopStyleColor(8);
 }
 void ParametersCreator::draw_input_sideral(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.07;
+    float longueurBox = winWidth*0.1;
     float offsetX = winWidth * 0.05 ;
-    float offsetY = winHeight * 0.165f;
+    float offsetY = winHeight * 0.163f;
     ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
     ImGui::SetCursorPos(cursorPos);
     ImGui::SetNextItemWidth(longueurBox);

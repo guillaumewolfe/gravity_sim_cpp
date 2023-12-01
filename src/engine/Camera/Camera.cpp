@@ -38,6 +38,7 @@ Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
 }
     
 void Camera::transitionToFollowObject() {
+    up = Vec3(0,1,0);
     if (!followedObject) return;
     
     Vec3 objectPosition = followedObject->getPositionSimulation();
@@ -92,6 +93,15 @@ void Camera::followObject() {
 
     position = objectPosition + offset;
     target = objectPosition;
+    // Calculate forward vector
+    Vec3 forward = (target - position).normalize();
+
+    // Calculate right vector as cross product of forward and global up
+    Vec3 globalUp(0, 1, 0);
+    Vec3 right = forward.cross(globalUp).normalize();
+
+    // Recalculate up vector as cross product of right and forward
+    //up = right.cross(forward).normalize();
 }
 
 
@@ -143,10 +153,8 @@ void Camera::updateObjectVisibility(CelestialObject* object) {
     object->shouldBeDrawn = (screenOccupation >= 0.00025);
 }
 
-void Camera::chosePositionMode(){
-    followedObject=nullptr;
-    position=Vec3(0,125,0);
-    target=Vec3(0,0,0);   
+void Camera::creationMode(){
+    followedObject=nullptr;  
     up=Vec3(0,0,-1);
     angle_perspective = 70;
     setPerspective();

@@ -32,7 +32,7 @@ void MessageTool::Draw() {
 void MessageTool::draw_rectangles(){
     // Calculer la position centrale de l'écran
     ImVec2 textSize = ImGui::CalcTextSize(phrase.c_str());
-    float longueur = winWidth * 0.2; // Exemple de taille
+    float longueur = winWidth * 0.24; // Exemple de taille
     float hauteur = winHeight * 0.125; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);

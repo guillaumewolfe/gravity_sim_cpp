@@ -8,6 +8,9 @@ Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& 
         if (fontSize == 0) {
             font = ImGui::GetFont();
         } else {
+            int winWidth, winHeight;
+            glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+            //fontSize = fontSize * winWidth / 1980;
             font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);
         }
         if (!font) {
