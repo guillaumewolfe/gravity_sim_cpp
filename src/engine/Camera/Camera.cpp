@@ -79,6 +79,28 @@ void Camera::transitionToFollowObject() {
     }
 }
 
+float Camera::calculateScreenOccupationPercentage() {
+    if (!followedObject) return 0.0f;
+
+    Vec3 objectPosition = followedObject->getPositionSimulation();
+    float objectRadius = followedObject->getRayon();
+
+    // Calculer la distance entre la caméra et l'objet
+    float distance = (objectPosition - this->position).norm();
+
+    // Calculer la taille angulaire de l'objet (en radians)
+    float angularSize = 2 * atan(objectRadius / distance);
+
+    // Calculer le FOV vertical de la caméra (en radians)
+    float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
+
+    // Calculer le pourcentage de l'écran occupé par l'objet
+    float screenOccupation = angularSize / verticalFOV;
+
+    // Convertir en pourcentage
+    return screenOccupation * 100.0f;
+}
+
 
 void Camera::followObject() {
     if (!followedObject) return;
@@ -104,6 +126,13 @@ void Camera::followObject() {
     //up = right.cross(forward).normalize();
 }
 
+void Camera::zoomByDistance(bool in){
+    if (!followedObject) return;
+
+    if(in){followingDistance *= 1.01;}
+    else{followingDistance /= 1.01;}
+    std::cout<<followingDistance<<std::endl;
+}
 
 
 void Camera::lookAt() {
@@ -163,7 +192,7 @@ void Camera::creationMode(){
 
 void Camera::zoom(bool in) {
 
-    if (in){zoomFactor = 0.99;}
+    if(in){zoomFactor = 0.99;}
         else{zoomFactor = 1.01;}
 
     angle_perspective *= zoomFactor;
@@ -287,11 +316,11 @@ void Camera::resetPosition() {
     up = originalUp;
     angle_perspective=40;
     followedObject = nullptr;
+    selectedObject = nullptr;
     orbitalHorizontalAngle = 0;
     orbitalVerticalAngle = 0;
     setPerspective();
     lookAt();
-    
 }
 
 void Camera::setPosition(Vec3 newPos){

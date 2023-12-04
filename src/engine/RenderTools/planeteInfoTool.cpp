@@ -151,6 +151,9 @@ void PlaneteInfoTool::Draw() {
     if(m_renderContext->currentCamera->followedObject!=nullptr){
         m_object = m_renderContext->currentCamera->followedObject;
         updateLabels();
+    }else if(m_renderContext->currentCamera->selectedObject!=nullptr){
+        m_object = m_renderContext->currentCamera->selectedObject;
+        updateLabels();
     }
 
 

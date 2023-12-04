@@ -181,7 +181,7 @@ void SimulationState::Update() {
 
     if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeFollowedObject();isOrbiting=true;}
 
-    if (ImGui::IsKeyDown(ImGuiKey_T)) {resetView();isOrbiting=true;}
+    if (ImGui::IsKeyPressed(ImGuiKey_T)) {resetView();isOrbiting=true;}
 
 }
 void SimulationState::UpdatePhysics(double dt){

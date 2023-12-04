@@ -312,11 +312,11 @@ void MenuState::generateMusic(){
         return;
     }
     // Play the music
-    /*
+    
     if (Mix_PlayMusic(bgMusic, -1) == -1) {
         std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
         Mix_FreeMusic(bgMusic);
         Mix_Quit();
         return;
-    }*/
+    }
 }

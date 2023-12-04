@@ -42,7 +42,7 @@ void Render::Draw(){
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(*(Context->isCreating)){Creator_Manager->Draw();}
     Name_Tool->Draw();
-    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
+    if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
     ImGui::Render();
     updateCamera();
     Background_Tool->Draw();
@@ -56,7 +56,7 @@ void Render::Draw(){
 
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if(Context->currentCamera->followedObject!=nullptr && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
+    if((Context->currentCamera->followedObject!=nullptr||Context->currentCamera->selectedObject!=nullptr) && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
     if(*(Context->isCreating)){Creator_Manager->DrawOpenGL();}
 
 }

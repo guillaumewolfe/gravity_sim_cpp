@@ -86,7 +86,6 @@ void ParametersCreator::Enter(){
 
 void ParametersCreator::Draw(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    std::cout<<winWidth<<std::endl;
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
 
@@ -366,7 +365,6 @@ void ParametersCreator::draw_input_sideral(){
     ImGui::InputFloat("##Rotation", &sideralMultiplicator, 0.0f, 0.0f, "%.2f");
 
     ImGui::PopStyleColor(8);
-
 
 }
 

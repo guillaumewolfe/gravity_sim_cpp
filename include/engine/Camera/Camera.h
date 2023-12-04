@@ -19,6 +19,7 @@ public:
     Vec3 originalTarget;
     Vec3 originalUp;
     CelestialObject* followedObject;
+    CelestialObject* selectedObject;
     float zoomFactor;
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
@@ -55,7 +56,11 @@ public:
     void Update();
     void lookAt(); 
     void zoom(bool in);
+    void zoomByDistance(bool in);
     void checkDistance();
+    float calculateScreenOccupationPercentage();
+
+    
 
     void rotateHorizontal(float angle);
     void rotateVertical(float angle);
@@ -88,6 +93,8 @@ public:
     
     void calculateNormalMatrix();
     const GLfloat* getNormalMatrix() const;
+
+private: 
 
 };
 

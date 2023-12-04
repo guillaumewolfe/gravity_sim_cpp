@@ -50,7 +50,6 @@ int main() {
         myGame.Draw();
         myGame.Update();
 
-
         //OpenGL refresh window
         glfwSwapBuffers(myGame.getWindow());
         glfwPollEvents();

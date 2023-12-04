@@ -36,6 +36,7 @@ updateLabelPositions();
 for (Labbel* label : labbels) {
     label->Draw();
 }
+detectClickAndPrintName();
 ImGui::End(); 
 }
 
@@ -90,14 +91,17 @@ if(object == followedObject) {
             labbels[i]->UpdateAlpha(0.0f);
         }
         else if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
-            labbels[i]->UpdateAlpha(alpha); // Object is visible on screen
+            if(object == m_renderContext->currentCamera->selectedObject){
+            labbels[i]->UpdateAlpha(1.0f);
+        }else{labbels[i]->UpdateAlpha(alpha);} // Object is visible on screen
             labbels[i]->UpdatePosition(xPercent, topYPercent);
         } else {
             labbels[i]->UpdateAlpha(0.0f); // Object is not visible on screen
         }
     }
+
     constexpr float minDistance = 0.02f; // Distance minimale pour éviter la superposition (à ajuster selon vos besoins)
-    constexpr float verticalShiftAmount = 0.02f; // Quantité de déplacement vertical pour éviter la superposition
+    constexpr float verticalShiftAmount = 0.04f; // Quantité de déplacement vertical pour éviter la superposition
     for (size_t i = 0; i < labbels.size(); ++i) {
         for (size_t j = i + 1; j < labbels.size(); ++j) {
             ImVec2 pos1 = labbels[i]->getPosition();
@@ -116,6 +120,64 @@ if(object == followedObject) {
                 }
             }
         }
+    }
+}
+
+glm::vec2 NameTool::convert3DPosToScreenPos(const glm::vec3& pos3D, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, int screenWidth, int screenHeight) {
+    // Convertir les coordonnées 3D en coordonnées de clip
+    glm::vec4 clipCoords = projectionMatrix * viewMatrix * glm::vec4(pos3D, 1.0f);
+    
+    // Convertir en NDC
+    glm::vec3 ndc = glm::vec3(clipCoords) / clipCoords.w;
+
+    // Convertir en coordonnées d'écran en pourcentage
+    float xPercent = (ndc.x + 1.0f) / 2.0f;
+    float yPercent = (1.0f - ndc.y) / 2.0f;
+
+    return glm::vec2(xPercent * screenWidth, yPercent * screenHeight);
+}
+
+void NameTool::detectClickAndPrintName() {
+    CelestialObject* closestPlanet = nullptr;
+    glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();
+    glm::mat4 projectionMatrix = m_renderContext->currentCamera->getProjectionMatrix();
+    int screenWidth, screenHeight;
+    glfwGetFramebufferSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+
+    ImVec2 mousePos = ImGui::GetMousePos();
+    // Convertir la position de la souris en pourcentages
+    float mouseXPercent = 2*mousePos.x / screenWidth;
+    float mouseYPercent = 2*mousePos.y / screenHeight;
+
+    float closestDistance = std::numeric_limits<float>::max();
+    std::string closestPlanetName = "";
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
+        glm::vec2 screenPos = convert3DPosToScreenPos(planetPos3D, viewMatrix, projectionMatrix, screenWidth, screenHeight);
+
+        // Convertir les positions de la planète en pourcentages
+        float planetXPercent = screenPos.x / screenWidth;
+        float planetYPercent = screenPos.y / screenHeight;
+
+        // Calculer la distance entre la souris et la planète
+        float distance = std::hypot(mouseXPercent - planetXPercent, mouseYPercent - planetYPercent);
+
+        // Mettre à jour la planète la plus proche et sa distance
+        if (distance < closestDistance) {
+            closestDistance = distance;
+            closestPlanetName = object->getName();
+            closestPlanet = object;
+        }
+    }
+
+    // Seuil de détection
+    float clickThreshold = 0.015f; // Ajustez ce seuil selon vos besoins
+
+    // Vérifier si la planète la plus proche est dans le seuil de clic
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && closestDistance < clickThreshold) {
+        m_renderContext->currentCamera->selectedObject = closestPlanet;
+    }if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && closestDistance < clickThreshold){
+        m_renderContext->currentCamera->newFollowObject(closestPlanet);
     }
 }
 
