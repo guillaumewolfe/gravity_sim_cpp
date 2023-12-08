@@ -3,7 +3,7 @@
 #define UITOOL_H
 
 #include "RenderComponent.h"
-
+#include <chrono>
 
 class UITool : public RenderComponent {
 public:
@@ -15,7 +15,8 @@ public:
     void draw_buttons();
     void draw_rect();
     GLuint backgroundTexture;
-
+    std::chrono::system_clock::time_point start_time;
+    void update_time();
     float lastScroll = 0.0f;
 
 private:

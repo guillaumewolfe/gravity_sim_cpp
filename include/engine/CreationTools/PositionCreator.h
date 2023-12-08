@@ -54,6 +54,7 @@ private:
     void moveRight(bool right);
     void resetCamPos();
     bool isHoveringRectangle();
+    void createEffects();
 
     double maxZoomOut = 2476.94;
     double maxZoomIn;

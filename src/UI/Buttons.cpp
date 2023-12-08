@@ -90,10 +90,11 @@ if(hidden){return;}
     }
 
     // Draw the label
+ImGui::PushFont(font);
     ImVec2 textSize = ImGui::CalcTextSize(label.c_str());   
+ImGui::PopFont();
     ImVec2 textPos = ImVec2(cursorPos.x + (actualSize.x - textSize.x) * 0.5,
-                            cursorPos.y + (actualSize.y - font->FontSize) * 0.5); // Centering the text
-
+                            cursorPos.y + (actualSize.y - textSize.y) * 0.5);
 
 ImU32 labelColorIM32 = IM_COL32((int)labelColor.x, (int)labelColor.y, (int)labelColor.z, (int)labelColor.w);
 if (font) {
@@ -141,12 +142,12 @@ if (font) {
             ImVec2 center = ImVec2(cursorPos.x + actualSize.x * 0.5, cursorPos.y + actualSize.y * 0.5);
             float radius = (actualSize.x < actualSize.y ? actualSize.x : actualSize.y) * 0.5;
             drawList->AddCircleFilled(center, radius,
-                                        IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, (alpha * 1.5) * 255));
+                                        IM_COL32(255, 255, 255, 30), cornerRadius);
         } else {
             // Click effect for rectangle
             drawList->AddRectFilled(cursorPos,
                                     ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y),
-                                    IM_COL32(hoverColor.x * 255, hoverColor.y * 255, hoverColor.z * 255, (alpha * 1.5) * 255), cornerRadius);
+                                    IM_COL32(255, 255, 255, 30), cornerRadius);
         }
     }
 

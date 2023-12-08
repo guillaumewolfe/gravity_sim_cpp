@@ -4,7 +4,7 @@
 
 
 Mercure::Mercure() : CelestialObject() {
-    std::string name_sub = "Mercure";
+    std::string name_sub = "Mercury";
     std::string path_sub = "../assets/textures/mercure.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(3,0,0);

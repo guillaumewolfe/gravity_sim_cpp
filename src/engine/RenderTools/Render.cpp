@@ -36,7 +36,7 @@ void Render::Draw(){
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     //On dessiner les éléments
-    UI_Tool->Draw();
+    if(!*(Context->isCreating)){UI_Tool->Draw();}
     if(*(Context->showCameraOptions)){CameraOptions_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}

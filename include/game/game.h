@@ -3,7 +3,8 @@
 #include <GLFW/glfw3.h>
 #include "UI/Buttons.h"
 #include <vector>
-
+#include <thread>
+#include <future>
 
 
 #ifndef GAME_H
@@ -15,11 +16,6 @@ private:
     GLFWwindow* window;
     std::vector<Button*> buttons;
     bool shouldClose = false;
-
-    //Fonts
-    ImFont* myFont;
-    std::map<std::string, ImFont*> fonts;
-    void LoadFonts();
 
     BaseState* requestedState;
     bool changeStateRequested;
@@ -34,8 +30,6 @@ public:
     void ApplyStateChange();
     void setShouldClose(bool value);
     void getState();
-    ImFont* getFont();
-    ImFont* getFont(const std::string& fontKey);
 
     void Init();
     ImFont* Create_font();
@@ -47,6 +41,15 @@ public:
     bool InitOpenGL();
     GLFWwindow* getWindow();
     void CleanupOpenGL();
+    void InitGameStates();
+    bool loadingComplete = false;
+    void ApplyFadeOut(GLFWwindow* loadingWindow);
+    GLFWwindow* loadingWindow;
+    void initLoadingWindow();
+
+    ImGuiContext* mainContext = ImGui::CreateContext();
+    ImGuiContext* loadingContext = ImGui::CreateContext();
+
 };
 
 #endif

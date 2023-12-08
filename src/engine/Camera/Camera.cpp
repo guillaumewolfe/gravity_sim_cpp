@@ -3,6 +3,7 @@
 #include "engine/Camera/Camera.h"
 #include "iostream"
 #include <algorithm>
+#include "engine/RenderTools/RenderContext.h"
 
 Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
         : position(pos), target(tgt), up(up), originalPosition(pos), originalTarget(tgt), originalUp(up)  {
@@ -68,6 +69,8 @@ void Camera::transitionToFollowObject() {
         //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
         isTransiting = false;
         transitionStep = 0;
+        *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+        *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
         return;
     }
 
@@ -76,6 +79,9 @@ void Camera::transitionToFollowObject() {
     if (transitionStep >= transitionThreshold) {
         isTransiting = false;
         transitionStep = 0;
+        *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+        *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+        return;
     }
 }
 
@@ -126,12 +132,39 @@ void Camera::followObject() {
     //up = right.cross(forward).normalize();
 }
 
+void Camera::firstPersonMode(CelestialObject* objToLookAt){
+    if (!followedObject) return;
+
+    Vec3 objectPosition = followedObject->getPositionSimulation();
+    float objectRadius = followedObject->getRayon();
+    Vec3 objToLookAtPosition = objToLookAt->getPositionSimulation();
+
+    Vec3 directionToObject = (objToLookAtPosition-objectPosition).normalize();
+
+    float heightAboveSurface = 0.05f; // Petite hauteur au-dessus de la surface pour éviter les problèmes de clipping
+    position = objectPosition + directionToObject * (objectRadius + heightAboveSurface);
+
+    target = objToLookAt->getPositionSimulation();
+    Vec3 globalUp(0, 1, 0);
+    Vec3 right = directionToObject.cross(globalUp).normalize();
+    up = right.cross(directionToObject).normalize();
+    // Ajustez la vue
+    lookAt();
+}
+
+void Camera::changeValue(bool increase){
+    if(increase){}
+        else{}
+    
+}
+
+
+
 void Camera::zoomByDistance(bool in){
     if (!followedObject) return;
 
     if(in){followingDistance *= 1.01;}
     else{followingDistance /= 1.01;}
-    std::cout<<followingDistance<<std::endl;
 }
 
 
@@ -278,7 +311,7 @@ void Camera::setPerspective() {
     const GLdouble pi = 3.1415926535897932384626433832795;
     GLdouble fW, fH;
     int winWidth, winHeight;
-    float zNear = 0.01;
+    float zNear = 0.001;
     float zFar = 3000;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     // Calculer la hauteur et la largeur de la fenêtre à la distance de clipping près
@@ -306,6 +339,10 @@ void Camera::newFollowObject(CelestialObject* obj) {
     transitionStep = 0;
     angle_perspective = 40;
     setPerspective();
+    currentSimulationSpeedIndexForTransition = *(m_renderContext->currentSpeedIndex);
+    *(m_renderContext->currentSpeedIndex) = 0; 
+    currentSimulationSpeedForTransition = *(m_renderContext->timeMultiplier);
+    *(m_renderContext->timeMultiplier) = 0;
 
 }
 
@@ -398,4 +435,8 @@ Vec3 Camera::getTarget(){
 }
 void Camera::setTarget(Vec3 newTarget){
     target = newTarget;
+}
+
+void Camera::setContext(RenderContext* context){
+    this->m_renderContext = context;
 }

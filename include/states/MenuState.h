@@ -49,6 +49,8 @@ public:
 
     double lastTime;
     double accumulator = 0.0;
+    float fadeOpacity = 1.0f;
+    bool musicStarted = false;
 
 
 

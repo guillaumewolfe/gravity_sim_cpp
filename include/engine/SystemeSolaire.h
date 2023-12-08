@@ -5,11 +5,12 @@
 #include "engine/CelestialObject.h"
 #include "engine/Planets/planetsIncludes.h"
 #include <vector> 
+#include "engine/DataAPI/ApiTool.h"
 
 class SystemeSolaire{
 
 public:
-
+ApiTool* apiTool;
 SystemeSolaire();
 std::vector<CelestialObject*> objects;
 std::vector<CelestialObject*> initSystem();
@@ -18,6 +19,7 @@ double maxSize = 1500;
 double scale;
 //methods
 void Draw();
+void syncWithNasa();
 
 void updatePhysics(double dt);
 void setRayonInit();

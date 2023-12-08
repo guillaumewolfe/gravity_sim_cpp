@@ -15,6 +15,12 @@ public:
     void RestartState() override;
     std::string getDescription() override;
 
+private:
+    ImFont* customFont;
+    void drawLoadingrectangle();
+    int winWidth, winHeight;
+    ImDrawList* drawList;
     // Autres méthodes et attributs spécifiques au menu
+    float progress = 0.0f;
 };
 #endif

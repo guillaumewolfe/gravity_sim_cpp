@@ -7,6 +7,7 @@
 #include "engine/Vec3.h"
 #include "engine/RenderTools/GlowTool.h"
 #include "engine/RenderTools/athmosphereTool.h"
+#include "engine/RenderTools/saturnRingTool.h"
 
 class ObjectsTool : public RenderComponent {
 public:
@@ -20,6 +21,7 @@ public:
     static void initSphere(CelestialObject& object, int lats, int longs);
     void drawPlanets(CelestialObject* object);
     void drawStars(CelestialObject* object);
+    void drawEffects();
     void drawPostTraitement();
     void updateLumiere(CelestialObject* object);
     bool fileExists(const std::string& path);
@@ -32,6 +34,7 @@ private:
 
     GlowTool* glowTool;
     AthmosphereTool* athmoTool;
+    SaturnRingTool* saturnRingTool;
 
     void initPlanetsShaders();
     void initStarShaders(); 

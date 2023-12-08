@@ -19,7 +19,7 @@ struct GlowSphere {
 class GlowTool {
 public:
     // Constructeur
-    GlowTool(CelestialObject* celestialObject,RenderContext* renderContext);
+    GlowTool(CelestialObject* celestialObject, RenderContext* renderContext);
 
     // Méthodes pour gérer le glow
     void initGlow();
@@ -29,7 +29,7 @@ public:
 private:
     RenderContext* m_renderContext;
     CelestialObject* m_celestialObject; 
-    int nbreSphere = 75;
+    int nbreSphere = 50;
     float sizeOfGlow = 0.4;
     std::vector<GlowSphere> glowSpheres;
     

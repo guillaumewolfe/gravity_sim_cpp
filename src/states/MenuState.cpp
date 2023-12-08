@@ -18,8 +18,10 @@ void MenuState::Enter() {
    buttons = generateButtons();
    labbels = generateLabbels();
    //Videos & Music
+
    generateVideo();
    generateMusic();
+   
 }
 std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
@@ -76,6 +78,18 @@ std::vector<Button*> MenuState::generateButtons(){
 
 
 void MenuState::Update() {
+    if (fadeOpacity > 0.0f) {
+        fadeOpacity -= 0.01f; // Ajustez ce taux selon la vitesse de fondu souhaitée
+    }    
+    if (!musicStarted) {
+        Mix_PlayMusic(bgMusic, -1);
+        musicStarted = true;
+        //pause sound
+        Mix_PauseMusic();
+    }
+
+
+
 }
 
 
@@ -103,7 +117,14 @@ void MenuState::Draw() {
    ImGui::NewFrame();
 
 
-   // Video update should be handled here
+    if (fadeOpacity > 0.0f) {
+        // Obtenez la taille de la fenêtre
+        ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+        // Définissez la couleur de fondu avec l'opacité actuelle
+        ImVec4 fadeColor = ImVec4(0.0f, 0.0f, 0.0f, fadeOpacity);
+        // Dessinez le rectangle de fondu
+        ImGui::GetForegroundDrawList()->AddRectFilled(ImVec2(0, 0), windowSize, ImGui::GetColorU32(fadeColor));
+    }
 
 
    // Draw the video texture
@@ -199,7 +220,12 @@ void MenuState::closeButton(){
 
 void MenuState::startButton(){
     std::string newstate = "simulation";
+    fadeOpacity = 1.0f;
     gameObj->ChangeState(newstate);
+    if (musicStarted) {
+        Mix_HaltMusic();
+        musicStarted = false;
+    }
 }
 
 
@@ -218,13 +244,15 @@ void MenuState::RestartState(){
 
 
 void MenuState::generateVideo() {
+    
     std::string videoPath = "../assets/animations/intro.mp4";
+    
     cap.open(videoPath);
     if (!cap.isOpened()) {
         std::cerr << "Error opening video file." << std::endl;
         return;
     }
-
+    
     // Only generate the texture if it hasn't been generated before
     if (videoTexture == 0) {
         glGenTextures(1, &videoTexture);
@@ -305,18 +333,11 @@ void MenuState::generateMusic(){
     }
 
     // Load music
-    Mix_Music *bgMusic = Mix_LoadMUS("../assets/sounds/music_background.mp3");
+    bgMusic = Mix_LoadMUS("../assets/sounds/music_background.mp3");
     if (!bgMusic) {
         std::cerr << "Failed to load background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
         Mix_Quit();
         return;
     }
-    // Play the music
-    
-    if (Mix_PlayMusic(bgMusic, -1) == -1) {
-        std::cerr << "Failed to play background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
-        Mix_FreeMusic(bgMusic);
-        Mix_Quit();
-        return;
-    }
+
 }

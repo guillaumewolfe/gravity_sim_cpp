@@ -6,30 +6,34 @@ SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
 }
 
 void SimulationState::Enter() {
+    
     //Constructions des éléments
     labbels = generateLabbels();
     buttons = generateButtons();
     buttons[2]->hidden=true;
     changeSimulationSpeed(true);
+    
 
     //Construction des outils pour le render
     systemeSolaire = new SystemeSolaire();
     float maxSize = systemeSolaire->maxSize;
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions);
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions, &isLive);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
+    currentCamera->setContext(renderContext);
 }
+
 
 //Labels
 std::vector<Labbel*> SimulationState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
-    Labbel *TimeLabel = new Labbel(0.5f,0.97f,ImVec4(255,255,255,255),
+    Labbel *TimeLabel = new Labbel(0.5f,0.95f,ImVec4(255,255,255,255),
                                 "Simulation time : ",20.0f,0.8f);
-    Labbel *TimeMultiplier = new Labbel(0.61f,0.98f,ImVec4(200,200,200,200),
+    Labbel *TimeMultiplier = new Labbel(0.61f,0.96f,ImVec4(200,200,200,200),
                                 "Time speed: x ",14.0f,0.8f);
-    Labbel *Speed = new Labbel(0.61f,0.96f,ImVec4(255,255,255,255),
+    Labbel *Speed = new Labbel(0.61f,0.94f,ImVec4(255,255,255,255),
                                 "Speed",18.0f,0.8f);
     labbel_list.push_back(TimeLabel);
     labbel_list.push_back(TimeMultiplier);
@@ -53,38 +57,38 @@ std::vector<Button*> SimulationState::generateButtons(){
     auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");},1);
 
-   Button *RestartButton = new Button(0.44f, 0.97, ImVec2(0.034, 0.0275),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Restart", 0.0f,16.0f,
-                            std::bind(&SimulationState::Restart, this),0);   
-   Button *PauseButton = new Button(0.46f, 0.97, ImVec2(0.0275, 0.0275),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "P", 0.0f,22.0f,
-                               std::bind(&SimulationState::Pause, this),10,true);  
+   Button *RestartButton = new Button(0.40f, 0.95, ImVec2(0.034, 0.0275),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                               "Restart", 0.9f,16.0f,
+                            std::bind(&SimulationState::Restart, this),5);   
+   Button *PauseButton = new Button(0.35f, 0.95, ImVec2(0.0275, 0.0275),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                               "P", 0.9f,22.0f,
+                               std::bind(&SimulationState::Pause, this),5,true);  
 
-    Button *ShowCamera = new Button(0.40, 0.97, ImVec2(0.025, 0.025),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                            "Camera", 0.0f,16.0f,
-                            std::bind(&SimulationState::ShowCameraOptionsButton, this),0);  
+    Button *ShowCamera = new Button(0.30, 0.95, ImVec2(0.030, 0.025),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                            "Camera", 0.9f,16.0f,
+                            std::bind(&SimulationState::ShowCameraOptionsButton, this),5);  
 
-    Button *CreateObject = new Button(0.36, 0.97, ImVec2(0.025, 0.025),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        "Add", 0.0f,16.0f,
-                        std::bind(&SimulationState::CreateObjectButton, this),0); 
+    Button *CreateObject = new Button(0.36, 0.95, ImVec2(0.025, 0.025),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "Add", 0.9f,16.0f,
+                        std::bind(&SimulationState::CreateObjectButton, this),5); 
 
-    Button *increaseSpeed = new Button(0.645f, 0.97, ImVec2(0.025, 0.025),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                            "+", 0.0f,22.0f,
+    Button *increaseSpeed = new Button(0.645f, 0.95, ImVec2(0.025, 0.025),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                            "+", 0.9f,22.0f,
                             std::bind(&SimulationState::changeSimulationSpeed, this,true),0,true); 
-    Button *decreaseSpeed = new Button(0.575f, 0.97, ImVec2(0.025, 0.025),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                        ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                            "-", 0.0f,25.0f,
+    Button *decreaseSpeed = new Button(0.575f, 0.95, ImVec2(0.025, 0.025),
+                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                            "-", 0.9f,22.0f,
                             std::bind(&SimulationState::changeSimulationSpeed, this,false),0,true); 
 
 
@@ -167,6 +171,9 @@ void SimulationState::Update() {
 
     //Show object info
     if (ImGui::IsKeyReleased(ImGuiKey_I)) {showInfos();}
+
+    if (ImGui::IsKeyDown(ImGuiKey_Z)) {bool in = true;currentCamera->changeValue(in);} 
+    if (ImGui::IsKeyDown(ImGuiKey_C)) {bool in = false;currentCamera->changeValue(in);}
 
     if(isOrbiting){currentCamera->orbitAroundObject(0.0020,0);}
     if (ImGui::IsKeyDown(ImGuiKey_W) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0,0.01);}
@@ -262,7 +269,8 @@ void SimulationState::Pause(){
 void SimulationState::Restart(){
     simulation_time = 0;
     currentCamera->resetPosition();
-
+    isLive = true;
+    render->UI_Tool->update_time();
     //Time multiplier
     currentSpeedIndex = 0;
     followedObjectIndex = 0;
@@ -323,6 +331,7 @@ void SimulationState::changeSimulationSpeed(bool increase) {
     } else if (!increase && currentSpeedIndex > 0) {
         currentSpeedIndex--;
     }
+    isLive=false;
 
     time_multiplier = speedSettings[currentSpeedIndex].first;
     std::string speedLabel = speedSettings[currentSpeedIndex].second;

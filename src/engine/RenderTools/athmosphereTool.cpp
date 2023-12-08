@@ -5,12 +5,13 @@
 #include <sstream>      // Pour std::stringstream
 #include <iostream> 
 #include <glm/gtc/type_ptr.hpp> // Pour convertir les types de GLM en pointeurs pour OpenGL.
-
+#include "opencv2/opencv.hpp"
 
 // Constructeur
 AthmosphereTool::AthmosphereTool(CelestialObject* celestialObject, RenderContext* renderContext) : m_celestialObject(celestialObject), m_renderContext(renderContext) {
     initAthmosphere();
     initShaders();
+    initCloudsShaders();
 }
 
 // Initialisation du Athmosphere
@@ -38,6 +39,11 @@ void AthmosphereTool::initAthmosphere() {
         initSphere(sphere, 50, 50, rayonSphere);
         AthmosphereSpheres.push_back(sphere);
     }
+    //Init Clouds
+    cloudSphere.textureID = loadTexture("../assets/textures/clouds.jpg");
+    float rayonClouds = m_celestialObject->getRayon() * (1.0f + 0.01); // Définir le rayon
+    cloudSphere.rayon = rayonClouds;
+    initSphere(cloudSphere, 150, 150, rayonClouds, cloudSphere.textureID);
 }
 
 void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
@@ -100,6 +106,7 @@ void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
     // Désactiver le shader
     glPopMatrix();
     glUseProgram(0);
+    drawClouds();
 }
 
 glm::vec3 AthmosphereTool::getLightDirection(CelestialObject* Sun){
@@ -110,7 +117,74 @@ glm::vec3 AthmosphereTool::getLightDirection(CelestialObject* Sun){
 
 }
 
-void AthmosphereTool::initSphere(AthmosphereSphere& sphere, int lats, int longs, float rayon) {
+
+void AthmosphereTool::drawClouds(){
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glUseProgram(cloudShaderProgram);
+        // Mise à jour des matrices de transformation
+        updateLumiere(m_celestialObject);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+        m_renderContext->currentCamera->lookAt();
+        glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
+        glRotatef(m_celestialObject->rotationSid,0,1,0);
+        glRotatef(rotationOffset,0,1,0);
+        rotationOffset += 0.001;
+        glBindTexture(GL_TEXTURE_2D, cloudSphere.textureID);
+
+        // Liage des VBOs et activation des attributs de vertex
+        glBindBuffer(GL_ARRAY_BUFFER, cloudSphere.vboVertices);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, cloudSphere.vboNormals);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, cloudSphere.vboTexCoords);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(2);
+        // Dessin de l'objet
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, cloudSphere.vertexCount);
+        // Désactivation des attributs de vertex
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+
+        glPopMatrix();
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_BLEND);
+        glUseProgram(0);
+        
+}
+
+
+
+
+void AthmosphereTool::updateLumiere(CelestialObject* object){
+    glm::vec3 positionSoleil = glm::vec3(0,0,0);
+    glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
+    glm::vec3 lightDir = glm::normalize(positionSoleil - positionObjet);
+
+    // Calculer la rotation inverse
+    float rotationInverse = -object->rotationSid-rotationOffset; // Si rotationSid est en degrés
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotationInverse), glm::vec3(0.0f, 1.0f, 0.0f));
+    
+    // Appliquer la rotation inverse à la direction de la lumière
+    glm::vec3 rotatedLightDir = glm::mat3(rotationMatrix) * lightDir;
+
+    // Passer la direction de la lumière ajustée au shader
+    GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection");
+    glUniform3f(lightDirUniform, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+}
+
+
+
+
+void AthmosphereTool::initSphere(AthmosphereSphere& sphere, int lats, int longs, float rayon, GLuint textureID) {
     std::vector<float> vertices;
     std::vector<float> normals;
     std::vector<float> texCoords;
@@ -172,22 +246,34 @@ void AthmosphereTool::initSphere(AthmosphereSphere& sphere, int lats, int longs,
     sphere.vertexCount = vertices.size() / 3; // Chaque vertex est composé de 3 floats
 }
 
+void AthmosphereTool::initCloudsShaders(){
+    std::string vertexCode = readShaderFile("../src/engine/RenderTools/Shaders/vertex_clouds.glsl");
+    std::string fragmentCode = readShaderFile("../src/engine/RenderTools/Shaders/frag_clouds.glsl");
+    const char* vertexShaderSource = vertexCode.c_str();
+    const char* fragmentShaderSource = fragmentCode.c_str();
+    // Compiler le vertex shader
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    checkCompileErrors(vertexShader, "VERTEX");
 
+    // Compiler le fragment shader
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    checkCompileErrors(fragmentShader, "FRAGMENT");
 
+    // Créer le programme shader
+    cloudShaderProgram = glCreateProgram();
+    glAttachShader(cloudShaderProgram, vertexShader);
+    glAttachShader(cloudShaderProgram, fragmentShader);
+    glLinkProgram(cloudShaderProgram);
+    checkCompileErrors(cloudShaderProgram, "PROGRAM");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //Delete Shaders 
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
 
 
 void AthmosphereTool::initShaders() {
@@ -264,3 +350,28 @@ bool AthmosphereTool::fileExists(const std::string& path) {
     std::ifstream file(path);
     return file.good();
 }
+
+
+//Clouds
+GLuint AthmosphereTool::loadTexture(const char* filename) {
+    cv::Mat image = cv::imread(filename);
+    if (image.empty()) {
+        std::cerr << "Erreur: Image non trouvée " << filename << std::endl;
+        return 0;
+    }
+    cv::flip(image, image, 0); // Inversion verticale de l'image
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return texture;
+}
+
+

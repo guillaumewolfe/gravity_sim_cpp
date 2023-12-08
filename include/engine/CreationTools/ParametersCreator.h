@@ -27,6 +27,7 @@ public:
     void next_state();
     void previous_state();
     void setParameters();
+    void updateEffects();
 
     void draw_input_name();
     void draw_input_weight();

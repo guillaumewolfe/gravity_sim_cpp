@@ -11,7 +11,7 @@
 #include <states/MenuState.h>
 #include <states/SimulationState.h>
 
-Game::Game() : currentState(nullptr), window(nullptr), myFont(nullptr), 
+Game::Game() : currentState(nullptr), window(nullptr), 
                requestedState(nullptr), changeStateRequested(false) {}
 
 Game::~Game()
@@ -23,27 +23,12 @@ void Game::setShouldClose(bool value) { shouldClose = value; }
 
 void Game::Init()
 { 
-
-states["menu"] = new MenuState(this);
 states["loading"] = new LoadingState(this);
+states["menu"] = new MenuState(this);
 states["simulation"] = new SimulationState(this);
+ChangeState("menu");
 }
 
-void Game::LoadFonts() {
-
-}
-
-ImFont* Game::getFont(const std::string& fontKey) {
-    auto it = fonts.find(fontKey);
-    if (it != fonts.end()) {
-        return it->second;
-    }
-    return nullptr;
-}
-ImFont* Game::getFont() {
-    // Utilisez une clé par défaut ou un chemin de fichier pour la police "Regular"
-    return getFont("Roboto-Medium.ttf"); // ou le chemin relatif selon l'organisation de vos fichiers
-}
 void Game::Close()
 {
     if (currentState)
@@ -111,7 +96,7 @@ bool Game::InitOpenGL()
     {
         return false;
     }
-    
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
     window = glfwCreateWindow(1920, 1080, "Space Query", NULL, NULL);
     if (!window)
     {

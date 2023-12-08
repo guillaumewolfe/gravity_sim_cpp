@@ -86,11 +86,36 @@ GLuint CelestialObject::loadTexture(const char* filename) {
 
 
 void CelestialObject::addPositionHistory(const Vec3& point) {
+    static const int MAX_HISTORY_SIZE = 1000; // Limite maximale pour les objets éloignés
+    static const float MIN_DISTANCE_INCREMENT = 0.01f; // Distance minimale pour un nouvel enregistrement
+
+    if(positionHistory.empty()){
+        positionHistory.push_back(point);
+        return;
+    }
+
+    if(orbitCircumference == 0) {
+        orbitCircumference = 2 * M_PI * distance_initiale * distanceScale; // Assurez-vous d'initialiser orbitCircumference correctement
+    }
+
     positionHistory.push_back(point);
-    if (positionHistory.size() > MAX_HISTORY_SIZE) {
+
+    // Calculez la distance totale parcourue et ajustez l'historique
+    if (positionHistory.size() > 1) {
+        totalDistance += (positionHistory[positionHistory.size() - 1] - positionHistory[positionHistory.size() - 2]).norm();
+    }
+
+    // Supprimez les points les plus anciens si la distance totale dépasse 90% de l'orbite ou si la taille dépasse la limite
+    float targetDistance = 0.90f * orbitCircumference;
+    while ((totalDistance > targetDistance || positionHistory.size() > MAX_HISTORY_SIZE) && !positionHistory.empty()) {
+        Vec3 oldPoint = positionHistory.front();
         positionHistory.erase(positionHistory.begin());
+        if (positionHistory.size() > 1) {
+            totalDistance -= (positionHistory.front() - oldPoint).norm();
+        }
     }
 }
+
 
 const std::vector<Vec3>& CelestialObject::getPositionHistory(){
     return positionHistory;

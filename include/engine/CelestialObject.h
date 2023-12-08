@@ -7,6 +7,9 @@
 #include "engine/Vec3.h"
 #include <GLFW/glfw3.h>
 
+class GlowTool;
+class AthmosphereTool;
+class SaturnRingTool;
 
 class CelestialObject{
 protected:
@@ -27,6 +30,8 @@ public:
     Vec3 initialVelocity;
     double distanceFromPlanet; //For satelite
     bool isCreated = false;
+    double totalDistance =0; //Distance pour le calcul de la grandeur du Path
+    double orbitCircumference=0;
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;
@@ -38,12 +43,18 @@ public:
     double radiusScale = 1;
     double distanceScale;
 
+    GlowTool* glowTool;
+    AthmosphereTool* athmosphereTool;
+    SaturnRingTool* saturnRingTool;
+    
 
     Vec3 position_real = {0,0,0};
     Vec3 velocity = {0,0,0};
     Vec3 force = {0,0,0};
     Vec3 accel = {0,0,0};
     Vec3 position_simulation = {0,0,0};
+    Vec3 nasaPosition;
+    Vec3 nasaVelocity;
     
     GLuint vao;
     GLuint vboVertices, vboNormals, vboTexCoords;
@@ -83,6 +94,7 @@ public:
     double getDistanceFromOrigin();
     double getWeight();
     void setWeight(double newWeight);
+    
 
 
 };

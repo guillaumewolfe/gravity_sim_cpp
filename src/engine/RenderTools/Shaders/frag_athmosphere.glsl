@@ -17,7 +17,7 @@ void main() {
     vec3 baseRed = vec3(1.0, 1.0, 1.0); // Rouge orangé de base
 
     // Mélange des couleurs de base avec du blanc pour les adoucir
-    vec3 rayleighColor = mix(baseBlue, vec3(1.0, 1.0, 1.0), 0.65); // Bleu moins intense
+    vec3 rayleighColor = mix(baseBlue, vec3(1.0, 1.0, 1.0), 0.6); // Bleu moins intense
     vec3 sunsetColor = baseRed; // Rouge moins intense
 
     // Adoucissement de la transition
@@ -35,5 +35,5 @@ void main() {
     vec4 ambientColor = vec4(0.1, 0.1, 0.1, 1.0);
 
     // Combinaison des couleurs finale
-    gl_FragColor = (vec4(finalColor, alpha/5) * diffuseColor * 0.3) + (vec4(finalColor, alpha/1.5) * ambientColor);
+    gl_FragColor = (vec4(finalColor, alpha/2) * diffuseColor * 0.5) + (vec4(finalColor, alpha/1.5) * ambientColor);
 }

@@ -19,7 +19,7 @@ Venus::Venus() : CelestialObject() {
     initialVelocity = Vec3(0,0,-35.02e3);
     inclinaison = 177.4;
     rotationSid = 0;
-    rotationSidSpeed = 0.0000000476;
+    rotationSidSpeed = -0.0000000476;
     rotationSidDirection = Vec3(0,-1,0);
     orbitalString = "255 days";
 

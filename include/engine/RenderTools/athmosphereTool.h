@@ -14,6 +14,7 @@ struct AthmosphereSphere {
     float rayon; // Rayon de la sphère
     float alpha; // Transparence de la sphère
     glm::vec3 color; // Couleur de la sphère
+    GLuint textureID; 
 };
 
 class AthmosphereTool {
@@ -24,13 +25,13 @@ public:
     // Méthodes pour gérer le Athmosphere
     void initAthmosphere();
     void drawAthmosphere(CelestialObject* Sun);
-    void initSphere(AthmosphereSphere& sphere, int lats, int longs, float rayon);
+    void initSphere(AthmosphereSphere& sphere, int lats, int longs, float rayon, GLuint textureID = 0);
     glm::vec3 getLightDirection(CelestialObject* Sun);
 
 private:
     RenderContext* m_renderContext;
     CelestialObject* m_celestialObject; 
-    int nbreSphere = 50;
+    int nbreSphere = 30;
     float sizeOfAthmosphere = 0.3;
     std::vector<AthmosphereSphere> AthmosphereSpheres;
     
@@ -44,7 +45,17 @@ private:
     std::string readShaderFile(const std::string& shaderPath);
     bool fileExists(const std::string& path);
 
-    
+
+    //Clouds
+    GLuint cloudTexture;
+    GLuint loadTexture(const char* filename);
+    AthmosphereSphere cloudSphere;
+    void drawClouds();
+    GLuint cloudShaderProgram;
+    void initCloudsShaders();
+    void updateLumiere(CelestialObject* object);
+    float rotationOffset = 0;
+
 
 };
 

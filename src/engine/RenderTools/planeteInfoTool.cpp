@@ -12,12 +12,8 @@
 
 
 PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent(renderContext){
-    typeDict[0] = std::make_pair("Black Hole", ImVec4(60, 60, 60, 1));
-    typeDict[1] = std::make_pair("Star", ImVec4(250,237,97, 1)); // Jaune pour une étoile par exemple
-    typeDict[2] = std::make_pair("Terrestrial Planet", ImVec4(169, 94, 43, 1));
-    typeDict[3] = std::make_pair("Gas Giant", ImVec4(204, 153, 204, 1)); // Bleu pour une planète
-    typeDict[4] = std::make_pair("Ice Giant", ImVec4(0, 103, 204, 1)); // Bleu pour une planète
-    typeDict[5] = std::make_pair("Natural satellite", ImVec4(200, 200, 200, 1)); // Gris pour un satellite naturel
+
+    typeDict = m_renderContext->colorByTypeDict;
     initLabels();
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 }
@@ -132,7 +128,8 @@ void PlaneteInfoTool::updateLabels(){
     labbels[11]->UpdateText("Distance from star");}
 
     else if(m_object->type==5){//Satelites
-        std::string distanceString = formatScientific(m_object->distanceFromPlanet)+ " km";
+        auto distance = (m_object->position_real-m_renderContext->systemeSolaire->objects[3]->position_real).norm();
+        std::string distanceString = formatScientific(distance)+ " km";
         labbels[12]->UpdateText(distanceString);
         labbels[11]->UpdateText("Distance from planet");
     }
@@ -210,6 +207,7 @@ ImVec4 PlaneteInfoTool::getTypeColor(int type) {
     return typeDict[type].second;
 }
 
+
 std::string PlaneteInfoTool::formatScientific(double value) {
     if (value == 0.0) {
         return "0";
@@ -219,6 +217,7 @@ std::string PlaneteInfoTool::formatScientific(double value) {
     double base = value / std::pow(10.0, exponent);
 
     std::ostringstream stream;
+    stream << std::fixed << std::setprecision(2); // Set fixed-point notation with 2 decimal places
     stream << base << " x 10^" << exponent;
     return stream.str();
 }

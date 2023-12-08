@@ -7,7 +7,9 @@
 #include <fstream>      // Pour std::ifstream
 #include <sstream>      // Pour std::stringstream
 #include <iostream> 
-
+#include "engine/RenderTools/GlowTool.h"
+#include "engine/RenderTools/athmosphereTool.h"
+#include "engine/RenderTools/saturnRingTool.h"
 
 
 ParametersCreator::ParametersCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
@@ -217,10 +219,7 @@ void ParametersCreator::Exit(){
 } 
 
 void ParametersCreator::setParameters(){
-    //Name
-    if(planetName[0] != '\0')
-        {m_manager->newCreatedObject->setName(planetName);}
-    
+
     //Mass
     double objectMass = itemsWeightDictionary[currentItemWeight] * massMultiplicator;
     m_manager->newCreatedObject->setWeight(objectMass);
@@ -228,14 +227,33 @@ void ParametersCreator::setParameters(){
     //Radius
     double objectRadius = itemsRadiusDictionary[currentItemRadius] * radiusMultiplicator;
     m_manager->newCreatedObject->real_radius=objectRadius;
-    m_renderContext->systemeSolaire->setRayon(m_manager->newCreatedObject);
+    m_renderContext->systemeSolaire->setRayon(m_manager->newCreatedObject); //Change effect if needed:
+    updateEffects();
     m_renderContext->currentCamera->newFollowObject(m_manager->newCreatedObject); //Reset cam with new object.
-
+    
+    //Name
+    if(planetName[0] != '\0')
+        {m_manager->newCreatedObject->setName(planetName);}
+    
     //Sideral speed
     m_manager->newCreatedObject->rotationSidSpeed = sideralMultiplicator/(24*60*60);
 }
 
+void ParametersCreator::updateEffects(){
+    CelestialObject* newObj = m_manager->newCreatedObject;
+    //remove previus effect
+    if(newObj->getName()=="Saturn"){
+        delete newObj->saturnRingTool;
+        newObj->saturnRingTool = new SaturnRingTool(newObj,m_renderContext);
+    }else if(newObj->getName()=="Earth"){
+        delete newObj->athmosphereTool;
+        newObj->athmosphereTool = new AthmosphereTool(newObj,m_renderContext);}
 
+    else if(newObj->getName()=="Sun"){
+        delete newObj->glowTool;
+        newObj->glowTool = new GlowTool(newObj,m_renderContext);
+    }
+}
 
 
 

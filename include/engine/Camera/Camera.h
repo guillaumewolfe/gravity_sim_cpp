@@ -10,6 +10,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include "engine/CelestialObject.h"
 
+class RenderContext;
+
 class Camera{
 public:
     Vec3 position;
@@ -33,6 +35,9 @@ public:
     float accumulatedHorizontalAngle = 0.0f;
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
+    void firstPersonMode(CelestialObject* objToLookAt);
+    void calculateSunAngleOffset(const Vec3& objectPosition, const Vec3& cameraPosition);
+    double sunAngleOffset;
 
 
     void startTransition(CelestialObject* newObject, int steps);
@@ -48,8 +53,6 @@ public:
 
     int transitionStep = 0;
     const int transitionThreshold = 1000; // Ajustez selon la douceur souhaitée
-
-
 
 
 
@@ -93,9 +96,13 @@ public:
     
     void calculateNormalMatrix();
     const GLfloat* getNormalMatrix() const;
+    void setContext(RenderContext* context);
 
+    void changeValue(bool increase);
 private: 
-
+    RenderContext* m_renderContext;
+    int currentSimulationSpeedIndexForTransition;
+    double currentSimulationSpeedForTransition;
 };
 
 

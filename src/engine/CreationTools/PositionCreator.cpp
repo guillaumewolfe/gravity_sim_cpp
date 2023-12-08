@@ -7,7 +7,9 @@
 #include <fstream>      // Pour std::ifstream
 #include <sstream>      // Pour std::stringstream
 #include <iostream> 
-
+#include "engine/RenderTools/GlowTool.h"
+#include "engine/RenderTools/athmosphereTool.h"
+#include "engine/RenderTools/saturnRingTool.h"
 
 
 PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
@@ -234,6 +236,7 @@ void PositionCreator::updateDistanceLabel(){
 
 void PositionCreator::next_state(){
     m_manager->ChangeState("VelocityCreator");
+    m_manager->newCreatedObject->distance_initiale = m_manager->newCreatedObject->getRealPosition().norm();
 }
 void PositionCreator::previous_state(){
     m_manager->ChangeState("TextureCreator");
@@ -256,6 +259,7 @@ void PositionCreator::createNewObject(){
         newObj->distanceScale=m_renderContext->systemeSolaire->scale;
         newObj->isCreated=true;
         m_manager->isCreated=true;
+        createEffects(); //Ajout du glow ou de l'athmosphere ou des anneaux
     }
 }
 
@@ -266,6 +270,17 @@ void PositionCreator::removeNewObject(){
 }
 
 
+void PositionCreator::createEffects(){
+    CelestialObject* newObj = m_manager->newCreatedObject;
+    if(newObj->getName()=="Saturn"){
+        newObj->saturnRingTool = new SaturnRingTool(newObj,m_renderContext);
+    }else if(newObj->getName()=="Earth"){
+        newObj->athmosphereTool = new AthmosphereTool(newObj,m_renderContext);}
+
+    else if(newObj->getName()=="Sun"){
+        newObj->glowTool = new GlowTool(newObj,m_renderContext);
+    }
+}
 
 void PositionCreator::DrawOrbits() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();

@@ -19,12 +19,23 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext) {
     initPlanetsShaders();
     initStarShaders();
-    glowTool = new GlowTool(m_renderContext->systemeSolaire->objects[0], m_renderContext);
     athmoTool = new AthmosphereTool(m_renderContext->systemeSolaire->objects[3], m_renderContext);
+    saturnRingTool = new SaturnRingTool(m_renderContext->systemeSolaire->objects[7], m_renderContext);
 
 
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         initSphere(*object, 150, 150); 
+
+        if(object->getName()=="Sun"){
+            glowTool = new GlowTool(object, m_renderContext);
+            object->glowTool = glowTool;
+        }else if(object->getName()=="Earth"){
+            athmoTool = new AthmosphereTool(object, m_renderContext);
+            object->athmosphereTool = athmoTool;
+    }else if(object->getName()=="Saturn"){
+            saturnRingTool = new SaturnRingTool(object, m_renderContext);
+            object->saturnRingTool = saturnRingTool;
+    }
     }
 }
 
@@ -47,8 +58,7 @@ void ObjectsTool::Draw() {
         drawPlanets(object);
     }
     }}
-    glowTool->drawGlow();
-    athmoTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
+    drawEffects();
     // Nettoyage*/
     glDisable(GL_DEPTH_TEST);
     //std::cout<<"-----"<<std::endl;
@@ -90,6 +100,8 @@ void ObjectsTool::drawStars(CelestialObject* object){
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
+
+        //Q:Comment savoir si "glowTool" existe pour l'objet?
 }
 
 
@@ -129,6 +141,24 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         glBindTexture(GL_TEXTURE_2D, 0);
         glUseProgram(0);
 }
+
+void ObjectsTool::drawEffects(){
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        if (object->shouldBeDrawn) {
+        if(object->glowTool!=nullptr){
+            object->glowTool->drawGlow();
+        }
+        if(object->athmosphereTool!=nullptr){
+            object->athmosphereTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
+        }
+        if(object->saturnRingTool!=nullptr){
+            object->saturnRingTool->Draw();
+        }
+    }
+    }
+}
+
+
 
 void ObjectsTool::updateLumiere(CelestialObject* object){
     glm::vec3 positionSoleil = glm::vec3(0,0,0);

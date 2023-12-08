@@ -34,6 +34,7 @@ private:
     bool forcePause = false;
     bool showAxes = false;
     bool isCreating = false;
+    bool isLive = false;
 
     RenderContext* renderContext;
 
@@ -47,10 +48,11 @@ public:
             {3600, "1 hour/second"},
             {86400/2, "0.5 day/second"},
             {86400, "1 day/second"},
+            {86400*2, "2 day/second"},
             {604800 , "1 week/second"},
-            {2592000, "1 month/second"},
             // Ajoutez d'autres vitesses ici
         };
+
 
 
 

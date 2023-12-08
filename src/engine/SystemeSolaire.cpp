@@ -3,9 +3,11 @@
 #include "engine/RenderTools/objectsTool.h"
 
 SystemeSolaire::SystemeSolaire(){
+    apiTool = new ApiTool();
     objects = initSystem();
     scale = getScale();
     setRayonInit();
+    syncWithNasa();
     //for (auto& object : objects){std::cout<<object->getName()<<" : "<<object->getRayon()<<std::endl;}
     }
 
@@ -53,12 +55,12 @@ double SystemeSolaire::getScale(){
 
 void SystemeSolaire::setRayonInit(){
     for (auto& object : objects){
-        object->setRayonSim(3*scale);
+        object->setRayonSim(2*scale);
         object->distanceScale = scale;
     }   
 }
 void SystemeSolaire::setRayon(CelestialObject* obj){
-    obj->setRayonSim(3*scale);
+    obj->setRayonSim(2*scale);
     ObjectsTool::initSphere(*obj, 150, 150);
 }
 
@@ -66,12 +68,29 @@ void SystemeSolaire::setRayon(CelestialObject* obj){
 void SystemeSolaire::resetPosition(){
         for (auto& object : objects){
         if(object->isCreated){removeObject(object);continue;}
-        object->updatePositionReal(Vec3(object->distance_initiale,0,0));
-        object->updateVelocity(object->initialVelocity);
+        object->updatePositionReal(object->nasaPosition);
+        object->updateVelocity(object->nasaVelocity);
         object->clearPositionHistory();
 }
 }
 
+void SystemeSolaire::syncWithNasa(){
+    if(objects.empty()){return;}
+    std::string sunString = apiTool->getBodyData("Sun");
+    std::pair<Vec3, Vec3> sunPositionAndVelocity = apiTool->extractBodyData(sunString);
+    Vec3 sunPosition = sunPositionAndVelocity.first;
+    Vec3 sunVelocity = sunPositionAndVelocity.second;
+    for(auto& object : objects){
+        std::string buffer = apiTool->getBodyData(object->getName());
+        std::pair<Vec3, Vec3> positionAndVelocity = apiTool->extractBodyData(buffer);
+        // Multipliez les valeurs par 1000
+        Vec3 newPosition = positionAndVelocity.first * 1000;
+        Vec3 newVelocity = positionAndVelocity.second * 1000;
+        object->nasaPosition = newPosition;
+        object->nasaVelocity = newVelocity;
+    }    
+    
+}
 
 
 void SystemeSolaire::addObject(CelestialObject* newObj){
