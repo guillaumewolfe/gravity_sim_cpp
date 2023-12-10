@@ -4,13 +4,14 @@
 #include <vector>
 #include "UI/Buttons.h"
 #include "UI/Labbel.h"
+#include "UI/ImageButton.h"
 #include "engine/EngineIncludes.h"
 #include <map>
 
 class RenderContext {
 public: 
 
-    RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns, float* maxsize, bool* showaxe,
+    RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe,
     SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions, bool* isLive);
     
     float* simulationTime;
@@ -23,6 +24,7 @@ public:
     std::vector<std::pair<int, std::string>> speedSettings;
     std::vector<Labbel*> labels;
     std::vector<Button*> buttons;
+    std::vector<ImageButton*> imageButtons;
     Camera* currentCamera;
     SystemeSolaire* systemeSolaire;
     bool* showCameraOptions;

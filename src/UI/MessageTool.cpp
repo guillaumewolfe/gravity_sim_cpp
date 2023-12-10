@@ -32,8 +32,8 @@ void MessageTool::Draw() {
 void MessageTool::draw_rectangles(){
     // Calculer la position centrale de l'écran
     ImVec2 textSize = ImGui::CalcTextSize(phrase.c_str());
-    float longueur = winWidth * 0.24; // Exemple de taille
-    float hauteur = winHeight * 0.125; // Exemple de taille
+    float longueur = winWidth * 0.275; // Exemple de taille
+    float hauteur = winHeight * 0.15; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
@@ -42,21 +42,21 @@ void MessageTool::draw_rectangles(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
     // Rayon des coins arrondis
-    float cornerRadius = 10.0f; // Vous pouvez ajuster ce rayon selon vos besoins
+    float cornerRadius = 5.0f; // Vous pouvez ajuster ce rayon selon vos besoins
 
     //Carré pour tout le fond d'écran
     drawList->AddRectFilled(ImVec2(0,0), 
                             ImVec2(winHeight*3,winHeight*3), 
-                            IM_COL32(0, 0, 0, 150), // Couleur
+                            IM_COL32(0, 0, 0, 180), // Couleur
                             cornerRadius);
     // Dessiner le premier rectangle avec coins arrondis
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 250), // Couleur
+                            IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
     drawList->AddRect(topLeft, 
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(60, 60, 60, 130), // Couleur
+                        IM_COL32(60, 60, 60, 0), // Couleur
                         cornerRadius,0,3.0f);
 
     // Définir la taille du deuxième rectangle (10% plus grand)
@@ -74,7 +74,7 @@ void MessageTool::draw_rectangles(){
 
 
 void MessageTool::generate_labels(){
-    Labbel *MessageLabel = new Labbel(0.5f,0.47f,ImVec4(255,255,255,255),
+    Labbel *MessageLabel = new Labbel(0.5f,0.45f,ImVec4(255,255,255,255),
                             phrase,0,1.0f);
     labbels.push_back(MessageLabel);
 }
@@ -108,6 +108,7 @@ void MessageTool::draw_buttons(){
 
 void MessageTool::OkButtonPressed(){
     onConfirm();
+    shouldClose = true;
 }
 
 void MessageTool::CancelButtonPressed(){

@@ -1,4 +1,5 @@
 
+#include "glad/glad.h"
 #include "engine/RenderTools/UITool.h"
 #include <iostream>
 #include <sstream>
@@ -21,48 +22,53 @@ ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlag
 draw_rect();
 draw_labbels();
 draw_buttons();
-
-
 ImGui::End(); 
-
-
 
 
 }
 
 void UITool::draw_rect(){
-    float longueur = winWidth * 0.5; // Exemple de taille
+    float longueur = winWidth * 0.60; // Exemple de taille
     float hauteur = winHeight * 0.06; // Exemple de taille
 
-    // Assurez-vous que le bas du rectangle ne dépasse pas le bas de la fenêtre
-    float bottomEdge = winHeight - hauteur; // Nouveau calcul pour le bord inférieur
-    float centerPosY = std::min(bottomEdge, winHeight * 0.97f);
+    // Position Y du bord supérieur du rectangle pour que le bas du rectangle soit au bas de la fenêtre
+    float topY = winHeight - hauteur;
 
-    ImVec2 centerPos = ImVec2(winWidth * 0.5f, centerPosY);
-    ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
+    // Position X du bord gauche pour centrer le rectangle
+    float leftX = (winWidth - longueur) / 2;
+
+    ImVec2 topLeft = ImVec2(leftX, topY);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     float cornerRadius = 5.0f;
 
     // Dessinez le rectangle
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(10, 10, 15, 175), // Couleur
+                            IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
 
     drawList->AddRect(topLeft, 
                       ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                       IM_COL32(10,10,10,0), // Couleur
                       cornerRadius, 0, 2.0f);
+    ImVec2 centerPos = ImVec2(leftX + longueur / 2, topY + hauteur / 2);
 
     if(!*(m_renderContext->isLive)){return;}
-    float distanceLive = centerPos.x+winWidth*0.45;
+    float distanceLive = centerPos.x+winWidth*0.09;
     drawList->AddCircleFilled(ImVec2(distanceLive, centerPos.y), 
-                                winWidth*0.005, 
-                                IM_COL32(255,20,20,200), // Couleur
+                                winWidth*0.004, 
+                                IM_COL32(150,250,150,200), // Couleur
                                 40);
     drawList->AddText(ImVec2(distanceLive+winWidth*0.01, centerPos.y-winHeight*0.01), 
-                        IM_COL32(255,50,50,200), // Couleur
+                        IM_COL32(150,255,150,200), // Couleur
                         "Live");
+    float pointSize = std::min(winWidth, winHeight) * 0.01f; // Taille du point en fonction de la fenêtre
+    ImVec2 topLeftCorner(0, 0);
+    ImVec2 topRightCorner(winWidth, 0);
+    ImVec2 bottomLeftCorner(0, winHeight);
+    ImVec2 bottomRightCorner(winWidth, winHeight);
+
+    ImU32 pointColor = IM_COL32(255, 0, 0, 255); // Rouge, entièrement opaque
 
 }
 
@@ -70,6 +76,9 @@ void UITool::draw_rect(){
 void UITool::draw_buttons(){
         // Dessinez les boutons
         for (Button* button : m_renderContext->buttons) {
+            button->Draw();
+        }
+        for(ImageButton* button : m_renderContext->imageButtons){
             button->Draw();
         }
 }

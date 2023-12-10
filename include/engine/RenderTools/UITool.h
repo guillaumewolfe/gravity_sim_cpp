@@ -4,6 +4,7 @@
 
 #include "RenderComponent.h"
 #include <chrono>
+#include "UI/ImageButton.h"
 
 class UITool : public RenderComponent {
 public:
@@ -18,6 +19,10 @@ public:
     std::chrono::system_clock::time_point start_time;
     void update_time();
     float lastScroll = 0.0f;
+
+    GLuint textureID;
+
+    ImageButton* pauseButton;
 
 private:
     int winWidth, winHeight;

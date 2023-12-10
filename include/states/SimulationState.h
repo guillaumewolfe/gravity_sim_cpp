@@ -6,6 +6,7 @@
 #include "engine/RenderTools/Render.h"
 #include "states/MenuState.h"
 #include "UI/MessageTool.h"
+#include "UI/ImageButton.h"
 
 
 #ifndef SIMULATION_H
@@ -20,7 +21,9 @@ private:
     //UI ELEMENTS
 
     std::vector<Button*> generateButtons();
+    std::vector<ImageButton*> generateImageButtons();
     std::vector<Labbel*> generateLabbels();
+    std::vector<ImageButton*>  imageButtons;
     MessageTool* messageBox;
     SystemeSolaire* systemeSolaire;
     Physics* physics;
@@ -74,11 +77,15 @@ public:
     void ShowAxesButton();
     void ShowCameraOptionsButton();
     void CreateObjectButton();
+    void SettingsButton();
+    void MinimapButton();
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();
     void showInfos();
     bool showInfo=true;
+    bool showSettings;
+    bool showMinimap;
     bool buttonsActivated = true;
     bool isOrbiting = true;
     bool showCameraOptions = false;
@@ -91,5 +98,7 @@ public:
 
     void deactivateButtons();
     void activateButtons();
+    void resetButtons();
+    void checkButtonState();
 };
 #endif

@@ -88,7 +88,7 @@ void TextureCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(7.5, 7.5, 7.5, 175), // Couleur
+                            IM_COL32(20, 25, 30, 240), // Couleur
                             cornerRadius);
 
     float cornerRadiusAdjustment = 10.0f;
@@ -324,7 +324,8 @@ void TextureCreator::generatePlanetLabels() {
 
         // Créer une nouvelle étiquette pour l'objet
         Labbel* planetLabel = new Labbel(labelPosX, labelPosY, ImVec4(255, 255, 255, 255),
-                                         info.name.c_str(), 18.0f, labelScale);
+                                         info.name.c_str(), 15.0f, labelScale);
+        planetLabel->UpdateAlpha(0.7);
 
         // Ajouter l'étiquette au vecteur
         planeteNames.push_back(planetLabel);

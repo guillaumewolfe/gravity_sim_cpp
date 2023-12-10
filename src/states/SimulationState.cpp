@@ -10,15 +10,14 @@ void SimulationState::Enter() {
     //Constructions des éléments
     labbels = generateLabbels();
     buttons = generateButtons();
-    buttons[2]->hidden=true;
     changeSimulationSpeed(true);
-    
+    imageButtons = generateImageButtons();
 
     //Construction des outils pour le render
     systemeSolaire = new SystemeSolaire();
     float maxSize = systemeSolaire->maxSize;
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions, &isLive);
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons,imageButtons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions, &isLive);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
     currentCamera->setContext(renderContext);
@@ -28,16 +27,18 @@ void SimulationState::Enter() {
 //Labels
 std::vector<Labbel*> SimulationState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
-
-    Labbel *TimeLabel = new Labbel(0.5f,0.95f,ImVec4(255,255,255,255),
-                                "Simulation time : ",20.0f,0.8f);
-    Labbel *TimeMultiplier = new Labbel(0.61f,0.96f,ImVec4(200,200,200,200),
+    float taille_y = 0.06f;
+    float topY = 1 - taille_y;
+    float buttonCenterY = topY + taille_y / 2; 
+    Labbel *TimeLabel = new Labbel(0.29f,buttonCenterY,ImVec4(255,255,255,255),
+                                "Simulation time : ",18.0f,0.8f);
+    Labbel *TimeMultiplier = new Labbel(0.4f,buttonCenterY,ImVec4(200,200,200,200),
                                 "Time speed: x ",14.0f,0.8f);
     Labbel *Speed = new Labbel(0.61f,0.94f,ImVec4(255,255,255,255),
                                 "Speed",18.0f,0.8f);
     labbel_list.push_back(TimeLabel);
     labbel_list.push_back(TimeMultiplier);
-    labbel_list.push_back(Speed);
+    //labbel_list.push_back(Speed);
     return labbel_list;
 }
 //Butons
@@ -92,17 +93,86 @@ std::vector<Button*> SimulationState::generateButtons(){
                             std::bind(&SimulationState::changeSimulationSpeed, this,false),0,true); 
 
 
-
-
-
-    buttons_list.push_back(MenuButton);
-    buttons_list.push_back(RestartButton);
-    buttons_list.push_back(PauseButton);
-    buttons_list.push_back(ShowCamera);
-    buttons_list.push_back(CreateObject);
-    buttons_list.push_back(increaseSpeed);
-    buttons_list.push_back(decreaseSpeed);
     return buttons_list;
+}
+std::vector<ImageButton*> SimulationState::generateImageButtons(){
+    std::vector<ImageButton*> imageButtons_list;
+    float taille_x = 0.035f;
+    float taille_y = 0.06f;
+    float position_x_left = (1.0+0.6)/2-taille_x/2;
+    float position_x_right = (1.0-0.6)/2+taille_x/2;
+    float diffx = taille_x;
+    float topY = 1 - taille_y;
+    float buttonCenterY = topY + taille_y / 2; 
+    ImVec4 button_color = ImVec4(20.0f/255.0f, 25.0f/255.0f, 30.0f/255.0f, 200);
+    button_color = ImVec4(1,1,1,1);
+    float alpha = 200.0f/255.0f;
+    ImageButton *cameraButton = new ImageButton(position_x_left-diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.40,
+                        button_color,button_color,
+                        "../assets/button/camera.png", 0,
+                            std::bind(&SimulationState::ShowCameraOptionsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+
+
+    ImageButton *addButton = new ImageButton(position_x_left-2*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+                        button_color,button_color,
+                        "../assets/button/planet.png", 0,
+                            std::bind(&SimulationState::CreateObjectButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    
+    ImageButton *optionButton = new ImageButton(position_x_left, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+                        button_color,button_color,
+                        "../assets/button/settings.png", 0,
+                            std::bind(&SimulationState::SettingsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *minimapButton = new ImageButton(position_x_left-3*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+                        button_color,button_color,
+                        "../assets/button/minimap.png", 0,
+                            std::bind(&SimulationState::MinimapButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+
+    ImageButton *menuButton = new ImageButton(0.015f, 0.025, ImVec2(0.05, 0.05),0.50,
+                        button_color,button_color,
+                        "../assets/button/menu.png", 0,
+                             [this]() {
+    auto boundFunction = std::bind(&SimulationState::MenuButton, this);
+    this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");},3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+
+    ImageButton *pauseButton = new ImageButton(0.5, buttonCenterY, ImVec2(taille_x, taille_y),0.325,
+                        button_color,button_color,
+                        "../assets/button/pause.png", 0,
+                            std::bind(&SimulationState::Pause, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *playButton = new ImageButton(0.5, buttonCenterY, ImVec2(taille_x, taille_y),0.325,
+                        button_color,button_color,
+                        "../assets/button/play.png", 0,
+                            std::bind(&SimulationState::Pause, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    playButton->hidden=true; //Au début, seul le boutton pause est affiché
+
+    ImageButton *forwardButton = new ImageButton(0.5+diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.4,
+                        button_color,button_color,
+                        "../assets/button/forward.png", 0,
+                            std::bind(&SimulationState::changeSimulationSpeed, this,true),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *backwardButton = new ImageButton(0.5-diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.45,
+                        button_color,button_color,
+                        "../assets/button/backward.png", 0,
+                            std::bind(&SimulationState::changeSimulationSpeed, this,false),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *restartButton = new ImageButton(position_x_right, buttonCenterY, ImVec2(taille_x, taille_y),0.45,
+                        button_color,button_color,
+                        "../assets/button/restart.png", 0,
+                            [this]() {
+                            auto boundFunction = std::bind(&SimulationState::Restart, this);
+                            this->generateDialogBox(boundFunction, "Do you want to restart the simulation?");},
+                            3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+
+
+    imageButtons_list.push_back(cameraButton);
+    imageButtons_list.push_back(addButton);
+    imageButtons_list.push_back(optionButton);
+    imageButtons_list.push_back(menuButton);
+    imageButtons_list.push_back(pauseButton);
+    imageButtons_list.push_back(playButton);
+    imageButtons_list.push_back(forwardButton);
+    imageButtons_list.push_back(backwardButton);
+    imageButtons_list.push_back(restartButton);
+    imageButtons_list.push_back(minimapButton);
+    return imageButtons_list;
+
 }
 
 
@@ -125,6 +195,7 @@ void SimulationState::rotateCamWithMouse(){
 }
 
 void SimulationState::Update() {
+    checkButtonState();
     if (isCreating){
         return;}
     else{if(!buttonsActivated)activateButtons();}
@@ -253,16 +324,19 @@ std::string SimulationState::getDescription() {
 void SimulationState::Pause(){
     if (forcePause){
         isPaused=true;
-        buttons[2]->updateLabel("R");
         forcePause = false;
+        imageButtons[4]->hidden=true; //Pause
+        imageButtons[5]->hidden=false; //Play
         return;        
     }
     if(isPaused){
         isPaused=false;
-        buttons[2]->updateLabel("P");
+        imageButtons[4]->hidden=false; //Pause
+        imageButtons[5]->hidden=true; //Play
     }else{
         isPaused=true;
-        buttons[2]->updateLabel("R");
+        imageButtons[4]->hidden=true; //Pause
+        imageButtons[5]->hidden=false; //Play
     }
 }
 
@@ -272,6 +346,7 @@ void SimulationState::Restart(){
     isLive = true;
     render->UI_Tool->update_time();
     //Time multiplier
+    isPaused = false;
     currentSpeedIndex = 0;
     followedObjectIndex = 0;
     time_multiplier = speedSettings[currentSpeedIndex].first;
@@ -302,6 +377,38 @@ void SimulationState::deactivateButtons(){
        buttonsActivated = false;
 }
 
+void SimulationState::resetButtons(){
+    for(ImageButton* button : imageButtons){
+        button->isOn=false;
+    }
+    imageButtons[4]->hidden=false; //Pause
+    imageButtons[5]->hidden=true; //Play
+}
+
+void SimulationState::checkButtonState(){
+    if(imageButtons.size()==0){return;}
+    if(isPaused){
+        imageButtons[4]->hidden=true; //Pause
+        imageButtons[5]->hidden=false; //Play
+    }else{
+        imageButtons[4]->hidden=false; //Pause
+        imageButtons[5]->hidden=true; //Play
+    }
+
+    if(isCreating){imageButtons[1]->isOn=true;}
+    else{imageButtons[1]->isOn=false;}
+
+    if(showCameraOptions){imageButtons[0]->isOn=true;}
+    else{imageButtons[0]->isOn=false;}
+
+    if(showSettings){imageButtons[2]->isOn=true;}
+    else{imageButtons[2]->isOn=false;}
+
+    if(showMinimap){imageButtons[9]->isOn=true;}
+    else{imageButtons[9]->isOn=false;}
+}
+
+
 void SimulationState::ShowAxesButton(){
     if(showAxes){
         showAxes = false;
@@ -313,6 +420,7 @@ void SimulationState::CreateObjectButton(){
         isCreating = false;
         activateButtons();
         Pause();
+        imageButtons[1]->isOn=false;
     }else{
         resetView();
         showCameraOptions = false;
@@ -321,6 +429,7 @@ void SimulationState::CreateObjectButton(){
         deactivateButtons();
         forcePause = true;
         Pause();
+        imageButtons[1]->isOn=true;
     }
 }
 
@@ -355,7 +464,12 @@ void SimulationState::RestartState(){
     render->Message_Tool = nullptr;
     showInfo = true;
     showAxes=false;
+    isCreating = false;
+    isPaused = false;
+    showMinimap = false;
+    showSettings = false;
     showCameraOptions = false;
+    resetButtons();
     Restart();
 
 }
@@ -368,6 +482,29 @@ void SimulationState::showInfos(){
 void SimulationState::ShowCameraOptionsButton(){
     if(showCameraOptions){
         showCameraOptions = false;
+        imageButtons[0]->isOn=false;
     }
-    else{showCameraOptions = true;}
+    else{
+        showCameraOptions = true;
+        imageButtons[0]->isOn=true;}
+}
+
+void SimulationState::SettingsButton(){
+    if(showSettings){
+        showSettings = false;
+        imageButtons[2]->isOn=false;
+    }
+    else{
+        imageButtons[2]->isOn=true;
+        showSettings = true;}
+}
+
+void SimulationState::MinimapButton(){
+    if(showMinimap){
+        showMinimap = false;
+        imageButtons[9]->isOn=false;
+    }
+    else{
+        imageButtons[9]->isOn=true;
+        showMinimap = true;}
 }

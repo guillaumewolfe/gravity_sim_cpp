@@ -96,8 +96,17 @@ bool Game::InitOpenGL()
     {
         return false;
     }
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-    window = glfwCreateWindow(1920, 1080, "Space Query", NULL, NULL);
+
+    // Obtention de la résolution de l'écran principal
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+
+    // Définir les dimensions maximales en fonction de la résolution de l'écran
+    int windowWidth = mode->width;
+    int windowHeight = mode->height;
+    
+    window = glfwCreateWindow(windowWidth, windowHeight, "Space Query", NULL, NULL);
+
     if (!window)
     {
         glfwTerminate();
