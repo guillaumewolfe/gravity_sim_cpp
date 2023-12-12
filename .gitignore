@@ -1,0 +1,36 @@
+# Ignore Mac system files
+.DS_Store
+
+# Ignore build output
+/build/
+*.exe
+*.o
+*.obj
+*.a
+
+# Ignore generated files from CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Ignore Visual Studio Code settings
+/.vscode/
+
+# Ignore specific binary or temporary files
+*.bin
+*.tmp
+*.temp
+
+# Ignore specific user files
+*.user
+*.suo
+
+# If you are using CLion or other JetBrains IDEs
+.idea/
+
+# Specific to your project (if any)
+app.dSYM/
+*.dll
+
+

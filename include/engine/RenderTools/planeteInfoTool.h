@@ -1,0 +1,61 @@
+
+#ifndef PlaneteInfoTool_H
+#define PlaneteInfoTool_H
+
+#include "RenderComponent.h"
+#include "engine/Vec3.h"
+#include "UI/Labbel.h"
+#include "UI/Buttons.h"
+#include "UI/ImageButton.h"
+#include "engine/CelestialObject.h"
+#include <utility> 
+#include <map>
+
+
+class PlaneteInfoTool : public RenderComponent {
+public:
+
+    int winWidth, winHeight;
+    explicit PlaneteInfoTool(RenderContext* renderContext);
+    void Draw() override;
+    void drawBackground();
+
+    void initLabels();
+    void initButtons();
+    void draw_labels();
+    void updateLabels();
+    void editButton();
+    void moveToButton();
+    void draw_buttons();
+    void closeButton();
+    void draw_story();
+
+
+    //Accessoire
+    std::string getTypeName(int type);
+    ImVec4 getTypeColor(int type);
+    std::string formatScientific(double value);
+    void drawTexturedSphere(float radius, int numSegments, int numSlices);
+
+    int mode = 1;
+    void setMode(int mode);
+
+    ImFont* storyFont;
+
+
+
+private:
+
+    CelestialObject* m_object;
+    CelestialObject* previousObject = nullptr;
+    std::vector<Labbel*> labbels;
+    std::vector<Button*> buttons;
+    std::vector<ImageButton*> imageButtons;
+    std::map<int, std::pair<std::string, ImVec4>> typeDict;
+    double Rotation=0;
+
+
+    
+};
+
+#endif // PlaneteInfoTool_H
