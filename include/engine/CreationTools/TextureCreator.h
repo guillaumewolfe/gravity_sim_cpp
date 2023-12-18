@@ -3,6 +3,8 @@
 #define TextureCreator_H
 
 #include "engine/CreationTools/StateCreator.h"
+#include "UI/ImageButton.h"
+#include "UI/Icon.h"
 
 struct CelestialObjectInfo {
     float posX;
@@ -62,6 +64,8 @@ private:
     std::vector<Labbel*> labbels;
     std::vector<Labbel*> planeteNames;
     std::vector<Button*> buttons;
+    std::vector<ImageButton*> imageButtons;
+    Icon* icon;
     std::vector<CelestialObject*> objects;
     std::vector<CelestialObject*> initSystem();
 

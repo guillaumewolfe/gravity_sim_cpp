@@ -24,7 +24,7 @@ Saturn::Saturn() : CelestialObject() {
     rotationSidSpeed = 0.0000261;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "29.46 years";
-
+    temperature = "-178°C";
 
     setName(name_sub);
     setPath(path_sub);

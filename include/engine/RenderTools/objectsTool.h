@@ -8,6 +8,7 @@
 #include "engine/RenderTools/GlowTool.h"
 #include "engine/RenderTools/athmosphereTool.h"
 #include "engine/RenderTools/saturnRingTool.h"
+#include "engine/Camera/Camera.h"
 
 class ObjectsTool : public RenderComponent {
 public:
@@ -15,7 +16,7 @@ public:
     std::string readShaderFile(const std::string& shaderPath);
 
 
-    explicit ObjectsTool(RenderContext* renderContext);
+    explicit ObjectsTool(RenderContext* renderContext, Camera* camera);
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     static void initSphere(CelestialObject& object, int lats, int longs);
@@ -31,6 +32,8 @@ private:
     //SHADERS:
     GLuint shaderProgram;
     GLuint starShaderProgram;
+
+    Camera* m_camera;
 
     GlowTool* glowTool;
     AthmosphereTool* athmoTool;

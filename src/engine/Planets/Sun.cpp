@@ -23,6 +23,7 @@ Sun::Sun() : CelestialObject() {
     rotationSid = 0;
     rotationSidDirection = Vec3(0,1,0);
     rotationSidSpeed = 1.0/2116800.0;
+    temperature = "5500°C"; 
 
     setName(name_sub);
     setPath(path_sub);

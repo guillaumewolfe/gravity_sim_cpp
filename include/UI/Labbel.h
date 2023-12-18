@@ -30,4 +30,5 @@ public:
     ImVec2 getPosition();
     void UpdateColor(ImVec4 newColor);
     bool isHidden = false;
+    bool alignLeft = false;
 };

@@ -23,7 +23,7 @@ Uranus::Uranus() : CelestialObject() {
     rotationSidSpeed = 0.0000161;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "84.01 years";
-
+    temperature = "-216°C";
 
     setName(name_sub);
     setPath(path_sub);

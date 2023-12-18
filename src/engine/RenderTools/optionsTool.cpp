@@ -16,6 +16,7 @@ OptionsTool::OptionsTool(RenderContext* renderContext) : RenderComponent(renderC
 
 void OptionsTool::Draw(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    ImGui::SetNextWindowFocus();
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.3f, 0.4f, 0.3f)); // Exemple de couleur (bleu foncé)
@@ -44,20 +45,20 @@ void OptionsTool::generate_buttons(){
     float taille_x = 0.175*0.5;
     float diff = taille_y+0.2*taille_y;
    Button *RestartButton = new Button(0.50f, 0.5, ImVec2(taille_x, taille_y),
+                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Resume", 0.1f,20.0f,
+                               "Resume", 0.2f,25.0f,
                             std::bind(&OptionsTool::CloseButton, this),5);       
    Button *OptionsButton = new Button(0.50f, 0.5+diff, ImVec2(taille_x, taille_y),
+                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Settings", 0.1f,20.0f,
+                               "Settings", 0.2f,25.0f,
                             std::bind(&OptionsTool::OptionsButton, this),5);   
 
    Button *MainMenuButton = new Button(0.50f, 0.5+2*diff, ImVec2(taille_x, taille_y),
+                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Main Menu", 0.1f,20.0f,
+                               "Main Menu", 0.2f,25.0f,
                             std::bind(&OptionsTool::MenuButton, this),5);   
 
 
@@ -68,8 +69,8 @@ void OptionsTool::generate_buttons(){
 }
 
 void OptionsTool::generate_labels(){
-    Labbel* menuLabbel = new Labbel(0.5f,0.4f,ImVec4(255,255,255,255),
-                                "Options",24.0f,0.8f);
+    Labbel* menuLabbel = new Labbel(0.5f,0.425f,ImVec4(255,255,255,255),
+                                "Options",28.0f,0.8f);
 
     labbels.push_back(menuLabbel);
 }

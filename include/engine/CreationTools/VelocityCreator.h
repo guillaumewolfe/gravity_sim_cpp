@@ -4,7 +4,8 @@
 
 #include "engine/CreationTools/StateCreator.h"
 #include "UI/Slider.h"
-
+#include "UI/ImageButton.h"
+#include "UI/Icon.h"
 
 class VelocityCreator : public StateCreator {
 public:
@@ -35,6 +36,8 @@ private:
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
     std::vector<Slider*> sliders;
+    std::vector<ImageButton*> imageButtons;
+    Icon* icon;
     float hauteur, longueur;
 
     ImVec2 bottomRight;
@@ -56,6 +59,7 @@ private:
     double escapeVelocity;
     double circularOrbitalVelocity;
     void setNewObjVelocity();
+    void forceClose();
 
 };
 

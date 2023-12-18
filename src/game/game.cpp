@@ -103,6 +103,8 @@ bool Game::InitOpenGL()
     GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
 
+
+
     // Définir les dimensions maximales en fonction de la résolution de l'écran
     int windowWidth = mode->width;
     int windowHeight = mode->height;

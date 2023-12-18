@@ -4,7 +4,7 @@
 #include "engine/CelestialObject.h" // Assurez-vous d'inclure le bon fichier pour CelestialObject
 #include <vector>
 #include "engine/RenderTools/RenderContext.h"
-
+#include "engine/Camera/Camera.h"
 
 
 
@@ -23,7 +23,7 @@ public:
 
     // Méthodes pour gérer le glow
     void initGlow();
-    void drawGlow();
+    void drawGlow(Camera* camera);
     void initSphere(GlowSphere& sphere, int lats, int longs, float rayon);
 
 private:

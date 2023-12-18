@@ -27,12 +27,20 @@ public:
     Vec3 rotationSidDirection;
     bool shouldBeDrawn = true;
     std::string orbitalString;
+    std::string story;
+    std::string temperature;
+    std::string composition;
     Vec3 initialVelocity;
     double distanceFromPlanet; //For satelite
     bool isCreated = false;
     double totalDistance =0; //Distance pour le calcul de la grandeur du Path
     double orbitCircumference=0;
-    std::string story;
+    bool showOrbit;
+    bool showPath = true;
+    bool showName = true;
+    CelestialObject* mostInfluentialObject;
+    void setMostInfluentialObject(CelestialObject* newMostInfluentialObject);
+    CelestialObject* getMostInfluentialObject();
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;

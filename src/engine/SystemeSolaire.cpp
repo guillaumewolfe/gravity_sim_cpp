@@ -3,11 +3,14 @@
 #include "engine/RenderTools/objectsTool.h"
 
 SystemeSolaire::SystemeSolaire(){
+    maxSize = 1000;
+    radiusScale = 2.0f;
     apiTool = new ApiTool();
     objects = initSystem();
     scale = getScale();
     setRayonInit();
     syncWithNasa();
+    
     //for (auto& object : objects){std::cout<<object->getName()<<" : "<<object->getRayon()<<std::endl;}
     }
 
@@ -55,12 +58,12 @@ double SystemeSolaire::getScale(){
 
 void SystemeSolaire::setRayonInit(){
     for (auto& object : objects){
-        object->setRayonSim(2*scale);
+        object->setRayonSim(radiusScale*scale);
         object->distanceScale = scale;
     }   
 }
 void SystemeSolaire::setRayon(CelestialObject* obj){
-    obj->setRayonSim(2*scale);
+    obj->setRayonSim(radiusScale*scale);
     ObjectsTool::initSphere(*obj, 150, 150);
 }
 

@@ -14,6 +14,8 @@ public:
 
     // Méthode pour dessiner le bouton
     void Draw();
+    void updatePointer(bool* newPointer);
+    bool isDeactivated = false;
 
 private:
     ImVec2 position;        // Position en pourcentage de la largeur et hauteur de la fenêtre

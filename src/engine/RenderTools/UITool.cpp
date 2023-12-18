@@ -55,22 +55,17 @@ void UITool::draw_rect(){
 
     if(!*(m_renderContext->isLive)){return;}
     float distanceLive = centerPos.x-winWidth*0.12;
+    drawList->AddText(ImVec2(distanceLive+winWidth*0.01, centerPos.y-winHeight*0.01), 
+                        IM_COL32(150,255,150,200), // Couleur
+                        "Live");
+               
     drawList->AddCircleFilled(ImVec2(distanceLive, centerPos.y), 
                                 winWidth*0.004, 
                                 IM_COL32(150,250,150,200), // Couleur
                                 40);
-    drawList->AddText(ImVec2(distanceLive+winWidth*0.01, centerPos.y-winHeight*0.01), 
-                        IM_COL32(150,255,150,200), // Couleur
-                        "Live");
-    float pointSize = std::min(winWidth, winHeight) * 0.01f; // Taille du point en fonction de la fenêtre
-    ImVec2 topLeftCorner(0, 0);
-    ImVec2 topRightCorner(winWidth, 0);
-    ImVec2 bottomLeftCorner(0, winHeight);
-    ImVec2 bottomRightCorner(winWidth, winHeight);
-
-    ImU32 pointColor = IM_COL32(255, 0, 0, 255); // Rouge, entièrement opaque
-
 }
+
+
 
 
 void UITool::draw_buttons(){

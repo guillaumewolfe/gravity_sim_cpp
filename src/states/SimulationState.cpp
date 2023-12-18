@@ -31,6 +31,12 @@ void SimulationState::Enter() {
     render->Settings_Tool->setSaveButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setGameSettings(gameObj->getSettings());
     render->Settings_Tool->init();
+
+    render->Zoom_Tool->setCloseButtonFonction(std::bind(&SimulationState::TelescopeButton, this));
+
+    render->CameraOptions_Tool->setCloseButtonFunction(std::bind(&SimulationState::ShowCameraOptionsButton, this));
+
+    render->Minimap_Tool->setCloseButtonFunction(std::bind(&SimulationState::MinimapButton, this));
 }
 
 
@@ -41,9 +47,9 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
     float topY = 1 - taille_y;
     float buttonCenterY = topY + taille_y / 2; 
     Labbel *TimeLabel = new Labbel(0.29f,buttonCenterY,ImVec4(255,255,255,255),
-                                "Simulation time : ",18.0f,0.8f);
-    Labbel *TimeMultiplier = new Labbel(0.60f,buttonCenterY,ImVec4(200,200,200,200),
-                                "Time speed: x ",14.0f,0.8f);
+                                "Simulation time : ",22.0f,0.8f);
+    Labbel *TimeMultiplier = new Labbel(0.585f,buttonCenterY,ImVec4(200,200,200,200),
+                                "Time speed: x ",16.0f,0.8f);
     Labbel *Speed = new Labbel(0.61f,0.94f,ImVec4(255,255,255,255),
                                 "Speed",18.0f,0.8f);
     labbel_list.push_back(TimeLabel);
@@ -51,6 +57,8 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
     //labbel_list.push_back(Speed);
     return labbel_list;
 }
+
+
 //Butons
 std::vector<Button*> SimulationState::generateButtons(){
     std::vector<Button*> buttons_list;
@@ -132,15 +140,14 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         button_color,button_color,
                         "../assets/button/settings.png", 0,
                             std::bind(&SimulationState::SettingsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
-    ImageButton *minimapButton = new ImageButton(position_x_left-3*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+    ImageButton *minimap = new ImageButton(position_x_left-4*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
-                        "../assets/button/minimap.png", 0,
+                        "../assets/button/solarsystem.png", 0,
                             std::bind(&SimulationState::MinimapButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
-    ImageButton *resetViewButton = new ImageButton(position_x_left-3*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+    ImageButton *telescopeButton = new ImageButton(position_x_left-3*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
                         "../assets/button/minimap.png", 0,
-                            std::bind(&SimulationState::resetView, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
-
+                            std::bind(&SimulationState::TelescopeButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *menuButton = new ImageButton(0.015f, 0.025, ImVec2(0.05, 0.05),0.50,
                         button_color,button_color,
                         "../assets/button/menu.png", 0,
@@ -182,7 +189,8 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
     imageButtons_list.push_back(forwardButton);
     imageButtons_list.push_back(backwardButton);
     imageButtons_list.push_back(restartButton);
-    imageButtons_list.push_back(resetViewButton);
+    imageButtons_list.push_back(telescopeButton);
+    imageButtons_list.push_back(minimap);
     return imageButtons_list;
 
 }
@@ -208,10 +216,12 @@ void SimulationState::rotateCamWithMouse(){
 
 void SimulationState::Update() {
     checkButtonState();
-    if (isCreating){
+    if (isCreating || renderContext->showZoom){
         return;}
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
-    if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {OptionsButton();}
+    if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
+        if(!isShowZoomClose){isShowZoomClose = true;}
+        else{OptionsButton();}}
     
 
     static ImVec2 lastMousePos = ImVec2(0, 0);
@@ -242,20 +252,33 @@ void SimulationState::Update() {
         isTranslating=true;
         rotateCamWithMouse();
     }
-    
-    if (ImGui::IsKeyDown(ImGuiKey_E)) {bool in = true;currentCamera->zoom(in);} 
-    if (ImGui::IsKeyDown(ImGuiKey_Q)) {bool in = false;currentCamera->zoom(in);}
+    if (ImGui::IsKeyDown(ImGuiKey_E)) {
+        bool in = true;
+        if(!currentCamera->isGlobalFollowing){
+        currentCamera->zoom(in);}
+        else{currentCamera->zoomByDistance(in);}}
+    if (ImGui::IsKeyDown(ImGuiKey_Q)) {
+        bool in = false;
+        if(!currentCamera->isGlobalFollowing){
+        currentCamera->zoom(in);}
+        else{currentCamera->zoomByDistance(in);}}
+
 
     if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {changeSimulationSpeed(false);} 
     if (ImGui::IsKeyPressed(ImGuiKey_RightArrow)) {changeSimulationSpeed(true);}
-
+    if (ImGui::IsKeyPressed(ImGuiKey_V)) {ShowAxesButton();}
     //Show object info
     if (ImGui::IsKeyReleased(ImGuiKey_I)) {showInfos();}
 
     if (ImGui::IsKeyDown(ImGuiKey_Z)) {bool in = true;currentCamera->changeValue(in);} 
     if (ImGui::IsKeyDown(ImGuiKey_C)) {bool in = false;currentCamera->changeValue(in);}
 
-    if(isOrbiting){currentCamera->orbitAroundObject(0.0020,0);}
+    if(isOrbiting){
+        if(currentCamera->isGlobalFollowing)
+            {currentCamera->orbitAroundObject(0.0000,0);}
+        else{currentCamera->orbitAroundObject(0.0015,0);}
+    }
+
     if (ImGui::IsKeyDown(ImGuiKey_W) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0,0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_S)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0,-0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_D)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0.01,0);isOrbiting=false;}
@@ -358,6 +381,7 @@ void SimulationState::Restart(){
     isPaused = false;
     currentSpeedIndex = 6;
     followedObjectIndex = 0;
+    renderContext->showZoom = false;
     time_multiplier = speedSettings[currentSpeedIndex].first;
     systemeSolaire->resetPosition();
     physics->Update(0.001);
@@ -416,11 +440,19 @@ void SimulationState::checkButtonState(){
     if(showSettings){imageButtons[2]->turnOn();}
     else{imageButtons[2]->turnOff();}
 
-    if(showMinimap){imageButtons[9]->turnOn();} 
-    else{imageButtons[9]->turnOff();}
-
     //Pause for live
     if(isPaused){isLive=false;}
+
+    //Show Zoom
+    if(showOptions || showSettings || isCreating){renderContext->showZoom = false;}
+    
+    if(renderContext->showZoom){imageButtons[9]->turnOn();}
+    else{imageButtons[9]->turnOff();}
+
+    if(renderContext->showMinimap){imageButtons[10]->turnOn();}
+    else{imageButtons[10]->turnOff();}
+
+
 }
 
 
@@ -434,12 +466,12 @@ void SimulationState::CreateObjectButton(){
     if(isCreating){
         render->Creator_Manager->Exit();
         Pause();
-        resetView();
-        showInfo = true;
     }else{
+        if(showOptions){OptionsButton();}
+        if(renderContext->showZoom){TelescopeButton();}
+        if(showInfo){showInfos();}
+        if(showCameraOptions){ShowCameraOptionsButton();}
         resetView();
-        showCameraOptions = false;
-        showInfo = false;
         isCreating = true;
         forcePause = true;
         Pause();
@@ -463,6 +495,7 @@ void SimulationState::changeSimulationSpeed(bool increase) {
 
 void SimulationState::changeFollowedObject(){
         currentCamera->newFollowObject(systemeSolaire->objects[followedObjectIndex]);
+        showInfo = true;
         followedObjectIndex+=1;
         if (followedObjectIndex > systemeSolaire->objects.size()-1){followedObjectIndex=0;}
 }
@@ -478,6 +511,8 @@ void SimulationState::RestartState(){
     showInfo = true;
     showAxes=false;
     isCreating = false;
+    showOptions = false;
+    renderContext->showZoom = false;
     isPaused = false;
     showMinimap = false;
     showSettings = false;
@@ -499,7 +534,9 @@ void SimulationState::ShowCameraOptionsButton(){
     }
     else{
         showCameraOptions = true;
-        imageButtons[0]->isOn=true;}
+        imageButtons[0]->isOn=true;
+        render->CameraOptions_Tool->Open();
+        }
 }
 
 void SimulationState::SettingsButton(){
@@ -508,6 +545,9 @@ void SimulationState::SettingsButton(){
         imageButtons[2]->isOn=false;
     }
     else{
+        if(showOptions){OptionsButton();}
+        if(renderContext->showZoom){TelescopeButton();}
+        if(isCreating){CreateObjectButton();}
         render->Settings_Tool->Open();
         imageButtons[2]->isOn=true;
         showSettings = true;
@@ -515,13 +555,15 @@ void SimulationState::SettingsButton(){
 }
 
 void SimulationState::MinimapButton(){
-    if(showMinimap){
-        showMinimap = false;
-        imageButtons[9]->isOn=false;
+    if(renderContext->showMinimap){
+        renderContext->showMinimap = false;
+        imageButtons[10]->isOn=false;
     }
     else{
-        imageButtons[9]->isOn=true;
-        showMinimap = true;}
+        if(isCreating){CreateObjectButton();}
+        if(showInfo){showInfos();}
+        imageButtons[10]->isOn=true;
+        renderContext->showMinimap = true;}
 }
 
 void SimulationState::OptionsButton(){
@@ -531,8 +573,29 @@ void SimulationState::OptionsButton(){
     }
     else{
         if(showSettings){render->Settings_Tool->CloseButton();}
+        if(renderContext->showZoom){OptionsButton();}
+        if(isCreating){CreateObjectButton();}
+        if(showInfo){showInfos();}
         showOptions = true;
         forcePause = true;
         Pause();
         }
 }
+
+void SimulationState::TelescopeButton(){
+    if(renderContext->showZoom){
+        renderContext->showZoom = false;
+        imageButtons[9]->isOn=false;
+    }
+    else{
+        if(showOptions){OptionsButton();}
+        if(showSettings){render->Settings_Tool->CloseButton();}
+        if(isCreating){CreateObjectButton();}
+        if(showInfo){showInfos();}
+        render->Zoom_Tool->Open();
+        renderContext->showZoom = true;
+        imageButtons[9]->isOn=true;
+        isShowZoomClose = false;
+        }
+}
+

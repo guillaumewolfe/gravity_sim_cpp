@@ -34,6 +34,11 @@ public:
     bool* showOptions;
     bool* showSettings;
     SimulationState* simulationState;
+    bool showAllOrbits = false;
+    bool showAllNames = true;
+    bool showAllPaths = true;
+    bool showZoom = false;
+    bool showMinimap = false;
 
 
 

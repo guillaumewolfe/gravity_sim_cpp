@@ -13,11 +13,16 @@ Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
 
 void Camera::Update() {
     if (followedObject) {
-        if (isTransiting) {
-            transitionToFollowObject();
-            //followObject();
-        } else {
-            followObject();
+        if(firstPersonModeEnabled){
+            firstPersonMode();
+        }
+        else{
+            if (isTransiting) {
+                transitionToFollowObject();
+                //followObject();
+            } else {
+                followObject();
+            }
         }
     }
     lookAt();
@@ -43,20 +48,29 @@ void Camera::transitionToFollowObject() {
     if (!followedObject) return;
     
     Vec3 objectPosition = followedObject->getPositionSimulation();
-    float objectRadius = followedObject->getRayon();
-    float pourcentOfScreen = 0.25f;
-
+    float objectRadius;
+    float pourcentOfScreen;
+    if(followedObject->type != 1){
+        objectRadius = followedObject->getRayon();
+        pourcentOfScreen = 0.30f;
+    }
+    else{
+        objectRadius = followedObject->getRayon();
+        pourcentOfScreen = 0.70f;
+    }
     // Calculer la distance de suivi désirée
     float verticalFOV = angle_perspective * (M_PI / 180.0f);
     float desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
 
-    this->followingDistance = desiredDistance;
+    if(!globalDistanceCalcuated){
+    globalFollowingDistance = calculateGlobalFollowingDistance();}
 
+    this->followingDistance = isGlobalFollowing ? globalFollowingDistance : desiredDistance;
     // Calculer la position finale
     Vec3 finalOffset;
-    finalOffset.x = desiredDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
-    finalOffset.y = desiredDistance * sin(orbitalVerticalAngle);
-    finalOffset.z = desiredDistance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+    finalOffset.x = followingDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
+    finalOffset.y = followingDistance * sin(orbitalVerticalAngle);
+    finalOffset.z = followingDistance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
     Vec3 finalPosition = objectPosition + finalOffset;
 
     // Interpolation temporelle
@@ -65,7 +79,7 @@ void Camera::transitionToFollowObject() {
     target = lerp(target, objectPosition, t);
 
 
-    if (glm::abs((position-finalPosition).norm()-desiredDistance)<0.1){
+    if (glm::abs((position-finalPosition).norm()-followingDistance)<0.01){
         //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
         isTransiting = false;
         transitionStep = 0;
@@ -79,40 +93,22 @@ void Camera::transitionToFollowObject() {
     if (transitionStep >= transitionThreshold) {
         isTransiting = false;
         transitionStep = 0;
-        *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
-        *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+        if(!isGlobalFollowing){
+            *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+            *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+        }
         return;
     }
 }
 
-float Camera::calculateScreenOccupationPercentage() {
-    if (!followedObject) return 0.0f;
-
-    Vec3 objectPosition = followedObject->getPositionSimulation();
-    float objectRadius = followedObject->getRayon();
-
-    // Calculer la distance entre la caméra et l'objet
-    float distance = (objectPosition - this->position).norm();
-
-    // Calculer la taille angulaire de l'objet (en radians)
-    float angularSize = 2 * atan(objectRadius / distance);
-
-    // Calculer le FOV vertical de la caméra (en radians)
-    float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
-
-    // Calculer le pourcentage de l'écran occupé par l'objet
-    float screenOccupation = angularSize / verticalFOV;
-
-    // Convertir en pourcentage
-    return screenOccupation * 100.0f;
-}
-
-
 void Camera::followObject() {
     if (!followedObject) return;
+    if (firstPersonModeEnabled) return;
 
+    if(isGlobalFollowing){
+        followingDistance = globalFollowingDistance;
+    }
     Vec3 objectPosition = followedObject->getPositionSimulation();
-
     // Utiliser les angles orbitaux pour calculer la position
     Vec3 offset;
     offset.x = followingDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
@@ -132,25 +128,123 @@ void Camera::followObject() {
     //up = right.cross(forward).normalize();
 }
 
-void Camera::firstPersonMode(CelestialObject* objToLookAt){
-    if (!followedObject) return;
+float Camera::calculateGlobalFollowingDistance() {
+    float maxDistance = 0.0f;
+    float verticalFOV = angle_perspective * (M_PI / 180.0f);
+    float halfFOV = tan(verticalFOV / 2);
+
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        Vec3 objectPosition = object->getPositionSimulation();
+        
+        // Calculez la position relative à la caméra
+        Vec3 relativePosition = objectPosition - target; // Ici target est la position que la caméra vise
+
+        // Utilisez la projection de cette position sur l'axe de la caméra
+        Vec3 forward = (target - position).normalize();
+        float distanceAlongCameraAxis = relativePosition.dot(forward); // 'forward' est le vecteur directionnel de la caméra
+
+        // Calculez la distance perpendiculaire à l'axe de la caméra
+        float perpendicularDistance = sqrt(pow(relativePosition.norm(),2) - distanceAlongCameraAxis * distanceAlongCameraAxis);
+
+        // Calculez la distance maximale à laquelle l'objet est visible
+        float visibleDistance = perpendicularDistance / halfFOV;
+        
+        if (visibleDistance > maxDistance) {
+            maxDistance = visibleDistance;
+        }
+    }
+    globalDistanceCalcuated = true;
+    return maxDistance/5;
+}
+
+
+
+
+void Camera::firstPersonMode() {
+    if (!followedObject || !firstPersonModeEnabled || !firstPersonTargetObject) return;
 
     Vec3 objectPosition = followedObject->getPositionSimulation();
+    Vec3 objToLookAtPosition = firstPersonTargetObject->getPositionSimulation();
+    Vec3 directionToObject = (objToLookAtPosition - objectPosition).normalize();
     float objectRadius = followedObject->getRayon();
-    Vec3 objToLookAtPosition = objToLookAt->getPositionSimulation();
+    float heightAboveSurface = objectRadius * 0.01f;
 
-    Vec3 directionToObject = (objToLookAtPosition-objectPosition).normalize();
+    // Déterminer la distance maximale pour 75% d'occupation de l'écran
+    float totalDistance = (firstPersonTargetObject->getPositionSimulation() - followedObject->getPositionSimulation()).norm();
 
-    float heightAboveSurface = 0.05f; // Petite hauteur au-dessus de la surface pour éviter les problèmes de clipping
-    position = objectPosition + directionToObject * (objectRadius + heightAboveSurface);
+    // Déterminer la distance pour 75% d'occupation de l'écran
+    float distanceFor75PercScreenOccupation = calculateDistanceForScreenOccupation(30.0f);
 
-    target = objToLookAt->getPositionSimulation();
+    // maxZoomDistance est la différence entre la distance totale et la distance pour 75% d'occupation
+    maxZoomDistance = totalDistance - distanceFor75PercScreenOccupation;
+    maxZoomDistance = std::max(maxZoomDistance, 0.0f);
+    // Interpoler entre le point minimal (heightAboveSurface) et le point maximal (maxZoomDistance)
+    float zoomDistance = heightAboveSurface + (maxZoomDistance - heightAboveSurface) * firstPersonZoomPercentage;
+
+    position = objectPosition + directionToObject * (objectRadius + zoomDistance);
+    target = objToLookAtPosition;
+
     Vec3 globalUp(0, 1, 0);
     Vec3 right = directionToObject.cross(globalUp).normalize();
     up = right.cross(directionToObject).normalize();
-    // Ajustez la vue
     lookAt();
 }
+
+void Camera::zoomFirstPerson(bool in) {
+    // Base zoom adjustment factor
+    float baseZoomAdjustmentFactor = 0.0025f; 
+
+    // Apply a quadratic scaling to the zoom adjustment factor
+    float zoomAdjustmentFactor = baseZoomAdjustmentFactor * (1.0f - firstPersonZoomPercentage * firstPersonZoomPercentage);
+
+    if (in) {
+        // Increase zoom, but not beyond 100%
+        firstPersonZoomPercentage = std::min(firstPersonZoomPercentage + zoomAdjustmentFactor, 1.0f);
+    } else {
+        // Decrease zoom, but not below 0%
+        firstPersonZoomPercentage = std::max(firstPersonZoomPercentage - zoomAdjustmentFactor, 0.0f);
+    }
+}
+
+
+float Camera::calculateDistanceForScreenOccupation(float occupationPercentage) {
+    if (!firstPersonTargetObject) return 0.0f;
+
+    float objectRadius = firstPersonTargetObject->getRayon();
+    float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
+
+    // Calculer la taille angulaire attendue pour le pourcentage d'occupation donné
+    float angularSize = 2 * atan(tan(verticalFOV / 2.0f) * (occupationPercentage / 100.0f));
+
+    // Calculer la distance à partir de la taille angulaire
+    float distance = objectRadius / tan(angularSize / 2.0f);
+
+    return distance;
+}
+
+
+
+float Camera::calculateScreenOccupationPercentage(CelestialObject* object) {
+    if (!object) return 0.0f;
+
+    Vec3 objectPosition = object->getPositionSimulation();
+    float objectRadius = object->getRayon();
+
+    // Calculer la distance entre la caméra et l'objet
+    float distance = (objectPosition - this->position).norm();
+
+    // Calculer la taille angulaire de l'objet (en radians)
+    float angularSize = 2 * atan(objectRadius / distance);
+
+    // Calculer le FOV vertical de la caméra (en radians)
+    float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
+
+    // Calculer le pourcentage de l'écran occupé par l'objet
+    float screenOccupation = (angularSize / verticalFOV) * 100.0f; // Converti en pourcentage
+
+    return screenOccupation;
+}
+
 
 void Camera::changeValue(bool increase){
     if(increase){}
@@ -158,13 +252,10 @@ void Camera::changeValue(bool increase){
     
 }
 
-
-
 void Camera::zoomByDistance(bool in){
     if (!followedObject) return;
-
-    if(in){followingDistance *= 1.01;}
-    else{followingDistance /= 1.01;}
+    if(in){globalFollowingDistance *= 1.01;}
+    else{globalFollowingDistance /= 1.01;}  
 }
 
 
@@ -224,14 +315,20 @@ void Camera::creationMode(){
 
 
 void Camera::zoom(bool in) {
+    if (firstPersonModeEnabled) {
+        zoomFirstPerson(in);
+    } else {
+        // Mode non première personne, ajustez l'angle de perspective
+        if (in) {
+            angle_perspective *= 0.99;
+        } else {
+            angle_perspective *= 1.01;
+        }
+        if (angle_perspective > 150) angle_perspective = 150;
+        if (angle_perspective < 10) angle_perspective = 10; // Évitez un angle de perspective trop petit
 
-    if(in){zoomFactor = 0.99;}
-        else{zoomFactor = 1.01;}
-
-    angle_perspective *= zoomFactor;
-    if(angle_perspective>150){angle_perspective = 150;}
-
-    setPerspective();
+        setPerspective();
+    }
 }
 
 void Camera::rotateHorizontal(float angle) {
@@ -312,11 +409,29 @@ void Camera::setPerspective() {
     GLdouble fW, fH;
     int winWidth, winHeight;
     float zNear = 0.001;
-    float zFar = 3000;
+    float zFar = 10000;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     // Calculer la hauteur et la largeur de la fenêtre à la distance de clipping près
     fH = tan(angle_perspective / 360 * pi) * zNear;
     fW = fH * winWidth/winHeight;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-fW, fW, -fH, fH, zNear, zFar);
+
+    // Revenir à la matrice de modèle-vue
+    glMatrixMode(GL_MODELVIEW);
+    projectionMatrix = glm::frustum(static_cast<float>(-fW), static_cast<float>(fW), static_cast<float>(-fH), static_cast<float>(fH), static_cast<float>(zNear), static_cast<float>(zFar));
+}
+void Camera::setCustomPerspective(float aspectRatio) {
+    const GLdouble pi = 3.1415926535897932384626433832795;
+    GLdouble fW, fH;
+    float zNear = 0.001;
+    float zFar = 3000;
+
+    // Utiliser l'aspectRatio fourni pour calculer fW et fH
+    fH = tan(angle_perspective / 360 * pi) * zNear;
+    fW = fH * aspectRatio;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -343,21 +458,57 @@ void Camera::newFollowObject(CelestialObject* obj) {
     *(m_renderContext->currentSpeedIndex) = 6; 
     currentSimulationSpeedForTransition = *(m_renderContext->timeMultiplier);
     *(m_renderContext->timeMultiplier) = 0;
+    isGlobalFollowing = false;
+}
 
+void Camera::newFollowObjectGlobal(CelestialObject* obj) {
+    isTransiting = true;
+    followedObject = obj;
+    // Exemple de définition d'un nouvel offset
+    Vec3 objectPosition = followedObject->getPositionSimulation();
+    float initialDistance = 10.0f; // Ou toute autre valeur logique
+    Vec3 initialOffset = Vec3(0, 0, initialDistance); // Modifier selon les besoins
+    transitionStep = 0;
+    angle_perspective = 35;
+    setPerspective();
+    isGlobalFollowing = true;
+    globalDistanceCalcuated = false;
+}
+
+
+void Camera::newFirstPersonTarget(CelestialObject* targetObject) {
+    firstPersonTargetObject = targetObject;
+    firstPersonModeEnabled = true;
+    firstPersonZoomOffset = 0.0f;
+    firstPersonZoomPercentage = 0.0f;
+    firstPersonZoomPercentage = 0.0f;
+    angle_perspective = 40;
+    isGlobalFollowing = false;
+    setPerspective();
 }
 
 
 void Camera::resetPosition() {
-    position = originalPosition;
-    target = originalTarget;
-    up = originalUp;
+    // position = originalPosition;
+    // target = originalTarget;
+    // up = originalUp;
     angle_perspective=40;
     followedObject = nullptr;
     selectedObject = nullptr;
+    firstPersonTargetObject = nullptr;
+    firstPersonModeEnabled = false;
+    isGlobalFollowing = false;
     orbitalHorizontalAngle = 0;
     orbitalVerticalAngle = 0;
     setPerspective();
     lookAt();
+    if (m_renderContext && !m_renderContext->systemeSolaire->objects.empty()) {
+        orbitalVerticalAngle = (M_PI/2)/5;
+        orbitalHorizontalAngle = -1.2112;
+        newFollowObjectGlobal(m_renderContext->systemeSolaire->objects[0]);
+        *(m_renderContext->showInfo) = false;
+        globalDistanceCalcuated = false;
+    }
 }
 
 void Camera::setPosition(Vec3 newPos){
@@ -368,12 +519,6 @@ void Camera::setInitPosition(Vec3 newPos){
     position = newPos;
     originalPosition = newPos;
 }
-
-
-
-
-
-
 
 
 
@@ -439,4 +584,12 @@ void Camera::setTarget(Vec3 newTarget){
 
 void Camera::setContext(RenderContext* context){
     this->m_renderContext = context;
+}
+
+double Camera::getAnglePerspective(){
+    return angle_perspective;
+}
+
+Vec3 Camera::getUp(){
+    return up;
 }

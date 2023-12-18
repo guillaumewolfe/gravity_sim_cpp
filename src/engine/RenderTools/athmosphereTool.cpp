@@ -46,7 +46,7 @@ void AthmosphereTool::initAthmosphere() {
     initSphere(cloudSphere, 150, 150, rayonClouds, cloudSphere.textureID);
 }
 
-void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
+void AthmosphereTool::drawAthmosphere(CelestialObject* Sun, Camera* camera) {
     if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn)) {
         return;
     }
@@ -64,7 +64,7 @@ void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
 
     glPushMatrix();
     glLoadIdentity();
-    m_renderContext->currentCamera->lookAt();
+    camera->lookAt();
     glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
     GLint alphaLoc = glGetUniformLocation(shaderProgram, "alpha");
     GLint colorLoc = glGetUniformLocation(shaderProgram, "sphereColor");
@@ -106,7 +106,7 @@ void AthmosphereTool::drawAthmosphere(CelestialObject* Sun) {
     // Désactiver le shader
     glPopMatrix();
     glUseProgram(0);
-    drawClouds();
+    drawClouds(camera);
 }
 
 glm::vec3 AthmosphereTool::getLightDirection(CelestialObject* Sun){
@@ -118,7 +118,7 @@ glm::vec3 AthmosphereTool::getLightDirection(CelestialObject* Sun){
 }
 
 
-void AthmosphereTool::drawClouds(){
+void AthmosphereTool::drawClouds(Camera* camera){
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glUseProgram(cloudShaderProgram);
@@ -127,7 +127,7 @@ void AthmosphereTool::drawClouds(){
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
-        m_renderContext->currentCamera->lookAt();
+        camera->lookAt();
         glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
         glRotatef(m_celestialObject->rotationSid,0,1,0);
         glRotatef(rotationOffset,0,1,0);

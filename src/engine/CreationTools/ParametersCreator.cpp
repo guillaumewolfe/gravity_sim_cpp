@@ -16,6 +16,7 @@ ParametersCreator::ParametersCreator(RenderContext* renderContext, CreatorManage
     generate_buttons();
     generate_labels();
     initDictionnaries();
+    font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", 14);
 }
 
 void ParametersCreator::initDictionnaries(){
@@ -109,24 +110,33 @@ void ParametersCreator::DrawOpenGL(){}
 
 
 void ParametersCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.0725f, 0.675, ImVec2(0.05, 0.045),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-                               
-                               "Previous", 0.00f,18.0f,
+   Button *ReturnButton = new Button(0.045f, 0.57, ImVec2(0.045, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Previous", 0.1,19.0f,
                                std::bind(&ParametersCreator::previous_state, this));  
-   Button *NextButton = new Button(0.125f, 0.675, ImVec2(0.05, 0.04),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Done", 0.0f,23.0f,
+
+   Button *NextButton = new Button(0.105f, 0.57, ImVec2(0.04, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Select", 0.4,19.0f,
                                std::bind(&ParametersCreator::next_state, this));  
 
 
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
-    buttons[1]->UpdateLabelColor(100,255,150,200);
-    buttons[0]->UpdateLabelColor(255,125,100,200);
 
+
+
+
+    ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
+    ImageButton* closeButton = new ImageButton((0.07+0.075)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.6f,
+                        button_color, button_color,
+                        "../assets/button/close.png", 0,
+                            std::bind(&ParametersCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+        
+    icon = new Icon((0.075-0.06)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.35f,"../assets/button/parameters.png",0.85);
+    imageButtons.push_back(closeButton);
 }
 
 void ParametersCreator::generate_sliders(){
@@ -136,19 +146,19 @@ void ParametersCreator::generate_sliders(){
 
 void ParametersCreator::generate_labels(){
     float space = ImGui::GetTextLineHeightWithSpacing();
-    Labbel *MessageLabel = new Labbel(0.095f,0.135f,ImVec4(255,255,255,255),
-                            "Choose Parameters",22.0f,0.9f);
-    Labbel *NameLabel = new Labbel(0.075f-0.030, 0.20f,ImVec4(255,255,255,255),
+    Labbel *MessageLabel = new Labbel(0.075f,0.25f,ImVec4(255,255,255,255),
+                            "Parameters",25.0f,0.9f);
+    float position_x = 0.010f;
+    float position_y = 0.35f;
+    float diff_y = 0.05f;
+    Labbel *NameLabel = new Labbel(position_x, position_y,ImVec4(255,255,255,255),
                             "Name",18.0f,0.7f);
-    Labbel *MassLabel = new Labbel(0.095f, 0.300f,ImVec4(255,255,255,255),
+    Labbel *MassLabel = new Labbel(position_x, position_y + diff_y,ImVec4(255,255,255,255),
                             "Mass",18.0f,0.7f);    
-    Labbel *RadiusLabel = new Labbel(0.095f, 0.425f,ImVec4(255,255,255,255),
+    Labbel *RadiusLabel = new Labbel(position_x, position_y + 2*diff_y,ImVec4(255,255,255,255),
                             "Radius",18.0f,0.7f);    
-    Labbel *SideralLabel = new Labbel(0.095f, 0.545f,ImVec4(255,255,255,255),
-                            "Rotation",18.0f,0.7f);    
-    Labbel *PerDayLabel = new Labbel(0.125, 0.575f,ImVec4(255,255,255,255),
-                            "per day",18.0f,0.7f);    
-
+    Labbel *SideralLabel = new Labbel(position_x, position_y + 3*diff_y,ImVec4(255,255,255,255),
+                            "Rotation",18.0f,0.7f);     
 
 
     labbels.push_back(MessageLabel);    
@@ -156,19 +166,23 @@ void ParametersCreator::generate_labels(){
     labbels.push_back(MassLabel);
     labbels.push_back(RadiusLabel);
     labbels.push_back(SideralLabel);
-    labbels.push_back(PerDayLabel);
+
+    //Faire une boucle sur les labbels sauf le premier
+    for (int i = 1; i < labbels.size(); i++) {
+        labbels[i]->alignLeft = true;
+    }
 
 }
 void ParametersCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 2.0f;
+    float cornerRadius = 10.0f;
 
 
-    float longueur = winWidth * 0.18; // Exemple de taille
-    float hauteur = winHeight * 0.60; // Exemple de taille
+    float longueur = winWidth* 0.14; // Exemple de taille
+    float hauteur = winHeight * 0.40; // Exemple de taille
 
-    centerPos = ImVec2(winWidth * 0.095f, winHeight * 0.4f);
+    centerPos = ImVec2(winWidth * 0.075f, winHeight * 0.4f);
     topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
 
@@ -181,12 +195,10 @@ void ParametersCreator::drawBackground(){
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
-
-    float cornerRadiusAdjustment = 10.0f;
-    drawList->AddRect(topLeft,
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
-                        cornerRadius,0,3.0f); // Ajustez le rayon ici
+    drawList->AddRect(topLeft, 
+                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                        IM_COL32(255,255,255,40), // Couleur
+                        cornerRadius,0,0.2f);
 
 }
 
@@ -194,6 +206,10 @@ void ParametersCreator::draw_buttons(){
         for (Button* btn : buttons) {
         btn->Draw();
     }
+    for(ImageButton* btn : imageButtons){
+        btn->Draw();
+    }
+    icon->Draw();
 }
 
 void ParametersCreator::draw_sliders(){
@@ -263,54 +279,64 @@ void ParametersCreator::updateEffects(){
 
 
 
-void ParametersCreator::draw_input_name(){
+void ParametersCreator::draw_input_name() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.06;
-    float offsetX = winWidth * 0.02 ;
-    float offsetY = winHeight * -0.21;
-    ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
-
-    // Calculer la taille du rectangle
-    float rectWidth = longueurBox * 1.2;
-    float rectHeight = 1.5 * ImGui::GetTextLineHeightWithSpacing();
-
-    // Calculer la position du rectangle pour le centrer
-    ImVec2 rect_pos = ImVec2(cursorPos.x - (rectWidth - longueurBox) / 2, cursorPos.y - (rectHeight - ImGui::GetTextLineHeightWithSpacing()) / 2);
-
-    // Taille du rectangle
-    ImVec2 rect_size = ImVec2(rectWidth, rectHeight);
-
-    //drawList->AddRect(rect_pos, ImVec2(rect_pos.x + rect_size.x, rect_pos.y + rect_size.y), IM_COL32(128, 128, 128, 255),3,0,2); // Modifier la couleur ici
+    ImGui::PushFont(font);
+    //calclation size of font
+    ImVec2 textSize = ImGui::CalcTextSize(planetName, NULL, false, 0.0f);
+    float offsetX = winWidth * 0.14;
+    float offsetY = winHeight * 0.35 - textSize.y/2;
+    float pourcentageX = 0.8;
+    ImVec2 cursorPos = ImVec2(centerPos.x*pourcentageX, offsetY);
+    // Calculate the width of the input background based on the text length
+    float textWidth = ImGui::CalcTextSize(planetName).x;
+    float inputWidth = winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX); // Add some padding
 
     ImGui::SetCursorPos(cursorPos);
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.3f, 0.3f, 0.3f, 0.0f)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 1.0f)); // Couleur de sélection du texte
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1.0f, 1.0f));
-    ImGui::SetNextItemWidth(longueurBox);
-    ImGui::InputText("##Planete Name", planetName, sizeof(planetName));
-    ImGui::PopStyleColor(2);
-    ImGui::PopStyleVar();
+    // Draw the editable text
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1,0,0,1.0)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 0.4f)); // Couleur de sélection du texte
+    ImGui::PushItemWidth(inputWidth);
+    ImGui::InputText("##PlanetNameInput", planetName, sizeof(planetName));
+    ImGui::PopItemWidth();
+    ImGui::PopStyleColor(3);
+    ImGui::PopFont();
 
-    if(planetName[0] == '\0'){strcpy(planetName, m_manager->newCreatedObject->getName().c_str());}//Si C'est vide, remet le nom de la planète
+    if (planetName[0] == '\0') {
+        strcpy(planetName, m_manager->newCreatedObject->getName().c_str());
+    }
 }
+
+
 
 void ParametersCreator::draw_input_weight(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.1;
-    float offsetX = winWidth * 0.025 ;
-    float offsetY = -winHeight * 0.085f;
-    ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
+    ImGui::PushFont(font);
+    ImVec2 textSize = ImGui::CalcTextSize(planetName, NULL, false, 0.0f);
+    float offsetX = winWidth * 0.14;
+    float offsetY = winHeight * (0.35+0.05) - textSize.y/2;
+    float pourcentageX = 0.8;
+    ImVec2 cursorPos = ImVec2(centerPos.x*pourcentageX, offsetY);
+    float inputWidth = winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX); // Add some padding
     ImGui::SetCursorPos(cursorPos);
-    ImGui::SetNextItemWidth(longueurBox);
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.3f, 0.3f, 0.3f, 0.0f)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1,1,1,0.5)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Fond
-    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 1.0f)); // Couleur de sélection du texte
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 0.4f)); // Couleur de sélection du texte
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.4f, 0.4f, 0.4f, 1.0f)); // Elément sélectionné
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.7f)); // Survol
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // Texte
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Ajustez ces valeurs selon vos besoins
+    const char* buffer = "1000.0x";
+    // Utilisez CalcTextSize pour calculer la longueur du texte
+    float textSize2 = ImGui::CalcTextSize(buffer, NULL, false, 0.0f).x*1.12;
+    ImGui::PushItemWidth(textSize2);
+    ImGui::InputFloat("##Planete Weight", &massMultiplicator, 0.0f, 0.0f, "%.1fx");
+    float space = winWidth*0.001;
+    cursorPos = ImVec2(centerPos.x*pourcentageX+textSize2+space, offsetY);
+    ImGui::SetCursorPos(cursorPos);
+    ImGui::PushItemWidth(winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX)-textSize2-space);
     if (ImGui::BeginCombo("##Choose mass", currentItemWeight.c_str(),ImGuiComboFlags_NoArrowButton)) { // currentItemWeight est une std::string pour stocker l'élément sélectionné
         for (int i = 0; i < itemNamesWeight.size(); i++) {
             bool isSelected = (currentItemWeight == itemNamesWeight[i]);
@@ -325,30 +351,38 @@ void ParametersCreator::draw_input_weight(){
         ImGui::EndCombo();
     }
     ImGui::PopStyleVar();
-    ImGui::SetCursorPos(ImVec2(cursorPos.x-0.04*winWidth, cursorPos.y));
-    ImGui::SetNextItemWidth(longueurBox/2);
-    ImGui::InputFloat("##Planete Weight", &massMultiplicator, 0.0f, 0.0f, "%.1f  x");
-
-    ImGui::PopStyleColor(8);
+    ImGui::PopStyleColor(7);
+    ImGui::PopFont();
 }
 
 void ParametersCreator::draw_input_radius(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.1;
-    float offsetX = winWidth * 0.025 ;
-    float offsetY = winHeight * 0.04f;
-    ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
+    ImGui::PushFont(font);
+    ImVec2 textSize = ImGui::CalcTextSize(planetName, NULL, false, 0.0f);
+    float offsetX = winWidth * 0.14;
+    float offsetY = winHeight * (0.35+0.1) - textSize.y/2;
+    float pourcentageX = 0.8;
+    ImVec2 cursorPos = ImVec2(centerPos.x*pourcentageX, offsetY);
+    float inputWidth = winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX); // Add some padding
     ImGui::SetCursorPos(cursorPos);
-    ImGui::SetNextItemWidth(longueurBox);
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.3f, 0.3f, 0.3f, 0.0f)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1,1,1,0.5)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Fond
-    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 1.0f)); // Couleur de sélection du texte
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 0.4f)); // Couleur de sélection du texte
     ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.4f, 0.4f, 0.4f, 1.0f)); // Elément sélectionné
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.7f)); // Survol
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // Texte
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Ajustez ces valeurs selon vos besoins
+    const char* buffer = "1000.0x";
+    // Utilisez CalcTextSize pour calculer la longueur du texte
+    float textSize2 = ImGui::CalcTextSize(buffer, NULL, false, 0.0f).x*1.12;
+    ImGui::PushItemWidth(textSize2);
+    ImGui::InputFloat("##Planete Radius", &radiusMultiplicator, 0.0f, 0.0f, "%.2f  x");
+    float space = winWidth*0.001;
+    cursorPos = ImVec2(centerPos.x*pourcentageX+textSize2+space, offsetY);
+    ImGui::SetCursorPos(cursorPos);
+    ImGui::PushItemWidth(winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX)-textSize2-space);
+
     if (ImGui::BeginCombo("##Choose radius", currentItemRadius.c_str(),ImGuiComboFlags_NoArrowButton)) { // currentItemRadius est une std::string pour stocker l'élément sélectionné
         for (int i = 0; i < itemNamesRadius.size(); i++) {
             bool isSelected = (currentItemRadius == itemNamesRadius[i]);
@@ -362,33 +396,37 @@ void ParametersCreator::draw_input_radius(){
         }
         ImGui::EndCombo();
     }
-    ImGui::SetCursorPos(ImVec2(cursorPos.x-0.04*winWidth, cursorPos.y));
-    ImGui::SetNextItemWidth(longueurBox/2);
-    ImGui::InputFloat("##Planete Radius", &radiusMultiplicator, 0.0f, 0.0f, "%.1f  x");
     ImGui::PopStyleVar();
-    ImGui::PopStyleColor(8);
+    ImGui::PopStyleColor(7);
+    ImGui::PopFont();
 }
 void ParametersCreator::draw_input_sideral(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float longueurBox = winWidth*0.1;
-    float offsetX = winWidth * 0.05 ;
-    float offsetY = winHeight * 0.163f;
-    ImVec2 cursorPos = ImVec2(centerPos.x-longueurBox/2+offsetX, centerPos.y + offsetY);
-    ImGui::SetCursorPos(cursorPos);
-    ImGui::SetNextItemWidth(longueurBox);
-    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.3f, 0.3f, 0.3f, 0.0f)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1,1,1,0.5)); // Couleur en RGBA
-    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Fond
-    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 1.0f)); // Couleur de sélection du texte
-    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.4f, 0.4f, 0.4f, 1.0f)); // Elément sélectionné
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.7f)); // Survol
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); // Texte
-    ImGui::SetCursorPos(ImVec2(cursorPos.x-0.04*winWidth, cursorPos.y));
-    ImGui::InputFloat("##Rotation", &sideralMultiplicator, 0.0f, 0.0f, "%.2f");
+    ImGui::PushFont(font);
+    //calclation size of font
+    ImVec2 textSize = ImGui::CalcTextSize(planetName, NULL, false, 0.0f);
+    float offsetX = winWidth * 0.14;
+    float offsetY = winHeight * 0.5 - textSize.y/2;
+    float pourcentageX = 0.8;
+    ImVec2 cursorPos = ImVec2(centerPos.x*pourcentageX, offsetY);
+    // Calculate the width of the input background based on the text length
+    float textWidth = ImGui::CalcTextSize(planetName).x;
+    float inputWidth = winWidth * 0.14/2*0.95+centerPos.x*(1-pourcentageX); // Add some padding
 
-    ImGui::PopStyleColor(8);
+    ImGui::SetCursorPos(cursorPos);
+    // Draw the editable text
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.95, 1, 0.95, 0.2)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(1,0,0,1.0)); // Couleur en RGBA
+    ImGui::PushStyleColor(ImGuiCol_TextSelectedBg, ImVec4(0.8f, 0.8f, 0.8f, 0.4f)); // Couleur de sélection du texte
+    ImGui::PushItemWidth(inputWidth);
+    ImGui::InputFloat("##Rotation", &sideralMultiplicator, 0.0f, 0.0f, "%.2f Per day");
+
+    ImGui::PopStyleColor(3);
+    ImGui::PopFont();
 
 }
 
 
+void ParametersCreator::forceClose(){
+    m_manager->Exit();
+}

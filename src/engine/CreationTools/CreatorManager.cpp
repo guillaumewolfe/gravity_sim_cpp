@@ -76,6 +76,8 @@ void CreatorManager::Exit(){
         if(newCreatedObject!=nullptr){
             m_renderContext->systemeSolaire->removeObject(newCreatedObject);
             newCreatedObject = nullptr;
+            m_renderContext->currentCamera->resetPosition();
+            *(m_renderContext->showInfo) = true;
         }
     }
     creationConfirmed = false;

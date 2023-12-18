@@ -15,8 +15,9 @@ SystemeSolaire();
 std::vector<CelestialObject*> objects;
 std::vector<CelestialObject*> initSystem();
 double getScale();
-double maxSize = 1500;
+double maxSize;
 double scale;
+float radiusScale;
 //methods
 void Draw();
 void syncWithNasa();

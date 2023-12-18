@@ -25,7 +25,7 @@ Neptune::Neptune() : CelestialObject() {
     rotationSidSpeed = 0.0000172;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "164.8 years";
-
+    temperature = "-214°C";
     
     setName(name_sub);
     setPath(path_sub);

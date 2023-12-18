@@ -52,7 +52,7 @@ std::vector<Button*> MenuState::generateButtons(){
    Button *exitButton = new Button(0.5f, 0.92f, ImVec2(0.08, 0.05),
                                    ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                    ImVec4(1.0f, 0.0f, 0.0f, 1.0f),
-                                   "Exit", 0.2f,20.0f,
+                                   "Exit", 0.2f,24.0f,
                                    [this]() {
     auto boundFunction = std::bind(&MenuState::closeButton, this);
     this->generateDialogBox(boundFunction, "Do you want to leave?");},5);
@@ -61,13 +61,13 @@ std::vector<Button*> MenuState::generateButtons(){
    Button *StartButton = new Button(0.5f, 0.8f, ImVec2(0.08, 0.05),
                                ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
-                               "Start", 0.2f,20.0f,
+                               "Start", 0.2f,24.0f,
                                [this]() {startButton();},5);
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.08, 0.05),
                                ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(1.0f, 1.0f, 0.5f, 1.0f),
-                               "Options", 0.2f,20.0f,
+                               "Options", 0.2f,24.0f,
                                std::bind(&MenuState::settingsButton, this),5);
 
 

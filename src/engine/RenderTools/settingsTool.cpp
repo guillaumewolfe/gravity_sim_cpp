@@ -295,7 +295,7 @@ void SettingsTool::draw_rect(){
     //Carré pour tout le fond d'écran
     drawList->AddRectFilled(ImVec2(0,0), 
                             ImVec2(winHeight*2,winHeight*2), 
-                            IM_COL32(0, 0, 0, 130), // Couleur
+                            IM_COL32(0, 0, 0, 200), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 

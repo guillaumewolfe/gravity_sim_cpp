@@ -12,8 +12,8 @@ Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color,
     else{
         int winWidth, winHeight;
         glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-        //fontSize = fontSize * winWidth / 1980;
-        font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);}
+        float fontSizeScaled = fontSize * winWidth / 1920;
+        font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSizeScaled);}
     if (!font) {
         // Gérer le cas où le chargement de la police échoue
         std::cerr << "Erreur lors du chargement de la police." << std::endl;

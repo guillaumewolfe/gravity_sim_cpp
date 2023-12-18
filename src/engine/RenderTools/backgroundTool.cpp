@@ -1,10 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/RenderTools/backgroundTool.h"
+#include "opencv2/opencv.hpp"
 
 BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(renderContext){
     srand(static_cast<unsigned>(time(nullptr)));
-    initStars(15000);
+    initStars(50000);
 }
 
 
@@ -18,7 +19,7 @@ void BackgroundTool::Draw() {
 
     // Utiliser drawIterations au lieu du temps de simulation
     float iterationFactor = drawIterations * 0.01f; // Modifier 0.1f au besoin pour ajuster la vitesse de scintillement
-
+    
     glBegin(GL_POINTS);
     for (Star& star : stars) {
         // Scintillement avec décalage aléatoire

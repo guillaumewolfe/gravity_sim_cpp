@@ -14,18 +14,26 @@ void Physics::Update(double dt){
 
 void Physics::updateAccel(CelestialObject* obj, double dt){
     Vec3 total_accel(0.0, 0.0, 0.0);
+    CelestialObject* mostInfluentialObject = nullptr;
+    double maxForce = 0.0;
+
     for (auto& other_obj : m_renderContext->systemeSolaire->objects){
         if(obj != other_obj){
-        Vec3 vector_direction = Vec3(other_obj->position_real - obj->position_real);
-        double distance = vector_direction.norm();
-        //if(obj->getName()=="Terre"&&other_obj->getName()=="Sun"){std::cout<<"Distance Terre et "<<other_obj->getName()<<": "<<distance<<std::endl;}
-        Vec3 unit_vector = vector_direction.normalize();
-        double accel_magnitude = G * other_obj->weight / (distance * distance);
-        Vec3 accel_vector = unit_vector * accel_magnitude;
-        total_accel = total_accel + accel_vector;
-    //if(obj->getName()=="Terre"){std::cout<<"Terre et "<<other_obj->getName()<<": "<<accel_vector.print()<<std::endl;}
-    }}
-obj->updateAccel(total_accel);
+            Vec3 vector_direction = Vec3(other_obj->position_real - obj->position_real);
+            double distance = vector_direction.norm();
+            Vec3 unit_vector = vector_direction.normalize();
+            double forceMagnitude = G * other_obj->weight / (distance * distance);
+            if (forceMagnitude > maxForce) {
+                maxForce = forceMagnitude;
+                mostInfluentialObject = other_obj;
+            }
+            Vec3 accel_vector = unit_vector * forceMagnitude;
+            total_accel = total_accel + accel_vector;
+        }
+    }
+
+    obj->updateAccel(total_accel);
+    obj->setMostInfluentialObject(mostInfluentialObject); // Stocker l'objet le plus influent
 }
 
 void Physics::updateVelocity(CelestialObject* obj, double dt){

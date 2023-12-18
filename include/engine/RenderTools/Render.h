@@ -15,6 +15,9 @@
 #include "engine/RenderTools/CameraOptionsTool.h"
 #include "engine/RenderTools/OptionsTool.h"
 #include "engine/RenderTools/settingsTool.h"
+#include "engine/RenderTools/zoomTool.h"
+#include "engine/RenderTools/orbitTool.h"
+#include "engine/RenderTools/minimapTool.h"
 
 
 #ifndef RENDER_H
@@ -46,6 +49,9 @@ PlaneteInfoTool* PlaneteInfo_Tool;
 CameraOptionsTool* CameraOptions_Tool;
 OptionsTool* Options_Tool;
 SettingsTool* Settings_Tool;
+ZoomTool* Zoom_Tool;
+OrbitTool* Orbit_Tool;
+MinimapTool* Minimap_Tool;
 
 
 

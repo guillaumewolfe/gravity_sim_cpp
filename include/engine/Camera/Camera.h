@@ -22,11 +22,13 @@ public:
     Vec3 originalUp;
     CelestialObject* followedObject;
     CelestialObject* selectedObject;
+    CelestialObject* firstPersonTargetObject;
     float zoomFactor;
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
     glm::mat4 globalRotationMatrix;
     bool zoomChanged = false;
+    bool isGlobalFollowing = false;
     double angle_perspective;
     float distanceToFollowedObject; 
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
@@ -35,9 +37,10 @@ public:
     float accumulatedHorizontalAngle = 0.0f;
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
-    void firstPersonMode(CelestialObject* objToLookAt);
+    void firstPersonMode();
     void calculateSunAngleOffset(const Vec3& objectPosition, const Vec3& cameraPosition);
     double sunAngleOffset;
+    
 
 
     void startTransition(CelestialObject* newObject, int steps);
@@ -52,16 +55,17 @@ public:
     float transitionProgress;
 
     int transitionStep = 0;
-    const int transitionThreshold = 1000; // Ajustez selon la douceur souhaitée
+    const int transitionThreshold = 3000; // Ajustez selon la douceur souhaitée
 
 
 
     void Update();
     void lookAt(); 
     void zoom(bool in);
+    void zoomFirstPerson(bool in);
     void zoomByDistance(bool in);
     void checkDistance();
-    float calculateScreenOccupationPercentage();
+    float calculateScreenOccupationPercentage(CelestialObject* object);
 
     
 
@@ -73,12 +77,16 @@ public:
     void orbitAroundObject(float horizontalAngle, float verticalAngle);
     void adjustDistanceToTarget();
     void newFollowObject(CelestialObject* obj);
+    void newFirstPersonTarget(CelestialObject* obj);
+    void newFollowObjectGlobal(CelestialObject* obj);
+    float calculateGlobalFollowingDistance();
     void followObject();
 
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix();
     Vec3 getPosition();
     Vec3 getTarget();
+    Vec3 getUp();
     void setTarget(Vec3 newTarget);
 
     void creationMode();
@@ -92,6 +100,7 @@ public:
 
     void updateViewMatrix();
     void setPerspective();
+    void setCustomPerspective(float aspectRatio);
     void updateObjectVisibility(CelestialObject* object);
     
     void calculateNormalMatrix();
@@ -99,10 +108,19 @@ public:
     void setContext(RenderContext* context);
 
     void changeValue(bool increase);
+
+    double getAnglePerspective();
+    bool firstPersonModeEnabled = false;
 private: 
     RenderContext* m_renderContext;
     int currentSimulationSpeedIndexForTransition;
     double currentSimulationSpeedForTransition;
+    float firstPersonZoomPercentage = 0.0f;
+    float firstPersonZoomOffset = 0.0f;
+    float maxZoomDistance;
+    bool globalDistanceCalcuated = false;
+    float calculateDistanceForScreenOccupation(float occupationPercentage);
+    float globalFollowingDistance;
 };
 
 

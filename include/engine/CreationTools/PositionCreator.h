@@ -3,6 +3,8 @@
 #define PositionCreator_H
 
 #include "engine/CreationTools/StateCreator.h"
+#include "UI/ImageButton.h"
+#include "UI/Icon.h"
 
 
 class PositionCreator : public StateCreator {
@@ -29,6 +31,7 @@ public:
     void updatePositionWithMouse();
     void updateDistanceLabel();
     void AdjustPosition();
+    void forceClose();
 
 
 
@@ -36,6 +39,8 @@ private:
     int winWidth, winHeight;
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
+    std::vector<ImageButton*> imageButtons;
+    Icon* icon;
     float hauteur, longueur;
     bool positionSelected = false;
     bool shouldUpdate = true;

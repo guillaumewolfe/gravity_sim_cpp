@@ -22,7 +22,7 @@ Mars::Mars() : CelestialObject() {
     rotationSidSpeed = 0.0000113;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "1.88 years";
-
+    temperature = "-125 to 20°C";
 
     setName(name_sub);
     setPath(path_sub);

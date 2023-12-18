@@ -16,13 +16,10 @@
 
 
 
-ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderContext) {
+ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderComponent(renderContext),m_camera(camera) {
     initPlanetsShaders();
     initStarShaders();
-    athmoTool = new AthmosphereTool(m_renderContext->systemeSolaire->objects[3], m_renderContext);
-    saturnRingTool = new SaturnRingTool(m_renderContext->systemeSolaire->objects[7], m_renderContext);
-
-
+    //m_renderContext->currentCamera
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         initSphere(*object, 150, 150); 
 
@@ -45,7 +42,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext) : RenderComponent(renderC
 
 void ObjectsTool::Draw() {
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
-            m_renderContext->currentCamera->updateObjectVisibility(object);
+            m_camera->updateObjectVisibility(object);
         }
 
     glEnable(GL_DEPTH_TEST);
@@ -72,7 +69,7 @@ void ObjectsTool::drawStars(CelestialObject* object){
 
         glPushMatrix();
         glLoadIdentity();
-        m_renderContext->currentCamera->lookAt();
+        m_camera->lookAt();
         glTranslatef(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
         glRotatef(object->rotationSid,0,1,0);
         glBindTexture(GL_TEXTURE_2D, object->getTexture());
@@ -112,7 +109,7 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
-        m_renderContext->currentCamera->lookAt();
+        m_camera->lookAt();
         glTranslatef(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
         glRotatef(object->rotationSid,0,1,0);
         glBindTexture(GL_TEXTURE_2D, object->getTexture());
@@ -146,13 +143,13 @@ void ObjectsTool::drawEffects(){
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
         if (object->shouldBeDrawn) {
         if(object->glowTool!=nullptr){
-            object->glowTool->drawGlow();
+            object->glowTool->drawGlow(m_camera);
         }
         if(object->athmosphereTool!=nullptr){
-            object->athmosphereTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0]);
+            object->athmosphereTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0], m_camera);
         }
         if(object->saturnRingTool!=nullptr){
-            object->saturnRingTool->Draw();
+            object->saturnRingTool->Draw(m_camera);
         }
     }
     }

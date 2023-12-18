@@ -8,7 +8,7 @@
 
 
 // Constructeur
-GlowTool::GlowTool(CelestialObject* celestialObject, RenderContext* renderContext) : m_celestialObject(celestialObject),m_renderContext(renderContext) {
+GlowTool::GlowTool(CelestialObject* celestialObject, RenderContext* renderContext) : m_celestialObject(celestialObject),m_renderContext(renderContext){
     initGlow();
     initShaders();
 }
@@ -39,8 +39,11 @@ void GlowTool::initGlow() {
     }
 }
 
-void GlowTool::drawGlow() {
+void GlowTool::drawGlow(Camera* camera) {
     if (m_celestialObject == nullptr) {
+        return;
+    }
+    if(m_renderContext->currentCamera->followedObject == m_celestialObject && m_renderContext->currentCamera->firstPersonModeEnabled){
         return;
     }
 
@@ -58,7 +61,7 @@ void GlowTool::drawGlow() {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    m_renderContext->currentCamera->lookAt();
+    camera->lookAt();
     glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
     for (const auto& sphere : glowSpheres) {
         glUniform1f(alphaLoc, sphere.alpha);

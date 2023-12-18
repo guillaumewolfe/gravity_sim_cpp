@@ -155,3 +155,11 @@ double CelestialObject::getWeight(){
 void CelestialObject::setWeight(double newWeight){
     weight = newWeight;
 }
+
+void CelestialObject::setMostInfluentialObject(CelestialObject* newMostInfluentialObject){
+    mostInfluentialObject = newMostInfluentialObject;
+}
+
+CelestialObject* CelestialObject::getMostInfluentialObject(){
+    return mostInfluentialObject;
+}

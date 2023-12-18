@@ -4,6 +4,8 @@
 
 #include "engine/CreationTools/StateCreator.h"
 #include <unordered_map>
+#include "UI/ImageButton.h"
+#include "UI/Icon.h"
 
 class ParametersCreator : public StateCreator {
 public:
@@ -34,6 +36,8 @@ public:
     void draw_input_radius();
     void draw_input_sideral();
     void getItemInitialParameters();
+    void forceClose();
+
  
 
 
@@ -42,7 +46,10 @@ private:
     int winWidth, winHeight;
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
+    std::vector<ImageButton*> imageButtons;
+    Icon* icon;
     float hauteur, longueur;
+    ImFont* font;
 
     ImVec2 bottomRight;
     ImVec2 topLeft;

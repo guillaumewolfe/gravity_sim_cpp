@@ -23,7 +23,8 @@ Mercure::Mercure() : CelestialObject() {
     rotationSidSpeed = 0.000000198;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "88 days";
-
+    temperature = "-173 to 427°C"; 
+    
     setName(name_sub);
     setPath(path_sub);
     updateVelocity(initialVelocity);

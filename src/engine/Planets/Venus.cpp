@@ -23,7 +23,7 @@ Venus::Venus() : CelestialObject() {
     rotationSidSpeed = -0.0000000476;
     rotationSidDirection = Vec3(0,-1,0);
     orbitalString = "255 days";
-
+    temperature = "462°C"; 
 
     setName(name_sub);
     setPath(path_sub);

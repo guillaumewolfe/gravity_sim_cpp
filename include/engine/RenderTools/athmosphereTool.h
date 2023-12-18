@@ -4,7 +4,7 @@
 #include "engine/CelestialObject.h" // Assurez-vous d'inclure le bon fichier pour CelestialObject
 #include <vector>
 #include "engine/RenderTools/RenderContext.h"
-
+#include "engine/Camera/Camera.h"
 
 
 
@@ -24,7 +24,7 @@ public:
 
     // Méthodes pour gérer le Athmosphere
     void initAthmosphere();
-    void drawAthmosphere(CelestialObject* Sun);
+    void drawAthmosphere(CelestialObject* Sun,Camera* camera);
     void initSphere(AthmosphereSphere& sphere, int lats, int longs, float rayon, GLuint textureID = 0);
     glm::vec3 getLightDirection(CelestialObject* Sun);
 
@@ -50,7 +50,7 @@ private:
     GLuint cloudTexture;
     GLuint loadTexture(const char* filename);
     AthmosphereSphere cloudSphere;
-    void drawClouds();
+    void drawClouds(Camera* camera);
     GLuint cloudShaderProgram;
     void initCloudsShaders();
     void updateLumiere(CelestialObject* object);

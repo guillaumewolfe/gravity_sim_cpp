@@ -16,51 +16,72 @@ PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent
     typeDict = m_renderContext->colorByTypeDict;
     initLabels();
     initButtons();
+    generate_mode3();
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    storyFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 16.0f);
+    float fontsize = 20.0f;
+    float fontSizeScaled = fontsize * winWidth / 1920;
+    storyFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", fontSizeScaled);
+    radius *= winWidth;
 }
 
 void PlaneteInfoTool::initLabels(){
-    float diff = 0.04f;
+    float diff = 0.03f;
     float beg = 0.45f;
-    float titleX = 0.82f;
-    float middleX = 0.92;
+    float titleX = 0.875f-0.1*0.9;
+    float middleX = 0.875+0.025;
+    float fontStaticSize = 22.0f;
+    float fontDynamicSize = 21.0f;
     Labbel *nameLabbel = new Labbel(0.875,0.26f,ImVec4(255,255,255,255),
                             "Name",30.0f,0.9f);    
 
-    Labbel *typeLabbel = new Labbel(0.875,0.30f,ImVec4(255,255,255,255),
+    Labbel *typeLabbel = new Labbel(0.875,0.29f,ImVec4(255,255,255,255),
                             "Type",20.0f,0.9f);  
     Labbel *typeLabbelBO = new Labbel(0.875,0.30f,ImVec4(255,255,255,255),
                         "Type",23.0f,1.0f);  
 
     Labbel *masseStaticLabbel = new Labbel(titleX ,beg,ImVec4(255,255,255,255),
-                        "Mass",20.0f,0.9f);  
+                        "Mass",fontStaticSize,0.9f);  
     Labbel *masseLabbel = new Labbel(middleX,beg,ImVec4(255,255,255,255),
-                    "Mass",18.0f,0.7f);  
+                    "Mass",fontDynamicSize,0.7f);  
 
     Labbel *radiusStaticLabbel = new Labbel(titleX ,beg+diff,ImVec4(255,255,255,255),
-                    "Radius",20.0f,0.9f); 
+                    "Radius",fontStaticSize,0.9f); 
     Labbel *radiusLabbel = new Labbel(middleX,beg+diff,ImVec4(255,255,255,255),
-                "Radius",18.0f,0.7f); 
+                "Radius",fontDynamicSize,0.7f); 
     
     Labbel *orbitalStaticLabbel = new Labbel(titleX ,beg+2*diff,ImVec4(255,255,255,255),
-                    "Orbital period",20.0f,0.9f); 
+                    "Orbital period",fontStaticSize,0.9f); 
     Labbel *orbitalLabbel = new Labbel(middleX,beg+2*diff,ImVec4(255,255,255,255),
-                "Orbital",18.0f,0.7f); 
+                "Orbital",fontDynamicSize,0.7f); 
 
      Labbel *sideralStaticLabbel = new Labbel(titleX ,beg+3*diff,ImVec4(255,255,255,255),
-                    "Sideral period",20.0f,0.9f); 
+                    "Sideral period",fontStaticSize,0.9f); 
     Labbel *sideralLabbel = new Labbel(middleX,beg+3*diff,ImVec4(255,255,255,255),
-                "Sideral",18.0f,0.7f);    
+                "Sideral",fontDynamicSize,0.7f);    
     
     Labbel *distanceStaticLabbel = new Labbel(titleX ,beg+4*diff,ImVec4(255,255,255,255),
-                    "Distance from star",15.0f,0.9f); 
+                    "Distance from star",fontStaticSize,0.9f); 
     Labbel *distanceLabbel = new Labbel(middleX,beg+4*diff,ImVec4(255,255,255,255),
-                "distance",18.0f,0.7f); 
-    Labbel *creationLabbel = new Labbel(0.875,0.34,ImVec4(150,255,175,255),
+                "distance",fontDynamicSize,0.7f); 
+    Labbel *creationLabbel = new Labbel(0.875,0.32,ImVec4(150,255,175,255),
                 "Created",18.0f,0.7f); 
-
-
+    Labbel* temperatureStaticLabbel = new Labbel(titleX ,beg+5*diff,ImVec4(255,255,255,255),
+                    "Temperature",fontStaticSize,0.9f);
+    Labbel* temperatureLabbel = new Labbel(middleX,beg+5*diff,ImVec4(255,255,255,255),
+                "temperature",fontDynamicSize,0.7f);
+    masseStaticLabbel->alignLeft = true;
+    radiusStaticLabbel->alignLeft = true;
+    orbitalStaticLabbel->alignLeft = true;
+    sideralStaticLabbel->alignLeft = true;
+    distanceStaticLabbel->alignLeft = true;
+    temperatureStaticLabbel->alignLeft = true;
+    masseLabbel->alignLeft = true;
+    radiusLabbel->alignLeft = true;
+    orbitalLabbel->alignLeft = true;
+    sideralLabbel->alignLeft = true;
+    distanceLabbel->alignLeft = true;
+    temperatureLabbel->alignLeft = true;
+    
     labbels.push_back(nameLabbel);
     labbels.push_back(typeLabbelBO);
     labbels.push_back(typeLabbel);
@@ -74,7 +95,10 @@ void PlaneteInfoTool::initLabels(){
     labbels.push_back(sideralLabbel);
     labbels.push_back(distanceStaticLabbel);
     labbels.push_back(distanceLabbel);
+    labbels.push_back(temperatureStaticLabbel);
+    labbels.push_back(temperatureLabbel);
     labbels.push_back(creationLabbel);
+
 }
 
 void PlaneteInfoTool::initButtons(){
@@ -82,7 +106,7 @@ void PlaneteInfoTool::initButtons(){
     float taille_y = 0.06f*0.8;
     float x_center = 0.875f;
     float diffx = taille_x*1.3;
-    float y_center = 0.375;
+    float y_center = 0.36;
 
     ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
 
@@ -135,10 +159,10 @@ void PlaneteInfoTool::updateLabels(){
     else{labbels[1]->UpdateAlpha(0);}
 
     if(mode!=1){
-    for(int i=3;i<13;i++){
+    for(int i=3;i<15;i++){
         labbels[i]->isHidden = true;
     }}else{
-        for(int i=3;i<13;i++){
+        for(int i=3;i<15;i++){
         labbels[i]->isHidden = false;
     }}
 
@@ -161,7 +185,7 @@ void PlaneteInfoTool::updateLabels(){
 
     //Sideral period
     double period = m_object->rotationSidSpeed*24*60*60;
-    period = 1/period;
+    period = abs(1/period);
     std::ostringstream sideralString;
     sideralString << std::fixed << std::setprecision(2) << period << " days";
     std::string periodString = sideralString.str();
@@ -169,9 +193,7 @@ void PlaneteInfoTool::updateLabels(){
 
     //Distance from star
     if(m_object->type==1){
-        std::string st = "-";
-        labbels[12]->UpdateText("");
-        labbels[11]->UpdateText("");}
+        labbels[12]->UpdateText("-");}
  //Soleil empty
 
     else if (m_object->type == 2 || m_object->type == 3 || m_object->type == 4){//Planets
@@ -191,24 +213,122 @@ void PlaneteInfoTool::updateLabels(){
     }
     
     if(m_object->isCreated){
-        labbels[13]->UpdateAlpha(0.7);
+        labbels[15]->UpdateAlpha(0.7);
     }else{
-        labbels[13]->UpdateAlpha(0);
+        labbels[15]->UpdateAlpha(0);
+    }
+
+//Temperature
+    if(!m_object->temperature.empty()){
+        labbels[14]->UpdateText(m_object->temperature);
+    }else{
+        labbels[14]->UpdateText("-");
     }
 
 }
 
 
+void PlaneteInfoTool::generate_mode3(){
+    float toggleSizeX = 0.03f;
+    float toggleSizeY = 0.03f;
+    float PositionX = 0.925;
+    float PositionYImage = 0.45;
+    float diffYImage = 0.040;
+    ImageButton* removeButton = new ImageButton(PositionX,PositionYImage+3*diffYImage,ImVec2(toggleSizeX,toggleSizeY),0.7f,
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "../assets/button/delete.png", 0,
+                            std::bind(&PlaneteInfoTool::removePlanete, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton* changeMassButton = new ImageButton(PositionX,PositionYImage,ImVec2(toggleSizeX,toggleSizeY),0.7f,
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "../assets/button/weight.png", 0,
+                            std::bind(&PlaneteInfoTool::changeMass, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton* changeRadiusButton = new ImageButton(PositionX,PositionYImage+diffYImage,ImVec2(toggleSizeX,toggleSizeY),0.7f,
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "../assets/button/changeRadius.png", 0,
+                            std::bind(&PlaneteInfoTool::changeRadius, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    
+    ImageButton* changePositionButton = new ImageButton(PositionX,PositionYImage+2*diffYImage,ImVec2(toggleSizeX,toggleSizeY),0.7f,
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "../assets/button/changePosition.png", 0,
+                            std::bind(&PlaneteInfoTool::changePosition, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    
+
+    imageButtonsMode3.push_back(removeButton);
+    imageButtonsMode3.push_back(changeMassButton);
+    imageButtonsMode3.push_back(changeRadiusButton);
+    imageButtonsMode3.push_back(changePositionButton);
+
+
+    ImVec4 color = ImVec4(200,200,200,150);
+    ImVec4 active = ImVec4(150,255,150,200);
+    toggleSizeX = 0.019f;
+    toggleSizeY = 0.016f;
+    PositionX = 0.955;
+    float PositionY = 0.66f;
+    float diffY = 0.030f;
+        ToggleButton* showOrbitToggle = new ToggleButton(PositionX,PositionY,ImVec2(toggleSizeX,toggleSizeY),color,
+                                        active,
+                                        nullptr,50);
+        ToggleButton* ShowNameToggle = new ToggleButton(PositionX,PositionY+diffY,ImVec2(toggleSizeX,toggleSizeY),color,
+                                        active,
+                                        nullptr,50);
+        ToggleButton* showPathToggle = new ToggleButton(PositionX,PositionY+2*diffY,ImVec2(toggleSizeX,toggleSizeY),color,
+                                        active,
+                                        nullptr,50);
+        togglebuttonsMode3.push_back(showOrbitToggle);
+        togglebuttonsMode3.push_back(ShowNameToggle);
+        togglebuttonsMode3.push_back(showPathToggle);
+
+        float sizeXofText = 0.06;
+        Labbel* showOrbitLabbel = new Labbel(PositionX-sizeXofText,PositionY,ImVec4(255,255,255,255),
+                            "Show orbit",19.0f,0.8f);
+        Labbel* ShowNameLabbel = new Labbel(PositionX-sizeXofText,PositionY+diffY,ImVec4(255,255,255,255),
+                            "Show name",19.0f,0.8f); 
+        Labbel* showPathLabbel = new Labbel(PositionX-sizeXofText,PositionY+2*diffY,ImVec4(255,255,255,255),
+                            "Show path",19.0f,0.8f);
+
+        PositionX = 0.805;
+        Labbel* changeMasseLabbel = new Labbel(PositionX,PositionYImage,ImVec4(255,255,255,255),
+                            "Change mass",21.0f,0.8f);
+        Labbel* changeRadiusLabbel = new Labbel(PositionX,PositionYImage+diffYImage,ImVec4(255,255,255,255),
+                            "Change radius",21.0f,0.8f);
+        Labbel* changeTextureLabbel = new Labbel(PositionX,PositionYImage+2*diffYImage,ImVec4(255,255,255,255),
+                            "Change Position",21.0f,0.8f);
+        Labbel* removeTextureLabbel = new Labbel(PositionX,PositionYImage+3*diffYImage,ImVec4(255,150,150,255),
+                            "Remove",21.0f,0.9f);
+        Labbel* smallNamePlanteLabbel = new Labbel(0.875,0.29f,ImVec4(255,255,255,255),
+                            "Sun",16.0f,0.9f);
+
+
+        showOrbitLabbel->alignLeft = true;
+        ShowNameLabbel->alignLeft = true;
+        showPathLabbel->alignLeft = true;
+        changeMasseLabbel->alignLeft = true;
+        changeRadiusLabbel->alignLeft = true;
+        changeTextureLabbel->alignLeft = true;  
+        removeTextureLabbel->alignLeft = true;
+        labbelsMode3.push_back(showOrbitLabbel);
+        labbelsMode3.push_back(ShowNameLabbel);
+        labbelsMode3.push_back(showPathLabbel);
+        labbelsMode3.push_back(changeMasseLabbel);
+        labbelsMode3.push_back(changeRadiusLabbel);
+        labbelsMode3.push_back(changeTextureLabbel);
+        labbelsMode3.push_back(removeTextureLabbel);
+        labbelsMode3.push_back(smallNamePlanteLabbel);
+}
+
+
 void PlaneteInfoTool::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    if(m_renderContext->currentCamera->followedObject!=nullptr){
-        m_object = m_renderContext->currentCamera->followedObject;
-        updateLabels();
-    }else if(m_renderContext->currentCamera->selectedObject!=nullptr){
+    
+    if(m_renderContext->currentCamera->selectedObject!=nullptr){
         m_object = m_renderContext->currentCamera->selectedObject;
         updateLabels();
     }
-
+    else if(m_renderContext->currentCamera->followedObject!=nullptr){
+        m_object = m_renderContext->currentCamera->followedObject;
+        updateLabels();
+    }
 
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
@@ -217,6 +337,10 @@ void PlaneteInfoTool::Draw() {
     draw_labels();
     draw_buttons();
     draw_story();
+
+    if(mode==3){
+        draw_mode3();
+    }
 
     ImGui::End(); 
 
@@ -245,31 +369,32 @@ void PlaneteInfoTool::draw_buttons(){
         imageButtons[1]->isOn = false;
         imageButtons[2]->isOn = false;}
 
-    if(m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject == nullptr){
+    if(m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject == nullptr ||m_renderContext->currentCamera->followedObject != nullptr  && m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject != m_renderContext->currentCamera->selectedObject ){
         imageButtons[4]->hidden = false;}
     else{imageButtons[4]->hidden = true;}
 
 //Check if object changed
-    if (m_renderContext->currentCamera->followedObject != nullptr) {
-        // Vérifiez si l'objet actuel est différent de l'objet précédent
-        if (m_object != previousObject) {
-            mode = 1;
-            previousObject = m_object;
-        }
-        m_object = m_renderContext->currentCamera->followedObject;
-    } else if (m_renderContext->currentCamera->selectedObject != nullptr) {
+    if (m_renderContext->currentCamera->selectedObject != nullptr) {
         // Vérifiez si l'objet actuel est différent de l'objet précédent
         if (m_object != previousObject) {
             mode = 1;
             previousObject = m_object;
         }
         m_object = m_renderContext->currentCamera->selectedObject;
+        
+    } else if (m_renderContext->currentCamera->followedObject != nullptr) {
+        // Vérifiez si l'objet actuel est différent de l'objet précédent
+        if (m_object != previousObject) {
+            mode = 1;
+            previousObject = m_object;
+        }
+        m_object = m_renderContext->currentCamera->followedObject;
     }
 }
 
 void PlaneteInfoTool::drawBackground(){
     float longueur = winWidth* 0.20; // Exemple de taille
-    float hauteur = winHeight * 0.55; // Exemple de taille
+    float hauteur = winHeight * 0.56; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.875f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
@@ -289,8 +414,18 @@ ImVec4 color = getTypeColor(m_object->type);
     drawList->AddRect(topLeft, 
                         ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                         IM_COL32(color.x,color.y,color.z,120), // Couleur
-                        cornerRadius,0,2.0f);
+                        cornerRadius,0,1.0f);
 //IM_COL32(90, 120, 149, 120), // Couleur
+    float taille_y = 0.06f*0.8;
+    float yPosition = 0.350+taille_y*1.01; // Juste en dessous des boutons, ajustez 0.02f si nécessaire
+    float lineWidth = winWidth * 2*0.06f*0.9;  // La longueur de la ligne, ajustez selon vos besoins
+    float lineThickness = 2.0f; // L'épaisseur de la ligne, ajustez selon vos besoins
+    ImVec2 lineStart = ImVec2(centerPos.x - lineWidth * 0.5f, winHeight * yPosition);
+    ImVec2 lineEnd = ImVec2(centerPos.x + lineWidth * 0.5f, winHeight * yPosition);
+
+    // Dessiner la ligne de délimitation
+    drawList->AddLine(lineStart, lineEnd, IM_COL32(255, 255, 255, 100), lineThickness); // Couleur blanche, ajustez si nécessaire
+
 }
 
 void PlaneteInfoTool::draw_labels(){
@@ -300,6 +435,134 @@ void PlaneteInfoTool::draw_labels(){
 
 }
 
+void PlaneteInfoTool::draw_mode3(){
+    for (ImageButton* button : imageButtonsMode3) {
+        button->Draw();
+    }  
+    for (Labbel* label : labbelsMode3) {
+        label->Draw();
+    }
+    for (size_t i = 0; i < togglebuttonsMode3.size(); ++i) {
+        ToggleButton* button = togglebuttonsMode3[i];
+        if(m_object->type == 0 || m_object->type == 1 && i == 0){
+            button->isDeactivated=true;}
+        else{button->isDeactivated=false;}
+            button->Draw();
+    }
+    
+
+    //Effet pour les Toggle sur la planètes (Path + Orbit + name)
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    float positionx= 0.8325f;
+    float positiony = 1.0-0.315f;
+    float orbitRadiusCircle = radius*1.4;
+    angleCercleOrbit += 0.005f; // Ajustez cette valeur pour contrôler la vitesse de rotation
+
+    // Calcul des coordonnées x et y du petit rond
+    satelliteX = winWidth * positionx + cos(angleCercleOrbit) * orbitRadiusCircle;
+    satelliteY = winHeight * positiony + sin(angleCercleOrbit) * orbitRadiusCircle;
+    // Dessiner le petit rond en orbite
+    float satelliteRadius = winWidth*0.002; // Vous pouvez ajuster la taille du petit rond ici
+    ImVec4 couleur = getTypeColor(m_object->type);
+    if(m_object->showOrbit){
+    drawList->AddCircle(ImVec2(winWidth * positionx, winHeight * positiony), orbitRadiusCircle, IM_COL32(255, 255, 255, 120), 100, 2.0f);}
+    
+ImVec4 colorCenterDot;
+int numBlurCircles;
+if(m_object->type == 2 || m_object->type == 3 ||m_object->type == 4 ){
+    colorCenterDot = ImVec4(255,215,80,255);
+    numBlurCircles = 20;
+}
+else if(m_object->type == 5){
+    colorCenterDot = ImVec4(50,50,255,255);
+    numBlurCircles = 8;
+}else{
+    colorCenterDot = ImVec4(255,255,255,0);
+    numBlurCircles = 0;
+}
+// Draw the central sun
+drawList->AddCircleFilled(ImVec2(positionx*winWidth, positiony*winHeight), satelliteRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z,colorCenterDot.w), 100);
+// Draw the blur effect // Number of blur circles
+float blurIncrease = orbitRadiusCircle*0.0175; // How much larger each successive blur circle is
+float initialAlpha = 20; // Starting alpha value for the outermost blur circle
+float alphaDecrease = initialAlpha / numBlurCircles; // How much alpha decreases per circle
+for (int i = 0; i < numBlurCircles; ++i) {
+    float blurRadius = satelliteRadius + blurIncrease * (i + 1);
+    float alpha = initialAlpha - alphaDecrease * i;
+    drawList->AddCircleFilled(ImVec2(positionx*winWidth, positiony*winHeight), blurRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z, alpha), 100);
+}
+
+    
+    
+float startAngle = angleCercleOrbit - IM_PI / 1.5; // Retranche 90 degrés
+float endAngle = angleCercleOrbit;               // L'angle actuel du satellite
+
+// Normalisation des angles dans l'intervalle [0, 2*PI]
+startAngle = fmod(startAngle + 2 * IM_PI, 2 * IM_PI);
+endAngle = fmod(endAngle + 2 * IM_PI, 2 * IM_PI);
+if (endAngle < startAngle) {
+    endAngle += 2 * IM_PI;
+}
+const int numSegments = 25;
+float segmentLength = (endAngle - startAngle) / numSegments;
+if(m_object->showPath && !m_object->showOrbit && m_object->type!=1 && m_object->type!=0){
+for (int i = 0; i < numSegments; ++i) {
+    // Calcul des angles de début et de fin pour le segment actuel
+    float segmentStartAngle = startAngle + i * segmentLength;
+    float segmentEndAngle = segmentStartAngle + segmentLength;
+
+    // Calcul de la valeur alpha pour le segment actuel
+    float alpha = 175 * ((float)i / numSegments);
+
+    // Dessiner le segment de l'arc avec la valeur alpha
+    drawList->PathArcTo(ImVec2(winWidth * positionx, winHeight * positiony), orbitRadiusCircle, segmentStartAngle, segmentEndAngle, 10); // 10 segments pour un dessin lisse de chaque petit arc
+    drawList->PathStroke(IM_COL32(255, 255, 255, alpha), false, 2.0f);
+}}
+if(m_object->showName){
+labbelsMode3[7]->isHidden=false;
+labbelsMode3[7]->UpdateText(m_object->getName());
+float labelOffsetY = 0.025;
+    if(m_object->type==1 || m_object->type==0){
+        labbelsMode3[7]->UpdatePosition(0.8325f, 1-0.3f-labelOffsetY-0.03);
+    }
+else{
+labbelsMode3[7]->UpdatePosition(satelliteX/winWidth, satelliteY/winHeight - labelOffsetY);}
+labbelsMode3[7]->UpdateColor(couleur);}
+else{
+    labbelsMode3[7]->isHidden=true;
+}
+if(m_object->showPath && (m_object->type == 0 || m_object->type==1)){
+if(m_object->showPath){
+// Position de départ et de fin
+ImVec2 startPos = ImVec2(winWidth * 0.8325f, winHeight * 0.70f);
+ImVec2 endPos = ImVec2(winWidth * 0.78f, winHeight * 0.70f);
+
+// Nombre de segments pour le dégradé
+const int numSegments = 20;
+
+// Calcul de la longueur de chaque segment de ligne
+float segmentLengthX = (endPos.x - startPos.x) / numSegments;
+float segmentLengthY = (endPos.y - startPos.y) / numSegments;
+
+float initialAlpha = 200; // Valeur alpha initiale pour le premier segment
+float alphaDecrease = initialAlpha / numSegments; // Diminution de l'alpha par segment
+
+for (int i = 0; i < numSegments; ++i) {
+    // Calcul du début et de la fin de chaque segment
+    ImVec2 segmentStart = ImVec2(startPos.x + segmentLengthX * i, startPos.y + segmentLengthY * i);
+    ImVec2 segmentEnd = ImVec2(segmentStart.x + segmentLengthX, segmentStart.y + segmentLengthY);
+
+    // Calcul de la valeur alpha pour le segment actuel
+    float alpha = initialAlpha - alphaDecrease * i;
+
+    // Dessiner le segment de ligne avec la valeur alpha
+    drawList->AddLine(segmentStart, segmentEnd, IM_COL32(255, 255, 255, alpha), winHeight*0.003);
+}
+    
+}
+}
+
+}
 
 std::string PlaneteInfoTool::getTypeName(int type) {
     return typeDict[type].first;
@@ -325,21 +588,35 @@ std::string PlaneteInfoTool::formatScientific(double value) {
 }
 
 
-void PlaneteInfoTool::drawTexturedSphere(float radius, int numSegments, int numSlices) {
+void PlaneteInfoTool::drawTexturedSphere() {
+    Vec3 translation;
+    float scaledRadius;
+    if (mode==3){
+        scaledRadius = radius * 0.25;
+        if(m_object->type!=1 && m_object->type != 0){
+            translation = Vec3(satelliteX, winHeight-satelliteY,0);
+        }else{
+            translation = Vec3(winWidth * 0.8325f, winHeight * 0.30f,0);
+            scaledRadius = radius * 0.75;
+        }
+    }else{
+        scaledRadius = radius;
+        translation = Vec3(winWidth * 0.875f, winHeight * 0.29f,0);
+    }    
+    
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
     int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    glOrtho(0, winWidth, 0, winHeight, -radius, radius);
+    glOrtho(0, winWidth, 0, winHeight, -scaledRadius, scaledRadius);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
 
-    // Positionnement de la sphère en fonction de la distance calculée
-    glTranslatef(winWidth * 0.875f, winHeight * 0.29f,0);
+    glTranslatef(translation.x, translation.y, translation.z);
     glRotatef(90,1,0,0);
     glRotatef(Rotation,0,0,-1);
     Rotation+=0.2;
@@ -362,13 +639,13 @@ void PlaneteInfoTool::drawTexturedSphere(float radius, int numSegments, int numS
         for (int j = 0; j <= numSegments; ++j) {
             float theta = static_cast<float>(j) / static_cast<float>(numSegments) * PI_2;
 
-            float x1 = radius * sinf(phi1) * cosf(theta);
-            float y1 = radius * sinf(phi1) * sinf(theta);
-            float z1 = radius * cosf(phi1);
+            float x1 = scaledRadius * sinf(phi1) * cosf(theta);
+            float y1 = scaledRadius * sinf(phi1) * sinf(theta);
+            float z1 = scaledRadius * cosf(phi1);
 
-            float x2 = radius * sinf(phi2) * cosf(theta);
-            float y2 = radius * sinf(phi2) * sinf(theta);
-            float z2 = radius * cosf(phi2);
+            float x2 = scaledRadius * sinf(phi2) * cosf(theta);
+            float y2 = scaledRadius * sinf(phi2) * sinf(theta);
+            float z2 = scaledRadius * cosf(phi2);
 
             // Calcul des coordonnées de texture en fonction de l'angle theta et phi
             float u1 = static_cast<float>(j) / static_cast<float>(numSegments);
@@ -419,6 +696,8 @@ style.Colors[ImGuiCol_Text].w = 1.0f; // Remettre la valeur par défaut
 
 void PlaneteInfoTool::setMode(int mode){
     this->mode = mode;
+
+    if(mode==3){updateMode3();}
 }
 
 void PlaneteInfoTool::closeButton(){
@@ -434,3 +713,14 @@ void PlaneteInfoTool::moveToButton(){
 }}
 
 }
+
+void PlaneteInfoTool::updateMode3(){
+    togglebuttonsMode3[0]->updatePointer(&m_object->showOrbit);
+    togglebuttonsMode3[1]->updatePointer(&m_object->showName);
+    togglebuttonsMode3[2]->updatePointer(&m_object->showPath);
+}
+
+void PlaneteInfoTool::removePlanete(){}
+void PlaneteInfoTool::changeMass(){}
+void PlaneteInfoTool::changeRadius(){}
+void PlaneteInfoTool::changePosition(){}

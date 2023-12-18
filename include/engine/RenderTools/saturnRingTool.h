@@ -4,7 +4,7 @@
 #include "engine/CelestialObject.h" // Assurez-vous d'inclure le bon fichier pour CelestialObject
 #include <vector>
 #include "engine/RenderTools/RenderContext.h"
-
+#include "engine/Camera/Camera.h"
 
 
 
@@ -25,11 +25,12 @@ public:
 
     // Méthodes pour gérer le Athmosphere
     void initParticules();
-    void Draw();
+    void Draw(Camera* camera);
     void initSphere(Particule& particule, int lats, int longs, float rayon);
     glm::vec3 getLightDirection(CelestialObject* Sun);
 
 private:
+
     RenderContext* m_renderContext;
     CelestialObject* m_celestialObject; 
     std::vector<Particule> Particules;

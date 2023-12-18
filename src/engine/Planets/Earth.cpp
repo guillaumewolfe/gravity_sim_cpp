@@ -24,6 +24,7 @@ Earth::Earth() : CelestialObject() {
     rotationSidSpeed = 0.0000116;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "1 year";
+    temperature = "-88 to 58°C";
 
 
     setName(name_sub);

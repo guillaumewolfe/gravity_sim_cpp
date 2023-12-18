@@ -12,6 +12,7 @@ MessageTool::MessageTool(std::string phr, std::function<void()> onConfirmFunc): 
 void MessageTool::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 
+    ImGui::SetNextWindowFocus();
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.2f, 0.3f, 0.4f, 0.3f)); // Exemple de couleur (bleu foncé)

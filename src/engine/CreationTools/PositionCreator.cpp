@@ -55,17 +55,17 @@ void PositionCreator::checkInputs(){
     if (ImGui::IsKeyDown(ImGuiKey_S)) {moveUp(false);}
 }
 void PositionCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.05f, 0.57, ImVec2(0.045, 0.03),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.27f, 0.17f, 0.17f, 1.0f),
-                               "Previous", 0.0,19.0f,
-                               std::bind(&PositionCreator::previous_state, this),3); 
+   Button *ReturnButton = new Button(0.045f, 0.57, ImVec2(0.045, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Previous", 0.1,19.0f,
+                               std::bind(&PositionCreator::previous_state, this)); 
 
-   Button *NextButton = new Button(0.1f, 0.57, ImVec2(0.04, 0.03),
-                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
-                                ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
-                               "Select", 0.0,19.0f,
-                               std::bind(&PositionCreator::next_state, this),3);  
+   Button *NextButton = new Button(0.105f, 0.57, ImVec2(0.04, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Select", 0.4,19.0f,
+                               std::bind(&PositionCreator::next_state, this));  
 
    Button *AdjustPositionButton = new Button(0.075f, 0.5, ImVec2(0.04, 0.03),
                                 ImVec4(0.05f, 0.05f, 0.05f, 1.0f),
@@ -93,13 +93,31 @@ void PositionCreator::generate_buttons(){
     buttons.push_back(ZoomInButton);
     buttons.push_back(ZoomOutButton);
     buttons.push_back(ResetPosButton);
-    buttons[1]->UpdateLabelColor(75,230,125,200);
-    buttons[0]->UpdateLabelColor(230,100,75,200);
-    buttons[2]->UpdateLabelColor(230,230,125,200);
+    buttons[2]->hidden=true;
     buttons[0]->UpdatePosition(0.075,0.57);
     buttons[1]->hidden=true;
-    buttons[2]->hidden=true;
     buttons[5]->UpdateLabelColor(230,230,125,200);
+
+    //Image Buttons
+
+    float taille_x = 0.035f;
+    float taille_y = 0.06f;
+    ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
+    ImageButton* resetPosition = new ImageButton(0.075f, 0.45, ImVec2(taille_x, taille_y),0.5,
+                        button_color,button_color,
+                        "../assets/button/reset2.png", 0,std::bind(&PositionCreator::AdjustPosition,this),
+                            3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    resetPosition->hidden=true;
+    ImageButton* closeButton = new ImageButton((0.07+0.075)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.6f,
+                        button_color, button_color,
+                        "../assets/button/close.png", 0,
+                            std::bind(&PositionCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+        
+    icon = new Icon((0.075-0.06)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.35f,"../assets/button/position.png",0.85);
+
+
+    imageButtons.push_back(resetPosition);
+    imageButtons.push_back(closeButton);
 }
 
 void PositionCreator::resetCamPos(){
@@ -150,10 +168,10 @@ m_manager->updateCamera();
 
 void PositionCreator::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.075f,0.25f,ImVec4(255,255,255,255),
-                            "Choose position",22.0f,0.9f);
+                            "Position",25.0f,0.9f);
     Labbel *DistanceStaticLabel = new Labbel(0.075f,0.35f,ImVec4(255,255,255,255),
                         "Distance from star",21.0f,0.7f);
-    Labbel *DistanceLabel = new Labbel(0.075f,0.40f,ImVec4(150,255,220,200),
+    Labbel *DistanceLabel = new Labbel(0.075f,0.40f,ImVec4(150,255,150,200),
                     "2 AU",25.0f,0.8f);
     Labbel *CameraLabel = new Labbel(0.075f,0.85f,ImVec4(255,255,255,255),
                             "Camera",22.0f,0.9f);
@@ -186,10 +204,10 @@ void PositionCreator::drawBackground(){
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft,
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
-                        cornerRadius,0,1.5f); // Ajustez le rayon ici
+    drawList->AddRect(topLeft, 
+                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                        IM_COL32(255,255,255,40), // Couleur
+                        cornerRadius,0,0.2f);
     
  //Camera
     hauteur *= 0.45;
@@ -218,6 +236,10 @@ void PositionCreator::draw_buttons(){
         for (Button* btn : buttons) {
         btn->Draw();
     }
+    for (ImageButton* btn : imageButtons) {
+        btn->Draw();
+    }
+    icon->Draw();
 }
 
 void PositionCreator::draw_labels(){
@@ -252,7 +274,7 @@ void PositionCreator::Exit(){
     positionSelected = false;
     positionSelected = false;
     buttons[1]->hidden=true;
-    buttons[2]->hidden=true;
+    imageButtons[0]->hidden=true;
     buttons[0]->UpdatePosition(0.075,0.57); 
 } 
 
@@ -386,9 +408,9 @@ void PositionCreator::updatePositionWithMouse(){
 void PositionCreator::checkClick(){
     if(ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !isHoveringRectangle()){
         positionSelected = true;
-        buttons[0]->UpdatePosition(0.05,0.57);    
+        buttons[0]->UpdatePosition(0.045,0.57);    
         buttons[1]->hidden=false;
-        buttons[2]->hidden=false;
+        imageButtons[0]->hidden=false;
     }
     if(ImGui::IsMouseClicked(ImGuiMouseButton_Right) && positionSelected && !isHoveringRectangle()){
         AdjustPosition();
@@ -399,6 +421,10 @@ void PositionCreator::checkClick(){
 void PositionCreator::AdjustPosition(){
     positionSelected = false;
     buttons[1]->hidden=true;
-    buttons[2]->hidden=true;
     buttons[0]->UpdatePosition(0.075,0.57); 
+    imageButtons[0]->hidden=true;
+}
+
+void PositionCreator::forceClose(){
+    m_manager->Exit();
 }

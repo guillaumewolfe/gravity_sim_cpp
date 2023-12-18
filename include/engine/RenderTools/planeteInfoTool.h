@@ -7,6 +7,8 @@
 #include "UI/Labbel.h"
 #include "UI/Buttons.h"
 #include "UI/ImageButton.h"
+#include "UI/Slider.h"
+#include "UI/ToggleButton.h"
 #include "engine/CelestialObject.h"
 #include <utility> 
 #include <map>
@@ -29,13 +31,17 @@ public:
     void draw_buttons();
     void closeButton();
     void draw_story();
+    void removePlanete();
+    void changeMass();
+    void changeRadius();
+    void changePosition();
 
 
     //Accessoire
     std::string getTypeName(int type);
     ImVec4 getTypeColor(int type);
     std::string formatScientific(double value);
-    void drawTexturedSphere(float radius, int numSegments, int numSlices);
+    void drawTexturedSphere();
 
     int mode = 1;
     void setMode(int mode);
@@ -54,8 +60,24 @@ private:
     std::map<int, std::pair<std::string, ImVec4>> typeDict;
     double Rotation=0;
 
+    std::vector<Labbel*> labbelsMode3;
+    std::vector<Button*> buttonsMode3;
+    std::vector<ToggleButton*> togglebuttonsMode3;
+    std::vector<ImageButton*> imageButtonsMode3;    
+    void generate_mode3();
+    void draw_mode3();
+    void updateMode3();
 
+    float radius = 0.025;
+    int numSegments = 40;
+    int numSlices = 40;
+    float angleCercleOrbit = 0;
+    float satelliteX;
+    float satelliteY;
     
+    bool drawOrbit;
+    bool drawPath;
+    bool drawName;
 };
 
 #endif // PlaneteInfoTool_H

@@ -31,6 +31,10 @@ private:
     void initStars(int numberOfStars);
     int drawIterations;
 
+    GLuint texture;
+    GLuint loadTexture(const char* filename);
+    void drawImage();
+
 };
 
 #endif // BACKGROUNDTOOL_H

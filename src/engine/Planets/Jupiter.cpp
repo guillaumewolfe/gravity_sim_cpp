@@ -24,6 +24,7 @@ Jupiter::Jupiter() : CelestialObject() {
     rotationSidSpeed = 0.000028;
     rotationSidDirection = Vec3(0,1,0);
     orbitalString = "11.86 years";
+    temperature = "-145°C";
 
 
 

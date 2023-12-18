@@ -7,6 +7,9 @@ PathTool::PathTool(RenderContext* renderContext) : RenderComponent(renderContext
 }
 
 void PathTool::Draw() {
+    if(!m_renderContext->showAllPaths){
+        return;
+    }
     // Assurez-vous que le mode de rendu OpenGL est configuré pour dessiner des lignes
     glLineWidth(2.0f);  // Définissez l'épaisseur de la ligne selon vos besoins
     glDisable(GL_DEPTH_TEST);
@@ -16,6 +19,9 @@ void PathTool::Draw() {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
         if(object == m_renderContext->currentCamera->followedObject){
+            continue;
+        }
+        if(!object->showPath){
             continue;
         }
         const auto& positionHistory = object->getPositionHistory();

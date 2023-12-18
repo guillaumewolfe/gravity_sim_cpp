@@ -24,7 +24,10 @@ Moon::Moon() : CelestialObject() {
     rotationSidSpeed = 0.000000424;
     rotationSidDirection = Vec3(0,1,0);
     distanceFromPlanet = 384400;
-
+    temperature = "-173 to 127°C";
+    showName = false;
+    showOrbit = false;
+    showPath = false;
 
     setName(name_sub);
     setPath(path_sub);

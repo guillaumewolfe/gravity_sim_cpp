@@ -57,7 +57,7 @@ void SaturnRingTool::initParticules() {
 
 
 
-void SaturnRingTool::Draw() {
+void SaturnRingTool::Draw(Camera* camera) {
     if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn) || !(m_renderContext->currentCamera->followedObject==m_celestialObject)) {
         return;
     }
@@ -73,7 +73,7 @@ void SaturnRingTool::Draw() {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    m_renderContext->currentCamera->lookAt();
+    camera->lookAt();
     glTranslatef(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
 
     // Configurer les rotations

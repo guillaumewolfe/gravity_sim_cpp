@@ -63,25 +63,32 @@ void VelocityCreator::DrawOpenGL(){}
 
 
 void VelocityCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.05f, 0.57, ImVec2(0.05, 0.045),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 0.0f),
-                               
-                               "Previous", 0.00f,20.0f,
+   Button *ReturnButton = new Button(0.045f, 0.57, ImVec2(0.045, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Previous", 0.1,19.0f,
                                std::bind(&VelocityCreator::previous_state, this));  
 
-   Button *NextButton = new Button(0.1f, 0.57, ImVec2(0.05, 0.04),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                                ImVec4(0.0f, 0.0f, 0.0f, 1.0f),
-                               "Select", 0.0f,20.0f,
+   Button *NextButton = new Button(0.105f, 0.57, ImVec2(0.04, 0.03),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Select", 0.4,19.0f,
                                std::bind(&VelocityCreator::next_state, this));  
 
 
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
-    buttons[1]->UpdateLabelColor(100,255,150,200);
-    buttons[0]->UpdateLabelColor(255,125,100,200);
 
+    ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
+    ImageButton* closeButton = new ImageButton((0.07+0.075)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.6f,
+                        button_color, button_color,
+                        "../assets/button/close.png", 0,
+                            std::bind(&VelocityCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+        
+    icon = new Icon((0.075-0.06)*0.95,(0.5-0.27)*0.95,ImVec2(0.025f,0.025f),0.35f,"../assets/button/speed.png",0.85);
+
+
+    imageButtons.push_back(closeButton);
 }
 
 void VelocityCreator::generate_sliders(){
@@ -95,7 +102,7 @@ void VelocityCreator::generate_sliders(){
 
 void VelocityCreator::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.075f,0.25f,ImVec4(255,255,255,255),
-                            "Choose Velocity",22.0f,0.9f);
+                            "Velocity",26.0f,0.9f);
     
     Labbel *VelocityLabel = new Labbel(0.075f,0.45f,ImVec4(100,255,150,200),
                         "",24.0f,0.8f);
@@ -110,7 +117,7 @@ void VelocityCreator::generate_labels(){
 void VelocityCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 2.0f;
+    float cornerRadius = 10.0f;
 
 
     float longueur = winWidth* 0.14; // Exemple de taille
@@ -129,12 +136,10 @@ void VelocityCreator::drawBackground(){
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
-
-    float cornerRadiusAdjustment = 10.0f;
-    drawList->AddRect(topLeft,
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur),
-                        IM_COL32(50, 50, 50, 0), // Couleur de remplissage
-                        cornerRadius,0,3.0f); // Ajustez le rayon ici
+    drawList->AddRect(topLeft, 
+                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                        IM_COL32(255,255,255,40), // Couleur
+                        cornerRadius,0,0.2f);
 
 }
 
@@ -142,6 +147,10 @@ void VelocityCreator::draw_buttons(){
         for (Button* btn : buttons) {
         btn->Draw();
     }
+    for(ImageButton* btn : imageButtons){
+        btn->Draw();
+    }
+    icon->Draw();
 }
 
 void VelocityCreator::draw_sliders(){
@@ -331,3 +340,6 @@ Vec3 VelocityCreator::calculateIntersection(const glm::vec3& rayDirection, const
     return Vec3(intersection.x, 0, intersection.z);
 }
 
+void VelocityCreator::forceClose(){
+    m_manager->Exit();
+}

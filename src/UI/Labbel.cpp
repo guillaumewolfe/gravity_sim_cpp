@@ -10,8 +10,8 @@ Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& 
         } else {
             int winWidth, winHeight;
             glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-            //fontSize = fontSize * winWidth / 1980;
-            font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSize);
+            float fontSizeScaled = fontSize * winWidth / 1920;
+            font = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/RobotoB.ttf", fontSizeScaled);
         }
         if (!font) {
             std::cerr << "Erreur lors du chargement de la police." << std::endl;
@@ -21,8 +21,10 @@ Labbel::Labbel(float xPercent, float yPercent, ImVec4 color, const std::string& 
 }
 
 
-void Labbel::Draw(){
-    if(isHidden){return;}
+void Labbel::Draw() {
+    if (isHidden) {
+        return;
+    }
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     int winWidth, winHeight;
@@ -37,10 +39,13 @@ void Labbel::Draw(){
     if (shouldUpdatePosition(textSize)) {
         prevTextSize = textSize; // Update the stored text size
     }
+
+    float xOffset = alignLeft ? 0.0f : -prevTextSize.x * 0.5f; // Adjust the xOffset based on alignment
     ImVec2 actualPos = ImVec2(
-        (position.x * winWidth) - (prevTextSize.x * 0.5f), // Center the text horizontally
-        (position.y * winHeight) - (textSize.y * 0.5f)     // Center the text vertically
+        (position.x * winWidth) + xOffset, // Adjusted x-position
+        (position.y * winHeight) - (textSize.y * 0.5f) // Center the text vertically
     );
+
     // Ensuite, utilisez actualPos pour positionner le texte
     drawList->AddText(
         font, font->FontSize,

@@ -5,11 +5,11 @@
 
 
 TextureCreator::TextureCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
-    generate_buttons();
-    generate_labels();
     objects = initSystem();
     calculateObjectPositions();
     generatePlanetLabels();
+    generate_buttons();
+    generate_labels();
 }
 
 void TextureCreator::Enter(){
@@ -101,8 +101,8 @@ void TextureCreator::drawBackground(){
 
 
 void TextureCreator::generate_labels(){
-    Labbel *MessageLabel = new Labbel(0.5f,0.20f,ImVec4(255,255,255,255),
-                            "Choose type of object",30.0f,0.7f);
+    Labbel *MessageLabel = new Labbel(0.5f,0.25f,ImVec4(255,255,255,255),
+                            "Type of object",28.0f,0.7f);
     labbels.push_back(MessageLabel);
 }
 void TextureCreator::updateClickStatus() {
@@ -118,7 +118,7 @@ void TextureCreator::updateClickStatus() {
         // Utiliser ImGui::IsMouseHoveringRect pour vérifier si la souris survole la zone
         if (ImGui::IsMouseHoveringRect(rectMin, rectMax) && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
             buttons[1]->hidden=false;
-            buttons[0]->UpdatePosition(0.45f, 0.8225);
+            buttons[0]->UpdatePosition(0.45f, 0.765);
             selectedIndex = i;
             drawSphereClick= true;
             selectionSphereClick.posX = info.posX;
@@ -274,25 +274,34 @@ void TextureCreator::draw_labels(){
 }
 
 void TextureCreator::generate_buttons(){
-   Button *ReturnButton = new Button(0.5f, 0.8225, ImVec2(0.045, 0.03),
-                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
-                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
-                               "Close", 0.0,22.0f,
-                               std::bind(&TextureCreator::CloseButtonPressed, this),3); 
+   Button *ReturnButton = new Button(0.5f, 0.765, ImVec2(0.040, 0.035),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Close", 0.1,18.0f,
+                               std::bind(&TextureCreator::CloseButtonPressed, this)); 
 
-   Button *NextButton = new Button(0.55f, 0.8225, ImVec2(0.04, 0.03),
-                                ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
-                                ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
-                               "Select", 0.0,20.0f,
-                               std::bind(&TextureCreator::NextButtonPressed, this),3); 
+   Button *NextButton = new Button(0.55f, 0.765, ImVec2(0.040, 0.035),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "Select", 0.4,18.0f,
+                               std::bind(&TextureCreator::NextButtonPressed, this)); 
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
     buttons[1]->hidden=true;
-    buttons[1]->UpdateLabelColor(100,255,150,200);
-    buttons[0]->UpdateLabelColor(255,125,100,200);
+
+    ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
+    ImageButton* closeButton = new ImageButton((0.5+longueur/(2*winWidth))-0.010,(0.5-hauteur/(2*winHeight))*1.15,ImVec2(0.025f,0.025f),0.6f,
+                        button_color, button_color,
+                        "../assets/button/close.png", 0,
+                            std::bind(&TextureCreator::CloseButtonPressed, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+        
+    imageButtons.push_back(closeButton);
 }
 void TextureCreator::draw_buttons(){
         for (Button* btn : buttons) {
+        btn->Draw();
+    }
+    for (ImageButton* btn : imageButtons) {
         btn->Draw();
     }
 }
@@ -336,7 +345,7 @@ void TextureCreator::generatePlanetLabels() {
 
 
 void TextureCreator::drawCelestialObjects() {
-    radius = winHeight * 0.025;
+    radius = winHeight * 0.020;
 
     for (const auto& info : objectPositions) {
         drawTexturedSphere(radius, 30, 30, info.posX, info.posY, info.texture);
@@ -346,8 +355,8 @@ void TextureCreator::drawCelestialObjects() {
 
 void TextureCreator::calculateObjectPositions() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    longueur = winWidth* 0.30; // Exemple de taille
-    hauteur = winHeight * 0.75; // Exemple de taille
+    longueur = winWidth* 0.25; // Exemple de taille
+    hauteur = winHeight * 0.60; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
@@ -355,12 +364,12 @@ void TextureCreator::calculateObjectPositions() {
 
     const int maxObjectsPerRow = 4;
     float bufferTop = winHeight * 0.10;
-    float bufferBottom = winHeight * 0.15;
+    float bufferBottom = winHeight * 0.10;
     float usableHeight = hauteur - (bufferTop + bufferBottom);
     float spacingX = longueur / maxObjectsPerRow;
     int numRows = (objects.size() + maxObjectsPerRow - 1) / maxObjectsPerRow;
     float spacingY = usableHeight / numRows;
-    float radius = winHeight * 0.025; // Le rayon de la sphère
+    float radius = winHeight * 0.020; // Le rayon de la sphère
     float hoverRadius = radius * 1.2f; // Le hoverRadius, légèrement plus grand que le rayon de la sphère
 
     for (size_t i = 0; i < objects.size(); ++i) {
@@ -449,7 +458,7 @@ void TextureCreator::reset(){
     drawSphereClick = false;
     Rotation=0;
     buttons[1]->hidden=true;
-    buttons[0]->UpdatePosition(0.5f, 0.8225);
+    buttons[0]->UpdatePosition(0.5f, 0.765);
     resetLabelColor();
 
 }

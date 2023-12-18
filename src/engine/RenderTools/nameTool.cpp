@@ -5,7 +5,10 @@
 
 NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext){
     alpha = 0.6f;
-    customFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", 14.0f);
+    float fontSize = 16.0f; // Taille de police
+    glfwGetWindowSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+    float fontSizeScaled = fontSize * screenWidth / 1920;
+    customFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", fontSizeScaled);
     initLabbels();
 }
 
@@ -71,6 +74,15 @@ void NameTool::updateLabelPositions() {
     glfwGetWindowSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
     for (size_t i = 0; i < objects.size(); ++i) {
         auto& object = objects[i];
+        if(object->showName == false){ //On affiche pas le nom pour 1 planètes si showName=false
+            labbels[i]->UpdateAlpha(0.0f);
+            continue;
+        }
+        if(!m_renderContext->showAllNames){ //Si on veut cacher les noms de toutes les planètes
+            labbels[i]->UpdateAlpha(0.0f);
+            continue;
+        }
+
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
         ImVec4 circleColor = m_renderContext->colorByTypeDict[object->type].second;
         // Convertir les coordonnées 3D en coordonnées de clip
@@ -87,7 +99,7 @@ void NameTool::updateLabelPositions() {
         float topYPercent = (1.0f - topOfPlanetPos.y) / 2.0f;
         topYPercent -= 0.02f; // Ajuster légèrement vers le haut
 
-        if(object == followedObject) {
+        if(object == followedObject && !m_renderContext->currentCamera->isGlobalFollowing){ 
             labbels[i]->UpdateAlpha(0.0f);
         }
         else if (ndc.x >= -1.0f && ndc.x <= 1.0f && ndc.y >= -1.0f && ndc.y <= 1.0f && ndc.z >= 0.0f && ndc.z <= 1.0f) {
@@ -148,7 +160,7 @@ glm::vec2 NameTool::convert3DPosToScreenPos(const glm::vec3& pos3D, const glm::m
 }
 
 void NameTool::detectClickAndPrintName() {
-    if(*(m_renderContext->isCreating) || *(m_renderContext->showOptions) || *(m_renderContext->showSettings) or *(m_renderContext->showOptions)){
+    if(*(m_renderContext->isCreating) || *(m_renderContext->showOptions) || *(m_renderContext->showSettings) or *(m_renderContext->showOptions)||m_renderContext->showMinimap){
         return;
     }
     CelestialObject* closestPlanet = nullptr;
@@ -158,8 +170,7 @@ void NameTool::detectClickAndPrintName() {
     ImVec2 mousePos = ImGui::GetMousePos();
     float mouseXPercent = mousePos.x / screenWidth;
     float mouseYPercent = mousePos.y / screenHeight;
-
-
+    
     float closestDistance = std::numeric_limits<float>::max();
     std::string closestPlanetName = "";
     for (const auto& object : m_renderContext->systemeSolaire->objects) {

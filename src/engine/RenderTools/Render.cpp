@@ -14,7 +14,7 @@ Render::Render(RenderContext* Context): Context(Context){
 
 void Render::initTools(){
     UI_Tool = new UITool(Context);
-    Objects_Tool = new ObjectsTool(Context);
+    Objects_Tool = new ObjectsTool(Context, Context->currentCamera);
     Background_Tool = new BackgroundTool(Context);
     Axes_Tool = new AxesTool(Context);
     Path_Tool = new PathTool(Context);
@@ -24,6 +24,9 @@ void Render::initTools(){
     CameraOptions_Tool = new CameraOptionsTool(Context);
     Options_Tool = new OptionsTool(Context);
     Settings_Tool = new SettingsTool(Context);
+    Zoom_Tool = new ZoomTool(Context);
+    Orbit_Tool = new OrbitTool(Context);
+    Minimap_Tool = new MinimapTool(Context);
 
     initCamera();
 }
@@ -38,29 +41,31 @@ void Render::Draw(){
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     //On dessiner les éléments
-    UI_Tool->Draw();
     if(*(Context->showCameraOptions)){CameraOptions_Tool->Draw();}
-    if (Message_Tool != nullptr) {Message_Tool->Draw();}
-    if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(*(Context->isCreating)){Creator_Manager->Draw();}
-    Name_Tool->Draw();
-    if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo)){PlaneteInfo_Tool->Draw();}
+    if(!Context->showZoom){Name_Tool->Draw();}
+    if(Context->showMinimap){Minimap_Tool->Draw();}
+    if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
+    if(Context->showZoom){Zoom_Tool->drawImGui();}
+    UI_Tool->Draw();
     if(*(Context->showSettings)){Settings_Tool->Draw();}
     if(*(Context->showOptions)){Options_Tool->Draw();}
+    if (Message_Tool != nullptr) {Message_Tool->Draw();}
+    if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     ImGui::Render();
+
     updateCamera();
     Background_Tool->Draw();
     Objects_Tool->Draw();
+    if(Context->showZoom){Zoom_Tool->Draw();}
     if(*(Context->showAxes)){Axes_Tool->Draw();}
     //if(!*(Context->isCreating)){Path_Tool->Draw();}
-    Path_Tool->Draw();
-
-
-
+    if(!Context->showZoom){Path_Tool->Draw();}
+    if(Context->showAllOrbits){Orbit_Tool->Draw();}
 
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if((Context->currentCamera->followedObject!=nullptr||Context->currentCamera->selectedObject!=nullptr) && *(Context->showInfo)){PlaneteInfo_Tool->drawTexturedSphere(PlaneteInfo_Tool->winWidth*0.027,40,40);}
+    if((Context->currentCamera->followedObject!=nullptr||Context->currentCamera->selectedObject!=nullptr) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->drawTexturedSphere();}
     if(*(Context->isCreating)){Creator_Manager->DrawOpenGL();}
 
 }
@@ -74,6 +79,6 @@ void Render::updateCamera(){
 }
 
 void Render::initCamera(){
-    Vec3 position_initiale = Vec3(-100,20.5236,23.6161);
+    Vec3 position_initiale = Vec3(-10,0,0);
     Context->currentCamera->setInitPosition(position_initiale);
 }

@@ -88,6 +88,7 @@ public:
     void SettingsButton();
     void MinimapButton();
     void OptionsButton();
+    void TelescopeButton();
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();
@@ -99,6 +100,7 @@ public:
     bool showCameraOptions = false;
     bool showOptions = false;
     bool showSettings = false;
+    bool isShowZoomClose = true;
 
     bool firstMouse = true;
     bool isRotatingWithMouse = false;
