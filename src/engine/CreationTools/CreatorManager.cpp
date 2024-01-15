@@ -80,6 +80,7 @@ void CreatorManager::Exit(){
             *(m_renderContext->showInfo) = true;
         }
     }
+    updateNames();
     creationConfirmed = false;
     ChangeState("TextureCreator");
 }
@@ -96,4 +97,12 @@ void CreatorManager::resetCamera(){
 void CreatorManager::updateCamera(){
     m_renderContext->currentCamera->setPosition(cameraCreationPosition);
     m_renderContext->currentCamera->setTarget(cameraCreationTarget);
+}
+
+void CreatorManager::setUpdateNamesFunction(const std::function<void()>& func) {
+    updateNamesFunction = func;
+}
+
+void CreatorManager::updateNames(){
+    updateNamesFunction();
 }

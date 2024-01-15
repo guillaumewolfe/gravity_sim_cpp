@@ -6,8 +6,15 @@
 PathTool::PathTool(RenderContext* renderContext) : RenderComponent(renderContext){
 }
 
+// Desctructeur
+PathTool::~PathTool() {
+}
+
+
+
 void PathTool::Draw() {
-    if(!m_renderContext->showAllPaths){
+
+    if(!m_renderContext->showAllPaths || !m_renderContext->isCreating){
         return;
     }
     // Assurez-vous que le mode de rendu OpenGL est configuré pour dessiner des lignes
@@ -18,7 +25,7 @@ void PathTool::Draw() {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
-        if(object == m_renderContext->currentCamera->followedObject){
+        if(object == m_renderContext->currentCamera->followedObject && !m_renderContext->currentCamera->isGlobalFollowing){
             continue;
         }
         if(!object->showPath){

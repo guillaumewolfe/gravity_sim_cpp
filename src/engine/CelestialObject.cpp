@@ -38,13 +38,13 @@ void CelestialObject::updateForce(const Vec3& newForce){
 //NAME
 std::string CelestialObject::getName(){return name;};
 void CelestialObject::setName(std::string nm){name = nm;};
+std::string CelestialObject::getTypeName(){return typeName;}
 //PATH
 std::string CelestialObject::getPath(){return texture_path;};
 void CelestialObject::setPath(std::string path){texture_path = path;};
 //RAYON
 void CelestialObject::setRayonSim(double scale){
     rayon_simulation = real_radius*scale;
-    //rayon_simulation=3;
     }
 double CelestialObject::getRayon(){return rayon_simulation;}
 void CelestialObject::realRadiusToSimRadius(){
@@ -105,6 +105,7 @@ void CelestialObject::addPositionHistory(const Vec3& point) {
         totalDistance += (positionHistory[positionHistory.size() - 1] - positionHistory[positionHistory.size() - 2]).norm();
     }
 
+    if(type!=0 && type!= 1){
     // Supprimez les points les plus anciens si la distance totale dépasse 90% de l'orbite ou si la taille dépasse la limite
     float targetDistance = 0.90f * orbitCircumference;
     while ((totalDistance > targetDistance || positionHistory.size() > MAX_HISTORY_SIZE) && !positionHistory.empty()) {
@@ -113,7 +114,7 @@ void CelestialObject::addPositionHistory(const Vec3& point) {
         if (positionHistory.size() > 1) {
             totalDistance -= (positionHistory.front() - oldPoint).norm();
         }
-    }
+    }}
 }
 
 
@@ -162,4 +163,26 @@ void CelestialObject::setMostInfluentialObject(CelestialObject* newMostInfluenti
 
 CelestialObject* CelestialObject::getMostInfluentialObject(){
     return mostInfluentialObject;
+}
+
+void CelestialObject::setInitialSettings(){
+    initialWeight = weight;
+    initialRadius = real_radius;
+}
+
+void CelestialObject::updateToInitialSettings(){
+    weight = initialWeight;
+    real_radius = initialRadius;
+}
+
+void CelestialObject::addPlanetEaten(CelestialObject* planet){
+    planetsEaten.push_back(planet);
+}
+
+std::vector<CelestialObject*> CelestialObject::getPlanetsEaten(){
+    return planetsEaten;
+}
+
+void CelestialObject::resetPlanetEaten(){
+    planetsEaten.clear();
 }

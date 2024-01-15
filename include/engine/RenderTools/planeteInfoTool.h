@@ -19,6 +19,7 @@ public:
 
     int winWidth, winHeight;
     explicit PlaneteInfoTool(RenderContext* renderContext);
+    ~PlaneteInfoTool() override;
     void Draw() override;
     void drawBackground();
 

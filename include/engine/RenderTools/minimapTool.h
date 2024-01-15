@@ -13,6 +13,7 @@ class MinimapTool : public RenderComponent {
 public:
     float sliderVariable;
     explicit MinimapTool(RenderContext* renderContext);
+    ~MinimapTool() override;
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     void draw_UI();
@@ -24,10 +25,14 @@ public:
     void draw_asteroid_belt(ImDrawList* drawList, const std::vector<ImVec2>& asteroidPositions, ImVec2 centerPos, float tailleAsteroide, ImU32 color, float rotation_par_seconde);
     void generate_colors();
     void setCloseButtonFunction(const std::function<void()>& func);
+    bool showGravityField = true;
+    void drawGravityField(CelestialObject* object, ImVec2 position, float radius, float scale);
 
 private:
     int winWidth, winHeight;
     float scale;
+    ImVec2 topLeft;
+    ImVec2 bottomRight ;
     ImFont* nameFont;
     std::map<int, std::pair<std::string, ImVec4>> typeDict;
     std::map<std::string, ImVec4> typeDictColor;

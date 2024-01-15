@@ -12,6 +12,13 @@ NameTool::NameTool(RenderContext* renderContext) : RenderComponent(renderContext
     initLabbels();
 }
 
+NameTool::~NameTool() {
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    labbels.clear();
+}
+
 void NameTool::initLabbels() {
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         std::string planetName = object->getName(); // Obtenez le nom de la planète
@@ -35,7 +42,6 @@ void NameTool::initLabbels() {
 void NameTool::Draw() {
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-
 updateLabelPositions();
 for (Labbel* label : labbels) {
     label->Draw();
@@ -207,6 +213,7 @@ void NameTool::detectClickAndPrintName() {
     }if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && closestDistance < clickThreshold){
         m_renderContext->currentCamera->newFollowObject(closestPlanet);
         *(m_renderContext->showInfo) = true;
+        *(m_renderContext->isOrbiting) = true;
     }
 }
 

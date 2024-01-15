@@ -18,7 +18,8 @@
 #include "engine/RenderTools/zoomTool.h"
 #include "engine/RenderTools/orbitTool.h"
 #include "engine/RenderTools/minimapTool.h"
-
+#include "engine/RenderTools/keysUI.h"
+#include "engine/RenderTools/collisionTool.h"
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -52,10 +53,14 @@ SettingsTool* Settings_Tool;
 ZoomTool* Zoom_Tool;
 OrbitTool* Orbit_Tool;
 MinimapTool* Minimap_Tool;
+KeysUI* Keys_UI;
+CollisionTool* Collision_Tool;
+
 
 
 
 Render(RenderContext* Context);
+~Render();
 void Draw();
 void initTools();
 void updateCamera();

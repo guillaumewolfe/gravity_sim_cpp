@@ -7,7 +7,6 @@ AxesTool::AxesTool(RenderContext* renderContext) : RenderComponent(renderContext
 }
 
 
-
 void AxesTool::Draw() {
     glUseProgram(0); // Utiliser le shader par défaut
     glLineWidth(1.0f);

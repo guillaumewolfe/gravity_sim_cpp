@@ -5,6 +5,7 @@
 
 Mars::Mars() : CelestialObject() {
     std::string name_sub = "Mars";
+    typeName = "Mars";
     std::string path_sub = "../assets/textures/mars.jpg";
     type = 2;
     textureID = loadTexture(path_sub.c_str());

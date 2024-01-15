@@ -14,14 +14,29 @@ UITool::UITool(RenderContext* renderContext) : RenderComponent(renderContext){
     start_time = std::chrono::system_clock::now();
 }
 
+UITool::~UITool() {
+}
+
 void UITool::Draw() {
 glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+auto now = std::chrono::steady_clock::now();
+frameCount++;
+std::chrono::duration<float> elapsed = now - lastFrameTime;
+if (elapsed.count() >= 1.0f) { // Update every second
+    fps = frameCount / elapsed.count();
+    frameCount = 0;
+    lastFrameTime = now;
+}
 
 draw_rect();
 draw_labbels();
 draw_buttons();
+std::ostringstream fpsStream;
+fpsStream << std::fixed << std::setprecision(2) << fps << " FPS";
+ImGui::SetCursorPos(ImVec2(winWidth*0.93, winHeight*0.01));
+ImGui::Text("%s", fpsStream.str().c_str());
 ImGui::End(); 
 
 
@@ -51,6 +66,8 @@ void UITool::draw_rect(){
                       ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                       IM_COL32(10,10,10,0), // Couleur
                       cornerRadius, 0, 2.0f);
+
+
     ImVec2 centerPos = ImVec2(leftX + longueur / 2, topY + hauteur / 2);
 
     if(!*(m_renderContext->isLive)){return;}
@@ -63,6 +80,7 @@ void UITool::draw_rect(){
                                 winWidth*0.004, 
                                 IM_COL32(150,250,150,200), // Couleur
                                 40);
+
 }
 
 
@@ -113,3 +131,6 @@ void UITool::draw_labbels() {
         label->Draw();
     }
 }
+
+
+

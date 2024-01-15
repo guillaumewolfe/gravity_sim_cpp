@@ -10,6 +10,7 @@
 #include "engine/RenderTools/GlowTool.h"
 #include "engine/RenderTools/athmosphereTool.h"
 #include "engine/RenderTools/saturnRingTool.h"
+#include "engine/RenderTools/uranusRingTool.h"
 
 
 PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
@@ -18,6 +19,10 @@ PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* m
 }
 
 void PositionCreator::Enter(){
+    CelestialObject* sun = m_renderContext->systemeSolaire->getSun();
+    Vec3 positionCameraInit = Vec3(sun->getPositionSimulation().x,125,sun->getPositionSimulation().z);
+    m_manager->cameraCreationPositionInit = Vec3(positionCameraInit);
+    m_manager->cameraCreationTargetInit = sun->getPositionSimulation();
     m_manager->resetCamera();
     if(!(m_manager->isCreated)){createNewObject();}
 } 
@@ -76,12 +81,12 @@ void PositionCreator::generate_buttons(){
                                 ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
                                 ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
                                "+", 0.0,25.0f,
-                               std::bind(&PositionCreator::zoomIn, this),3,false,ImVec4(255,255,255,255),true);  
+                               std::bind(&PositionCreator::zoomIn, this),3,"normal",false,ImVec4(255,255,255,255),true);  
     Button *ZoomOutButton = new Button(0.045f, 0.9, ImVec2(0.02, 0.02),
                                 ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
                                 ImVec4(0.17f, 0.17f, 0.17f, 1.0f),
                             "-", 0.0,28.0f,
-                            std::bind(&PositionCreator::zoomOut, this),3,false,ImVec4(255,255,255,255),true); 
+                            std::bind(&PositionCreator::zoomOut, this),3,"normal",false,ImVec4(255,255,255,255),true); 
     Button *ResetPosButton = new Button(0.075f, 0.97, ImVec2(0.04, 0.03),
                                 ImVec4(0.1f, 0.1f, 0.1f, 1.0f),
                                 ImVec4(0.27f, 0.27f, 0.17f, 1.0f),
@@ -307,14 +312,17 @@ void PositionCreator::createEffects(){
     else if(newObj->getName()=="Sun"){
         newObj->glowTool = new GlowTool(newObj,m_renderContext);
     }
+    else if(newObj->getName()=="Uranus"){
+        newObj->uranusRingTool = new UranusRingTool(newObj,m_renderContext);
+    }
 }
 
 void PositionCreator::DrawOrbits() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     auto& objects = m_renderContext->systemeSolaire->objects;
-
+    CelestialObject* centerObject = m_renderContext->systemeSolaire->getSun();
     // Obtenir la position du soleil (premier objet)
-    const glm::vec3& sunPos3D = objects[0]->getPositionSimulation().toGlm();
+    const glm::vec3& sunPos3D = centerObject->getPositionSimulation().toGlm();
 
     // Calculer les coordonnées d'écran du soleil
     glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();
@@ -324,14 +332,14 @@ void PositionCreator::DrawOrbits() {
     float xPercentSun = (ndc.x + 1.0f) / 2.0f;
     float yPercentSun = (1.0f - ndc.y) / 2.0f;
 
-    ImVec2 center(xPercentSun * winWidth, yPercentSun * winHeight); // Utiliser les coordonnées d'écran du soleil comme centre
+    ImVec2 center(xPercentSun* winWidth, yPercentSun * winHeight); // Utiliser les coordonnées d'écran du soleil comme centre
 
     // Parcourez tous les objets pour dessiner leurs orbites
     for (const auto& object : objects) {
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
 
         // Calculer la position de la planète par rapport au soleil
-        glm::vec3 relativePos = planetPos3D - sunPos3D;
+        glm::vec3 relativePos = planetPos3D;
 
         // Convertir les coordonnées 3D en coordonnées de clip
         clipCoords = projectionMatrix * viewMatrix * glm::vec4(relativePos, 1.0f);
@@ -343,21 +351,20 @@ void PositionCreator::DrawOrbits() {
 
         ImVec2 planetScreenPos = ImVec2(xPercent * winWidth, yPercent * winHeight);
         float radius = std::sqrt(std::pow(center.x - planetScreenPos.x, 2) + std::pow(center.y - planetScreenPos.y, 2));
-
         ImU32 color = (object == m_manager->newCreatedObject) ? IM_COL32(100,255,150,130) : IM_COL32(255, 255, 255, 80);
         float tickness = (object == m_manager->newCreatedObject) ? winWidth * 0.002 : winWidth * 0.00075;
         int num_segments = 300; // Qualité du cercle
         if (object != m_manager->newCreatedObject) {
             drawList->AddCircle(center, radius, color, num_segments, tickness);
+            drawList->AddCircleFilled(planetScreenPos, winWidth * 0.0025, IM_COL32(255,255,255,130));
         }
 
         if (object == m_manager->newCreatedObject && (!isHoveringRectangle() || positionSelected)) {
             drawList->AddCircle(center, radius, color, num_segments, tickness);
             ImU32 arrowColor = IM_COL32(100,255,150,130);
-            ImVec2 objectScreenPos = ImVec2(xPercent * winWidth, yPercent * winHeight);
-            drawList->AddLine(center, objectScreenPos, arrowColor, winWidth * 0.002);
+            drawList->AddLine(center, planetScreenPos, arrowColor, winWidth * 0.002);
             ImU32 color = IM_COL32(100,255,150,255);
-            drawList->AddCircleFilled(objectScreenPos, winWidth * 0.0025, color);
+            drawList->AddCircleFilled(planetScreenPos, winWidth * 0.0025, color);
         }
     }
 }

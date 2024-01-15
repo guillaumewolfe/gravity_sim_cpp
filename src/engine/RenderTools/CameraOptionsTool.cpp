@@ -9,6 +9,45 @@ CameraOptionsTool::CameraOptionsTool(RenderContext* renderContext) : RenderCompo
     generate_buttons();
     initcameraModeList();
 }
+// Destructeur
+CameraOptionsTool::~CameraOptionsTool() {
+    for (Button* btn : buttons) {
+        delete btn;
+    }
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    for (ImageButton* imgbtn : imageButtons) {
+        delete imgbtn;
+    }
+    for (Slider* slider : sliders) {
+        delete slider;
+    }
+    for (Icon* icon : icons) {
+        delete icon;
+    }
+    for (ToggleButton* toggle : toggleButtons) {
+        delete toggle;
+    }
+    for (ImageButton* imgbtn : imageButtonsMode1) {
+        delete imgbtn;
+    }
+    for (Labbel* label : labbelsMode1) {
+        delete label;
+    }
+    for (ImageButton* imgbtn : imageButtonsMode2) {
+        delete imgbtn;
+    }
+    for (Labbel* label : labbelsMode2) {
+        delete label;
+    }
+    for (ImageButton* imgbtn : imageButtonsMode3) {
+        delete imgbtn;
+    }
+    for (Labbel* label : labbelsMode3) {
+        delete label;
+    }
+}
 
 void CameraOptionsTool::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);

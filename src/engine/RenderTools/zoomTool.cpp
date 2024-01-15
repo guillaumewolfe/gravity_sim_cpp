@@ -167,7 +167,11 @@ void ZoomTool::drawImGui() {
         drawList->AddLine(ImVec2(center.x - offset, center.y - subSectionLength / 2), ImVec2(center.x - offset, center.y + subSectionLength / 2), IM_COL32(255,255,255, 100), winWidth * 0.00075);
         drawList->AddLine(ImVec2(center.x + offset, center.y - subSectionLength / 2), ImVec2(center.x + offset, center.y + subSectionLength / 2), IM_COL32(255,255,255, 100), winWidth * 0.00075);
     }
-    
+    drawList->AddCircleFilled(center, winWidth * 0.002, IM_COL32(255,255,255, 100), 100);
+    //draw white line from center to cursor
+    ImVec2 mousePos = ImGui::GetMousePos();
+    drawList->AddLine(center, mousePos, IM_COL32(255,255,255, 100), winWidth * 0.00075);
+
     
     char buf[64];
     sprintf(buf, "Zoom: %.0fx", zoom); // Formatage du texte avec la valeur de zoom
@@ -178,6 +182,8 @@ void ZoomTool::drawImGui() {
 
 
 void ZoomTool::Open(){
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    glfwSetCursorPos(glfwGetCurrentContext(), winWidth/2, winHeight/2);
     zoom = 10;
 }
 

@@ -12,6 +12,7 @@
 class OptionsTool : public RenderComponent {
 public:
     explicit OptionsTool(RenderContext* renderContext);
+    ~OptionsTool() override;
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     void draw_labbels();

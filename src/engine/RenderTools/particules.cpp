@@ -16,6 +16,11 @@ ParticleSystem::ParticleSystem(CelestialObject& object, unsigned int maxParticle
         initSystem();
 
         }
+// Desctructeur
+ParticleSystem::~ParticleSystem() {
+    glDeleteProgram(starEffectShaderProgram);
+}
+
 
 void ParticleSystem::update(float deltaTime) {
     // Pour l'instant, laissez cette méthode vide

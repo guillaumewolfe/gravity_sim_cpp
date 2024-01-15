@@ -14,6 +14,17 @@ AthmosphereTool::AthmosphereTool(CelestialObject* celestialObject, RenderContext
     initCloudsShaders();
 }
 
+//destructeur
+AthmosphereTool::~AthmosphereTool() {
+    for (const auto& sphere : AthmosphereSpheres) {
+        glDeleteBuffers(1, &sphere.vboVertices);
+        glDeleteBuffers(1, &sphere.vboNormals);
+        glDeleteBuffers(1, &sphere.vboTexCoords);
+    }
+    glDeleteProgram(shaderProgram);
+    glDeleteProgram(cloudShaderProgram);
+}
+
 // Initialisation du Athmosphere
 void AthmosphereTool::initAthmosphere() {
     if (m_celestialObject == nullptr) {

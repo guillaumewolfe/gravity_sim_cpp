@@ -22,6 +22,10 @@ public:
     void loadTexture(const char* filename);
     void UpdatePosition(float xPerc, float yPerc);
     GLuint createTexture(const cv::Mat& originalImage);
+    bool enabled = true;
+    std::string imagePath;
+    ImVec2 getPosition();
+    ImVec2 getSize();
 
 private:
     ImVec2 position;

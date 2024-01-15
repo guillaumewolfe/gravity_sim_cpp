@@ -10,12 +10,14 @@
 class GlowTool;
 class AthmosphereTool;
 class SaturnRingTool;
+class UranusRingTool;
 
 class CelestialObject{
 protected:
     CelestialObject();
 public:
     std::string name;
+    std::string typeName;
     std::string texture_path;
     double real_radius = 5000;
     double weight = 1;
@@ -41,6 +43,10 @@ public:
     CelestialObject* mostInfluentialObject;
     void setMostInfluentialObject(CelestialObject* newMostInfluentialObject);
     CelestialObject* getMostInfluentialObject();
+    std::vector<CelestialObject*> planetsEaten;
+
+    double initialWeight;
+    double initialRadius;
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;
@@ -55,6 +61,7 @@ public:
     GlowTool* glowTool;
     AthmosphereTool* athmosphereTool;
     SaturnRingTool* saturnRingTool;
+    UranusRingTool* uranusRingTool;
     
 
     Vec3 position_real = {0,0,0};
@@ -87,6 +94,7 @@ public:
 
     virtual void setName(std::string);
     virtual std::string getName();
+    std::string getTypeName();
 
     virtual void setPath(std::string);
     virtual std::string getPath();
@@ -103,6 +111,11 @@ public:
     double getDistanceFromOrigin();
     double getWeight();
     void setWeight(double newWeight);
+    void setInitialSettings();
+    void updateToInitialSettings();
+    void addPlanetEaten(CelestialObject* planet);
+    std::vector<CelestialObject*> getPlanetsEaten();
+    void resetPlanetEaten();
     
 
 

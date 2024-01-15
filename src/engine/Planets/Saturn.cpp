@@ -6,13 +6,14 @@
 
 Saturn::Saturn() : CelestialObject() {
     std::string name_sub = "Saturn";
+    typeName = "Saturn";
     std::string path_sub = "../assets/textures/saturn.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(18,0,0);
     type = 3;
     textureID = loadTexture(path_sub.c_str());
 
-    story = "\tSaturn is famous for its stunning rings, made primarily of ice particles with a smaller amount of rocky debris and dust. It's a gas giant like Jupiter, with the most extensive ring system of any planet. Saturn's moon Titan, larger than Mercury, has a thick atmosphere and liquid methane lakes.";
+    story = "\tSaturn is famous for its stunning rings, made primarily of ice particles with a smaller amount of rocky debris and dust. Spanning up to 282,000 kilometers (175,000 miles) in width, these rings could fit nearly 75 Earths lined up in a row. Despite their grand scale, the rings are surprisingly thin, often just about 10 meters (33 feet) thick. It's a gas giant like Jupiter, with the most extensive ring system of any planet. Saturn's moon Titan, larger than Mercury, has a thick atmosphere and liquid methane lakes.";
 
 
     distance_initiale = 1426666422e3;

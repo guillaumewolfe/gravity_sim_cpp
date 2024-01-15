@@ -20,7 +20,8 @@ class GlowTool {
 public:
     // Constructeur
     GlowTool(CelestialObject* celestialObject, RenderContext* renderContext);
-
+    // Destructeur
+    ~GlowTool();
     // Méthodes pour gérer le glow
     void initGlow();
     void drawGlow(Camera* camera);

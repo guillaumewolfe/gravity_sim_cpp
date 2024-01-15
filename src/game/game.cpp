@@ -164,7 +164,7 @@ void Game::InitSettings() {
     settings.movementSpeed = 0.75f;
     settings.rotationSpeed = 0.75f;
     settings.musicVolume = 0.0f;
-    settings.sfxVolume = 0.0f;
-    settings.mainVolume = 0.0f;
+    settings.sfxVolume = 0.75f;
+    settings.mainVolume = 0.75f;
     settings.volumeChanged = false;
 }

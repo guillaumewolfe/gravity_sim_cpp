@@ -14,7 +14,7 @@ class RenderContext {
 public: 
 
     RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe,
-    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions, bool* isLive, bool* showOptions, bool* showSettings);
+    SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions, bool* isLive, bool* showOptions, bool* showSettings, bool* isOrbiting, bool* isPaused);
     
     float* simulationTime;
     float* timeMultiplier;
@@ -33,12 +33,16 @@ public:
     bool* isLive;
     bool* showOptions;
     bool* showSettings;
+    bool* isOrbiting;
+    bool* isPaused;
     SimulationState* simulationState;
     bool showAllOrbits = false;
     bool showAllNames = true;
     bool showAllPaths = true;
     bool showZoom = false;
     bool showMinimap = false;
+    bool showControls = true;
+    bool showCollision = true;
 
 
 

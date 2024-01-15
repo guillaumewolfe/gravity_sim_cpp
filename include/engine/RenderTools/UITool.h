@@ -5,11 +5,14 @@
 #include "RenderComponent.h"
 #include <chrono>
 #include "UI/ImageButton.h"
+#include "UI/Icon.h"
 
 class UITool : public RenderComponent {
 public:
     float sliderVariable;
     explicit UITool(RenderContext* renderContext);
+    ~UITool() override;
+    
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     void draw_labbels();
@@ -27,6 +30,10 @@ public:
 private:
     int winWidth, winHeight;
     ImFont* myFont;
+    std::chrono::steady_clock::time_point lastFrameTime;
+    int frameCount;
+    float fps;
+
 };
 
 #endif // UITOOL_H

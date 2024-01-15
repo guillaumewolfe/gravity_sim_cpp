@@ -10,6 +10,7 @@
 #include "engine/RenderTools/GlowTool.h"
 #include "engine/RenderTools/athmosphereTool.h"
 #include "engine/RenderTools/saturnRingTool.h"
+#include "engine/RenderTools/uranusRingTool.h"
 
 
 ParametersCreator::ParametersCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
@@ -120,7 +121,7 @@ void ParametersCreator::generate_buttons(){
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Select", 0.4,19.0f,
-                               std::bind(&ParametersCreator::next_state, this));  
+                               std::bind(&ParametersCreator::next_state, this),10.0,"creation");  
 
 
     buttons.push_back(ReturnButton);
@@ -249,7 +250,6 @@ void ParametersCreator::setParameters(){
     double objectRadius = itemsRadiusDictionary[currentItemRadius] * radiusMultiplicator;
     m_manager->newCreatedObject->real_radius=objectRadius;
     m_renderContext->systemeSolaire->setRayon(m_manager->newCreatedObject); //Change effect if needed:
-    updateEffects();
     m_renderContext->currentCamera->newFollowObject(m_manager->newCreatedObject); //Reset cam with new object.
     
     //Name
@@ -260,21 +260,6 @@ void ParametersCreator::setParameters(){
     m_manager->newCreatedObject->rotationSidSpeed = sideralMultiplicator/(24*60*60);
 }
 
-void ParametersCreator::updateEffects(){
-    CelestialObject* newObj = m_manager->newCreatedObject;
-    //remove previus effect
-    if(newObj->getName()=="Saturn"){
-        delete newObj->saturnRingTool;
-        newObj->saturnRingTool = new SaturnRingTool(newObj,m_renderContext);
-    }else if(newObj->getName()=="Earth"){
-        delete newObj->athmosphereTool;
-        newObj->athmosphereTool = new AthmosphereTool(newObj,m_renderContext);}
-
-    else if(newObj->getName()=="Sun"){
-        delete newObj->glowTool;
-        newObj->glowTool = new GlowTool(newObj,m_renderContext);
-    }
-}
 
 
 

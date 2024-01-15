@@ -16,7 +16,7 @@ using namespace std;
 int main() {
     //Time accumulator for physical updates:
     double t = 0.0;
-    const double dt = 1/60.0;
+    const double dt = 1/100.0;
     double currentTime = glfwGetTime();
     double accumulator = 0.0;
     

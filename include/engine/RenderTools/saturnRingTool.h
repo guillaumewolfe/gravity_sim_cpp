@@ -22,6 +22,8 @@ class SaturnRingTool {
 public:
     // Constructeur
     SaturnRingTool(CelestialObject* celestialObject, RenderContext* renderContext);
+    // Destructeur
+    ~SaturnRingTool();
 
     // Méthodes pour gérer le Athmosphere
     void initParticules();

@@ -12,6 +12,16 @@ GlowTool::GlowTool(CelestialObject* celestialObject, RenderContext* renderContex
     initGlow();
     initShaders();
 }
+// Destructeur
+GlowTool::~GlowTool() {
+    for (const auto& sphere : glowSpheres) {
+        glDeleteBuffers(1, &sphere.vboVertices);
+        glDeleteBuffers(1, &sphere.vboNormals);
+        glDeleteBuffers(1, &sphere.vboTexCoords);
+    }
+    glDeleteProgram(shaderProgram);
+}
+
 
 // Initialisation du glow
 void GlowTool::initGlow() {

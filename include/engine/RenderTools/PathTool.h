@@ -10,6 +10,7 @@ class PathTool : public RenderComponent {
 public:
 
     explicit PathTool(RenderContext* renderContext);
+    ~PathTool() override;
     void Draw() override;
 
 

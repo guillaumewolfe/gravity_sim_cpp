@@ -1,6 +1,8 @@
 #include "engine/SystemeSolaire.h"
 #include <iostream>
 #include "engine/RenderTools/objectsTool.h"
+#include "engine/RenderTools/RenderContext.h"
+#include "engine/RenderTools/uranusRingTool.h"
 
 SystemeSolaire::SystemeSolaire(){
     maxSize = 1000;
@@ -60,32 +62,24 @@ void SystemeSolaire::setRayonInit(){
     for (auto& object : objects){
         object->setRayonSim(radiusScale*scale);
         object->distanceScale = scale;
+        object->setInitialSettings();
     }   
 }
 void SystemeSolaire::setRayon(CelestialObject* obj){
     obj->setRayonSim(radiusScale*scale);
     ObjectsTool::initSphere(*obj, 150, 150);
-}
-
-
-void SystemeSolaire::resetPosition(){
-        for (auto& object : objects){
-        if(object->isCreated){removeObject(object);continue;}
-        object->updatePositionReal(object->nasaPosition);
-        object->updateVelocity(object->nasaVelocity);
-        object->clearPositionHistory();
-}
+    updateEffects(obj);
 }
 
 void SystemeSolaire::syncWithNasa(){
     if(objects.empty()){return;}
     std::string sunString = apiTool->getBodyData("Sun");
-    std::pair<Vec3, Vec3> sunPositionAndVelocity = apiTool->extractBodyData(sunString);
+    std::pair<Vec3, Vec3> sunPositionAndVelocity = apiTool->extractBodyData(sunString, "Sun");
     Vec3 sunPosition = sunPositionAndVelocity.first;
     Vec3 sunVelocity = sunPositionAndVelocity.second;
     for(auto& object : objects){
         std::string buffer = apiTool->getBodyData(object->getName());
-        std::pair<Vec3, Vec3> positionAndVelocity = apiTool->extractBodyData(buffer);
+        std::pair<Vec3, Vec3> positionAndVelocity = apiTool->extractBodyData(buffer,object->getName());
         // Multipliez les valeurs par 1000
         Vec3 newPosition = positionAndVelocity.first * 1000;
         Vec3 newVelocity = positionAndVelocity.second * 1000;
@@ -96,6 +90,47 @@ void SystemeSolaire::syncWithNasa(){
 }
 
 
+void SystemeSolaire::resetPosition() {
+    // Enlever tous les objets créés pendant la simulation
+    objects.erase(std::remove_if(objects.begin(), objects.end(), [](CelestialObject* obj) { 
+        return obj->isCreated; 
+    }), objects.end());
+
+    // Trier le vecteur deletedObjects par position originale pour conserver l'ordre
+    std::sort(deletedObjects.begin(), deletedObjects.end(), 
+              [](const std::pair<CelestialObject*, size_t>& a, const std::pair<CelestialObject*, size_t>& b) {
+                  return a.second < b.second;
+              });
+
+    // Réintégrer les objets originaux supprimés dans leurs positions originales
+    for (const auto& pair : deletedObjects) {
+        CelestialObject* deletedObject = pair.first;
+        size_t position = pair.second;
+        if (position <= objects.size()) {
+            objects.insert(objects.begin() + position, deletedObject);
+        }
+    }
+    deletedObjects.clear(); // Vider le vecteur des objets supprimés après les avoir réintégrés
+
+    // Réinitialiser la position et la vitesse des objets originaux
+    for (auto& object : objects) {
+        object->resetPlanetEaten();
+        bool rayonChanged = false;
+        if (!object->isCreated) {
+            object->updatePositionReal(object->nasaPosition);
+            object->updateVelocity(object->nasaVelocity);
+            object->clearPositionHistory();
+            if (object->real_radius != object->initialRadius) {
+                rayonChanged = true;
+            }
+            object->updateToInitialSettings(); //Reset des caractéristiques initiales
+            if(rayonChanged){
+                setRayon(object);
+            }
+        }
+    }
+}
+
 void SystemeSolaire::addObject(CelestialObject* newObj){
     if(newObj->real_radius){
     setRayon(newObj);
@@ -105,13 +140,52 @@ void SystemeSolaire::addObject(CelestialObject* newObj){
     objects.push_back(newObj);
 }
 
-void SystemeSolaire::removeObject(CelestialObject* objToRemove){
+void SystemeSolaire::removeObject(CelestialObject* objToRemove) {
     auto it = std::find(objects.begin(), objects.end(), objToRemove);
-
     if (it != objects.end()) {
+        if (!objToRemove->isCreated) {
+            size_t position = std::distance(objects.begin(), it);
+            deletedObjects.emplace_back(objToRemove, position);
+        }
         objects.erase(it); // Enlever l'objet de la liste
     } else {
         std::cout << "Objet non trouvé." << std::endl;
     }
+}
 
+void SystemeSolaire::updateEffects(CelestialObject* newObj){
+    if(newObj->getTypeName()=="Saturn"){
+        delete newObj->saturnRingTool;
+        newObj->saturnRingTool = new SaturnRingTool(newObj,m_renderContext);
+    }else if(newObj->getTypeName()=="Earth"){
+        delete newObj->athmosphereTool;
+        newObj->athmosphereTool = new AthmosphereTool(newObj,m_renderContext);}
+
+    else if(newObj->getTypeName()=="Sun"){
+        delete newObj->glowTool;
+        newObj->glowTool = new GlowTool(newObj,m_renderContext);}
+    else if(newObj->getTypeName()=="Uranus"){
+        delete newObj->saturnRingTool;
+        newObj->uranusRingTool = new UranusRingTool(newObj,m_renderContext);
+    }
+}
+
+void SystemeSolaire::setContext(RenderContext* renderContext){
+    m_renderContext = renderContext;
+}
+
+CelestialObject* SystemeSolaire::getSun(){
+    if(objects.empty()){return nullptr;}    
+    CelestialObject* sun = objects[0];
+    if(objects[0]->getTypeName()=="Sun"){
+        sun = objects[0];}
+    else{
+        for (auto& object : objects) {
+            if (object->getWeight() > sun->getWeight()) {
+                sun = object; // Update mostMassive if a more massive object is found
+            }
+        }
+    }
+
+    return sun;
 }

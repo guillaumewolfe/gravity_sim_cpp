@@ -4,6 +4,7 @@
 
 Ice::Ice() : CelestialObject() {
     std::string name_sub = "Ice";
+    typeName = "Ice";
     std::string path_sub = "../assets/textures/fictionnal_ice.jpg";
     real_radius = 2*24622e3;
     type = 4;

@@ -254,8 +254,8 @@ void Camera::changeValue(bool increase){
 
 void Camera::zoomByDistance(bool in){
     if (!followedObject) return;
-    if(in){globalFollowingDistance *= 1.01;}
-    else{globalFollowingDistance /= 1.01;}  
+    if(in){globalFollowingDistance /= 1.01;}
+    else{globalFollowingDistance *= 1.01;}  
 }
 
 
@@ -504,8 +504,8 @@ void Camera::resetPosition() {
     lookAt();
     if (m_renderContext && !m_renderContext->systemeSolaire->objects.empty()) {
         orbitalVerticalAngle = (M_PI/2)/5;
-        orbitalHorizontalAngle = -1.2112;
-        newFollowObjectGlobal(m_renderContext->systemeSolaire->objects[0]);
+        orbitalHorizontalAngle = -1.18;
+        newFollowObjectGlobal(m_renderContext->systemeSolaire->getSun());
         *(m_renderContext->showInfo) = false;
         globalDistanceCalcuated = false;
     }

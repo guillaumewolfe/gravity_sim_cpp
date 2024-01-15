@@ -14,6 +14,17 @@ OptionsTool::OptionsTool(RenderContext* renderContext) : RenderComponent(renderC
     generate_labels();
 }
 
+OptionsTool::~OptionsTool() {
+    for (Button* btn : buttons) {
+        delete btn;
+    }
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    delete imageButton;
+    delete icon;
+}
+
 void OptionsTool::Draw(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowFocus();

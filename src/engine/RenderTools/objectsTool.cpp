@@ -13,7 +13,7 @@
 #include <glm/glm.hpp> // Ceci inclut les types de vecteurs et de matrices de base.
 #include <glm/gtc/matrix_transform.hpp> // Pour les transformations comme glm::translate, glm::rotate, glm::scale.
 #include <glm/gtc/type_ptr.hpp> // Pour convertir les types de GLM en pointeurs pour OpenGL.
-
+#include "engine/RenderTools/uranusRingTool.h"
 
 
 ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderComponent(renderContext),m_camera(camera) {
@@ -21,7 +21,7 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderC
     initStarShaders();
     //m_renderContext->currentCamera
     for (auto& object : m_renderContext->systemeSolaire->objects) {
-        initSphere(*object, 150, 150); 
+        initSphere(*object, 200, 200); 
 
         if(object->getName()=="Sun"){
             glowTool = new GlowTool(object, m_renderContext);
@@ -32,17 +32,29 @@ ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderC
     }else if(object->getName()=="Saturn"){
             saturnRingTool = new SaturnRingTool(object, m_renderContext);
             object->saturnRingTool = saturnRingTool;
-    }
+    }else if(object->getName()=="Uranus"){
+            object->uranusRingTool = new UranusRingTool(object, m_renderContext);
+            }
     }
 }
 
+// Destructeur
+ObjectsTool::~ObjectsTool() {
+    for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        glDeleteBuffers(1, &object->vboVertices);
+        glDeleteBuffers(1, &object->vboNormals);
+        glDeleteBuffers(1, &object->vboTexCoords);
+    }
+    glDeleteProgram(shaderProgram);
+    glDeleteProgram(starShaderProgram);
+}
 
 
 
 
 void ObjectsTool::Draw() {
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
-            m_camera->updateObjectVisibility(object);
+            //m_camera->updateObjectVisibility(object);
         }
 
     glEnable(GL_DEPTH_TEST);
@@ -150,6 +162,9 @@ void ObjectsTool::drawEffects(){
         }
         if(object->saturnRingTool!=nullptr){
             object->saturnRingTool->Draw(m_camera);
+        }
+        if(object->uranusRingTool!=nullptr){
+            object->uranusRingTool->Draw(m_camera);
         }
     }
     }

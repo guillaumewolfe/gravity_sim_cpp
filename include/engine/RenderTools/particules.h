@@ -17,6 +17,7 @@ struct Particle {
 class ParticleSystem {
 public:
     ParticleSystem(CelestialObject& object, unsigned int maxParticles);
+    ~ParticleSystem();
     void update(float deltaTime);
     void draw(const glm::vec3& cameraPosition, const glm::vec3& cameraDirection);
     void initSystem();

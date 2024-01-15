@@ -21,7 +21,8 @@ class AthmosphereTool {
 public:
     // Constructeur
     AthmosphereTool(CelestialObject* celestialObject, RenderContext* renderContext);
-
+    // Destructeur
+    ~AthmosphereTool();
     // Méthodes pour gérer le Athmosphere
     void initAthmosphere();
     void drawAthmosphere(CelestialObject* Sun,Camera* camera);

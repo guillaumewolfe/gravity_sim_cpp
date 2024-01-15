@@ -7,6 +7,7 @@ OrbitTool::OrbitTool(RenderContext* renderContext) : RenderComponent(renderConte
     init();
 }
 
+
 void OrbitTool::init(){
     typeDict = m_renderContext->colorByTypeDict;
 }

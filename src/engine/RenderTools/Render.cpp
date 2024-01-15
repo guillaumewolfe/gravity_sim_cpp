@@ -27,6 +27,8 @@ void Render::initTools(){
     Zoom_Tool = new ZoomTool(Context);
     Orbit_Tool = new OrbitTool(Context);
     Minimap_Tool = new MinimapTool(Context);
+    Keys_UI = new KeysUI(Context);
+    Collision_Tool = new CollisionTool(Context);
 
     initCamera();
 }
@@ -48,6 +50,7 @@ void Render::Draw(){
     if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->drawImGui();}
     UI_Tool->Draw();
+    if(Context->showControls){Keys_UI->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
     if(*(Context->showOptions)){Options_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
@@ -62,6 +65,7 @@ void Render::Draw(){
     //if(!*(Context->isCreating)){Path_Tool->Draw();}
     if(!Context->showZoom){Path_Tool->Draw();}
     if(Context->showAllOrbits){Orbit_Tool->Draw();}
+    if(Context->showCollision){Collision_Tool->Draw();}
 
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -81,4 +85,24 @@ void Render::updateCamera(){
 void Render::initCamera(){
     Vec3 position_initiale = Vec3(-10,0,0);
     Context->currentCamera->setInitPosition(position_initiale);
+}
+
+
+//destructeur
+Render::~Render(){
+    delete UI_Tool;
+    delete Objects_Tool;
+    delete Background_Tool;
+    delete Axes_Tool;
+    delete Path_Tool;
+    delete Creator_Manager;
+    delete Name_Tool;
+    delete PlaneteInfo_Tool;
+    delete CameraOptions_Tool;
+    delete Options_Tool;
+    delete Settings_Tool;
+    delete Zoom_Tool;
+    delete Orbit_Tool;
+    delete Minimap_Tool;
+    delete Keys_UI;
 }

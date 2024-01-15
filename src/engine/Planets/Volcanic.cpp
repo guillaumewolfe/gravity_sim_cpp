@@ -5,6 +5,7 @@
 
 Volcanic::Volcanic() : CelestialObject() {
     std::string name_sub = "Volcanic";
+    typeName = "Volcanic";
     std::string path_sub = "../assets/textures/volcanic.png";
     real_radius = 24622e3/2;
     type = 2;

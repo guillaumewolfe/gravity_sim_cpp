@@ -14,7 +14,7 @@
 MinimapTool::MinimapTool(RenderContext* renderContext) : RenderComponent(renderContext){
     typeDict = m_renderContext->colorByTypeDict;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    longueur = winWidth* 0.65; // Exemple de taille
+    longueur = winHeight* 0.80; // Exemple de taille
     hauteur = winHeight * 0.8; // Exemple de taille
     scale = 0.95;
     longueurScene = longueur * scale;
@@ -36,10 +36,19 @@ ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlag
 draw_rect();
 draw_Scene();
 draw_UI();
-
+if (ImGui::IsKeyReleased(ImGuiKey_Escape)){CloseButton();}
+if (ImGui::IsKeyReleased(ImGuiKey_Enter)){SelectObject(selectedObject);}
 ImGui::End(); 
 
 
+}
+
+//destructeur
+MinimapTool::~MinimapTool(){
+    for(auto& button : imageButtons){
+        delete button;
+    }
+    delete iconCamera;
 }
 
 void MinimapTool::generate_buttons(){
@@ -58,15 +67,16 @@ void MinimapTool::generate_buttons(){
 void MinimapTool::draw_rect(){
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5, winHeight * 0.5f);
-    ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
+    topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
+    bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     float cornerRadius = 10.0f;
-    /*drawList->AddRectFilled(topLeft, 
+    drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(0,0,0,255), // Couleur
                             cornerRadius);    // Dessiner le premier rectangle avec coins arrondis
-*/  
-    drawList->AddCircleFilled(centerPos, 0.96*hauteur/2, IM_COL32(0,0,0,255),100);
+ 
+    //drawList->AddCircleFilled(centerPos, 0.96*hauteur/2, IM_COL32(0,0,0,255),100);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(15, 20, 25, 120), // Couleur
@@ -123,9 +133,9 @@ void MinimapTool::draw_planets(){
     // Décalage à appliquer à toutes les planètes pour centrer le système
     ImVec2 offset = ImVec2(centerPos.x - compressedCentrePos.x, centerPos.y - compressedCentrePos.y);
     ImGui::PushFont(nameFont);
-    float radius = winHeight * 0.0075;
-draw_asteroid_belt(drawList, asteroid1Positions, centerPos, winHeight*0.0015, IM_COL32(150, 150, 150, 120), -7.14e-9);
-draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0015, IM_COL32(100, 149, 237, 120), -1.25e-10);
+    float radius = winHeight * 0.01;
+draw_asteroid_belt(drawList, asteroid1Positions, centerPos, winHeight*0.0010, IM_COL32(180, 150, 150, 120), -7.14e-9);
+draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0010, IM_COL32(150, 200, 255, 120), -1.25e-10);
 
     for(auto& planete : m_renderContext->systemeSolaire->objects){
         if(planete->type == 5) continue; // Ne pas dessiner le centre (par exemple, le Soleil
@@ -141,6 +151,9 @@ draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0015, IM
 
         // Calculer la position finale avec le décalage
         ImVec2 planetPos = ImVec2(compressedPlanetPos.x + offset.x, compressedPlanetPos.y + offset.y);
+    if (planetPos.x - radius >= topLeft.x && planetPos.x + radius <= bottomRight.x &&
+            planetPos.y - radius >= topLeft.y && planetPos.y + radius <= bottomRight.y) {
+
         float distanceToCenter = std::sqrt(std::pow(planetPos.x - centerPos.x, 2) + std::pow(planetPos.y - centerPos.y, 2));
         ImVec4 colorType = getTypeColor(planete->type);
         std::string planetName = planete->getName(); // Assurez-vous que getName() renvoie une chaîne de caractères
@@ -158,6 +171,8 @@ draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0015, IM
         }
         if (isMouseClicked && distanceToMouse <= radius * 2) {
             selectedObject = planete;
+            m_renderContext->currentCamera->selectedObject = selectedObject;
+            *(m_renderContext->showInfo) = true;
         }
         //Soleil
         if(planete->type == 1){
@@ -175,9 +190,10 @@ draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0015, IM
             ImVec2 directionToSun = ImVec2(planetPos.x - centerPos.x, planetPos.y - centerPos.y);
             float shadowAngle = atan2(directionToSun.y, directionToSun.x) + IM_PI; // Ajouter PI pour que l'ombre soit opposée au Soleil
             // Dessiner l'ombre comme un demi-cercle
-            draw_half_circle_shadow(drawList, planetPos, radius, IM_COL32(0, 0, 0, 150), shadowAngle, 100);
+            draw_half_circle_shadow(drawList, planetPos, radius, IM_COL32(0, 0, 0, 180), shadowAngle, 100);
 
-        }}
+        }
+}}
 
     for(auto& planete : m_renderContext->systemeSolaire->objects) {
         std::string planetName = planete->getName();
@@ -206,8 +222,14 @@ draw_asteroid_belt(drawList, asteroid2Positions, centerPos, winHeight*0.0015, IM
         // Position et dessin du texte
         ImVec2 textPos = ImVec2(planetPos.x - ImGui::CalcTextSize(planetName.c_str()).x / 2, 
                                 planetPos.y - radius - winHeight*0.025);
+        ImVec2 textSize = ImGui::CalcTextSize(planetName.c_str());
+
+        // Vérifier si la position du texte est dans les limites de la minimap
+        if (textPos.x >= topLeft.x && textPos.x + textSize.x <= bottomRight.x &&
+            textPos.y >= topLeft.y && textPos.y + textSize.y <= bottomRight.y) {
+
         drawList->AddText(textPos, IM_COL32(255, 255, 255, alpha), planetName.c_str());
-        drawList->AddCircle(planetPos, radius*1.2, IM_COL32(255,255,255,alphaCircle),100,winWidth*0.001);// Assurez-vous que la méthode getName() existe
+        drawList->AddCircle(planetPos, radius*1.2, IM_COL32(255,255,255,alphaCircle),100,winWidth*0.001);}// Assurez-vous que la méthode getName() existe
         if(selected && isMouseDoubleClicked){
             SelectObject(selectedObject);
         }
@@ -232,9 +254,20 @@ ImVec2 finalCameraPos = ImVec2(
     compressedCameraPos.y + offset.y
 );
 iconCamera->UpdatePosition(finalCameraPos.x/winWidth,finalCameraPos.y/winHeight);
-    // Dessiner un indicateur pour le centre (par exemple, le Soleil)
-    float centerRadius = winHeight * 0.005;
-    //drawList->AddCircle(centerPos, centerRadius, IM_COL32(255, 0, 0, 255),100,3); // Couleur dorée pour le centre
+// Texte à afficher au-dessus de l'icône de la caméra
+std::string cameraText = "You";
+
+// Calculer la position du texte
+float textOffsetY = iconCamera->getSize().y*1.3*winHeight; // Ajustez cette valeur selon vos besoins
+ImVec2 textPos = ImVec2(finalCameraPos.x - ImGui::CalcTextSize(cameraText.c_str()).x / 2, 
+                        finalCameraPos.y - textOffsetY);
+
+// Vérifier si le texte est dans les limites de la fenêtre
+if (textPos.x >= topLeft.x && textPos.x + ImGui::CalcTextSize(cameraText.c_str()).x <= bottomRight.x &&
+    textPos.y >= topLeft.y && textPos.y + ImGui::CalcTextSize(cameraText.c_str()).y <= bottomRight.y) {
+    // Dessiner le texte
+    drawList->AddText(textPos, IM_COL32(220, 255, 220, 200), cameraText.c_str());
+}
     ImGui::PopFont();
 }
 
@@ -254,8 +287,8 @@ void MinimapTool::generate_asteroids() {
 
     // Ceinture de Kuiper
     float rayonInterieur2 = 30.0f * scale/2; // Commence à la position de Neptune
-    float rayonExterieur2 = 33.5f * scale/2; // S'étend au-delà de Neptune
-    int numAsteroides2 = 500;
+    float rayonExterieur2 = 33.0f * scale/2; // S'étend au-delà de Neptune
+    int numAsteroides2 = 700;
     generate_asteroid_belt(gen, dis, rayonInterieur2, rayonExterieur2, numAsteroides2, asteroid2Positions);
 }
 
@@ -330,6 +363,12 @@ void MinimapTool::draw_half_circle_shadow(ImDrawList* drawList, ImVec2 center, f
     drawList->PathFillConvex(color);
 }
 
+void MinimapTool::drawGravityField(CelestialObject* object, ImVec2 position, float radius, float scale) {
+
+}
+
+
+
 
 void MinimapTool::setCloseButtonFunction(const std::function<void()>& func) {
     closeFunction = func;
@@ -341,6 +380,7 @@ void MinimapTool::CloseButton(){
 }
 
 void MinimapTool::SelectObject(CelestialObject* object) {
+    if(object == nullptr) {return;}
     CloseButton();
     m_renderContext->currentCamera->newFollowObject(object);
     *(m_renderContext->showInfo) = true;

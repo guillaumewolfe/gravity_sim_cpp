@@ -24,6 +24,30 @@ PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent
     radius *= winWidth;
 }
 
+PlaneteInfoTool::~PlaneteInfoTool() {
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    for (Labbel* label : labbelsMode3) {
+        delete label;
+    }
+    for (Button* btn : buttons) {
+        delete btn;
+    }
+    for (Button* btn : buttonsMode3) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtons) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtonsMode3) {
+        delete btn;
+    }
+    for (ToggleButton* btn : togglebuttonsMode3) {
+        delete btn;
+    }
+}
+
 void PlaneteInfoTool::initLabels(){
     float diff = 0.03f;
     float beg = 0.45f;
@@ -678,7 +702,10 @@ ImGui::SetNextWindowSize(ImVec2(winWidth*0.19, winWidth*0.135)); // Taille de la
 ImGuiStyle& style = ImGui::GetStyle();
 style.Colors[ImGuiCol_Text].w = 0.7; // alphaValue est compris entre 0.0f (complètement transparent) et 1.0f (complètement opaque)
 // Créer la nouvelle fenêtre
-ImGui::Begin("Ma Nouvelle Fenêtre",nullptr, ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoBackground);
+float originalScrollbarSize = style.ScrollbarSize;
+style.ScrollbarSize = 10.0f; // Modifier la taille de la barre de défilement
+
+ImGui::Begin("Ma Nouvelle Fenêtre",nullptr, ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysVerticalScrollbar);
 
 std::string story;
 if(m_object->isCreated){
@@ -692,6 +719,7 @@ ImGui::TextWrapped("%s",story.c_str());
 ImGui::PopFont();
 ImGui::End();
 style.Colors[ImGuiCol_Text].w = 1.0f; // Remettre la valeur par défaut
+style.ScrollbarSize = originalScrollbarSize; // Remettre la valeur par défaut
 }
 
 void PlaneteInfoTool::setMode(int mode){
@@ -720,7 +748,10 @@ void PlaneteInfoTool::updateMode3(){
     togglebuttonsMode3[2]->updatePointer(&m_object->showPath);
 }
 
-void PlaneteInfoTool::removePlanete(){}
+void PlaneteInfoTool::removePlanete(){
+    m_renderContext->systemeSolaire->removeObject(m_object);
+    *(m_renderContext->showInfo) = false;
+}
 void PlaneteInfoTool::changeMass(){}
 void PlaneteInfoTool::changeRadius(){}
 void PlaneteInfoTool::changePosition(){}

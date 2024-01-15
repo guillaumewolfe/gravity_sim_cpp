@@ -3,8 +3,8 @@
 #include "opencv2/opencv.hpp"
 
 // Constructor
-Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label,  float alpha,float fontsize, std::function<void()> onClickAction,float cornerRadius, bool isRound, ImVec4 labelColor, bool isContinuedClick)
-    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label),  alpha(alpha),fontSize(fontsize),cornerRadius(cornerRadius), isRound(isRound), labelColor(labelColor), isContinuedClick(isContinuedClick)  {
+Button::Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label,  float alpha,float fontsize, std::function<void()> onClickAction,float cornerRadius,std::string clickSound, bool isRound, ImVec4 labelColor, bool isContinuedClick)
+    : position(xPercent, yPercent), sizePercent(sizePercent), color(color), hoverColor(hoverColor), onClick(onClickAction), label(label),  alpha(alpha),fontSize(fontsize),cornerRadius(cornerRadius), isRound(isRound), labelColor(labelColor), isContinuedClick(isContinuedClick), clickSoundName(clickSound)  {
         if (!InitSoundEffects()) {
             std::cout<<"Failed to load sound at init"<<std::endl;
         }
@@ -192,16 +192,17 @@ bool Button::InitSoundEffects() {
         return false;
     }
 
-    // Load sound effects (replace with your sound file paths)
-    hoverSound = Mix_LoadWAV("../assets/sounds/select.wav");
-    clickSound = Mix_LoadWAV("../assets/sounds/delete.wav");
+    // Load sound effects
+    hoverSound = getSoundPath("hover");
+    clickSound = getSoundPath(clickSoundName);
+
 
     if (!hoverSound  || !clickSound ) {
         std::cerr << "Failed to load sound effects: " << Mix_GetError() << std::endl;
         Mix_CloseAudio(); // Close audio before returning
         return false;
     }
-
+    SetSoundVolume(0.7f);  // Réglez le volume à la moitié pour l'exemple
     return true; // Sound effects initialized successfully
 }
 
@@ -213,3 +214,20 @@ void Button::UpdateLabelColor(float x,float y,float z,float w) {
     labelColor = ImVec4(x,y,z,w);
 }
 
+Mix_Chunk* Button::getSoundPath(const std::string& name) {
+    if (name == "hover") {return Mix_LoadWAV("../assets/sounds/select.wav");} 
+    else if (name == "normal") {return Mix_LoadWAV("../assets/sounds/delete.wav");} 
+    else if (name == "start"){return Mix_LoadWAV("../assets/sounds/startSim.wav");}
+    else if (name == "creation"){return Mix_LoadWAV("../assets/sounds/confirm_creation.wav");}
+
+
+
+    else {return nullptr;}
+}
+
+
+void Button::SetSoundVolume(float volume) {
+    int volumeInt = volume * 128;
+    Mix_VolumeChunk(hoverSound, volumeInt);
+    Mix_VolumeChunk(clickSound, volumeInt);
+}

@@ -5,6 +5,7 @@
 
 Sun::Sun() : CelestialObject() {
     std::string name_sub = "Sun";
+    typeName = "Sun";
     std::string path_sub = "../assets/textures/sun.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(0,0,0);

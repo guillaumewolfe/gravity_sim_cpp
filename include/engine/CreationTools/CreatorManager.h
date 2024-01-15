@@ -4,6 +4,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <functional>
 
 #include "StateCreator.h"
 #include "../RenderTools/RenderComponent.h"
@@ -36,11 +37,16 @@ public:
     Vec3 cameraCreationTargetInit = Vec3(0,0,0);
     void resetCamera();
     void updateCamera();
+    void setUpdateNamesFunction(const std::function<void()>& func);
+     
 
 
 private:
     std::map<std::string, std::unique_ptr<StateCreator>> states;
     StateCreator* currentState = nullptr;
+
+    std::function<void()> updateNamesFunction;
+    void updateNames();
 };
 
 #endif // CreatorManager_H

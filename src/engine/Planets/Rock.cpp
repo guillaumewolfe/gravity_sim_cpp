@@ -5,6 +5,7 @@
 
 Rock::Rock() : CelestialObject() {
     std::string name_sub = "Rock";
+    typeName = "Rock";
     std::string path_sub = "../assets/textures/fictionnal_terre.jpg";
     real_radius = 24622e3/4;
     type = 2;

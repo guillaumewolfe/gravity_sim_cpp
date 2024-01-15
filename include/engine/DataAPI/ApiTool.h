@@ -7,6 +7,7 @@
 #include <regex>
 #include "engine/Vec3.h"
 #include <map>
+#include <utility>
 
 class ApiTool {
 public:
@@ -17,15 +18,18 @@ public:
     ~ApiTool();
 
     // Function to get Mars data
-    std::pair<Vec3, Vec3> extractBodyData(const std::string& data);
+    std::pair<Vec3, Vec3> extractBodyData(const std::string& data, const std::string& bodyName);
     std::string getBodyData(const std::string& bodyName);
-
+    void printCurrentDataForManualEntry();
+    bool testConnection();
 private:
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *s);
     CURL *curl;
     std::string getCurrentDateUTC();
     std::string encodeURL(const std::string &value);
-
+    std::map<std::string, std::pair<Vec3, Vec3>> defaultData; // Données par défaut
+    void initializeDefaultData(); //En cas de manque de connection internet
+    std::pair<Vec3, Vec3> getDefaultBodyData(const std::string& bodyName);
 
 
 

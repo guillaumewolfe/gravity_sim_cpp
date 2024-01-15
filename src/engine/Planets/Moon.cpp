@@ -5,12 +5,13 @@
 
 Moon::Moon() : CelestialObject() {
     std::string name_sub = "Moon";
+    typeName = "Moon";
     std::string path_sub = "../assets/textures/lunar.jpg";
     type = 5;
     textureID = loadTexture(path_sub.c_str());
 
 
-    story = "\tEarth's Moon, the only natural satellite of our planet, is the fifth largest moon in the solar system. It affects Earth's tides and has phases that illuminate the night sky. The Moon's surface, covered with craters, plains, and mountains, bears evidence of ancient volcanic activity and cosmic impacts.";
+    story = "\tEarth's Moon, our planet's only natural satellite, ranks as the fifth largest moon in the solar system. It's about 1/4th the size of Earth, with a diameter of 3,474 kilometers (2,159 miles). The Moon's gravitational influence is a major factor in Earth's tides and has a stabilizing effect on Earth's axial tilt, impacting our climate. Its phases, from new moon to full moon, not only illuminate our night sky but have also been crucial in the development of calendars. The Moon's surface features craters, plains (maria), and mountains, showcasing ancient volcanic activity and cosmic impacts. The far side of the Moon is always facing away from Earth due to tidal locking and remains unseen from our planet. The Moon is believed to have formed about 4.5 billion years ago, likely due to a massive impact between Earth and a Mars-sized body.";
 
 
 

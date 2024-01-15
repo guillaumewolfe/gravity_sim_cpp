@@ -22,14 +22,14 @@ void MenuState::Enter() {
    generateVideo();
    generateMusic();
 
-   settingsTool = new SettingsTool(nullptr);
+    settingsTool = new SettingsTool(nullptr);
     settingsTool->setCloseButtonFunction(std::bind(&MenuState::settingsButton, this));
     settingsTool->setSaveButtonFunction(std::bind(&MenuState::settingsButton, this));
     settingsTool->setGameSettings(gameObj->getSettings());
     settingsTool->init();
-
-   
 }
+
+
 std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
@@ -62,7 +62,7 @@ std::vector<Button*> MenuState::generateButtons(){
                                ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(0.5f, 1.0f, 0.5f, 1.0f),
                                "Start", 0.2f,24.0f,
-                               [this]() {startButton();},5);
+                               [this]() {startButton();},5,"start");
 
    Button *OptionButton = new Button(0.5f, 0.86f, ImVec2(0.08, 0.05),
                                ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),

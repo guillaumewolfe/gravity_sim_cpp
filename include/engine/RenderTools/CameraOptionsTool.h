@@ -15,6 +15,7 @@
 class CameraOptionsTool : public RenderComponent {
 public:
     explicit CameraOptionsTool(RenderContext* renderContext);
+    ~CameraOptionsTool() override;
     void Draw() override;
     void setCloseButtonFunction(const std::function<void()>& func);
     void Open();

@@ -8,6 +8,7 @@ SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
 void SimulationState::Enter() {
     
     //Constructions des éléments
+    generateMusic();
     labbels = generateLabbels();
     buttons = generateButtons();
     changeSimulationSpeed(true);
@@ -17,7 +18,7 @@ void SimulationState::Enter() {
     systemeSolaire = new SystemeSolaire();
     float maxSize = systemeSolaire->maxSize;
     currentCamera = new Camera(Vec3(0.0, 0.0, 10.0), Vec3(0.0, 0.0, 0.0), Vec3(0.0, 1.0, 0.0));
-    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons,imageButtons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions, &isLive, &showOptions, &showSettings);
+    renderContext = new RenderContext(&simulation_time, &time_multiplier, currentCamera, labbels, buttons,imageButtons, &maxSize, &showAxes, systemeSolaire, &currentSpeedIndex, speedSettings, &isCreating, &showInfo, &showCameraOptions, &isLive, &showOptions, &showSettings, &isOrbiting, &isPaused);
     render = new Render(renderContext);
     physics = new Physics(renderContext);
     currentCamera->setContext(renderContext);
@@ -37,9 +38,20 @@ void SimulationState::Enter() {
     render->CameraOptions_Tool->setCloseButtonFunction(std::bind(&SimulationState::ShowCameraOptionsButton, this));
 
     render->Minimap_Tool->setCloseButtonFunction(std::bind(&SimulationState::MinimapButton, this));
+
+
+    render->Creator_Manager->setUpdateNamesFunction(std::bind(&NameTool::initLabbels, render->Name_Tool));
+
+    physics->setCollisionFunction(std::bind(&CollisionTool::newCollision, render->Collision_Tool, std::placeholders::_1, std::placeholders::_2));
+    physics->setEndCollisionFunction(std::bind(&CollisionTool::endCollision, render->Collision_Tool, std::placeholders::_1, std::placeholders::_2));
+    systemeSolaire->setContext(renderContext);
 }
 
+//destructeur
 
+SimulationState::~SimulationState() {
+    
+}
 //Labels
 std::vector<Labbel*> SimulationState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
@@ -85,7 +97,7 @@ std::vector<Button*> SimulationState::generateButtons(){
                         ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                                "P", 0.9f,22.0f,
-                               std::bind(&SimulationState::Pause, this),5,true);  
+                               std::bind(&SimulationState::Pause, this),5);  
 
     Button *ShowCamera = new Button(0.30, 0.95, ImVec2(0.030, 0.025),
                         ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
@@ -103,12 +115,12 @@ std::vector<Button*> SimulationState::generateButtons(){
                         ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                             "+", 0.9f,22.0f,
-                            std::bind(&SimulationState::changeSimulationSpeed, this,true),0,true); 
+                            std::bind(&SimulationState::changeSimulationSpeed, this,true),0); 
     Button *decreaseSpeed = new Button(0.575f, 0.95, ImVec2(0.025, 0.025),
                         ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                             "-", 0.9f,22.0f,
-                            std::bind(&SimulationState::changeSimulationSpeed, this,false),0,true); 
+                            std::bind(&SimulationState::changeSimulationSpeed, this,false),0); 
 
 
     return buttons_list;
@@ -178,6 +190,10 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                             auto boundFunction = std::bind(&SimulationState::Restart, this);
                             this->generateDialogBox(boundFunction, "Do you want to restart the simulation?");},
                             3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *controls = new ImageButton(0.055f, 0.025, ImVec2(0.05, 0.05),0.50,
+                        button_color,button_color,
+                        "../assets/button/controls.png", 0,
+                        std::bind(&SimulationState::showControlsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
 
     imageButtons_list.push_back(cameraButton);
@@ -191,6 +207,7 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
     imageButtons_list.push_back(restartButton);
     imageButtons_list.push_back(telescopeButton);
     imageButtons_list.push_back(minimap);
+    imageButtons_list.push_back(controls);
     return imageButtons_list;
 
 }
@@ -291,7 +308,14 @@ void SimulationState::Update() {
 
     if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeFollowedObject();isOrbiting=true;}
 
+    if (ImGui::IsKeyPressed(ImGuiKey_R)) {
+        auto boundFunction = std::bind(&SimulationState::Restart, this);
+        this->generateDialogBox(boundFunction, "Do you want to restart the simulation?");
+    }
     if (ImGui::IsKeyPressed(ImGuiKey_T)) {resetView();isOrbiting=true;}
+    if (ImGui::IsKeyPressed(ImGuiKey_G)) {changeGlobalFollowing();isOrbiting=true;}
+    if (ImGui::IsKeyPressed(ImGuiKey_M)) {MinimapButton();}
+    if (ImGui::IsKeyPressed(ImGuiKey_C)) {showControlsButton();}
 
 }
 void SimulationState::UpdatePhysics(double dt){
@@ -304,28 +328,35 @@ void SimulationState::UpdatePhysics(double dt){
 
 void SimulationState::Draw() {
     render->Draw();
+
+    if (gameObj->getSettings() && gameObj->getSettings()->volumeChanged) {
+        int sdlVolume = static_cast<int>(gameObj->getSettings()->musicVolume * gameObj->getSettings()->mainVolume * 128);
+        Mix_VolumeMusic(sdlVolume);
+        gameObj->getSettings()->volumeChanged = false; // Réinitialisez le drapeau
+    }
+        if (!musicStarted) {
+        Mix_PlayMusic(bgMusic, -1);
+        musicStarted = true;
+    }
 }
 
-void SimulationState::drawUiElements(){
-//Update time
-std::ostringstream stream;
-stream << std::fixed << std::setprecision(2) << simulation_time;
-std::string rounded_simulation_time_str = stream.str();
-std::string newLabelText = "Simulation time : " + rounded_simulation_time_str;
- if (labbels.size() > 0) {
-        labbels[0]->UpdateText(newLabelText);  // Update the text of the second label
+void SimulationState::generateMusic(){
+    // Initialize SDL_mixer
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        std::cerr << "SDL_mixer could not initialize! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
     }
 
+    // Load music
+    bgMusic = Mix_LoadMUS("../assets/sounds/simulationMusic.mp3");
+    if (!bgMusic) {
+        std::cerr << "Failed to load background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
+        return;
+    }
 
-//Draw Labels
-   for (Labbel *label : labbels) {
-       label->Draw();
-   }
+    int sdlVolume = static_cast<int>(gameObj->getSettings()->musicVolume*gameObj->getSettings()->mainVolume * 128);
+    Mix_VolumeMusic(sdlVolume);
 
-//Draw Buttons
-   for (Button *btn : buttons) {
-       btn->Draw();
-   }
 }
 
 
@@ -342,6 +373,12 @@ void SimulationState::Exit() {
     }
     labbels.clear(); // Clear the vector after deleting the labels
 
+    //detruit les outils    
+    delete render;
+    delete physics;
+    delete systemeSolaire;
+    delete currentCamera;
+    delete renderContext;
 }
 
 std::string SimulationState::getDescription() {
@@ -374,7 +411,10 @@ void SimulationState::Pause(){
 
 void SimulationState::Restart(){
     simulation_time = 0;
+    systemeSolaire->resetPosition();
     currentCamera->resetPosition();
+    render->Name_Tool->initLabbels();
+    render->Collision_Tool->reset();
     isLive = true;
     render->UI_Tool->update_time();
     //Time multiplier
@@ -383,7 +423,6 @@ void SimulationState::Restart(){
     followedObjectIndex = 0;
     renderContext->showZoom = false;
     time_multiplier = speedSettings[currentSpeedIndex].first;
-    systemeSolaire->resetPosition();
     physics->Update(0.001);
 }
 
@@ -391,6 +430,10 @@ void SimulationState::MenuButton(){
     OptionsButton();
     std::string newstate = "menu";
     gameObj->ChangeState(newstate);
+    if (musicStarted) {
+        Mix_HaltMusic();
+        musicStarted = false;
+    }
 }
 
 void SimulationState::generateDialogBox(std::function<void()> func, const std::string& message){
@@ -452,7 +495,8 @@ void SimulationState::checkButtonState(){
     if(renderContext->showMinimap){imageButtons[10]->turnOn();}
     else{imageButtons[10]->turnOff();}
 
-
+    if(renderContext->showControls){imageButtons[11]->hidden=true;}
+    else{imageButtons[11]->hidden=false;}
 }
 
 
@@ -561,9 +605,11 @@ void SimulationState::MinimapButton(){
     }
     else{
         if(isCreating){CreateObjectButton();}
-        if(showInfo){showInfos();}
+        //if(showInfo){showInfos();}
         imageButtons[10]->isOn=true;
-        renderContext->showMinimap = true;}
+        renderContext->showMinimap = true;
+        isShowZoomClose = false;
+        }
 }
 
 void SimulationState::OptionsButton(){
@@ -599,3 +645,22 @@ void SimulationState::TelescopeButton(){
         }
 }
 
+void SimulationState::changeGlobalFollowing(){
+    //Change between follow object and global isGlobalFollowing
+    if(currentCamera->followedObject == nullptr){return;}
+    if(currentCamera->isGlobalFollowing){
+        currentCamera->newFollowObject(currentCamera->followedObject);
+        showInfo = true;
+    }else{
+        currentCamera->newFollowObjectGlobal(currentCamera->followedObject);
+        showInfo = false;
+    }
+}
+
+void SimulationState::showControlsButton(){
+    if(!renderContext->showControls){
+        renderContext->showControls = true;
+    }else{
+        renderContext->showControls = false;
+    }
+}

@@ -8,7 +8,12 @@ BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(r
     initStars(50000);
 }
 
-
+// Destructeur
+BackgroundTool::~BackgroundTool() {
+    // Libérer les ressources
+    glDeleteTextures(1, &texture);
+    
+}
 
 void BackgroundTool::Draw() {
     glEnable(GL_DEPTH_TEST);

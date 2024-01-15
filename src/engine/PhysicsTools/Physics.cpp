@@ -9,8 +9,10 @@ void Physics::Update(double dt){
         updateVelocity(object, dt);
         updatePosition(object, dt);
         updateRotation(object, dt);
+        if(*(m_renderContext->simulationTime)>0){checkCollision(m_renderContext->systemeSolaire->objects);}
     }
 }
+
 
 void Physics::updateAccel(CelestialObject* obj, double dt){
     Vec3 total_accel(0.0, 0.0, 0.0);
@@ -60,3 +62,116 @@ void Physics::updateRotation(CelestialObject* obj, double dt){
     //if(obj->getName()=="Earth"){
     //std::cout<<"rorationSid: "<<obj->rotationSid<<" Speed: "<<obj->rotationSidSpeed<<" dt:"<<dt*60<<std::endl;}
 } 
+
+void Physics::checkCollision(std::vector<CelestialObject*> objects){
+    isColliding = false;
+    float collisionThreshold = 0.30; // Seuil pour la fonction collision
+    float collidingThreshold = 1.00; // Seuil pour activer isColliding
+
+    for (int i = 0; i < objects.size(); i++){
+        for (int j = i + 1; j < objects.size(); j++){
+            Vec3 positionObj = objects[i]->getPositionSimulation();
+            Vec3 positionOther = objects[j]->getPositionSimulation();
+
+            float rayonObj = objects[i]->getRayon();
+            float rayonOther = objects[j]->getRayon();
+
+            Vec3 diff = positionObj - positionOther;
+            float distance = diff.norm(); // Calcule la distance entre les centres
+
+            // Détection de collision pour activer isColliding
+            if (distance <= (rayonObj + rayonOther) * collidingThreshold) {
+                collisionForToolFunction(objects[i], objects[j]);
+                isColliding = true;
+            }
+
+            bool isCompletelyInside = distance + std::min(rayonObj, rayonOther) <= std::max(rayonObj, rayonOther);
+
+
+            // Détection de collision pour la fonction collision
+            if (distance <= (rayonObj + rayonOther) * collisionThreshold || isCompletelyInside) {
+                collision(objects[i], objects[j]);
+                isColliding = false;
+            }
+            if(!isColliding){
+                endCollisionForToolFunction(objects[i], objects[j]);
+            }
+        }
+    }
+}
+
+
+
+void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
+    float m1 = obj1->getWeight();
+    float m2 = obj2->getWeight();
+    float r1 = obj1->real_radius;
+    float r2 = obj2->real_radius;
+
+
+    Vec3 v1 = obj1->velocity;
+    Vec3 v2 = obj2->velocity;
+    Vec3 pos1 = obj1->position_real;
+    Vec3 pos2 = obj2->position_real;
+
+    // Calculer la nouvelle masse
+    float new_mass = m1 + m2;
+    float new_rayon = r1 + r2;
+
+    // Calculer la nouvelle vitesse
+    Vec3 new_velocity;
+    new_velocity.x = (v1.x * m1 + v2.x * m2) / new_mass;
+    new_velocity.y = (v1.y * m1 + v2.y * m2) / new_mass;
+    new_velocity.z = (v1.z * m1 + v2.z * m2) / new_mass;
+
+    if(obj1->getTypeName() == "BlackHole"){
+        obj1->setWeight(new_mass);
+        obj1->updateVelocity(new_velocity);
+        obj1->real_radius = new_rayon;
+        obj1->addPlanetEaten(obj2);
+        m_renderContext->systemeSolaire->setRayon(obj1);
+        m_renderContext->systemeSolaire->removeObject(obj2);
+    }else if(obj2->getTypeName() == "BlackHole"){
+        obj2->setWeight(new_mass);
+        obj2->updateVelocity(new_velocity);
+        obj2->real_radius = new_rayon;
+        obj2->addPlanetEaten(obj1);
+        m_renderContext->systemeSolaire->setRayon(obj2);
+        m_renderContext->systemeSolaire->removeObject(obj1);
+    }
+
+    else{//Not black holes
+    if(m1 > m2){
+        obj1->setWeight(new_mass);
+        obj1->updateVelocity(new_velocity);
+        obj1->real_radius = new_rayon;
+        obj1->addPlanetEaten(obj2);
+        m_renderContext->systemeSolaire->setRayon(obj1);
+        m_renderContext->systemeSolaire->removeObject(obj2);
+    } else if(m2 > m1){
+        obj2->setWeight(new_mass);
+        obj2->updateVelocity(new_velocity);
+        obj2->real_radius = new_rayon;
+        obj2->addPlanetEaten(obj1);
+        m_renderContext->systemeSolaire->setRayon(obj2);
+        m_renderContext->systemeSolaire->removeObject(obj1);
+    }
+    else{
+        obj1->setWeight(new_mass);
+        obj1->updateVelocity(new_velocity);
+        obj1->real_radius = new_rayon;
+        obj1->addPlanetEaten(obj2);
+        m_renderContext->systemeSolaire->setRayon(obj1);
+        m_renderContext->systemeSolaire->removeObject(obj2);
+    }
+    }
+}
+
+
+void Physics::setCollisionFunction(const std::function<void(CelestialObject*, CelestialObject*)>& func) {
+    collisionForToolFunction = func;
+}
+
+void Physics::setEndCollisionFunction(const std::function<void(CelestialObject*, CelestialObject*)>& func) {
+    endCollisionForToolFunction = func;
+}

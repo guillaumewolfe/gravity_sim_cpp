@@ -55,12 +55,15 @@ public:
             {-3600, "-1 hour/second"},
             {-3600/2, "-0.5 hour/second"},
             {1, "Normal speed"},
+            {60, "1 minute/second"},
+            {600, "10 minutes/second"},
             {3600/2, "0.5 hour/second"},
             {3600, "1 hour/second"},
             {86400/2, "0.5 day/second"},
             {86400, "1 day/second"},
             {86400*2, "2 day/second"},
             {604800 , "1 week/second"},
+            {86400*30,"1 month/second"}
             // Ajoutez d'autres vitesses ici
         };
 
@@ -69,6 +72,7 @@ public:
 
 
    SimulationState(Game* gameObj);
+    ~SimulationState() override;
     void Enter() override;
     void Update() override;
     void UpdatePhysics(double dt) override;
@@ -77,6 +81,8 @@ public:
     void Exit() override;
     void RestartState() override;
     std::string getDescription() override;
+    Mix_Music* bgMusic;
+    void generateMusic();
 
     // Bouttons:
     void Pause();
@@ -92,7 +98,9 @@ public:
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();
+    void changeGlobalFollowing();
     void showInfos();
+    void showControlsButton();
     bool showInfo=true;
     bool showMinimap;
     bool buttonsActivated = true;
@@ -101,6 +109,7 @@ public:
     bool showOptions = false;
     bool showSettings = false;
     bool isShowZoomClose = true;
+    bool musicStarted = false;
 
     bool firstMouse = true;
     bool isRotatingWithMouse = false;
@@ -112,5 +121,6 @@ public:
     void activateButtons();
     void resetButtons();
     void checkButtonState();
+
 };
 #endif

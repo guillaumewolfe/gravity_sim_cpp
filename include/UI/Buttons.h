@@ -9,6 +9,8 @@
 #include <imgui_internal.h>
 #include <SDL_mixer.h> 
 
+class Game;
+
 class Button {
 private:
     ImVec2 position; 
@@ -31,10 +33,11 @@ private:
     bool hoverSoundPlayed = false; 
 
     bool mouseButtonPressed = false;
+    std::string clickSoundName;
 
 
 public:
-    Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, float alpha,float fontsize, std::function<void()> onClickAction, float cornerRadius = 10.0f, bool isRound = false, ImVec4 labelColor = ImVec4(255,255,255,240), bool isContinuedClick = false);
+    Button(float xPercent, float yPercent, ImVec2 sizePercent, ImVec4 color, ImVec4 hoverColor, const std::string& label, float alpha,float fontsize, std::function<void()> onClickAction, float cornerRadius = 10.0f,std::string clickSound = "normal", bool isRound = false, ImVec4 labelColor = ImVec4(255,255,255,240), bool isContinuedClick = false);
     ~Button(); 
     void Draw();
     void updateLabel(const std::string& newLabel);
@@ -46,4 +49,6 @@ public:
     void UpdateLabelColor(float x,float y,float z,float w);
     void turnOff();
     void turnOn();
+    Mix_Chunk* getSoundPath(const std::string& name);
+    void SetSoundVolume(float volume);
 };

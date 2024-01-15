@@ -13,6 +13,16 @@ SaturnRingTool::SaturnRingTool(CelestialObject* celestialObject, RenderContext* 
     initShaders();
 }
 
+// Destructeur
+SaturnRingTool::~SaturnRingTool() {
+    for (const auto& particule : Particules) {
+        glDeleteBuffers(1, &particule.vboVertices);
+        glDeleteBuffers(1, &particule.vboNormals);
+        glDeleteBuffers(1, &particule.vboTexCoords);
+    }
+    glDeleteProgram(shaderProgram);
+}
+
 void SaturnRingTool::initParticules() {
     if (m_celestialObject == nullptr) {
         return;

@@ -4,7 +4,7 @@
 
 
 Icon::Icon(float xPercent, float yPercent, ImVec2 sizePercent, float imageScalePercent, const std::string& imagePath, float alpha)
-    : position(xPercent, yPercent), sizePercent(sizePercent), imageScale(imageScalePercent), alpha(alpha) {
+    : position(xPercent, yPercent), sizePercent(sizePercent), imageScale(imageScalePercent), alpha(alpha), imagePath(imagePath) {
     loadTexture(imagePath.c_str());
     if (!texture) {
         std::cerr << "Error loading texture." << std::endl;
@@ -15,6 +15,7 @@ Icon::~Icon() {
 }
 
 void Icon::Draw() {
+    if(!enabled) return;
     // Get window dimensions
     int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
@@ -35,6 +36,14 @@ void Icon::Draw() {
 
     // Draw image with texture, ensuring it's square
     ImGui::Image((void*)(intptr_t)texture, squareSize);
+}
+
+
+ImVec2 Icon::getPosition() {
+    return position;
+}   
+ImVec2 Icon::getSize() {
+    return sizePercent;
 }
 
 

@@ -5,13 +5,14 @@
 
 Jupiter::Jupiter() : CelestialObject() {
     std::string name_sub = "Jupiter";
+    typeName = "Jupiter";
     std::string path_sub = "../assets/textures/jupiter.jpg";
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(15,0,0);
     type = 3;
     textureID = loadTexture(path_sub.c_str());
 
-    story = "\tJupiter, the largest planet, is a gas giant with no solid surface. Its Great Red Spot, a massive storm, has raged for centuries. Jupiter's fast rotation creates strong jet streams, separating its clouds into dark belts and bright zones. It has over 79 moons, including Ganymede, the largest moon in the solar system.";
+    story = "\tJupiter, the largest planet, is a gas giant with no solid surface. Its Great Red Spot, a massive storm, has raged for centuries. This enormous storm is about 1.3 times the width of Earth. Jupiter's fast rotation creates strong jet streams, separating its clouds into dark belts and bright zones. It has over 79 moons, including Ganymede, the largest moon in the solar system, which is bigger than the planet Mercury.";
 
 
     //Physics:

@@ -21,6 +21,58 @@ void SettingsTool::init(){
     generate_UImodes3();
 }
 
+SettingsTool::~SettingsTool() {
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    for (Button* btn : buttons) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtons) {
+        delete btn;
+    }
+    for (Labbel* label : labbelsMode1) {
+        delete label;
+    }
+    for (Button* btn : buttonsMode1) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtonsMode1) {
+        delete btn;
+    }
+    for (Slider* slider : slidersMode1) {
+        delete slider;
+    }
+    for (Labbel* label : labbelsMode2) {
+        delete label;
+    }
+    for (Button* btn : buttonsMode2) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtonsMode2) {
+        delete btn;
+    }
+    for (Slider* slider : slidersMode2) {
+        delete slider;
+    }
+    for (Labbel* label : labbelsMode3) {
+        delete label;
+    }
+    for (Button* btn : buttonsMode3) {
+        delete btn;
+    }
+    for (ImageButton* btn : imageButtonsMode3) {
+        delete btn;
+    }
+    for (Slider* slider : slidersMode3) {
+        delete slider;
+    }
+    for (ToggleButton* btn : ToggleButtonsMode3) {
+        delete btn;
+    }
+    delete icon;
+}
+
 void SettingsTool::Draw(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowPos(ImVec2(0, 0));

@@ -21,6 +21,7 @@ struct Star {
 class BackgroundTool : public RenderComponent {
 public:
     explicit BackgroundTool(RenderContext* renderContext);
+    ~BackgroundTool() override;
     void Draw() override;
 
 

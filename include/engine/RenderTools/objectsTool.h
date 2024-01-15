@@ -17,6 +17,7 @@ public:
 
 
     explicit ObjectsTool(RenderContext* renderContext, Camera* camera);
+    ~ObjectsTool() override;
     // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
     void Draw() override;
     static void initSphere(CelestialObject& object, int lats, int longs);

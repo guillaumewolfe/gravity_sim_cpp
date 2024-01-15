@@ -11,6 +11,7 @@ class NameTool : public RenderComponent {
 public:
 
     explicit NameTool(RenderContext* renderContext);
+    ~NameTool() override;
     void Draw() override;
     void initLabbels();
     void updateLabelPositions();
