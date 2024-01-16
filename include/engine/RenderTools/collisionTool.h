@@ -10,6 +10,7 @@ struct ParticleCollision {
     Vec3 velocity; // Vitesse de la particule
     float distanceDestruction;
     Vec3 color;
+    std::vector<Vec3> previousPositions;
 };
 class CollisionTool : public RenderComponent {
 public:
@@ -40,12 +41,12 @@ private:
     bool shouldGenerateParticle;
     void drawCircleIntersection();
     float distanceMiddle;
+    
 
 std::vector<Vec3> explosionColors = {
-    Vec3(1.0f, 0.5f, 0.0f),          // Orange Vif
-    Vec3(1.0f, 0.6f, 0.0f),          // Orange Moyen
-    Vec3(165.0f / 255, 42.0f / 255, 42.0f / 255), // Jaune de Flamme
-    Vec3(1.0f, 0.8f, 0.0f),          // Jaune Vif
+    Vec3(1.0f, 0.9f, 0.9f),          // Orange Vif
+    Vec3(1.0f, 0.9f, 0.75f),          // Orange Moyen
+    Vec3(1.0,1.0,0.7), // Jaune de Flamme
     };
 };
 

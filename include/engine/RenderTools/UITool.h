@@ -33,6 +33,7 @@ private:
     std::chrono::steady_clock::time_point lastFrameTime;
     int frameCount;
     float fps;
+    void checkScroll();
 
 };
 

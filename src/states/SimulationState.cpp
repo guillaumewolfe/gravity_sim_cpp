@@ -6,7 +6,6 @@ SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
 }
 
 void SimulationState::Enter() {
-    
     //Constructions des éléments
     generateMusic();
     labbels = generateLabbels();
@@ -232,6 +231,7 @@ void SimulationState::rotateCamWithMouse(){
 }
 
 void SimulationState::Update() {
+
     checkButtonState();
     if (isCreating || renderContext->showZoom){
         return;}
@@ -317,6 +317,13 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_M)) {MinimapButton();}
     if (ImGui::IsKeyPressed(ImGuiKey_C)) {showControlsButton();}
 
+    //Mouse dragging for mooving the camera
+    if (ImGui::IsMouseDragging(0, 0.0f)) {
+        ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
+        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);
+        isOrbiting=false;
+        ImGui::ResetMouseDragDelta(0);
+    }
 }
 void SimulationState::UpdatePhysics(double dt){
     if (!isPaused){
@@ -512,6 +519,8 @@ void SimulationState::CreateObjectButton(){
         Pause();
     }else{
         if(showOptions){OptionsButton();}
+        if(renderContext->showMinimap){MinimapButton();}
+        if(renderContext->showControls){showControlsButton();}
         if(renderContext->showZoom){TelescopeButton();}
         if(showInfo){showInfos();}
         if(showCameraOptions){ShowCameraOptionsButton();}
@@ -609,6 +618,7 @@ void SimulationState::MinimapButton(){
         imageButtons[10]->isOn=true;
         renderContext->showMinimap = true;
         isShowZoomClose = false;
+        render->Minimap_Tool->Open();
         }
 }
 

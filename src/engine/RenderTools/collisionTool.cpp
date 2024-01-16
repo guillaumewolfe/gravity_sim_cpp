@@ -62,16 +62,22 @@ normal = (positionObj2 - positionObj1).normalize();
     // Dessiner les particules
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    glPointSize(2.0); // Taille des points pour les particules
-    glBegin(GL_POINTS);
-    for (const auto& particle : particles) {
-        glColor4f(particle.color.x, particle.color.y, particle.color.z,0.7); // Rouge pour les particules
-        glVertex3f(particle.position.x, particle.position.y, particle.position.z);
+glLineWidth(1.0); // Largeur des lignes pour les chemins
+glBegin(GL_LINES);
+for (const auto& particle : particles) {
+    if (!particle.previousPositions.empty()) {
+        // Utiliser le premier et le dernier point pour dessiner la ligne
+        Vec3 start = particle.previousPositions.front();
+        Vec3 end = particle.previousPositions.back();
+
+        glColor4f(particle.color.x, particle.color.y, particle.color.z, 0.4); // Couleur des lignes
+        glVertex3f(start.x, start.y, start.z);
+        glVertex3f(end.x, end.y, end.z);
     }
-    glEnd();
-    glPointSize(1.0); // Taille par défaut
-    glColor4f(1.0, 1.0, 1.0, 1.0); // Couleur par défaut (blanc)
-    glDisable(GL_BLEND);
+}
+glEnd();
+glLineWidth(1.0); // Restaurer la largeur de ligne par défaut
+glDisable(GL_BLEND);
 }
 
 Vec3 RotateVector(const Vec3& v, const Vec3& axis, float angleDeg) {
@@ -116,8 +122,8 @@ Vec3 ApproachVectorTowardsNormal(const Vec3& v, const Vec3& normal, float angleD
 
 
 void CollisionTool::GenerateParticle() {
-    particleSpeedFactor = 0.25f;
-    float particulesLoop = 40;
+    particleSpeedFactor = 0.50f;
+    float particulesLoop = 10;
 
     std::random_device rd;  
     std::mt19937 gen(rd()); 
@@ -172,6 +178,11 @@ void CollisionTool::updateParticles(){
     if (*(m_renderContext->isPaused)){return;}
     for (size_t i = 0; i < particles.size(); ) {
         // Mise à jour de la position
+        //Ajouter une particule 
+        particles[i].previousPositions.push_back(particles[i].position);
+        if (particles[i].previousPositions.size() > 10) {
+            particles[i].previousPositions.erase(particles[i].previousPositions.begin());
+        }
         particles[i].position.x += particles[i].velocity.x * deltaTime;
         particles[i].position.y += particles[i].velocity.y * deltaTime;
         particles[i].position.z += particles[i].velocity.z * deltaTime;

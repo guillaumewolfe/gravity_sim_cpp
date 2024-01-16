@@ -37,6 +37,7 @@ std::ostringstream fpsStream;
 fpsStream << std::fixed << std::setprecision(2) << fps << " FPS";
 ImGui::SetCursorPos(ImVec2(winWidth*0.93, winHeight*0.01));
 ImGui::Text("%s", fpsStream.str().c_str());
+checkScroll();
 ImGui::End(); 
 
 
@@ -133,4 +134,23 @@ void UITool::draw_labbels() {
 }
 
 
-
+void UITool::checkScroll(){
+    if(ImGui::IsWindowHovered()){
+        if(ImGui::GetIO().MouseWheel != 0){
+            if(ImGui::GetIO().MouseWheel > 0){
+                bool in = false;
+                if(!m_renderContext->currentCamera->isGlobalFollowing){
+                m_renderContext->currentCamera->zoom(in);}
+                else{
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);}}
+            else{
+                bool in = true;
+                if(!m_renderContext->currentCamera->isGlobalFollowing){
+                m_renderContext->currentCamera->zoom(in);}
+                else{
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);}}
+        }
+    }
+}

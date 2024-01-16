@@ -211,7 +211,22 @@ void NameTool::detectClickAndPrintName() {
         m_renderContext->currentCamera->selectedObject = closestPlanet;
         *(m_renderContext->showInfo) = true;
     }if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && closestDistance < clickThreshold){
-        m_renderContext->currentCamera->newFollowObject(closestPlanet);
+        if(m_renderContext->currentCamera->isGlobalFollowing){//Si on est en global
+            if(m_renderContext->currentCamera->followedObject == closestPlanet){//Si on est déjà en train de suivre la planète
+                m_renderContext->currentCamera->newFollowObject(closestPlanet);
+            }
+            else{//Si on est pas en train de suivre la planète
+                m_renderContext->currentCamera->newFollowObjectGlobal(closestPlanet);
+            }
+        }
+        else{
+            if(m_renderContext->currentCamera->followedObject == closestPlanet){//Si on est déjà en train de suivre la planète
+                m_renderContext->currentCamera->newFollowObjectGlobal(closestPlanet);
+            }
+            else{//Si on est pas en train de suivre la planète
+                m_renderContext->currentCamera->newFollowObject(closestPlanet);
+            }
+        }
         *(m_renderContext->showInfo) = true;
         *(m_renderContext->isOrbiting) = true;
     }

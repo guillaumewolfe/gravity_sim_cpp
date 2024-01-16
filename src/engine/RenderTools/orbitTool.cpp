@@ -15,6 +15,7 @@ void OrbitTool::init(){
 
 void OrbitTool::Draw() {
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        if(!object->showOrbit){continue;}
         if (object->getName() == "Sun") { continue; } // Ne dessinez pas l'orbite du soleil
 
         CelestialObject* influentialObject = object->getMostInfluentialObject();

@@ -37,7 +37,7 @@ public:
     bool isCreated = false;
     double totalDistance =0; //Distance pour le calcul de la grandeur du Path
     double orbitCircumference=0;
-    bool showOrbit;
+    bool showOrbit = true;
     bool showPath = true;
     bool showName = true;
     CelestialObject* mostInfluentialObject;

@@ -177,10 +177,7 @@ void PlaneteInfoTool::updateLabels(){
     //Object type
     labbels[2]->UpdateText(getTypeName(m_object->type));
     labbels[2]->UpdateColor(getTypeColor(m_object->type));
-    if(m_object->type==0){
-    labbels[1]->UpdateText(getTypeName(m_object->type));
-    labbels[1]->UpdateAlpha(0.6);}
-    else{labbels[1]->UpdateAlpha(0);}
+    labbels[1]->UpdateAlpha(0);
 
     if(mode!=1){
     for(int i=3;i<15;i++){
@@ -393,7 +390,7 @@ void PlaneteInfoTool::draw_buttons(){
         imageButtons[1]->isOn = false;
         imageButtons[2]->isOn = false;}
 
-    if(m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject == nullptr ||m_renderContext->currentCamera->followedObject != nullptr  && m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject != m_renderContext->currentCamera->selectedObject ){
+    if(m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject == nullptr ||(m_renderContext->currentCamera->followedObject != nullptr  && m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject != m_renderContext->currentCamera->selectedObject)||  m_renderContext->currentCamera->isGlobalFollowing ){
         imageButtons[4]->hidden = false;}
     else{imageButtons[4]->hidden = true;}
 
@@ -736,7 +733,7 @@ void PlaneteInfoTool::moveToButton(){
     CelestialObject* selectedObject = m_renderContext->currentCamera->selectedObject;
     CelestialObject* followedObject = m_renderContext->currentCamera->followedObject;
     if(selectedObject!=nullptr){
-        if(selectedObject != followedObject)
+        if(selectedObject != followedObject || m_renderContext->currentCamera->isGlobalFollowing)
             {m_renderContext->currentCamera->newFollowObject(selectedObject);
 }}
 

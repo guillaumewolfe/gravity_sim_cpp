@@ -253,9 +253,15 @@ void ParametersCreator::setParameters(){
     m_renderContext->currentCamera->newFollowObject(m_manager->newCreatedObject); //Reset cam with new object.
     
     //Name
-    if(planetName[0] != '\0')
-        {m_manager->newCreatedObject->setName(planetName);}
-    
+    if(planetName[0] != '\0'){
+        for(auto& planete : m_renderContext->systemeSolaire->objects){
+            if(planete->getName()==planetName && planete!=m_manager->newCreatedObject){
+                strcat(planetName, "2");
+            }
+        m_manager->newCreatedObject->setName(planetName);
+        
+        }
+    }
     //Sideral speed
     m_manager->newCreatedObject->rotationSidSpeed = sideralMultiplicator/(24*60*60);
 }
