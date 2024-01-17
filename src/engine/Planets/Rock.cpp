@@ -14,6 +14,7 @@ Rock::Rock() : CelestialObject() {
 
     setName(name_sub);
     setPath(path_sub);
+    setDefaultValues();
 
 }
 

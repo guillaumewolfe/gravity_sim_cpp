@@ -28,7 +28,7 @@ glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
 
-
+updatePosition();
 draw_rect();
 drawUI();
 draw_key_icons();
@@ -38,6 +38,65 @@ updateAlpha();
 ImGui::End(); 
 
 
+}
+
+void KeysUI::updatePosition(){
+    bool currentShowCameraOptions = *(m_renderContext->showCameraOptions);
+    if (currentShowCameraOptions == lastShowCameraOptionsState) {return;}
+
+
+    if(*(m_renderContext->showCameraOptions)){
+        topLeft = ImVec2(0.005*winWidth,0.06*winHeight);
+        center = ImVec2(topLeft.x + longueur/2, topLeft.y + hauteur/2);
+        float diffHauteur = 0.15-0.06;
+        for(auto& labbel : labbels){
+            ImVec2 anciennePos = labbel->getPosition();
+            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& labbel : keyLabbels){
+            ImVec2 anciennePos = labbel->getPosition();
+            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& button : buttons){
+            ImVec2 anciennePos = button->getPosition();
+            button->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& imageButton : imageButtons){
+            ImVec2 anciennePos = imageButton->getPosition();
+            imageButton->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& key : keys){
+            ImVec2 anciennePos = key.icon->getPosition();
+            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+    }
+    else{
+        topLeft = ImVec2(0.005*winWidth,0.15*winHeight);
+        center = ImVec2(topLeft.x + longueur/2, topLeft.y + hauteur/2);
+        float diffHauteur = 0.06-0.15;
+        for(auto& labbel : labbels){
+            ImVec2 anciennePos = labbel->getPosition();
+            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& labbel : keyLabbels){
+            ImVec2 anciennePos = labbel->getPosition();
+            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& button : buttons){
+            ImVec2 anciennePos = button->getPosition();
+            button->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& imageButton : imageButtons){
+            ImVec2 anciennePos = imageButton->getPosition();
+            imageButton->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+        for(auto& key : keys){
+            ImVec2 anciennePos = key.icon->getPosition();
+            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
+        }
+    }
+
+    lastShowCameraOptionsState = currentShowCameraOptions; 
 }
 
 void KeysUI::draw_rect(){

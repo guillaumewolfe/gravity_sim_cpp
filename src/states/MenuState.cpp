@@ -68,7 +68,7 @@ std::vector<Button*> MenuState::generateButtons(){
                                ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
                                ImVec4(1.0f, 1.0f, 0.5f, 1.0f),
                                "Options", 0.2f,24.0f,
-                               std::bind(&MenuState::settingsButton, this),5);
+                               std::bind(&MenuState::settingsButton, this),5,"restart");
 
 
    buttons_list.push_back(exitButton);

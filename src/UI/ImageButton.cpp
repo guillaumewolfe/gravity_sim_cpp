@@ -226,4 +226,7 @@ void ImageButton::turnOn(){
     isOn = true;
 }
 
+ImVec2 ImageButton::getPosition(){
+    return position;
+}
 

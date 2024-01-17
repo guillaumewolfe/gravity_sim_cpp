@@ -186,3 +186,24 @@ std::vector<CelestialObject*> CelestialObject::getPlanetsEaten(){
 void CelestialObject::resetPlanetEaten(){
     planetsEaten.clear();
 }
+
+double CelestialObject::getDefaultWeight(){
+    return defaultWeight;
+}
+double CelestialObject::getDefaultRadius(){
+    return defaultRadius;
+}
+std::string CelestialObject::getDefaultName(){
+    return defaultName;
+}
+void CelestialObject::setDefaultValues(){
+    defaultWeight = weight;
+    defaultRadius = real_radius;
+    defaultName = name;
+}
+
+void CelestialObject::resetToDefaultValues(){
+    weight = defaultWeight;
+    real_radius = defaultRadius;
+    name = defaultName;
+}

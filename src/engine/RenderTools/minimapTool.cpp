@@ -164,9 +164,8 @@ void MinimapTool::draw_planets(){
 
 
 
-    if (isWithinBounds(planetPos, ImVec2(radius*2, radius*2))) {
+    if (isWithinBounds(planetPos, ImVec2(radius, radius))) {
         float distanceToCenter = std::sqrt(std::pow(planetPos.x - centerPos.x, 2) + std::pow(planetPos.y - centerPos.y, 2));
-        ImVec4 colorType = getTypeColor(planete->type);
         std::string planetTypeName = planete->typeName; // Assurez-vous que getName() renvoie une chaîne de caractères
         ImVec4 color = typeDictColor[planetTypeName]; // Utiliser le nom pour accéder à la couleur
         // Dessiner la planète
@@ -206,7 +205,8 @@ void MinimapTool::drawSunEffect(ImVec2 planetPos){
     for (int i = 0; i < numBlurCircles; ++i) {
         float blurRadius = radius + blurIncrease * (i + 1);
         float alpha = initialAlpha - alphaDecrease * i;
-        drawList->AddCircleFilled(planetPos, blurRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z, alpha), 100);
+        if(isWithinBounds(planetPos,ImVec2(blurRadius,blurRadius))){
+        drawList->AddCircleFilled(planetPos, blurRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z, alpha), 100);}
     }
 }
 void MinimapTool::drawPlanetLight(ImVec2 planetPos){
@@ -214,7 +214,6 @@ void MinimapTool::drawPlanetLight(ImVec2 planetPos){
         float shadowAngle = atan2(directionToSun.y, directionToSun.x) + IM_PI; // Ajouter PI pour que l'ombre soit opposée au Soleil
         // Dessiner l'ombre comme un demi-cercle
         draw_half_circle_shadow(planetPos, radius, IM_COL32(0, 0, 0, 180), shadowAngle, 100);
-
 }
 
 
@@ -464,8 +463,8 @@ ImVec2 MinimapTool::distanceConverterSimToLog(ImVec2 positionInitiale){
 }
 
 bool MinimapTool::isWithinBounds(ImVec2 position, ImVec2 size){
-    return (position.x >= topLeft.x && position.x + size.x <= bottomRight.x &&
-    position.y >= topLeft.y && position.y + size.y <= bottomRight.y);
+    return (position.x-size.x >= topLeft.x && position.x + size.x <= bottomRight.x &&
+    position.y-size.y >= topLeft.y && position.y + size.y <= bottomRight.y);
 }
 
 void MinimapTool::checkMouseSelection(ImVec2 planetPos, CelestialObject* planete){

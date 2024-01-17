@@ -43,9 +43,10 @@ void Render::Draw(){
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     //On dessiner les éléments
+    updateShouldClick();
+    if(!Context->showZoom){Name_Tool->Draw();}
     if(*(Context->showCameraOptions)){CameraOptions_Tool->Draw();}
     if(*(Context->isCreating)){Creator_Manager->Draw();}
-    if(!Context->showZoom){Name_Tool->Draw();}
     if(Context->showMinimap){Minimap_Tool->Draw();}
     if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->drawImGui();}
@@ -87,7 +88,41 @@ void Render::initCamera(){
     Context->currentCamera->setInitPosition(position_initiale);
 }
 
+void Render::updateShouldClick(){
+    if(Context->showZoom){
+        Context->shouldClickOnNames = false;
 
+    }else if(*(Context->isCreating)){
+        Context->shouldClickOnNames = false;}
+
+    else if (PlaneteInfo_Tool->changeParametersTool->getMode() != 0){
+        Context->shouldClickOnNames = false;
+    }
+    else if(*(Context->showOptions)){
+        Context->shouldClickOnNames = false;
+    }
+    else if(*(Context->showSettings)){
+        Context->shouldClickOnNames = false;
+    }
+    else if(Context->showMinimap){
+        Context->shouldClickOnNames = false;}
+    else if(PlaneteInfo_Tool->isHovering){
+        Context->shouldClickOnNames = false;
+    }
+    else{
+        Context->shouldClickOnNames = true;
+    }
+
+
+
+
+
+
+
+    if(!*(Context->showInfo)){
+        PlaneteInfo_Tool->isHovering = false;
+    }
+}
 //destructeur
 Render::~Render(){
     delete UI_Tool;

@@ -13,6 +13,7 @@ Ice::Ice() : CelestialObject() {
 
     setName(name_sub);
     setPath(path_sub);
+    setDefaultValues();
 
     //updatePositionSimulation();
 }

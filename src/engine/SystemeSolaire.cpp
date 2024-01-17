@@ -123,7 +123,7 @@ void SystemeSolaire::resetPosition() {
             if (object->real_radius != object->initialRadius) {
                 rayonChanged = true;
             }
-            object->updateToInitialSettings(); //Reset des caractéristiques initiales
+            object->resetToDefaultValues(); //Reset des caractéristiques initiales
             if(rayonChanged){
                 setRayon(object);
             }

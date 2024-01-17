@@ -12,6 +12,7 @@
 #include "engine/CelestialObject.h"
 #include <utility> 
 #include <map>
+#include "engine/RenderTools/changeParametersTool.h"
 
 
 class PlaneteInfoTool : public RenderComponent {
@@ -36,6 +37,8 @@ public:
     void changeMass();
     void changeRadius();
     void changePosition();
+    void changeName();
+    void orbitButton();
 
 
     //Accessoire
@@ -48,6 +51,8 @@ public:
     void setMode(int mode);
 
     ImFont* storyFont;
+    ChangeParametersTool* changeParametersTool;
+    bool isHovering = false;
 
 
 

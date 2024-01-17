@@ -43,6 +43,7 @@ public:
     bool showMinimap = false;
     bool showControls = true;
     bool showCollision = true;
+    bool shouldClickOnNames = true;
 
 
 

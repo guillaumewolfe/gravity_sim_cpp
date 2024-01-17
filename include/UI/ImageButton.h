@@ -57,4 +57,5 @@ public:
     GLuint createTextureWithTint(const cv::Mat& originalImage, float tint);
     void turnOff();
     void turnOn();
+    ImVec2 getPosition();
 };

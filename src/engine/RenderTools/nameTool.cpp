@@ -46,7 +46,7 @@ updateLabelPositions();
 for (Labbel* label : labbels) {
     label->Draw();
 }
-detectClickAndPrintName();
+if(m_renderContext->shouldClickOnNames){detectClickAndPrintName();}
 ImGui::End(); 
 }
 

@@ -51,6 +51,8 @@ private:
     void activateKey(const std::string& keyName);
     void updateKeyPhrase(const std::string& keyName, const std::string& newControlPhrase);
     void drawRectForPressedKey(Icon* icon, bool isKeyDown);
+    void updatePosition();
+    bool lastShowCameraOptionsState;
 };
 
 #endif // KeysUI_H

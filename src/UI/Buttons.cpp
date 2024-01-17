@@ -219,6 +219,7 @@ Mix_Chunk* Button::getSoundPath(const std::string& name) {
     else if (name == "normal") {return Mix_LoadWAV("../assets/sounds/delete.wav");} 
     else if (name == "start"){return Mix_LoadWAV("../assets/sounds/startSim.wav");}
     else if (name == "creation"){return Mix_LoadWAV("../assets/sounds/confirm_creation.wav");}
+    else if (name == "restart"){return Mix_LoadWAV("../assets/sounds/restart.mp3");}
 
 
 
@@ -230,4 +231,8 @@ void Button::SetSoundVolume(float volume) {
     int volumeInt = volume * 128;
     Mix_VolumeChunk(hoverSound, volumeInt);
     Mix_VolumeChunk(clickSound, volumeInt);
+}
+
+ImVec2 Button::getPosition(){
+    return position;
 }

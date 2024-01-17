@@ -22,6 +22,7 @@ PlaneteInfoTool::PlaneteInfoTool(RenderContext* renderContext) : RenderComponent
     float fontSizeScaled = fontsize * winWidth / 1920;
     storyFont = ImGui::GetIO().Fonts->AddFontFromFileTTF("../assets/fonts/Roboto.ttf", fontSizeScaled);
     radius *= winWidth;
+    changeParametersTool = new ChangeParametersTool(m_renderContext);
 }
 
 PlaneteInfoTool::~PlaneteInfoTool() {
@@ -46,6 +47,7 @@ PlaneteInfoTool::~PlaneteInfoTool() {
     for (ToggleButton* btn : togglebuttonsMode3) {
         delete btn;
     }
+    delete changeParametersTool;
 }
 
 void PlaneteInfoTool::initLabels(){
@@ -160,13 +162,17 @@ void PlaneteInfoTool::initButtons(){
                         "../assets/button/moveTo.png", 0,
                             std::bind(&PlaneteInfoTool::moveToButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
         
-
+    ImageButton *orbit = new ImageButton(0.94, 1-0.29f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
+                        button_color,button_color,
+                        "../assets/button/orbit.png", 0,
+                            std::bind(&PlaneteInfoTool::orbitButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
     imageButtons.push_back(infoButton);
     imageButtons.push_back(textButton);
     imageButtons.push_back(toolButton);
     imageButtons.push_back(closeButton);
     imageButtons.push_back(zoomButton);
+    imageButtons.push_back(orbit);
 }
 
 
@@ -246,6 +252,15 @@ void PlaneteInfoTool::updateLabels(){
         labbels[14]->UpdateText("-");
     }
 
+    if(!*(m_renderContext->isOrbiting) && !m_renderContext->currentCamera->isGlobalFollowing){
+        imageButtons[5]->hidden = false;
+    }else{
+        imageButtons[5]->hidden = true;
+    }
+    if(mode==3){
+        imageButtons[5]->hidden = true;
+    }
+
 }
 
 
@@ -272,12 +287,16 @@ void PlaneteInfoTool::generate_mode3(){
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                         "../assets/button/changePosition.png", 0,
                             std::bind(&PlaneteInfoTool::changePosition, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
-    
+    ImageButton* changeNameButton = new ImageButton(0.925,0.26f,ImVec2(toggleSizeX,toggleSizeY),0.7f,
+                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
+                        "../assets/button/edit.png", 0,
+                            std::bind(&PlaneteInfoTool::changeName, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
     imageButtonsMode3.push_back(removeButton);
     imageButtonsMode3.push_back(changeMassButton);
     imageButtonsMode3.push_back(changeRadiusButton);
     imageButtonsMode3.push_back(changePositionButton);
+    imageButtonsMode3.push_back(changeNameButton);
 
 
     ImVec4 color = ImVec4(200,200,200,150);
@@ -358,6 +377,8 @@ void PlaneteInfoTool::Draw() {
     draw_labels();
     draw_buttons();
     draw_story();
+    changeParametersTool->Update(m_object);
+    changeParametersTool->Draw();
 
     if(mode==3){
         draw_mode3();
@@ -420,6 +441,8 @@ void PlaneteInfoTool::drawBackground(){
     ImVec2 centerPos = ImVec2(winWidth * 0.875f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
+    isHovering = ImGui::IsMouseHoveringRect(topLeft, bottomRight);
     float cornerRadius = 10.0f;
 
 
@@ -485,8 +508,8 @@ void PlaneteInfoTool::draw_mode3(){
     // Dessiner le petit rond en orbite
     float satelliteRadius = winWidth*0.002; // Vous pouvez ajuster la taille du petit rond ici
     ImVec4 couleur = getTypeColor(m_object->type);
-    if(m_object->showOrbit){
-    drawList->AddCircle(ImVec2(winWidth * positionx, winHeight * positiony), orbitRadiusCircle, IM_COL32(255, 255, 255, 120), 100, 2.0f);}
+    if(m_object->showOrbit && m_object->type!=1 && m_object->type!=0){
+    drawList->AddCircle(ImVec2(winWidth * positionx, winHeight * positiony), orbitRadiusCircle, IM_COL32(255, 255, 255, 100), 100, 1.0f);}
     
 ImVec4 colorCenterDot;
 int numBlurCircles;
@@ -526,18 +549,18 @@ if (endAngle < startAngle) {
 }
 const int numSegments = 25;
 float segmentLength = (endAngle - startAngle) / numSegments;
-if(m_object->showPath && !m_object->showOrbit && m_object->type!=1 && m_object->type!=0){
+if(m_object->showPath && m_object->type!=1 && m_object->type!=0){
 for (int i = 0; i < numSegments; ++i) {
     // Calcul des angles de début et de fin pour le segment actuel
     float segmentStartAngle = startAngle + i * segmentLength;
     float segmentEndAngle = segmentStartAngle + segmentLength;
 
     // Calcul de la valeur alpha pour le segment actuel
-    float alpha = 175 * ((float)i / numSegments);
+    float alpha = 255 * ((float)i / numSegments);
 
     // Dessiner le segment de l'arc avec la valeur alpha
     drawList->PathArcTo(ImVec2(winWidth * positionx, winHeight * positiony), orbitRadiusCircle, segmentStartAngle, segmentEndAngle, 10); // 10 segments pour un dessin lisse de chaque petit arc
-    drawList->PathStroke(IM_COL32(255, 255, 255, alpha), false, 2.0f);
+    drawList->PathStroke(IM_COL32(255, 255, 255, alpha), false, 4.0f);
 }}
 if(m_object->showName){
 labbelsMode3[7]->isHidden=false;
@@ -727,6 +750,7 @@ void PlaneteInfoTool::setMode(int mode){
 
 void PlaneteInfoTool::closeButton(){
     *(m_renderContext->showInfo) = false;
+    changeParametersTool->setMode(0, nullptr);
 }
 
 void PlaneteInfoTool::moveToButton(){
@@ -748,7 +772,23 @@ void PlaneteInfoTool::updateMode3(){
 void PlaneteInfoTool::removePlanete(){
     m_renderContext->systemeSolaire->removeObject(m_object);
     *(m_renderContext->showInfo) = false;
+    changeParametersTool->setMode(0, nullptr);
 }
-void PlaneteInfoTool::changeMass(){}
-void PlaneteInfoTool::changeRadius(){}
-void PlaneteInfoTool::changePosition(){}
+void PlaneteInfoTool::changeMass(){
+    changeParametersTool->setMode(1, m_object);
+}
+void PlaneteInfoTool::changeRadius(){
+    changeParametersTool->setMode(2, m_object);
+}
+void PlaneteInfoTool::changePosition(){
+    changeParametersTool->setMode(3, m_object);
+}
+
+void PlaneteInfoTool::changeName(){
+    changeParametersTool->setMode(4, m_object);
+}
+
+
+void PlaneteInfoTool::orbitButton(){
+    *(m_renderContext->isOrbiting) = true;
+}

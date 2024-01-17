@@ -44,6 +44,8 @@ void SimulationState::Enter() {
     physics->setCollisionFunction(std::bind(&CollisionTool::newCollision, render->Collision_Tool, std::placeholders::_1, std::placeholders::_2));
     physics->setEndCollisionFunction(std::bind(&CollisionTool::endCollision, render->Collision_Tool, std::placeholders::_1, std::placeholders::_2));
     systemeSolaire->setContext(renderContext);
+    render->PlaneteInfo_Tool->changeParametersTool->setupdateNamesFunction(std::bind(&NameTool::synchronizeLabels, render->Name_Tool));
+    render->PlaneteInfo_Tool->changeParametersTool->setCloseMinimapFunction(std::bind(&SimulationState::MinimapButton, this));
 }
 
 //destructeur
@@ -233,7 +235,7 @@ void SimulationState::rotateCamWithMouse(){
 void SimulationState::Update() {
 
     checkButtonState();
-    if (isCreating || renderContext->showZoom){
+    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showMinimap){
         return;}
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
@@ -318,10 +320,13 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_C)) {showControlsButton();}
 
     //Mouse dragging for mooving the camera
+    if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
         currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);
-        isOrbiting=false;
+        if(delta.x!=0){
+            isOrbiting=false;
+        }
         ImGui::ResetMouseDragDelta(0);
     }
 }
@@ -504,6 +509,7 @@ void SimulationState::checkButtonState(){
 
     if(renderContext->showControls){imageButtons[11]->hidden=true;}
     else{imageButtons[11]->hidden=false;}
+
 }
 
 
@@ -615,6 +621,9 @@ void SimulationState::MinimapButton(){
     else{
         if(isCreating){CreateObjectButton();}
         //if(showInfo){showInfos();}
+        if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){
+            render->PlaneteInfo_Tool->changeParametersTool->setMode(0,nullptr);
+        }
         imageButtons[10]->isOn=true;
         renderContext->showMinimap = true;
         isShowZoomClose = false;

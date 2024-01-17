@@ -65,6 +65,7 @@ void Draw();
 void initTools();
 void updateCamera();
 void initCamera();
+void updateShouldClick();
 };
 
 

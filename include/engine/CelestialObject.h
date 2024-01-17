@@ -21,6 +21,9 @@ public:
     std::string texture_path;
     double real_radius = 5000;
     double weight = 1;
+    double defaultWeight;
+    double defaultRadius;
+    std::string defaultName;
     double distance_initiale = 1;
     double rayon_simulation = 1;
     float inclinaison;
@@ -116,6 +119,11 @@ public:
     void addPlanetEaten(CelestialObject* planet);
     std::vector<CelestialObject*> getPlanetsEaten();
     void resetPlanetEaten();
+    double getDefaultWeight();
+    double getDefaultRadius();
+    std::string getDefaultName();
+    void setDefaultValues();
+    void resetToDefaultValues();
     
 
 

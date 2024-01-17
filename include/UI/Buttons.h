@@ -51,4 +51,5 @@ public:
     void turnOn();
     Mix_Chunk* getSoundPath(const std::string& name);
     void SetSoundVolume(float volume);
+    ImVec2 getPosition();
 };

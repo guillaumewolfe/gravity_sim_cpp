@@ -143,14 +143,22 @@ void UITool::checkScroll(){
                 m_renderContext->currentCamera->zoom(in);}
                 else{
                     m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);}}
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    }}
             else{
                 bool in = true;
                 if(!m_renderContext->currentCamera->isGlobalFollowing){
                 m_renderContext->currentCamera->zoom(in);}
                 else{
                     m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);}}
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    m_renderContext->currentCamera->zoomByDistance(in);
+                    }}
         }
     }
 }
