@@ -99,26 +99,31 @@ bool Game::InitOpenGL()
         return false;
     }
 
-    // Obtention de la résolution de l'écran principal
     GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
 
+    // Obtenez les dimensions de l'espace de travail de l'écran
+    int workAreaX, workAreaY, workAreaWidth, workAreaHeight;
+    glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaWidth, &workAreaHeight);
 
+    // Configurer la fenêtre pour être "windowed borderless"
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
-    // Définir les dimensions maximales en fonction de la résolution de l'écran
-    int windowWidth = mode->width;
-    int windowHeight = mode->height;
-    
-    window = glfwCreateWindow(windowWidth, windowHeight, "Space Query", NULL, NULL);
+    // Création de la fenêtre en utilisant les dimensions de l'espace de travail
+    window = glfwCreateWindow(workAreaWidth, workAreaHeight, "Space Query", NULL, NULL);
 
     if (!window)
     {
         glfwTerminate();
         return false;
     }
-    settings.resolutionX = windowWidth;
-    settings.resolutionY = windowHeight;
-    settings.fullscreen = (glfwGetWindowMonitor(window) != NULL); // Vérifier si la fenêtre est en plein écran
+
+    // Placer la fenêtre pour s'adapter à l'espace de travail
+    glfwSetWindowPos(window, workAreaX, workAreaY);
+
+    settings.resolutionX = workAreaWidth;
+    settings.resolutionY = workAreaHeight;
+    settings.fullscreen = false;
 
     glfwMakeContextCurrent(window);
     gladLoadGL();
@@ -140,6 +145,7 @@ bool Game::InitOpenGL()
 
     return true;
 }
+
 
 GLFWwindow *Game::getWindow()
 {

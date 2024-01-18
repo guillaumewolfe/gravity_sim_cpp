@@ -57,6 +57,7 @@ public:
     float fadeOpacity = 1.0f;
     bool musicStarted = false;
     SoundTool* soundTool;
+    int winWidth, winHeight;
 
 
 

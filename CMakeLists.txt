@@ -60,16 +60,30 @@ file(GLOB_RECURSE SOURCES
      external/imgui/backends/imgui_impl_glfw.cpp
      external/imgui/backends/imgui_impl_opengl3.cpp)
 # Executable
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "SpaceQuerry")
+# Executable
+# Executable
+# Configurez le fichier .icns pour qu'il soit copié dans le répertoire de build
+set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/myIcon.icns)
+configure_file(${APP_ICON} ${CMAKE_CURRENT_BINARY_DIR}/myIcon.icns COPYONLY)
 
-# Specify MACOSX Bundle properties
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
-    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
-)
+# Définir les propriétés du fichier icône pour qu'il soit inclus dans le bundle
+set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+# Ajoutez l'exécutable avec l'icône comme ressource
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${APP_ICON})
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
+
+
+if(APPLE)
+    # Configuration supplémentaire pour le bundle macOS
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
+    )
+endif()
+
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${CURL_LIBRARIES})

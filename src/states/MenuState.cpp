@@ -11,6 +11,9 @@ MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
   
 }
 void MenuState::Enter() {
+glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+ImGui::SetNextWindowPos(ImVec2(0, 0));
+ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
    //std::cout << "Entering Menu State" << std::endl;
    /* Enter menu state:
        1- Restart video
@@ -146,9 +149,9 @@ void MenuState::Draw() {
 
 
    // Set the contrasting background color
-    int winWidth, winHeight;
-    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
+glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+ImGui::SetNextWindowPos(ImVec2(0, 0));
+ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
    ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
 
 
