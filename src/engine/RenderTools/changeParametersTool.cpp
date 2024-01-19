@@ -204,6 +204,7 @@ void ChangeParametersTool::changeMode(){
             break;}
         case 3:
             editPositionFunction(m_object);
+            if(*(m_renderContext->showCameraOptions)){*(m_renderContext->showCameraOptions) = false;}
             mode = 0;
             break;
         case 4:
@@ -1052,17 +1053,17 @@ void ChangeParametersTool::generate_colors() {
     // Modifier le dictionnaire pour utiliser des chaînes de caractères comme clés
     typeDictColor["Black Hole"] = ImVec4(0, 0, 0, 1);
     typeDictColor["Sun"] = ImVec4(250, 250, 120, 1); // Jaune pour une étoile par exemple
-    typeDictColor["Mercury"] = ImVec4(150, 150, 150, 1);
-    typeDictColor["Venus"] = ImVec4(155, 100, 25, 1); // Orange pour Venus
+    typeDictColor["Mercury"] = ImVec4(100, 100, 100, 1);
+    typeDictColor["Venus"] = ImVec4(238, 147, 17, 1); // Orange pour Venus
     typeDictColor["Earth"] = ImVec4(50, 100, 255, 1); // Bleu pour la Terre
-    typeDictColor["Mars"] = ImVec4(200, 63, 33, 1); // Rougeâtre pour Mars
-    typeDictColor["Jupiter"] = ImVec4(225, 175, 135, 1);
-    typeDictColor["Saturn"] = ImVec4(175, 175, 135, 1); // Jaune pour Saturne
-    typeDictColor["Uranus"] = ImVec4(50, 50, 255, 1);
-    typeDictColor["Neptune"] = ImVec4(50, 50, 255, 1); // Bleu pour Neptune
-    typeDictColor["Ice"] = ImVec4(103, 225, 255, 1); // Bleu clair pour les objets glacés
-    typeDictColor["Rock"] = ImVec4(200, 150, 0, 1); // Gris pour les objets rocheux
-    typeDictColor["Volcanic"] = ImVec4(200, 200, 200, 1); // Gris foncé pour les objets volcaniques
+    typeDictColor["Mars"] = ImVec4(197, 84, 62, 1); // Rougeâtre pour Mars
+    typeDictColor["Jupiter"] = ImVec4(234, 206, 180, 1);
+    typeDictColor["Saturn"] = ImVec4(217, 186, 140, 1); // Jaune pour Saturne
+    typeDictColor["Uranus"] = ImVec4(155, 221, 227, 1);
+    typeDictColor["Neptune"] = ImVec4(39, 114, 210, 1); // Bleu pour Neptune
+    typeDictColor["Ice"] = ImVec4(122, 137, 150, 1); // Bleu clair pour les objets glacés
+    typeDictColor["Rock"] = ImVec4(137, 80, 77, 1); // Gris pour les objets rocheux
+    typeDictColor["Volcanic"] = ImVec4(62, 95, 86, 1); // Gris foncé pour les objets volcaniques
     typeDictColor["Moon"] = ImVec4(200, 200, 200, 1); // Gris pour les lunes
 }
 

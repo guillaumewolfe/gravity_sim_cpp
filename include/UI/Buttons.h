@@ -35,6 +35,7 @@ private:
     bool mouseButtonPressed = false;
     std::string clickSoundName;
 
+
     std::function<void(std::string)> playSoundFunc;
 
 public:
@@ -50,6 +51,7 @@ public:
     void turnOff();
     void turnOn();
     ImVec2 getPosition();
+    bool isOn;
 
     bool soundFunctionValid = false;
 };

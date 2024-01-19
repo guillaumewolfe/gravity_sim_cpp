@@ -10,6 +10,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include "engine/CelestialObject.h"
 
+
 class RenderContext;
 
 class Camera{
@@ -40,24 +41,35 @@ public:
     void firstPersonMode();
     void calculateSunAngleOffset(const Vec3& objectPosition, const Vec3& cameraPosition);
     double sunAngleOffset;
+    void resetOrbits();
     
 
 
     void startTransition(CelestialObject* newObject, int steps);
     void updateTransition();
     void transitionToFollowObject();
-
+    void newFocusOnAxis(std::string axis);
+    void transitionToAxisFocus();
+    void axisFocus();
+    bool isFocusOnAxis = false;
+    std::string focusedAxis;
+    float targetOrbitalVerticalAngle;
+    float targetOrbitalHorizontalAngle;
     //Transition
     bool isTransiting= false;
     double followingDistance;
 
     Vec3 lerp(const Vec3& start, const Vec3& end, float t);
+    float lerp(float start, float end, float t);
     float transitionProgress;
 
     int transitionStep = 0;
     const int transitionThreshold = 3000; // Ajustez selon la douceur souhaitée
 
-
+    float* zoomSensitiviy;
+    float* rotationSensitivity;
+    int transitionStepAxis = 0;
+    bool isTransitingAxis = false;
 
     void Update();
     void lookAt(); 
@@ -66,7 +78,7 @@ public:
     void zoomByDistance(bool in);
     void checkDistance();
     float calculateScreenOccupationPercentage(CelestialObject* object);
-
+    void stopAxisTransition();
     
 
     void rotateHorizontal(float angle);

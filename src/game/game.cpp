@@ -167,8 +167,8 @@ GameSettings* Game::getSettings() { return &settings; }
 void Game::InitSettings() {
     settings.textureQuality = 1;
     settings.antiAliasing = true;
-    settings.movementSpeed = 0.75f;
-    settings.rotationSpeed = 0.75f;
+    settings.movementSpeed = 0.5f;
+    settings.rotationSpeed = 0.5f;
     settings.musicVolume = 0.0f;
     settings.sfxVolume = 0.75f;
     settings.mainVolume = 0.75f;

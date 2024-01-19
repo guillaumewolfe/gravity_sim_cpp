@@ -39,6 +39,7 @@ public:
     void changePosition();
     void changeName();
     void orbitButton();
+    void playStoryButton();
 
 
     //Accessoire

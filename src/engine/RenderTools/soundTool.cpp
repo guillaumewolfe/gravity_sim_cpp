@@ -28,7 +28,9 @@ void SoundTool::initAllSounds(){
     soundMap["start"] = Mix_LoadWAV(getFullPath("/assets/sounds/startSim.wav").c_str());
     soundMap["creation"] = Mix_LoadWAV(getFullPath("/assets/sounds/confirm_creation.wav").c_str());
     soundMap["restart"] = Mix_LoadWAV(getFullPath("/assets/sounds/restart.mp3").c_str()); // Note: Mix_LoadWAV is typically used for WAV files
-
+    
+    //Planets
+    soundMap["Mars"] = Mix_LoadWAV(getFullPath("/assets/sounds/planets/test.wav").c_str());
     // Check for loading errors
     for (const auto& pair : soundMap) {
         if (pair.second == nullptr) {

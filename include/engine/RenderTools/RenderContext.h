@@ -46,6 +46,7 @@ public:
     bool showCollision = true;
     bool shouldClickOnNames = true;
     bool mouseIsOnMinimap = false;
+    bool isChangingParameters = false;
     SoundTool* soundTool;
 
 

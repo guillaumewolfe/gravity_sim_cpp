@@ -29,7 +29,6 @@ glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
 
-updatePosition();
 draw_rect();
 drawUI();
 draw_key_icons();
@@ -39,73 +38,6 @@ updateAlpha();
 ImGui::End(); 
 
 
-}
-
-void KeysUI::updatePosition(){
-    bool currentShowCameraOptions = *(m_renderContext->showCameraOptions);
-    if (currentShowCameraOptions == lastShowCameraOptionsState) {return;}
-
-
-    if(*(m_renderContext->showCameraOptions)){
-        topLeft = ImVec2(0.005*winWidth,0.06*winHeight);
-        center = ImVec2(topLeft.x + longueur/2, topLeft.y + hauteur/2);
-        float diffHauteur = 0.15-0.06;
-        for(auto& labbel : labbels){
-            ImVec2 anciennePos = labbel->getPosition();
-            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& labbel : keyLabbels){
-            ImVec2 anciennePos = labbel->getPosition();
-            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& button : buttons){
-            ImVec2 anciennePos = button->getPosition();
-            button->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& imageButton : imageButtons){
-            ImVec2 anciennePos = imageButton->getPosition();
-            imageButton->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& key : keys){
-            ImVec2 anciennePos = key.icon->getPosition();
-            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& key : keysHighlight){
-            ImVec2 anciennePos = key.icon->getPosition();
-            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-    }
-    else{
-        topLeft = ImVec2(0.005*winWidth,0.15*winHeight);
-        center = ImVec2(topLeft.x + longueur/2, topLeft.y + hauteur/2);
-        float diffHauteur = 0.06-0.15;
-        for(auto& labbel : labbels){
-            ImVec2 anciennePos = labbel->getPosition();
-            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& labbel : keyLabbels){
-            ImVec2 anciennePos = labbel->getPosition();
-            labbel->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& button : buttons){
-            ImVec2 anciennePos = button->getPosition();
-            button->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& imageButton : imageButtons){
-            ImVec2 anciennePos = imageButton->getPosition();
-            imageButton->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& key : keys){
-            ImVec2 anciennePos = key.icon->getPosition();
-            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-        for(auto& key : keysHighlight){
-            ImVec2 anciennePos = key.icon->getPosition();
-            key.icon->UpdatePosition(anciennePos.x,anciennePos.y-diffHauteur);
-        }
-    }
-
-    lastShowCameraOptionsState = currentShowCameraOptions; 
 }
 
 void KeysUI::draw_rect(){
@@ -180,9 +112,9 @@ void KeysUI::init_key_icons(){
     keys.push_back({"e", "Zoom In", new Icon(longueurk, hauteurk + diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/e.png", 0.5)});
     keys.push_back({"q", "Zoom Out", new Icon(longueurk, hauteurk + 2*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/q.png", 0.5)});
     keys.push_back({"Space", "Play/Pause", new Icon(longueurk, hauteurk + 3*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/space.png", 0.5)});
-    keys.push_back({"R", "Reset simulation", new Icon(longueurk, hauteurk + 4*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/r.png", 0.5)});
-    keys.push_back({"T", "Reset Camera", new Icon(longueurk, hauteurk + 5*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/t.png", 0.5)});
-    keys.push_back({"G", "Global/Focus view", new Icon(longueurk, hauteurk + 6*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/g.png", 0.5)});
+    keys.push_back({"R", "Reset Camera", new Icon(longueurk, hauteurk + 4*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/r.png", 0.5)});
+    keys.push_back({"Tab", "Next Object", new Icon(longueurk, hauteurk + 5*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/tab.png", 0.5)});
+    keys.push_back({"F", "Focus/Global view", new Icon(longueurk, hauteurk + 6*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/f.png", 0.5)});
     keys.push_back({"I", "Show/Hide infos", new Icon(longueurk, hauteurk + 7*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/i.png", 0.5)});
     keys.push_back({"wasd", "Move around", new Icon(longueurk, hauteurk + 8*diff, ImVec2(grandeur*1.5, 1.5*grandeur), 0.5f, "../assets/button/keys/wasd.png", 0.5)});
     keys.push_back({"mouse", "Select Object", new Icon(longueurk, hauteurk + 9*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/mouse.png", 0.5)});
@@ -251,6 +183,8 @@ ImGuiKey KeysUI::getKeyFromName(const std::string& keyName) {
     else if (keyName == "T") return ImGuiKey_T;
     else if (keyName == "G") return ImGuiKey_G;
     else if (keyName == "I") return ImGuiKey_I;
+    else if(keyName == "Tab") return ImGuiKey_Tab;
+    else if(keyName == "F") return ImGuiKey_F;
     // Les touches WASD sont traitées séparément dans updateAlpha
     // La souris est également traitée séparément dans updateAlpha
     else return ImGuiKey_None;

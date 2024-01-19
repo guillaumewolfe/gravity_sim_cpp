@@ -49,8 +49,10 @@ private:
     float velocityValue=0;
     float finalVelocityValue=0;
     float velocityAngle; 
+    float velocityAngleOffset;
     float vectorLength;
     float velocityOffset;
+    std::vector<float> positionsSlidder;
     void updateVelocityLabel();
     void calculateVelocityVector();
     const double G = 6.67430e-11;

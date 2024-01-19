@@ -56,6 +56,8 @@ private:
     ImVec4 getTypeColor(int type);
     std::vector<ImVec2> asteroid1Positions;
     std::vector<ImVec2> asteroid2Positions;
+    std::vector<ImVec2> originalAsteroid1Positions; // Déclarer un vecteur pour stocker les positions originales
+    std::vector<ImVec2> originalAsteroid2Positions; // Déclarer un vecteur pour stocker les positions originales
     void draw_half_circle_shadow(ImVec2 center, float radius, ImU32 color, float angle, int num_segments = 20);
     CelestialObject* selectedObject = nullptr;
     std::function<void()> closeFunction;
@@ -64,6 +66,7 @@ private:
     bool selected = false;
     void SelectObject(CelestialObject* object);
     Icon* iconCamera;
+    void applyZoomToAsteroids();
 
     //Setup dimension
     void setup_dimension();

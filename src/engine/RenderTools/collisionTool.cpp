@@ -64,18 +64,22 @@ normal = (positionObj2 - positionObj1).normalize();
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 glLineWidth(1.0); // Largeur des lignes pour les chemins
 glBegin(GL_LINES);
+    glPushMatrix();
+    glLoadIdentity();
+    m_renderContext->currentCamera->lookAt();
 for (const auto& particle : particles) {
     if (!particle.previousPositions.empty()) {
         // Utiliser le premier et le dernier point pour dessiner la ligne
         Vec3 start = particle.previousPositions.front();
         Vec3 end = particle.previousPositions.back();
-
+        glTranslated(start.x, start.y, start.z);
         glColor4f(particle.color.x, particle.color.y, particle.color.z, 0.4); // Couleur des lignes
         glVertex3f(start.x, start.y, start.z);
         glVertex3f(end.x, end.y, end.z);
     }
 }
 glEnd();
+glPopMatrix();
 glLineWidth(1.0); // Restaurer la largeur de ligne par défaut
 glDisable(GL_BLEND);
 }
@@ -243,7 +247,8 @@ void CollisionTool::drawCircleIntersection(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-
+    glLoadIdentity();
+    m_renderContext->currentCamera->lookAt();
     // Translation pour positionner la sphère au point de collision
     glTranslatef(newMid.x, newMid.y, newMid.z);
     glRotatef(angle, rotationAxis.x, rotationAxis.y, rotationAxis.z); // Rotation pour aligner avec la normale

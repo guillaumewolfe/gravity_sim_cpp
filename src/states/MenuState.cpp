@@ -40,7 +40,7 @@ std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
-                                "Space Querry",100.0f,0.7f);
+                                "Space Query",100.0f,0.7f);
     /*Labbel *GameTitle2 = new Labbel(0.501f,0.201f,ImVec4(0,0,0,255),
                             "Space Querry",gameObj->getFont("Title"),0.4f);*/
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),

@@ -36,6 +36,8 @@ void MinimapTool::Open(){
     deplacement_X = initialCenterX;
     deplacement_Y = initialCenterY;
     zoom = 1;
+    asteroid1Positions = originalAsteroid1Positions;
+    asteroid2Positions = originalAsteroid2Positions;
 }
 
 void MinimapTool::Draw() {
@@ -69,7 +71,7 @@ void MinimapTool::generate_buttons(){
     ImVec4 buttonColor = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
     ImageButton* resetCam = new ImageButton(playSoundFunc,initialCenterX-0.85*longueur/(2*winWidth),initialCenterY-0.85*hauteur/(2*winHeight),ImVec2(0.04f,0.04f),0.6f,
                         buttonColor, buttonColor,
-                        "../assets/button/resetMinimapCam.png", 0,
+                        "../assets/button/changePosition.png", 0,
                             std::bind(&MinimapTool::resetCamera, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     imageButtons.push_back(resetCam);
 
@@ -133,8 +135,8 @@ void MinimapTool::draw_Scene(){
     setup_dimension();
     draw_planets();
     draw_camera();
-    draw_asteroid_belt(asteroid1Positions,winHeight*0.0010, IM_COL32(180, 150, 150, 120), -7.14e-9);
-    draw_asteroid_belt(asteroid2Positions,winHeight*0.0010, IM_COL32(150, 200, 255, 120), -1.25e-10);
+    draw_asteroid_belt(asteroid1Positions,winHeight*0.0010, IM_COL32(180, 150, 150, 50), -7.14e-9);
+    draw_asteroid_belt(asteroid2Positions,winHeight*0.0010, IM_COL32(150, 200, 255, 50), -1.25e-10);
     draw_text();
     ImGui::PopFont();
 }
@@ -238,12 +240,12 @@ void MinimapTool::draw_camera(){
                             finalCameraPos.y - textOffsetY);
     float textSize = ImGui::CalcTextSize(cameraText.c_str()).x;
     // Vérifier si le texte est dans les limites de la fenêtre
-    float iconSize = iconCamera->getSize().x*winWidth;
+    float iconSize = iconCamera->getSize().x*winWidth*0.35f;
     if (isWithinBounds(textPos, ImVec2(textSize, 0))) {
         // Dessiner le texte
         drawList->AddText(textPos, IM_COL32(220, 255, 220, 200), cameraText.c_str());
     }
-    if(isWithinBounds(finalCameraPos,ImVec2(iconSize,iconSize))){
+    if(isWithinBounds(finalCameraPos,ImVec2(iconSize/2,iconSize/2))){
         iconCamera->Draw();
     }
 }
@@ -292,31 +294,15 @@ void MinimapTool::generate_asteroids() {
     float rayonExterieur1 = 20.0f * scale/2;
     int numAsteroides1 = 1000;
     generate_asteroid_belt(gen, dis, rayonInterieur1, rayonExterieur1, numAsteroides1, asteroid1Positions);
-
+    originalAsteroid1Positions = asteroid1Positions; // Stocker les positions originales
     // Ceinture de Kuiper
     float rayonInterieur2 = 30.0f * scale/2; // Commence à la position de Neptune
     float rayonExterieur2 = 33.0f * scale/2; // S'étend au-delà de Neptune
     int numAsteroides2 = 700;
     generate_asteroid_belt(gen, dis, rayonInterieur2, rayonExterieur2, numAsteroides2, asteroid2Positions);
+    originalAsteroid2Positions = asteroid2Positions; // Stocker les positions originales
 }
 
-void MinimapTool::updateAsteroidScale(float newScale){
-
-    float scale = hauteurScene*0.9 / 30.0f;
-    float scaleRatio = newScale / scale;
-
-    // Loop through and update positions of the main asteroid belt
-    for (ImVec2& pos : asteroid1Positions) {
-        pos.x *= scaleRatio;
-        pos.y *= scaleRatio;
-    }
-
-    // Loop through and update positions of the Kuiper belt
-    for (ImVec2& pos : asteroid2Positions) {
-        pos.x *= scaleRatio;
-        pos.y *= scaleRatio;
-    }
-}
 void MinimapTool::generate_asteroid_belt(std::mt19937& gen, std::uniform_real_distribution<>& dis, float rayonInterieur, float rayonExterieur, int numAsteroides, std::vector<ImVec2>& asteroidPositions) {
     for (int i = 0; i < numAsteroides; ++i) {
         float angle = dis(gen) * 360.0f;
@@ -353,17 +339,17 @@ void MinimapTool::generate_colors() {
     // Modifier le dictionnaire pour utiliser des chaînes de caractères comme clés
     typeDictColor["Black Hole"] = ImVec4(0, 0, 0, 1);
     typeDictColor["Sun"] = ImVec4(250, 250, 120, 1); // Jaune pour une étoile par exemple
-    typeDictColor["Mercury"] = ImVec4(150, 150, 150, 1);
-    typeDictColor["Venus"] = ImVec4(155, 100, 25, 1); // Orange pour Venus
+    typeDictColor["Mercury"] = ImVec4(100, 100, 100, 1);
+    typeDictColor["Venus"] = ImVec4(238, 147, 17, 1); // Orange pour Venus
     typeDictColor["Earth"] = ImVec4(50, 100, 255, 1); // Bleu pour la Terre
-    typeDictColor["Mars"] = ImVec4(200, 63, 33, 1); // Rougeâtre pour Mars
-    typeDictColor["Jupiter"] = ImVec4(225, 175, 135, 1);
-    typeDictColor["Saturn"] = ImVec4(175, 175, 135, 1); // Jaune pour Saturne
-    typeDictColor["Uranus"] = ImVec4(50, 50, 255, 1);
-    typeDictColor["Neptune"] = ImVec4(50, 50, 255, 1); // Bleu pour Neptune
-    typeDictColor["Ice"] = ImVec4(103, 225, 255, 1); // Bleu clair pour les objets glacés
-    typeDictColor["Rock"] = ImVec4(200, 200, 200, 1); // Gris pour les objets rocheux
-    typeDictColor["Volcanic"] = ImVec4(200, 200, 200, 1); // Gris foncé pour les objets volcaniques
+    typeDictColor["Mars"] = ImVec4(197, 84, 62, 1); // Rougeâtre pour Mars
+    typeDictColor["Jupiter"] = ImVec4(234, 206, 180, 1);
+    typeDictColor["Saturn"] = ImVec4(217, 186, 140, 1); // Jaune pour Saturne
+    typeDictColor["Uranus"] = ImVec4(155, 221, 227, 1);
+    typeDictColor["Neptune"] = ImVec4(39, 114, 210, 1); // Bleu pour Neptune
+    typeDictColor["Ice"] = ImVec4(122, 137, 150, 1); // Bleu clair pour les objets glacés
+    typeDictColor["Rock"] = ImVec4(137, 80, 77, 1); // Gris pour les objets rocheux
+    typeDictColor["Volcanic"] = ImVec4(62, 95, 86, 1); // Gris foncé pour les objets volcaniques
     typeDictColor["Moon"] = ImVec4(200, 200, 200, 1); // Gris pour les lunes
 }
 
@@ -563,6 +549,7 @@ void MinimapTool::transitionCamera() {
     if (deplacement_X == initialCenterX && deplacement_Y == initialCenterY && zoomOk) {
         cameraTransition = false;
     }
+    applyZoomToAsteroids();
 }
 
 void MinimapTool::Zoom(bool in){
@@ -572,5 +559,16 @@ void MinimapTool::Zoom(bool in){
     else{
         zoom *= 1.01;
     }
+    applyZoomToAsteroids();
+}
 
+void MinimapTool::applyZoomToAsteroids() {
+    for (size_t i = 0; i < asteroid1Positions.size(); ++i) {
+        asteroid1Positions[i].x = originalAsteroid1Positions[i].x * zoom;
+        asteroid1Positions[i].y = originalAsteroid1Positions[i].y * zoom;
+    }
+    for (size_t i = 0; i < asteroid2Positions.size(); ++i) {
+        asteroid2Positions[i].x = originalAsteroid2Positions[i].x * zoom;
+        asteroid2Positions[i].y = originalAsteroid2Positions[i].y * zoom;
+    }
 }

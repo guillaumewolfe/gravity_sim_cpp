@@ -209,6 +209,9 @@ void NameTool::detectClickAndPrintName() {
         m_renderContext->currentCamera->selectedObject = closestPlanet;
         *(m_renderContext->showInfo) = true;
     }if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) && closestDistance < clickThreshold){
+        if(m_renderContext->currentCamera->firstPersonModeEnabled){
+            m_renderContext->currentCamera->firstPersonModeEnabled = false;
+        }
         if(m_renderContext->currentCamera->isGlobalFollowing){//Si on est en global
             if(m_renderContext->currentCamera->followedObject == closestPlanet){//Si on est déjà en train de suivre la planète
                 m_renderContext->currentCamera->newFollowObject(closestPlanet);

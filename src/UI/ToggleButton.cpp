@@ -6,6 +6,7 @@ ToggleButton::ToggleButton(float xPercent, float yPercent, ImVec2 sizePercent, I
 
 void ToggleButton::Draw() {
     if (!value) return;
+    if(isHidden)return;
 
     int winWidth, winHeight;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
@@ -51,4 +52,12 @@ void ToggleButton::Draw() {
 
 void ToggleButton::updatePointer(bool* newPointer) {
     this->value = newPointer;
+}
+
+void ToggleButton::setPosition(float xPercent, float yPercent) {
+    this->position = ImVec2(xPercent, yPercent);
+}
+
+void ToggleButton::setSize(float xPercent, float yPercent) {
+    this->sizePercent = ImVec2(xPercent, yPercent);
 }

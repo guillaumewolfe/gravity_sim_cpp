@@ -4,7 +4,6 @@
 #include "iostream"
 #include <algorithm>
 #include "engine/RenderTools/RenderContext.h"
-
 Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
         : position(pos), target(tgt), up(up), originalPosition(pos), originalTarget(tgt), originalUp(up)  {
             globalRotationMatrix = glm::mat4(1.0f); // Ajout de la variable membre
@@ -17,17 +16,25 @@ void Camera::Update() {
             firstPersonMode();
         }
         else{
-            if (isTransiting) {
-                transitionToFollowObject();
+                if(isFocusOnAxis && isTransitingAxis){
+                    transitionToAxisFocus();
+                }
+                else if (isTransiting) {
+                    transitionToFollowObject();
+                
                 //followObject();
             } else {
                 followObject();
-            }
+            
         }
-    }
+    }}
     lookAt();
 }
 
+float Camera::lerp(float start, float end, float t) {
+    t = glm::clamp(t, 0.0f, 1.0f); // Ensure t is within the range [0, 1]
+    return start + (end - start) * t;
+}
 
 Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
     t = glm::clamp(t, 0.0f, 1.0f); // Assurez-vous que t reste dans la plage [0, 1]
@@ -45,7 +52,7 @@ Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
     
 void Camera::transitionToFollowObject() {
     up = Vec3(0,1,0);
-    if (!followedObject) return;
+    if (!followedObject or isTransitingAxis) {return;}
     
     Vec3 objectPosition = followedObject->getPositionSimulation();
     float objectRadius;
@@ -78,13 +85,14 @@ void Camera::transitionToFollowObject() {
     position = lerp(position, finalPosition, t);
     target = lerp(target, objectPosition, t);
 
-
-    if (glm::abs((position-finalPosition).norm()-followingDistance)<0.01){
+    if (glm::abs((position-followedObject->getPositionSimulation()).norm()-followingDistance)<0.01){
         //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
         isTransiting = false;
         transitionStep = 0;
-        *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
-        *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+        if(!isGlobalFollowing){
+            *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+            *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+        }
         return;
     }
 
@@ -124,8 +132,6 @@ void Camera::followObject() {
     Vec3 globalUp(0, 1, 0);
     Vec3 right = forward.cross(globalUp).normalize();
 
-    // Recalculate up vector as cross product of right and forward
-    //up = right.cross(forward).normalize();
 }
 
 float Camera::calculateGlobalFollowingDistance() {
@@ -245,6 +251,38 @@ float Camera::calculateScreenOccupationPercentage(CelestialObject* object) {
     return screenOccupation;
 }
 
+void Camera::transitionToAxisFocus() {
+    if (!followedObject || !isFocusOnAxis) return;
+    // Interpolate orbital angles
+    float t = (float)transitionStepAxis / transitionThreshold;
+    orbitalVerticalAngle = lerp(orbitalVerticalAngle, targetOrbitalVerticalAngle, t);
+    orbitalHorizontalAngle = lerp(orbitalHorizontalAngle, targetOrbitalHorizontalAngle, t);
+
+    // Continue to follow the object using the interpolated angles
+    followObject();
+
+    // Use a fixed angle tolerance for comparison (e.g., 5 degrees in radians)
+    float angleToleranceHorizontal = glm::radians(0.001f);
+    float angleToleranceVertical = glm::radians(0.1f);
+    bool closeToVertical = glm::abs(orbitalVerticalAngle - targetOrbitalVerticalAngle) < angleToleranceVertical;
+    bool closeToHorizontal = glm::abs(orbitalHorizontalAngle - targetOrbitalHorizontalAngle) < angleToleranceHorizontal;
+
+
+    if (closeToVertical && closeToHorizontal) {
+        isTransitingAxis = false;
+        isFocusOnAxis = false; // You might also want to reset this flag
+        transitionStepAxis = 0;
+        return;
+    }else if(transitionStepAxis >= transitionThreshold) {
+        transitionStepAxis = 0;
+        isTransitingAxis = false;
+        isFocusOnAxis = false; // You might also want to reset this flag
+        return;
+    }else{transitionStepAxis++;}
+}
+
+
+
 
 void Camera::changeValue(bool increase){
     if(increase){}
@@ -254,8 +292,9 @@ void Camera::changeValue(bool increase){
 
 void Camera::zoomByDistance(bool in){
     if (!followedObject) return;
-    if(in){globalFollowingDistance /= 1.01;}
-    else{globalFollowingDistance *= 1.01;}  
+    float speed = *zoomSensitiviy*0.02;
+    if(in){globalFollowingDistance /= (1.0+speed);}
+    else{globalFollowingDistance *= (1.01+speed);}  
 }
 
 
@@ -393,9 +432,9 @@ void Camera::orbitAroundObject(float horizontalAngle, float verticalAngle) {
     if (!followedObject) {
         return;
     }
-
-    orbitalHorizontalAngle += horizontalAngle;
-    orbitalVerticalAngle += verticalAngle;
+    float speed = *rotationSensitivity*2;
+    orbitalHorizontalAngle += horizontalAngle*speed;
+    orbitalVerticalAngle += verticalAngle*speed;
     if (orbitalVerticalAngle>1.57){orbitalVerticalAngle = 1.57;}
     if (orbitalVerticalAngle<-1.57){orbitalVerticalAngle = -1.57;}
 }
@@ -446,11 +485,10 @@ void Camera::newFollowObject(CelestialObject* obj) {
     //resetPosition();
     isTransiting = true;
     followedObject = obj;
+    isFocusOnAxis = false;
 
     // Exemple de définition d'un nouvel offset
     Vec3 objectPosition = followedObject->getPositionSimulation();
-    float initialDistance = 10.0f; // Ou toute autre valeur logique
-    Vec3 initialOffset = Vec3(0, 0, initialDistance); // Modifier selon les besoins
     transitionStep = 0;
     angle_perspective = 40;
     setPerspective();
@@ -464,6 +502,7 @@ void Camera::newFollowObject(CelestialObject* obj) {
 void Camera::newFollowObjectGlobal(CelestialObject* obj) {
     isTransiting = true;
     followedObject = obj;
+    isFocusOnAxis = false;
     // Exemple de définition d'un nouvel offset
     Vec3 objectPosition = followedObject->getPositionSimulation();
     float initialDistance = 10.0f; // Ou toute autre valeur logique
@@ -479,12 +518,14 @@ void Camera::newFollowObjectGlobal(CelestialObject* obj) {
 void Camera::newFirstPersonTarget(CelestialObject* targetObject) {
     firstPersonTargetObject = targetObject;
     firstPersonModeEnabled = true;
+    isFocusOnAxis = false;
     firstPersonZoomOffset = 0.0f;
     firstPersonZoomPercentage = 0.0f;
     firstPersonZoomPercentage = 0.0f;
     angle_perspective = 40;
     isGlobalFollowing = false;
     setPerspective();
+
 }
 
 
@@ -498,17 +539,25 @@ void Camera::resetPosition() {
     firstPersonTargetObject = nullptr;
     firstPersonModeEnabled = false;
     isGlobalFollowing = false;
+    isFocusOnAxis = false;
     orbitalHorizontalAngle = 0;
     orbitalVerticalAngle = 0;
+    isTransitingAxis = false;
+    transitionStep = 0;
+    transitionStepAxis = 0;
     setPerspective();
     lookAt();
     if (m_renderContext && !m_renderContext->systemeSolaire->objects.empty()) {
-        orbitalVerticalAngle = (M_PI/2)/5;
-        orbitalHorizontalAngle = -1.18;
+        resetOrbits();
         newFollowObjectGlobal(m_renderContext->systemeSolaire->getSun());
         *(m_renderContext->showInfo) = false;
         globalDistanceCalcuated = false;
     }
+    selectedObject = followedObject;
+}
+void Camera::resetOrbits(){
+        orbitalVerticalAngle = (M_PI/2)/5;
+        orbitalHorizontalAngle = -1.18;
 }
 
 void Camera::setPosition(Vec3 newPos){
@@ -592,4 +641,37 @@ double Camera::getAnglePerspective(){
 
 Vec3 Camera::getUp(){
     return up;
+}
+
+void Camera::newFocusOnAxis(std::string axis) {
+    if (!followedObject) return;
+    isTransitingAxis = true;
+    isFocusOnAxis = true;
+    transitionStepAxis = 0;
+
+    if(*(m_renderContext->isOrbiting)){
+        *(m_renderContext->isOrbiting) = false;}
+
+    // Determine target orbital angles based on the specified axis
+    if (axis == "x") {
+        targetOrbitalVerticalAngle = 0;
+        targetOrbitalHorizontalAngle = M_PI / 2;
+    } else if (axis == "y") {
+        targetOrbitalVerticalAngle = M_PI / 2;
+        targetOrbitalHorizontalAngle = 0;
+    } else if (axis == "z") {
+        targetOrbitalVerticalAngle = 0;
+        targetOrbitalHorizontalAngle = 0;
+    } else {
+        std::cerr << "Invalid axis specified: " << axis << std::endl;
+        isTransiting = false;
+        isFocusOnAxis = false;
+        return;
+    }
+}
+
+void Camera::stopAxisTransition(){
+    isTransitingAxis = false;
+    isFocusOnAxis = false;
+    transitionStepAxis = 0;
 }

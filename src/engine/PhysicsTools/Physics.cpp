@@ -125,19 +125,18 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
     new_velocity.z = (v1.z * m1 + v2.z * m2) / new_mass;
 
     if(obj1->getTypeName() == "BlackHole"){
+        if(!(obj2->getTypeName() == "BlackHole") && !(obj2->getRayon()>obj1->getRayon())){
         obj1->setWeight(new_mass);
         obj1->updateVelocity(new_velocity);
-        obj1->real_radius = new_rayon;
         obj1->addPlanetEaten(obj2);
-        m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
-    }else if(obj2->getTypeName() == "BlackHole"){
+        return;}
+    }if(obj2->getTypeName() == "BlackHole"){
         obj2->setWeight(new_mass);
         obj2->updateVelocity(new_velocity);
-        obj2->real_radius = new_rayon;
         obj2->addPlanetEaten(obj1);
-        m_renderContext->systemeSolaire->setRayon(obj2);
         m_renderContext->systemeSolaire->removeObject(obj1);
+        return;
     }
 
     else{//Not black holes
@@ -148,6 +147,7 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
+        return;
     } else if(m2 > m1){
         obj2->setWeight(new_mass);
         obj2->updateVelocity(new_velocity);
@@ -155,6 +155,7 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj2->addPlanetEaten(obj1);
         m_renderContext->systemeSolaire->setRayon(obj2);
         m_renderContext->systemeSolaire->removeObject(obj1);
+        return;
     }
     else{
         obj1->setWeight(new_mass);
@@ -163,6 +164,7 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
+        return;
     }
     }
 }

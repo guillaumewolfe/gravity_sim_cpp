@@ -16,6 +16,9 @@ public:
     void Draw();
     void updatePointer(bool* newPointer);
     bool isDeactivated = false;
+    void setPosition(float xPercent, float yPercent);
+    void setSize(float xPercent, float yPercent);
+    bool isHidden = false;
 
 private:
     ImVec2 position;        // Position en pourcentage de la largeur et hauteur de la fenêtre

@@ -21,6 +21,7 @@ VelocityCreator::VelocityCreator(RenderContext* renderContext, CreatorManager* m
 void VelocityCreator::Enter(){
     velocityValue =0;
     velocityAngle = 0;
+    velocityAngleOffset = -2*M_PI;
     computeEscapeVelocitySpeed();
     m_renderContext->currentCamera->creationMode();
     m_manager->updateCamera();
@@ -51,15 +52,24 @@ void VelocityCreator::Draw(){
     if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {previous_state();}
 
     calculateVelocityVector();
+    /*
     DrawOrbits();
     drawBackground();
     draw_buttons();
     draw_labels();
-    draw_sliders();
+    draw_sliders();*/
 
     ImGui::End(); 
 } 
 void VelocityCreator::DrawOpenGL(){} 
+
+
+void draw_Background(){
+    
+}
+
+
+
 
 
 
@@ -99,8 +109,12 @@ void VelocityCreator::generate_buttons(){
 void VelocityCreator::generate_sliders(){
     Slider *VelocitySlider = new Slider(0.075f,0.38,ImVec2(0.14*0.8, 0.40*0.0175),ImVec4(225,225,225,225),
                                 ImVec4(100,255,150,200),&velocityValue,ImVec2(0,1),20);
+    Slider *VelocitySliderOffset = new Slider(0.075f,0.52,ImVec2(0.14*0.6, 0.30*0.0175),ImVec4(225,225,225,150),
+                                ImVec4(100,255,150,150),&velocityAngleOffset,ImVec2(-2*M_PI,0),20);
     
     sliders.push_back(VelocitySlider);
+    sliders.push_back(VelocitySliderOffset);
+
 }
 
 
@@ -115,9 +129,14 @@ void VelocityCreator::generate_labels(){
     Labbel *infoOrbitLabel = new Labbel(0.075f,0.34f,ImVec4(150,255,220,200),
                     "Stationary",19.0f,0.8f);
 
+    Labbel *direction = new Labbel(0.075f,0.49,ImVec4(255,255,255,200),
+                    "Direction",19.0f,0.8f);
+
     labbels.push_back(MessageLabel);
     labbels.push_back(VelocityLabel);
     labbels.push_back(infoOrbitLabel);
+    labbels.push_back(direction);
+
 }
 void VelocityCreator::drawBackground(){
 
@@ -162,6 +181,25 @@ void VelocityCreator::draw_sliders(){
         for (Slider* slider : sliders) {
         slider->Draw();
     }
+
+
+    float threshold = 2*M_PI/25;
+    std::vector<float> values;
+    values.push_back(-2*M_PI);
+    values.push_back(-M_PI_2);
+    values.push_back(-M_PI);
+    values.push_back(-3*M_PI_2);
+    values.push_back(0);
+
+    //Si velocityAngleOffset est proche d'une valeur de values, on le met à cette valeur
+    
+    for(int i=0; i<values.size(); i++){
+        if(abs(velocityAngleOffset-values[i])<threshold){
+            velocityAngleOffset = values[i];
+        }
+    }
+
+
 }
 
 
@@ -229,8 +267,8 @@ void VelocityCreator::previous_state(){
 }
 void VelocityCreator::setNewObjVelocity(){
     Vec3 newVel;
-    newVel.x = finalVelocityValue * cos(velocityAngle);
-    newVel.z = finalVelocityValue * sin(velocityAngle);
+    newVel.x = finalVelocityValue * cos(velocityAngle+velocityAngleOffset);
+    newVel.z = finalVelocityValue * sin(velocityAngle+velocityAngleOffset);
     newVel.y=0;
     m_manager->newCreatedObject->updateVelocity(newVel);
 }
@@ -294,7 +332,7 @@ void VelocityCreator::DrawOrbits() {
             velocityAngle = M_PI + angleToSun + M_PI / 2; // Angle tangentiel
             if(vectorLength==0){continue;}
             // Convertir l'angle en vecteur de direction
-            Vec3 velocityDirection(std::cos(velocityAngle), 0, std::sin(velocityAngle));
+            Vec3 velocityDirection(std::cos(velocityAngle+velocityAngleOffset), 0, std::sin(velocityAngle+velocityAngleOffset));
             float arrowLength = vectorLength; // Longueur de la flèche (modifiable)
             float minArrowLength = 10.0f; // Définir une longueur minimale pour la flèche
 
@@ -314,7 +352,7 @@ void VelocityCreator::DrawOrbits() {
             drawList->AddLine(planetScreenPos, velocityLineEndPos, IM_COL32(100,255,150,190), 3.0f);
 
             // Inversez la direction pour les points de la pointe de la flèche
-            float pointBaseAngle = velocityAngle + M_PI; // Ajouter π pour inverser la direction de la pointe
+            float pointBaseAngle = velocityAngle+velocityAngleOffset + M_PI; // Ajouter π pour inverser la direction de la pointe
 
             // Angle pour les points de la base de la pointe de la flèche
             float angle1 = pointBaseAngle + M_PI / 6; // 30 degrés de chaque côté de la pointe inversée

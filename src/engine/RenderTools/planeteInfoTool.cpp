@@ -159,15 +159,20 @@ void PlaneteInfoTool::initButtons(){
                             std::bind(&PlaneteInfoTool::closeButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
         
 
-    ImageButton *zoomButton = new ImageButton(playSoundFunc,0.96-0.17, 0.25, ImVec2(taille_x*0.6, taille_y*0.6),0.90,
+    ImageButton *zoomButton = new ImageButton(playSoundFunc,0.803646, 1-0.29f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
                         button_color,button_color,
                         "../assets/button/moveTo.png", 0,
                             std::bind(&PlaneteInfoTool::moveToButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
         
-    ImageButton *orbit = new ImageButton(playSoundFunc,0.94, 1-0.29f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
+    ImageButton *orbit = new ImageButton(playSoundFunc,0.803646, 1-0.29f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
                         button_color,button_color,
                         "../assets/button/orbit.png", 0,
                             std::bind(&PlaneteInfoTool::orbitButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+
+    ImageButton *playStory = new ImageButton(playSoundFunc,0.96-0.16, 0.255, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
+                        button_color,button_color,
+                        "../assets/button/listen.png", 0,
+                            std::bind(&PlaneteInfoTool::playStoryButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
     imageButtons.push_back(infoButton);
     imageButtons.push_back(textButton);
@@ -175,6 +180,7 @@ void PlaneteInfoTool::initButtons(){
     imageButtons.push_back(closeButton);
     imageButtons.push_back(zoomButton);
     imageButtons.push_back(orbit);
+    imageButtons.push_back(playStory);
 }
 
 
@@ -423,7 +429,10 @@ void PlaneteInfoTool::draw_buttons(){
         imageButtons[2]->isOn = false;}
 
     if(m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject == nullptr ||(m_renderContext->currentCamera->followedObject != nullptr  && m_renderContext->currentCamera->selectedObject != nullptr && m_renderContext->currentCamera->followedObject != m_renderContext->currentCamera->selectedObject)||  m_renderContext->currentCamera->isGlobalFollowing ){
-        imageButtons[4]->hidden = false;}
+        if(mode == 3){imageButtons[4]->hidden = true;}
+    else{
+        imageButtons[4]->hidden = false;}}
+
     else{imageButtons[4]->hidden = true;}
 
 //Check if object changed
@@ -524,19 +533,20 @@ ImVec4 colorCenterDot;
 int numBlurCircles;
 if(m_object->type == 2 || m_object->type == 3 ||m_object->type == 4 ){
     colorCenterDot = ImVec4(255,215,80,255);
-    numBlurCircles = 20;
+    numBlurCircles = 40;
 }
 else if(m_object->type == 5){
     colorCenterDot = ImVec4(50,50,255,255);
-    numBlurCircles = 8;
+    numBlurCircles = 15;
 }else{
     colorCenterDot = ImVec4(255,255,255,0);
     numBlurCircles = 0;
 }
 // Draw the central sun
-drawList->AddCircleFilled(ImVec2(positionx*winWidth, positiony*winHeight), satelliteRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z,colorCenterDot.w), 100);
+float radiusCenter = winWidth*0.006;
+drawList->AddCircleFilled(ImVec2(positionx*winWidth, positiony*winHeight), radiusCenter, IM_COL32(250, 250, 120,150), 100);
 // Draw the blur effect // Number of blur circles
-float blurIncrease = orbitRadiusCircle*0.0175; // How much larger each successive blur circle is
+float blurIncrease = radiusCenter*0.06;  // How much larger each successive blur circle is
 float initialAlpha = 20; // Starting alpha value for the outermost blur circle
 float alphaDecrease = initialAlpha / numBlurCircles; // How much alpha decreases per circle
 for (int i = 0; i < numBlurCircles; ++i) {
@@ -642,6 +652,9 @@ std::string PlaneteInfoTool::formatScientific(double value) {
 
 
 void PlaneteInfoTool::drawTexturedSphere() {
+    if(m_object->isDeleted){
+        return;
+    }
     Vec3 translation;
     float scaledRadius;
     if (mode==3){
@@ -800,9 +813,15 @@ void PlaneteInfoTool::changeName(){
 
 
 void PlaneteInfoTool::orbitButton(){
+    m_renderContext->currentCamera->stopAxisTransition();
     *(m_renderContext->isOrbiting) = true;
 }
 
 void PlaneteInfoTool::setConfirmBoxFunction(const std::function<void(std::function<void()> func, const std::string& message)>& confirmBoxFunc) {
     confirmBoxFunction = confirmBoxFunc;
+}
+
+void PlaneteInfoTool::playStoryButton(){
+    if(m_object==nullptr){return;}
+    m_renderContext->soundTool->playSound(m_object->typeName);
 }

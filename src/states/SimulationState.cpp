@@ -32,6 +32,8 @@ void SimulationState::Enter() {
     render->Settings_Tool->setSaveButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setGameSettings(gameObj->getSettings());
     render->Settings_Tool->init();
+    currentCamera->zoomSensitiviy = &(gameObj->getSettings()->movementSpeed);
+    currentCamera->rotationSensitivity = &(gameObj->getSettings()->rotationSpeed);
 
     render->Zoom_Tool->setCloseButtonFonction(std::bind(&SimulationState::TelescopeButton, this));
 
@@ -321,22 +323,20 @@ void SimulationState::Update() {
             !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}*/
 
 
-    if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeFollowedObject();isOrbiting=true;}
+    if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeGlobalFollowing();isOrbiting=true;}
 
-    if (ImGui::IsKeyPressed(ImGuiKey_R)) {
-        auto boundFunction = std::bind(&SimulationState::Restart, this);
-        this->generateDialogBox(boundFunction, "Do you want to restart the simulation?");
-    }
-    if (ImGui::IsKeyPressed(ImGuiKey_T)) {resetView();isOrbiting=true;}
-    if (ImGui::IsKeyPressed(ImGuiKey_G)) {changeGlobalFollowing();isOrbiting=true;}
-    if (ImGui::IsKeyPressed(ImGuiKey_C)) {showControlsButton();}
+
+    if (ImGui::IsKeyPressed(ImGuiKey_R)) {resetView();isOrbiting=true;}
+    if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {changeFollowedObject();}
+    if (ImGui::IsKeyPressed(ImGuiKey_C)) {ShowCameraOptionsButton();}
     if (ImGui::IsKeyPressed(ImGuiKey_M)){MinimapButton();}
 
     //Mouse dragging for mooving the camera
     if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
-        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);
+        if(showCameraOptions && !render->CameraOptions_Tool->mouseOnCameraOptions()){
+        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);}
         if(delta.x!=0){
             isOrbiting=false;
         }
@@ -583,8 +583,15 @@ void SimulationState::changeSimulationSpeed(bool increase) {
 
 
 void SimulationState::changeFollowedObject(){
-        currentCamera->newFollowObject(systemeSolaire->objects[followedObjectIndex]);
+        if(currentCamera->followedObject == nullptr){return;}
+        if(currentCamera->firstPersonModeEnabled){currentCamera->firstPersonModeEnabled=false;}
+        if(currentCamera->isGlobalFollowing){
+            currentCamera->newFollowObjectGlobal(systemeSolaire->objects[followedObjectIndex]); 
+        }
+        else{currentCamera->newFollowObject(systemeSolaire->objects[followedObjectIndex]);}
+        currentCamera->selectedObject = systemeSolaire->objects[followedObjectIndex];
         showInfo = true;
+        isOrbiting=true;
         followedObjectIndex+=1;
         if (followedObjectIndex > systemeSolaire->objects.size()-1){followedObjectIndex=0;}
 }
@@ -618,7 +625,8 @@ void SimulationState::showInfos(){
 
 void SimulationState::ShowCameraOptionsButton(){
     if(showCameraOptions){
-        showCameraOptions = false;
+        if(!render->CameraOptions_Tool->isClosed){render->CameraOptions_Tool->Close();return;}
+        else{showCameraOptions = false;}
         imageButtons[0]->isOn=false;
     }
     else{
@@ -683,6 +691,7 @@ void SimulationState::TelescopeButton(){
         imageButtons[9]->isOn=false;
     }
     else{
+        if(showCameraOptions){ShowCameraOptionsButton();}
         if(showOptions){OptionsButton();}
         if(showSettings){render->Settings_Tool->CloseButton();}
         if(isCreating){CreateObjectButton();}

@@ -79,6 +79,7 @@ void OrbitTool::DrawEllipse(const Vec3& center, float a, float b, const Vec3& ax
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glPopMatrix();
 }
 
 ImVec4 OrbitTool::getTypeColor(int type) {

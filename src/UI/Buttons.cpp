@@ -90,6 +90,7 @@ ImGui::PopFont();
                             cursorPos.y + (actualSize.y - textSize.y) * 0.5);
 
 ImU32 labelColorIM32 = IM_COL32((int)labelColor.x, (int)labelColor.y, (int)labelColor.z, (int)labelColor.w);
+if(isOn){ImU32 labelColorIM32 = IM_COL32((int)255, (int)255, (int)255, (int)255);}
 if (font) {
     drawList->AddText(font, font->FontSize, textPos,
                       labelColorIM32,
@@ -121,6 +122,16 @@ if (font) {
                     label.c_str());
         }
     }
+    if(isOn){
+    float rectHeight = actualSize.y * 0.075; // 10% de la hauteur du bouton
+    float rectWidth = actualSize.x * 0.70;// 10% de la largeur du bouton
+    float offsetX = (actualSize.x - rectWidth) / 2; // Demi-différence entre les largeurs du bouton et du rectangle
+    ImVec2 rectTopLeft = ImVec2(actualPos.x + offsetX, actualPos.y + actualSize.y - rectHeight);
+    ImVec2 rectBottomRight = ImVec2(rectTopLeft.x + rectWidth, actualPos.y + actualSize.y);
+    drawList->AddRectFilled(rectTopLeft, rectBottomRight, IM_COL32(255, 255, 255, 255),cornerRadius);
+    drawList->AddRectFilled(cursorPos,
+                            ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y),
+                            IM_COL32(255, 255, 255, 5), cornerRadius);}
 
     // Button click detection
     if (isHovered && ImGui::IsMouseClicked(0)) {

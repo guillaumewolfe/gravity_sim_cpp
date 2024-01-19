@@ -19,8 +19,13 @@ public:
     void Draw() override;
     void setCloseButtonFunction(const std::function<void()>& func);
     void Open();
+    void Close();
+    bool isClosed = false;
+    bool mouseOnCameraOptions();
 
 private:
+    float posX;
+    float longueur, hauteur;
 
     void drawBackground();
     void generate_buttons();
@@ -38,6 +43,10 @@ private:
     void setMode(int newMode);
     void updateButtonMode();
     void globalViewButton();
+    void followObjectButton();
+    void POVButton();
+    CelestialObject* POVtarget = nullptr;
+    CelestialObject* getNewPOVtarget();
     void changeFollowObject(CelestialObject* obj);
     void changeFirstPersonTarget(CelestialObject* targetObject);
 
@@ -48,12 +57,14 @@ private:
     ImVec2 topLeft;
     ImVec2 centerPos;
     int winWidth, winHeight;
+    ImFont* nameFont;
+    ImFont* nameFontBig;
 
     std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
+    std::vector<Button*> buttons,buttonsMode2;
     std::vector<ImageButton*> imageButtons;
     std::vector<Slider*> sliders;
-    std::vector<Icon*> icons;
+    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3;
     std::vector<ToggleButton*> toggleButtons;
 
     std::vector<ImageButton*> imageButtonsMode1;
@@ -68,8 +79,29 @@ private:
     std::map<int, std::string> cameraMode;
     bool focusOnAxis = false;
 
-    
+    std::map<std::string, ImVec4> typeDictColor;
+    void generate_colors();
+    void draw_planetsMode3();
+    void drawSunEffect(ImVec2 planetPos, float radius);
+    void drawPlanetLight(ImVec2 planetPos, float radius, CelestialObject* planet);
+    void resetViewAxis();
+    void updateSliderPosition();
+    void draw_global_following();
+    void draw_focus_following();
+    void draw_combo(float x1, float y1, float x2, float y2);
+
+    void draw_POV_following();
     std::function<void()> closeButtonFunction;
+
+    bool isTransitioning = false;
+    float isClosing = false;
+    float transitionProgress;
+
+    bool isGlobalView = false;
+    bool isFollowingObject = false;
+    bool isFollowingFirstPerson = false;
+    
+    void focusOnAxisButton(std::string axis);
 
 
 };

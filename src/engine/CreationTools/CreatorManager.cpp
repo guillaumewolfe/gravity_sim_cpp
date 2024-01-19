@@ -86,13 +86,13 @@ void CreatorManager::AddState(const std::string& stateName, std::unique_ptr<Stat
 void CreatorManager::Exit(){
     currentState->Exit();
     *(m_renderContext->isCreating)=false;
-    m_renderContext->currentCamera->resetPosition();
     if(!creationConfirmed && !isEditing){//Si la création n'a pas été confirmée, on supprime l'objet
         if(newCreatedObject!=nullptr){
             m_renderContext->systemeSolaire->removeObject(newCreatedObject);
             newCreatedObject = nullptr;
             m_renderContext->currentCamera->resetPosition();
             *(m_renderContext->showInfo) = true;
+            m_renderContext->currentCamera->resetPosition();
         }
     }
     if(isEditing){
@@ -101,8 +101,8 @@ void CreatorManager::Exit(){
         if(!isEditingConfirmed){
             newCreatedObject->position_real = positionInitialeEditing;
             newCreatedObject->velocity = vitesseInitialeEditing;
-            m_renderContext->currentCamera->newFollowObjectGlobal(newCreatedObject);
         }
+        m_renderContext->currentCamera->newFollowObjectGlobal(newCreatedObject);
     }
     updateNames();
     creationConfirmed = false;

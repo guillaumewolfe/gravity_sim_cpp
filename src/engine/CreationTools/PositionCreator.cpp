@@ -237,7 +237,14 @@ void PositionCreator::drawBackground(){
                         cornerRadius,0,1.5f); // Ajustez le rayon ici
 }
 bool PositionCreator::isHoveringRectangle(){
-    return (ImGui::IsMouseHoveringRect(topLeft, bottomRight) || ImGui::IsMouseHoveringRect(topLeftCamera, bottomRightCamera) );
+    float longueur = winWidth * 0.60; // Exemple de taille
+    float hauteur = winHeight * 0.06; // Exemple de taille
+    // Position Y du bord supérieur du rectangle pour que le bas du rectangle soit au bas de la fenêtre
+    float topY = winHeight - hauteur;
+    float leftX = (winWidth - longueur) / 2;
+    ImVec2 menuTopLeft = ImVec2(leftX,topY);
+    ImVec2 menuBottomRight = ImVec2(menuTopLeft.x+longueur,menuTopLeft.y+hauteur);
+    return (ImGui::IsMouseHoveringRect(topLeft, bottomRight) || ImGui::IsMouseHoveringRect(topLeftCamera, bottomRightCamera) || ImGui::IsMouseHoveringRect(menuTopLeft,menuBottomRight));
 }
 
 void PositionCreator::draw_buttons(){
@@ -419,13 +426,14 @@ void PositionCreator::updatePositionWithMouse(){
 }
 
 void PositionCreator::checkClick(){
-    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !isHoveringRectangle()){
+    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !positionSelected && !isHoveringRectangle()){
         positionSelected = true;
         buttons[0]->UpdatePosition(0.045,0.57);    
         buttons[1]->hidden=false;
         imageButtons[0]->hidden=false;
+        return;
     }
-    if(ImGui::IsMouseClicked(ImGuiMouseButton_Right) && positionSelected && !isHoveringRectangle()){
+    if(ImGui::IsMouseClicked(ImGuiMouseButton_Left) && positionSelected && !isHoveringRectangle()){
         AdjustPosition();
     }
 }

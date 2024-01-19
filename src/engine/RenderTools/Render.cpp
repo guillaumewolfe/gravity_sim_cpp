@@ -120,7 +120,9 @@ void Render::updateShouldClick(){
 
 
 
-
+    if(PlaneteInfo_Tool->changeParametersTool->getMode() != 0)
+    {Context->isChangingParameters = true;}
+    else{Context->isChangingParameters = false;}
 
     if(!*(Context->showInfo)){
         PlaneteInfo_Tool->isHovering = false;
