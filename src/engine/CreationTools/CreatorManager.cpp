@@ -48,6 +48,15 @@ void CreatorManager::editObject(CelestialObject* object){
     vitesseInitialeEditing = object->velocity;
 }
 
+std::string CreatorManager::getStateName(){
+// Fonction pour obtenir le nom de l'état actuel
+    for (const auto& pair : states) {
+        if (pair.second.get() == currentState) {
+            return pair.first;
+        }
+    }
+    return ""; // Retourner une chaîne vide si aucun état correspondant n'est trouvé
+}
 
 void CreatorManager::ChangeState(const std::string& newStateName) {
     auto stateIter = states.find(newStateName);
@@ -86,6 +95,11 @@ void CreatorManager::AddState(const std::string& stateName, std::unique_ptr<Stat
 void CreatorManager::Exit(){
     currentState->Exit();
     *(m_renderContext->isCreating)=false;
+    if(creationConfirmed && !isEditing){
+        m_renderContext->currentCamera->newFollowObject(newCreatedObject);
+        m_renderContext->currentCamera->selectedObject = newCreatedObject;
+        *(m_renderContext->showInfo) = true;
+    }
     if(!creationConfirmed && !isEditing){//Si la création n'a pas été confirmée, on supprime l'objet
         if(newCreatedObject!=nullptr){
             m_renderContext->systemeSolaire->removeObject(newCreatedObject);

@@ -39,6 +39,8 @@ private:
     int winWidth, winHeight;
     std::vector<Labbel*> labbels;
     std::vector<Button*> buttons;
+    ImFont* nameFontBig;
+    ImFont* nameFont;
     std::vector<ImageButton*> imageButtons;
     Icon* icon;
     float hauteur, longueur;
@@ -52,17 +54,35 @@ private:
     ImVec2 centerPos;
     ImVec2 bottomRightCamera;
     ImVec2 topLeftCamera;
+    float longueurMidSquare, hauteurMidSquare;
+    ImVec2 centerPosMidSquare;
     Vec3 calculateIntersection(const glm::vec3& rayDirection, const glm::vec3& cameraPosition);
-    void zoomIn();
-    void zoomOut();
+    void zoomIn(float zoomFactor = 1.0f);
+    void zoomOut(float zoomFactor = 1.0f);
     void moveUp(bool up);
     void moveRight(bool right);
     void resetCamPos();
     bool isHoveringRectangle();
+    bool isWithinBounds(const ImVec2& objectPos, const ImVec2& objectSize);
     void createEffects();
+
+    void drawPlanets();
+    void drawMainBackground();
+    void drawSunEffect(ImVec2 planetPos, float radius);
+    void drawPlanetLightNOSHADOW(ImVec2 planetPos, float radius, CelestialObject* obj);
+    void drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float radius);
+    void draw_half_circle_shadow(ImVec2 center, float radius, ImU32 color, float angle, int num_segments);
+    void generate_colors();
+    std::map<std::string, ImVec4> typeDictColor;
+    CelestialObject* sun;
 
     double maxZoomOut = 2476.94;
     double maxZoomIn;
+
+    void drawControls();
+
+    std::vector<Icon*> iconsControls;
+
 
 
 };

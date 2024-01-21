@@ -44,7 +44,7 @@ void Render::Draw(){
     ImGui::NewFrame();
     //On dessiner les éléments
     updateShouldClick();
-    if(!Context->showZoom){Name_Tool->Draw();}
+    if(!Context->showZoom && (!*(Context->isCreating) && Creator_Manager->getStateName()!="PositionCreator")){Name_Tool->Draw();}
     if(*(Context->showCameraOptions)){CameraOptions_Tool->Draw();}
     if(*(Context->isCreating)){Creator_Manager->Draw();}
     if(Context->showMinimap){Minimap_Tool->Draw();}
@@ -60,7 +60,7 @@ void Render::Draw(){
 
     updateCamera();
     Background_Tool->Draw();
-    Objects_Tool->Draw();
+    if(!*(Context->isCreating) or Creator_Manager->getStateName()!="PositionCreator"){Objects_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->Draw();}
     if(*(Context->showAxes)){Axes_Tool->Draw();}
     //if(!*(Context->isCreating)){Path_Tool->Draw();}

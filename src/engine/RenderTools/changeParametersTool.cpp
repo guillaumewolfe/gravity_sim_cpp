@@ -72,8 +72,8 @@ void ChangeParametersTool::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     drawMode();
 
-        if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
-        Close();}
+    if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
+    Close();}
 }
 
 void ChangeParametersTool::drawUI(){
@@ -225,7 +225,7 @@ void ChangeParametersTool::initMode1(){
     Labbel* changeWeight = new Labbel(0.5,0.355,ImVec4(255,255,255,255),
                 "Change Mass",28,0.85f);
     Labbel* weight = new Labbel(0.6,0.45,ImVec4(255,255,255,255),
-                "Mass:",23,0.85f);
+                "Select mass:",23,0.85f);
     labbelsMode1.push_back(changeWeight);
     labbelsMode1.push_back(weight);
 
@@ -267,7 +267,6 @@ void ChangeParametersTool::initMode2(){
                         "../assets/button/reset2.png", 0,
                             std::bind(&ChangeParametersTool::resetRadius, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     imageButtonsMode2.push_back(reset);
-    labbelsMode2.push_back(changeRadius);
 }
 void ChangeParametersTool::initMode3(){
 

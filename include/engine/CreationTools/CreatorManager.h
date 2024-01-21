@@ -45,6 +45,7 @@ public:
     Vec3 positionInitialeEditing;
     Vec3 vitesseInitialeEditing;
      
+    std::string getStateName();
 
 
 private:

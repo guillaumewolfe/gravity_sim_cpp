@@ -278,17 +278,17 @@ void TextureCreator::generate_buttons(){
            std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
 
-   Button *ReturnButton = new Button(playSoundFunc,0.5f, 0.765, ImVec2(0.040, 0.035),
+   Button *ReturnButton = new Button(playSoundFunc,0.5f, 0.765, ImVec2(0.045, 0.035),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Close", 0.1,18.0f,
-                               std::bind(&TextureCreator::CloseButtonPressed, this)); 
+                               "Close", 0.05f,19.0f,
+                               std::bind(&TextureCreator::CloseButtonPressed, this),5); 
 
-   Button *NextButton = new Button(playSoundFunc,0.55f, 0.765, ImVec2(0.040, 0.035),
+   Button *NextButton = new Button(playSoundFunc,0.55f, 0.765, ImVec2(0.045, 0.035),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Select", 0.4,18.0f,
-                               std::bind(&TextureCreator::NextButtonPressed, this)); 
+                               "Select", 0.2f,20.0f,
+                               std::bind(&TextureCreator::NextButtonPressed, this),5); 
     buttons.push_back(ReturnButton);
     buttons.push_back(NextButton);
     buttons[1]->hidden=true;

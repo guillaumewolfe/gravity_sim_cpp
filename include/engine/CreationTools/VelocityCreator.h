@@ -39,6 +39,8 @@ private:
     std::vector<ImageButton*> imageButtons;
     Icon* icon;
     float hauteur, longueur;
+    ImFont* nameFont;
+    ImFont* nameFontBig;
 
     ImVec2 bottomRight;
     ImVec2 topLeft;
@@ -62,7 +64,28 @@ private:
     double circularOrbitalVelocity;
     void setNewObjVelocity();
     void forceClose();
+    void calculateVelocityAngle(CelestialObject* planet, CelestialObject* sun);
 
+    void drawUI();
+    void drawPlanets();
+    void drawAngleSelector(CelestialObject* planet, CelestialObject* sun, CelestialObject* selectedObject);
+    void drawSunEffect(ImVec2 planetPos, float radius);
+    void drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float radius);
+    void draw_half_circle_shadow(ImVec2 center, float radius, ImU32 color, float angle, int num_segments);
+    
+    void generate_colors();
+    std::map<std::string, ImVec4> typeDictColor;
+    ImDrawList* drawList;
+
+
+    std::vector<float> valuesAngle;
+    float normalizeAngle(float angle);
+
+    //Selection
+    CelestialObject* selectedObject;
+    bool checkSelection(CelestialObject* m_object, CelestialObject* sun, CelestialObject* otherObject, ImVec2 position, float radius);
+    bool isExited;
 };
+
 
 #endif // VelocityCreator_H

@@ -21,7 +21,7 @@ MinimapTool::MinimapTool(RenderContext* renderContext) : RenderComponent(renderC
     scale = 0.95;
     longueurScene = longueur * scale;
     hauteurScene = hauteur * scale;
-    initialCenterX = 0.095f;
+    initialCenterX = 0.096f;
     initialCenterY = 0.845;
     float fontsize = 17.0f;
     float fontSizeScaled = fontsize * winWidth / 1920;
