@@ -288,14 +288,10 @@ void SimulationState::Update() {
     }
     if (ImGui::IsKeyDown(ImGuiKey_E)) {
         bool in = true;
-        if(!currentCamera->isGlobalFollowing){
-        currentCamera->zoom(in);}
-        else{currentCamera->zoomByDistance(in);}}
+        currentCamera->zoomByDistance(in);}
     if (ImGui::IsKeyDown(ImGuiKey_Q)) {
         bool in = false;
-        if(!currentCamera->isGlobalFollowing){
-        currentCamera->zoom(in);}
-        else{currentCamera->zoomByDistance(in);}}
+        currentCamera->zoomByDistance(in);}
 
 
     if (ImGui::IsKeyPressed(ImGuiKey_LeftArrow)) {changeSimulationSpeed(false);} 
@@ -309,7 +305,7 @@ void SimulationState::Update() {
 
     if(isOrbiting){
         if(currentCamera->isGlobalFollowing)
-            {currentCamera->orbitAroundObject(0.0000,0);}
+            {currentCamera->orbitAroundObject(0.0002,0);}
         else{currentCamera->orbitAroundObject(0.0015,0);}
     }
 
@@ -330,6 +326,8 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {changeFollowedObject();}
     if (ImGui::IsKeyPressed(ImGuiKey_C)) {ShowCameraOptionsButton();}
     if (ImGui::IsKeyPressed(ImGuiKey_M)){MinimapButton();}
+
+    if (ImGui::IsKeyPressed(ImGuiKey_L)){showDialogBox();}
 
     //Mouse dragging for mooving the camera
     if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
@@ -444,6 +442,7 @@ void SimulationState::Restart(){
     showMinimap = false;
     showSettings = false;
     showCameraOptions = false;
+    renderContext->showDialogBox = false;
     
     systemeSolaire->resetPosition();
     currentCamera->resetPosition();
@@ -722,3 +721,12 @@ void SimulationState::showControlsButton(){
         renderContext->showControls = false;
     }
 }
+
+void SimulationState::showDialogBox(){
+    if(renderContext->showDialogBox){
+        render->DialogBox_Tool->Close();
+    }else{
+        render->DialogBox_Tool->Open("Notification","I have created a minimap for you","Open","Close",std::bind(&SimulationState::MinimapButton, this));
+    }
+}
+

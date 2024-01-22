@@ -176,18 +176,34 @@ void SystemeSolaire::setContext(RenderContext* renderContext){
     m_renderContext = renderContext;
 }
 
-CelestialObject* SystemeSolaire::getSun(){
-    if(objects.empty()){return nullptr;}    
-    CelestialObject* sun = objects[0];
-    if(objects[0]->getTypeName()=="Sun"){
-        sun = objects[0];}
-    else{
-        for (auto& object : objects) {
-            if (object->getWeight() > sun->getWeight()) {
-                sun = object; // Update mostMassive if a more massive object is found
+CelestialObject* SystemeSolaire::getSun(CelestialObject* excludeObject) {
+    if (objects.empty()) {
+        return nullptr;
+    }
+
+    CelestialObject* mostMassive = nullptr;
+    for (auto& object : objects) {
+        // Vérifiez si cet objet est celui à exclure
+        if (object == excludeObject) {
+            continue; // Passez à l'objet suivant si c'est celui à exclure
+        }
+
+        // Si c'est le premier objet valide ou si l'objet est un "sun", traitez-le en conséquence
+        if (mostMassive == nullptr || object->type == 1) {
+            mostMassive = object;
+            if (object->type == 1) {
+                // Si l'objet est un "sun", retournez-le immédiatement
+                return object;
             }
+        }
+
+        // Sinon, continuez à chercher l'objet le plus massif
+        else if (object->getWeight() > mostMassive->getWeight()) {
+            mostMassive = object;
         }
     }
 
-    return sun;
+    // Si aucun "sun" n'a été trouvé, retournez l'objet le plus massif
+    return mostMassive;
 }
+

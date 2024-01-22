@@ -205,3 +205,11 @@ void Button::UpdateLabelColor(float x,float y,float z,float w) {
 ImVec2 Button::getPosition(){
     return position;
 }
+
+void Button::UpdateText(std::string newText){
+    label = newText;
+}
+
+void Button::UpdateFunction(std::function<void()> newFunction){
+    onClick = newFunction;
+}

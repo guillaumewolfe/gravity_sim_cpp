@@ -514,6 +514,7 @@ void CameraOptionsTool::draw_POV_following(){
 }
 
 void CameraOptionsTool::draw_combo(float x1, float y1, float x2, float y2){
+    bool comboOpen = false;
     ImGui::PushFont(nameFontBig);
     ImVec2 center = ImVec2(x1,y1);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -534,6 +535,7 @@ void CameraOptionsTool::draw_combo(float x1, float y1, float x2, float y2){
     ImGui::SetCursorPos(center);
     ImGui::SetNextItemWidth(textSize.x*1.2);
     if (ImGui::BeginCombo("##POV TARGET", POVtarget->name.c_str(), ImGuiComboFlags_NoArrowButton)) {
+        comboOpen = true;
         for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
             if(otherObj == followedObject){continue;}
             std::string name = otherObj->getName();
@@ -560,6 +562,7 @@ void CameraOptionsTool::draw_combo(float x1, float y1, float x2, float y2){
     ImGui::SetCursorPos(center);
     ImGui::SetNextItemWidth(textSize.x*1.2);
     if (ImGui::BeginCombo("##FOLLOW OBJECT", followedObject->name.c_str(), ImGuiComboFlags_NoArrowButton)) {
+        comboOpen = true;
         for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
             if(otherObj == POVtarget){continue;}
             std::string name = otherObj->getName();
@@ -579,7 +582,15 @@ void CameraOptionsTool::draw_combo(float x1, float y1, float x2, float y2){
         changeFollowObject(newFollowedObject);
     }
 
-
+    if(comboOpen){
+        for(auto& button: buttonsMode2){
+            button->enabled = false;
+        }
+    }else{
+        for(auto& button: buttonsMode2){
+            button->enabled = true;
+        }
+    }
 
     ImGui::PopStyleColor(7);
     ImGui::PopFont();

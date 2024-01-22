@@ -6,10 +6,12 @@
 #include "UI/Labbel.h"
 #include "UI/ImageButton.h"
 #include "engine/EngineIncludes.h"
+//#include "engine/RenderTools/dialogBox.h"
 #include <map>
 
 class SimulationState;
 class SoundTool;
+class DialogBox;
 
 class RenderContext {
 public: 
@@ -47,11 +49,9 @@ public:
     bool shouldClickOnNames = true;
     bool mouseIsOnMinimap = false;
     bool isChangingParameters = false;
+    bool showDialogBox = false;
     SoundTool* soundTool;
-
-
-
-
+    DialogBox* dialogBox;
 
 
     std::map<int, std::pair<std::string, ImVec4>> colorByTypeDict;

@@ -1,4 +1,5 @@
 #include "engine/Physics/Physics.h"
+#include "engine/RenderTools/dialogBox.h"
 
 Physics::Physics(RenderContext* renderContext):m_renderContext(renderContext){
 }
@@ -9,6 +10,7 @@ void Physics::Update(double dt){
         updateVelocity(object, dt);
         updatePosition(object, dt);
         updateRotation(object, dt);
+        checkIfTooFar(object);
         if(*(m_renderContext->simulationTime)>0){checkCollision(m_renderContext->systemeSolaire->objects);}
     }
 }
@@ -62,6 +64,19 @@ void Physics::updateRotation(CelestialObject* obj, double dt){
     //if(obj->getName()=="Earth"){
     //std::cout<<"rorationSid: "<<obj->rotationSid<<" Speed: "<<obj->rotationSidSpeed<<" dt:"<<dt*60<<std::endl;}
 } 
+
+
+void Physics::checkIfTooFar(CelestialObject* obj){
+    CelestialObject* sun = m_renderContext->systemeSolaire->getSun(obj);
+
+    double distanceFromSun = (obj->getPositionSimulation()-sun->getPositionSimulation()).norm();
+    double distanceFromOrigin = obj->getPositionSimulation().norm();
+
+    if(distanceFromSun > m_renderContext->systemeSolaire->maxSize*2 or distanceFromOrigin > m_renderContext->systemeSolaire->maxSize*2){
+        m_renderContext->systemeSolaire->removeObject(obj);
+    }
+}
+
 
 void Physics::checkCollision(std::vector<CelestialObject*> objects){
     isColliding = false;
@@ -124,18 +139,24 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
     new_velocity.y = (v1.y * m1 + v2.y * m2) / new_mass;
     new_velocity.z = (v1.z * m1 + v2.z * m2) / new_mass;
 
+    CelestialObject* objectRestant;
+
     if(obj1->getTypeName() == "BlackHole"){
         if(!(obj2->getTypeName() == "BlackHole") && !(obj2->getRayon()>obj1->getRayon())){
         obj1->setWeight(new_mass);
         obj1->updateVelocity(new_velocity);
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->removeObject(obj2);
+        objectRestant = obj1;
+        sendMessageCollsion(obj1, obj2, objectRestant);
         return;}
     }if(obj2->getTypeName() == "BlackHole"){
         obj2->setWeight(new_mass);
         obj2->updateVelocity(new_velocity);
         obj2->addPlanetEaten(obj1);
         m_renderContext->systemeSolaire->removeObject(obj1);
+        objectRestant = obj2;
+        sendMessageCollsion(obj1, obj2, objectRestant);
         return;
     }
 
@@ -147,6 +168,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
+        objectRestant = obj1;
+        sendMessageCollsion(obj1, obj2, objectRestant);
         return;
     } else if(m2 > m1){
         obj2->setWeight(new_mass);
@@ -155,6 +178,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj2->addPlanetEaten(obj1);
         m_renderContext->systemeSolaire->setRayon(obj2);
         m_renderContext->systemeSolaire->removeObject(obj1);
+        objectRestant = obj2;
+        sendMessageCollsion(obj1, obj2, objectRestant);
         return;
     }
     else{
@@ -164,11 +189,17 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
+        objectRestant = obj1;
+        sendMessageCollsion(obj1, obj2, objectRestant);
         return;
     }
     }
+
 }
 
+void Physics::sendMessageCollsion(CelestialObject* obj1, CelestialObject* obj2, CelestialObject* objectRestant){
+    m_renderContext->dialogBox->Open("Collision", "Collision between " + obj1->getName() + " and " + obj2->getName()+"!", "See", "Cancel", [this, objectRestant](){ m_renderContext->currentCamera->newFollowObject(objectRestant); });
+}
 
 void Physics::setCollisionFunction(const std::function<void(CelestialObject*, CelestialObject*)>& func) {
     collisionForToolFunction = func;

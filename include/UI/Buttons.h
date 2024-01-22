@@ -52,6 +52,8 @@ public:
     void turnOn();
     ImVec2 getPosition();
     bool isOn;
+    void UpdateText(std::string newText);
+    void UpdateFunction(std::function<void()> newFunction);
 
     bool soundFunctionValid = false;
 };

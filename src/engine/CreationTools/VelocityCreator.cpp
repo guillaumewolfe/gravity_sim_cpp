@@ -37,11 +37,12 @@ void VelocityCreator::computeEscapeVelocitySpeed(){
   2- Définir G
   3- Trouver distance entre object et Soleil
 */
-double mass = m_renderContext->systemeSolaire->objects[0]->getWeight();
+CelestialObject* sun = m_renderContext->systemeSolaire->getSun(m_manager->newCreatedObject);
+double mass = sun->getWeight();
 const double G = 6.67430e-11;
-double deltax = m_manager->newCreatedObject->getRealPosition().x - m_renderContext->systemeSolaire->objects[0]->getRealPosition().x;
-double deltay = m_manager->newCreatedObject->getRealPosition().y - m_renderContext->systemeSolaire->objects[0]->getRealPosition().y;
-double deltaz = m_manager->newCreatedObject->getRealPosition().z - m_renderContext->systemeSolaire->objects[0]->getRealPosition().z;
+double deltax = m_manager->newCreatedObject->getRealPosition().x - sun->getRealPosition().x;
+double deltay = m_manager->newCreatedObject->getRealPosition().y - sun->getRealPosition().y;
+double deltaz = m_manager->newCreatedObject->getRealPosition().z - sun->getRealPosition().z;
 double puissance = deltax*deltax + deltay*deltay + deltaz*deltaz;
 double distance = pow(puissance, 0.5);
 
@@ -267,12 +268,12 @@ ImVec2 textSizeSun = ImGui::CalcTextSize(sun->name.c_str());
 ImVec2 textSizeObject = ImGui::CalcTextSize(m_object->name.c_str());
 
 drawList->AddLine(posObject, posSun, IM_COL32(255, 255, 255, 30),winWidth*0.001);
-drawList->AddCircleFilled(posSun, radiusSun, IM_COL32(colorSun.x, colorSun.y, colorSun.z, 200), 100);
+drawList->AddCircleFilled(posSun, radiusSun, IM_COL32(colorSun.x, colorSun.y, colorSun.z, 255), 100);
 
 drawList->AddCircleFilled(posObject, radiusObject, IM_COL32(colorObject.x, colorObject.y, colorObject.z, 255), 100);
 drawList->AddCircle(center, sizeBigCircle, IM_COL32(255, 255, 255, 30), 100,winWidth*0.005);
-drawList->AddText(ImVec2(posSun.x-textSizeSun.x/2, posSun.y - 3*radiusSun), IM_COL32(255, 255, 255, 200), sun->name.c_str());
-drawList->AddText(ImVec2(posObject.x-textSizeObject.x/2, posObject.y - 3*radiusObject), IM_COL32(255, 255, 255, 200), m_object->name.c_str());
+drawList->AddText(ImVec2(posSun.x-textSizeSun.x/2, posSun.y - 3*radiusSun), IM_COL32(255, 255, 255, 255), sun->name.c_str());
+drawList->AddText(ImVec2(posObject.x-textSizeObject.x/2, posObject.y - 3*radiusObject), IM_COL32(255, 255, 255, 255), m_object->name.c_str());
 
 if(selectedObject != nullptr){
     ImVec4 colorObjectSelected = typeDictColor[selectedObject->typeName];
@@ -287,16 +288,21 @@ if(selectedObject != nullptr){
 }
 
 
-if(sun->type==1){
+if(sun->type==1){//Soleil
     drawSunEffect(posSun, radiusSun);}
-else if (sun->type!=0){
+else if (sun->type!=0){//Planet
     drawPlanetLight(posSun, center, radiusSun);
+}else{//Trou noir
+    drawPlanetLightNOSHADOW(posSun, radiusSun, sun);
 }
 
-if(m_object->type==1){
+if(m_object->type==1){//Soleil
     drawSunEffect(posObject, radiusObject);
-}else if (m_object->type!=0){
+}else if (m_object->type!=0){//Planet
     drawPlanetLight(posObject, posSun, radiusObject);
+}else{//Trou noir
+    drawPlanetLightNOSHADOW(posObject, radiusObject, m_object);
+
 }
 
 if(selectedObject){
@@ -316,8 +322,8 @@ void VelocityCreator::drawPlanets(){
     float mObjectRadius = normalRadius * 2.5;
     int index = 0;
     //drawList
-    CelestialObject* sun = m_renderContext->systemeSolaire->getSun();
     CelestialObject* m_object = m_manager->newCreatedObject;
+    CelestialObject* sun = m_renderContext->systemeSolaire->getSun(m_object);
 
     calculateVelocityAngle(m_object, sun);
     drawAngleSelector(m_object, sun, selectedObject);
@@ -424,7 +430,18 @@ void VelocityCreator::drawSunEffect(ImVec2 planetPos, float radius){
         float alpha = initialAlpha - alphaDecrease * i;
         drawList->AddCircleFilled(planetPos, blurRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z, alpha), 100);}
 }
-
+void VelocityCreator::drawPlanetLightNOSHADOW(ImVec2 planetPos, float radius, CelestialObject* obj){
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec4 colorCenterDot = typeDictColor[obj->typeName];
+    float numBlurCircles = 20;
+    float blurIncrease = radius*0.03; // How much larger each successive blur circle is
+    float initialAlpha = 30; // Starting alpha value for the outermost blur circle
+    float alphaDecrease = initialAlpha / numBlurCircles; // How much alpha decreases per circle
+    for (int i = 0; i < numBlurCircles; ++i) {
+        float blurRadius = radius + blurIncrease * (i + 1);
+        float alpha = initialAlpha - alphaDecrease * i;
+        drawList->AddCircleFilled(planetPos, blurRadius, IM_COL32(colorCenterDot.x,colorCenterDot.y,colorCenterDot.z, alpha), 100);}
+}
 void VelocityCreator::drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float radius){
         ImVec2 directionToSun = ImVec2(planetPos.x - sunPos.x, planetPos.y - sunPos.y);
         float shadowAngle = atan2(directionToSun.y, directionToSun.x) + IM_PI; // Ajouter PI pour que l'ombre soit opposée au Soleil
@@ -594,7 +611,7 @@ void VelocityCreator::DrawOrbits() {
     auto& objects = m_renderContext->systemeSolaire->objects;
 
     // Obtenir la position du soleil (premier objet)
-    const glm::vec3& sunPos3D = objects[0]->getPositionSimulation().toGlm();
+    const glm::vec3& sunPos3D = m_renderContext->systemeSolaire->getSun(m_manager->newCreatedObject)->getPositionSimulation().toGlm();
 
     // Calculer les coordonnées d'écran du soleil
     glm::mat4 viewMatrix = m_renderContext->currentCamera->getViewMatrix();

@@ -20,7 +20,9 @@ private:
     void updatePosition(CelestialObject* obj, double dt);
     void updateRotaton(CelestialObject* obj, double dt);
     void updateRotation(CelestialObject* obj, double dt);
+    void checkIfTooFar(CelestialObject* obj);
 
+    void sendMessageCollsion(CelestialObject* obj1, CelestialObject* obj2, CelestialObject* objectRestant);
     
 
     const double G = 6.67430e-11;

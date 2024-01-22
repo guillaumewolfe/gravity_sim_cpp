@@ -9,8 +9,8 @@ Ice::Ice() : CelestialObject() {
     real_radius = 2*24622e3;
     type = 4;
     textureID = loadTexture(path_sub.c_str());
-    
-
+    weight = 5.972e24*1.5;
+    real_radius = 6371e3*1.5;
     setName(name_sub);
     setPath(path_sub);
     setDefaultValues();

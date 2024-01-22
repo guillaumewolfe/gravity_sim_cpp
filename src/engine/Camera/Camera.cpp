@@ -112,16 +112,18 @@ void Camera::transitionToFollowObject() {
 void Camera::followObject() {
     if (!followedObject) return;
     if (firstPersonModeEnabled) return;
-
+    float distance;
     if(isGlobalFollowing){
-        followingDistance = globalFollowingDistance;
+        distance = globalFollowingDistance;
+    }else{
+        distance = followingDistance;
     }
     Vec3 objectPosition = followedObject->getPositionSimulation();
     // Utiliser les angles orbitaux pour calculer la position
     Vec3 offset;
-    offset.x = followingDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
-    offset.y = followingDistance * sin(orbitalVerticalAngle);
-    offset.z = followingDistance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+    offset.x = distance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
+    offset.y = distance * sin(orbitalVerticalAngle);
+    offset.z = distance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
 
     position = objectPosition + offset;
     target = objectPosition;
@@ -290,11 +292,34 @@ void Camera::changeValue(bool increase){
     
 }
 
-void Camera::zoomByDistance(bool in){
+void Camera::zoomByDistance(bool in, float speedOffset){
     if (!followedObject) return;
-    float speed = *zoomSensitiviy*0.02;
-    if(in){globalFollowingDistance /= (1.0+speed);}
-    else{globalFollowingDistance *= (1.01+speed);}  
+    float speed = *zoomSensitiviy*0.02+speedOffset;
+
+    //Global
+    if(isGlobalFollowing){
+
+        if(in){globalFollowingDistance /= (1.0+speed);}
+        else{globalFollowingDistance *= (1.01+speed);}
+        }
+
+    //Focus 
+    else{
+        float screenOccupation = calculateScreenOccupationPercentage(followedObject);
+        //Si screenOccupation > 80%, return; sinon zoom out/in comme d'habitude
+        if(in){
+            if(screenOccupation>80){return;}
+            else{followingDistance /= (1.0+speed);}
+        }
+        else{
+            if(screenOccupation<1){return;}
+            else{followingDistance *= (1.0+speed);}
+        }
+
+    }
+
+
+
 }
 
 
@@ -500,6 +525,10 @@ void Camera::newFollowObject(CelestialObject* obj) {
 }
 
 void Camera::newFollowObjectGlobal(CelestialObject* obj) {
+    if(m_renderContext->systemeSolaire->objects.size()==1){
+        newFollowObject(obj);
+        return;
+    }
     isTransiting = true;
     followedObject = obj;
     isFocusOnAxis = false;

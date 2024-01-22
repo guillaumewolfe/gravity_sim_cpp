@@ -140,26 +140,12 @@ void UITool::checkScroll(){
         if(ImGui::GetIO().MouseWheel != 0){
             if(ImGui::GetIO().MouseWheel > 0){
                 bool in = false;
-                if(!m_renderContext->currentCamera->isGlobalFollowing){
-                m_renderContext->currentCamera->zoom(in);}
-                else{
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    }}
+                    m_renderContext->currentCamera->zoomByDistance(in,0.075);
+                    }
             else{
                 bool in = true;
-                if(!m_renderContext->currentCamera->isGlobalFollowing){
-                m_renderContext->currentCamera->zoom(in);}
-                else{
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    m_renderContext->currentCamera->zoomByDistance(in);
-                    }}
+                m_renderContext->currentCamera->zoomByDistance(in,0.075);
+                    }
         }
     }
 }

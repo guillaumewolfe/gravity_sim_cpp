@@ -71,6 +71,7 @@ private:
     void drawAngleSelector(CelestialObject* planet, CelestialObject* sun, CelestialObject* selectedObject);
     void drawSunEffect(ImVec2 planetPos, float radius);
     void drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float radius);
+    void drawPlanetLightNOSHADOW(ImVec2 planetPos, float radius, CelestialObject* obj);
     void draw_half_circle_shadow(ImVec2 center, float radius, ImU32 color, float angle, int num_segments);
     
     void generate_colors();

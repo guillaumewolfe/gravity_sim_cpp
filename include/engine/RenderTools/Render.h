@@ -20,6 +20,7 @@
 #include "engine/RenderTools/minimapTool.h"
 #include "engine/RenderTools/keysUI.h"
 #include "engine/RenderTools/collisionTool.h"
+#include "engine/RenderTools/dialogBox.h"
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -55,6 +56,7 @@ OrbitTool* Orbit_Tool;
 MinimapTool* Minimap_Tool;
 KeysUI* Keys_UI;
 CollisionTool* Collision_Tool;
+DialogBox* DialogBox_Tool;
 
 
 

@@ -70,12 +70,13 @@ public:
     float* rotationSensitivity;
     int transitionStepAxis = 0;
     bool isTransitingAxis = false;
+    float followingOffset = 0.0f;
 
     void Update();
     void lookAt(); 
     void zoom(bool in);
     void zoomFirstPerson(bool in);
-    void zoomByDistance(bool in);
+    void zoomByDistance(bool in, float speedOffset = 0);
     void checkDistance();
     float calculateScreenOccupationPercentage(CelestialObject* object);
     void stopAxisTransition();

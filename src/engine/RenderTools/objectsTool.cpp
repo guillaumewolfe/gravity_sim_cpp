@@ -173,7 +173,10 @@ void ObjectsTool::drawEffects(){
 
 
 void ObjectsTool::updateLumiere(CelestialObject* object){
-    glm::vec3 positionSoleil = glm::vec3(0,0,0);
+    CelestialObject* sun = m_renderContext->systemeSolaire->getSun(object);
+    bool isSunPresent = (sun != nullptr && sun->type == 1);
+
+    glm::vec3 positionSoleil = m_renderContext->systemeSolaire->getSun(object)->position_simulation.toGlm();
     glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
     glm::vec3 lightDir = glm::normalize(positionSoleil - positionObjet);
 
@@ -187,6 +190,9 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
     // Passer la direction de la lumière ajustée au shader
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection");
     glUniform3f(lightDirUniform, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+
+    GLint isThereSunUniform = glGetUniformLocation(shaderProgram, "isThereSun");
+    glUniform1i(isThereSunUniform, isSunPresent ? GL_TRUE : GL_FALSE); 
 }
 
 

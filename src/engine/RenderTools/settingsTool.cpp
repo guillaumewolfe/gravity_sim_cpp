@@ -253,16 +253,16 @@ void SettingsTool::generate_UImodes3(){
     ImVec4 color = ImVec4(200,200,200,150);
     ImVec4 active = ImVec4(150,255,150,200);
     float xPosition = 0.55f;
-    ToggleButton* qualityToggle = new ToggleButton(xPosition,0.55f,ImVec2(0.027f,0.025f),color,
+    ToggleButton* qualityToggle = new ToggleButton(xPosition,0.55f,ImVec2(0.035f,0.025f),color,
                                     active,
                                     &gameSettings->highQuality,50);
-    ToggleButton* fullScreenToggle = new ToggleButton(xPosition,0.59f,ImVec2(0.027f,0.025f),color,
+    ToggleButton* fullScreenToggle = new ToggleButton(xPosition,0.59f,ImVec2(0.035f,0.025f),color,
                                     active,
                                     &gameSettings->fullscreen,50);
-    ToggleButton* vsyncToggle = new ToggleButton(xPosition,0.63f,ImVec2(0.027f,0.025f),color,
+    ToggleButton* vsyncToggle = new ToggleButton(xPosition,0.63f,ImVec2(0.035f,0.025f),color,
                                 active,
                                 &gameSettings->vsync,50);
-    ToggleButton* antiAliashingToggle = new ToggleButton(xPosition,0.67f,ImVec2(0.027f,0.025f),color,
+    ToggleButton* antiAliashingToggle = new ToggleButton(xPosition,0.67f,ImVec2(0.035f,0.025f),color,
                                     active,
                                     &gameSettings->antiAliasing,50);
 

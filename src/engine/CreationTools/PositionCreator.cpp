@@ -48,13 +48,6 @@ void PositionCreator::Draw(){
     drawPlanets();
     drawControls();
 
-    ImVec2 mousePos = ImGui::GetMousePos();
-    ImVec2 mousePosPercent = ImVec2(mousePos.x/winWidth, mousePos.y/winHeight);
-
-    if(ImGui::IsMouseClicked(0)){
-        std::cout << "MousePos: " << mousePosPercent.x << ", " << mousePosPercent.y << std::endl;
-    }
-
 
     if (!isHoveringRectangle()){shouldUpdate=false;}
     else{shouldUpdate=true;}
@@ -137,10 +130,10 @@ void PositionCreator::generate_buttons(){
 
     //Icons:
 
-    Icon* reset = new Icon(0.08f, 0.58f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/r.png",0.75);
+    Icon* reset = new Icon(0.08f, 0.57f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/r.png",0.75);
     Icon* wasd = new Icon(0.08f, 0.61f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/wasd.png",0.75);
-    Icon* zoom = new Icon(0.08f, 0.64f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/scroll.png",0.75);
-    Icon* mouse = new Icon(0.08f, 0.67f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/mouse.png",0.75);
+    Icon* zoom = new Icon(0.08f, 0.65f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/scroll.png",0.75);
+    Icon* mouse = new Icon(0.08f, 0.69f,ImVec2(0.025f,0.025f),0.35f,"../assets/button/keys/mouse.png",0.75);
 
 
     iconsControls.push_back(reset);
@@ -243,13 +236,13 @@ void PositionCreator::generate_labels(){
 
 
 
-    Labbel *reset = new Labbel(0.11, 0.58,ImVec4(255,255,255,255),
+    Labbel *reset = new Labbel(0.11, 0.57,ImVec4(255,255,255,255),
                             "Reset View",20.0f,0.7f);
     Labbel *wasdLabel = new Labbel(0.11, 0.61,ImVec4(255,255,255,255),
                             "Move Camera",20.0f,0.7f);
-    Labbel *zoomLabel = new Labbel(0.11, 0.64,ImVec4(255,255,255,255),
+    Labbel *zoomLabel = new Labbel(0.11, 0.65,ImVec4(255,255,255,255),
                             "Zoom with scroll",20.0f,0.7f);
-    Labbel *mouseLabel = new Labbel(0.11, 0.67,ImVec4(255,255,255,255),
+    Labbel *mouseLabel = new Labbel(0.11, 0.69,ImVec4(255,255,255,255),
                             "Click to Select/Unselect",18.0f,0.7f);   
 
 
@@ -458,7 +451,7 @@ ImGui::PushFont(nameFont);
 
         float planetRadius = winWidth * 0.006;
         ImVec4 planetColor = typeDictColor[object->typeName];
-        float distanceFromSun = pow(pow(planetScreenPos.x-center.x,2)+pow(planetScreenPos.y-center.x,2),0.5);
+        float distanceFromSun = pow(pow(planetScreenPos.x-center.x,2)+pow(planetScreenPos.y-center.y,2),0.5);
             if((object!=sun && object!= m_manager->newCreatedObject) && distanceFromSun<planetRadius*2){
                 continue;}
         ImU32 color = (object == m_manager->newCreatedObject) ? IM_COL32(255, 255, 255,100) : IM_COL32(255, 255, 255, 20);
@@ -466,7 +459,7 @@ ImGui::PushFont(nameFont);
 
         ImVec2 textSize = ImGui::CalcTextSize(object->getName().c_str());
         float alphaText = (object == m_manager->newCreatedObject) ? 255 : 100;
-        int segments = 500;
+        int segments = 200;
         float increment = 2.0f * M_PI / segments;
         ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
         ImVec4 colorOrbit = object == m_manager->newCreatedObject ? ImVec4(255, 255, 255, 150) : ImVec4(255, 255, 255, 100);

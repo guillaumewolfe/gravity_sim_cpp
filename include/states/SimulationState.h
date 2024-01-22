@@ -127,5 +127,7 @@ public:
     void resetButtons();
     void checkButtonState();
 
+    void showDialogBox();
+
 };
 #endif

@@ -46,13 +46,13 @@ public:
     Vec3 vitesseInitialeEditing;
      
     std::string getStateName();
-
+    std::map<std::string, std::unique_ptr<StateCreator>> states;
+    std::function<void()> updateNamesFunction;
 
 private:
-    std::map<std::string, std::unique_ptr<StateCreator>> states;
+
     StateCreator* currentState = nullptr;
 
-    std::function<void()> updateNamesFunction;
     void updateNames();
 };
 

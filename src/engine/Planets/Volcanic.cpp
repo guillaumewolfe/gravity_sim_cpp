@@ -10,7 +10,8 @@ Volcanic::Volcanic() : CelestialObject() {
     real_radius = 24622e3/2;
     type = 2;
     textureID = loadTexture(path_sub.c_str());
-
+    weight = 5.972e24*0.5;
+    real_radius = 6371e3*0.5;
     setName(name_sub);
     setPath(path_sub);
     setDefaultValues();

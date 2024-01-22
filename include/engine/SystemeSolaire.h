@@ -34,7 +34,7 @@ void removeObject(CelestialObject* objToRemove);
 void updateEffects(CelestialObject* obj);
 RenderContext* m_renderContext;
 void setContext(RenderContext* renderContext);
-CelestialObject* getSun();
+CelestialObject* getSun(CelestialObject* exclude = nullptr);
 
 private:
 

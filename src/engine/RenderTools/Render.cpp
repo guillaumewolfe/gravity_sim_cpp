@@ -29,6 +29,8 @@ void Render::initTools(){
     Minimap_Tool = new MinimapTool(Context);
     Keys_UI = new KeysUI(Context);
     Collision_Tool = new CollisionTool(Context);
+    DialogBox_Tool = new DialogBox(Context);
+    Context->dialogBox = DialogBox_Tool;
 
     initCamera();
 }
@@ -52,6 +54,7 @@ void Render::Draw(){
     if(Context->showZoom){Zoom_Tool->drawImGui();}
     UI_Tool->Draw();
     if(Context->showControls){Keys_UI->Draw();}
+    if(Context->showDialogBox){DialogBox_Tool->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
     if(*(Context->showOptions)){Options_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}

@@ -406,7 +406,6 @@ void MinimapTool::CloseButton(){
 
 void MinimapTool::SelectObject(CelestialObject* object) {
     if(object == nullptr) {return;}
-    CloseButton();
     m_renderContext->currentCamera->newFollowObject(object);
     *(m_renderContext->showInfo) = true;
 }

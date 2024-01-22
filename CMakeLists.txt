@@ -22,7 +22,6 @@ if(WIN32)
     set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
     include_directories("/opt/homebrew/Cellar/glm/0.9.9.8/include")
     include_directories("/opt/homebrew/Cellar/opencv/4.8.1_4/include/opencv4")
-    include_directories("/opt/homebrew/Cellar/glew/2.2.0_1/include")
     find_package(CURL REQUIRED)
     include_directories(${CURL_INCLUDE_DIRS})
 

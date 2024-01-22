@@ -164,7 +164,7 @@ void PlaneteInfoTool::initButtons(){
                         "../assets/button/moveTo.png", 0,
                             std::bind(&PlaneteInfoTool::moveToButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
         
-    ImageButton *orbit = new ImageButton(playSoundFunc,0.803646, 1-0.29f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
+    ImageButton *orbit = new ImageButton(playSoundFunc,0.803646, 0.75f, ImVec2(taille_x*0.7, taille_y*0.7),0.90,
                         button_color,button_color,
                         "../assets/button/orbit.png", 0,
                             std::bind(&PlaneteInfoTool::orbitButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -232,7 +232,7 @@ void PlaneteInfoTool::updateLabels(){
  //Soleil empty
 
     else if (m_object->type == 2 || m_object->type == 3 || m_object->type == 4){//Planets
-    auto distance = (m_object->position_real-m_renderContext->systemeSolaire->objects[0]->position_real).norm();
+    auto distance = (m_object->position_real-m_renderContext->systemeSolaire->getSun()->position_real).norm();
     distance = distance/149597870e3;
     std::ostringstream distanceString;
     distanceString << std::fixed << std::setprecision(2) << distance << " AU";
