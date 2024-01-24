@@ -985,19 +985,14 @@ void ParametersCreator::resetRadius(){
     }
 }
 void ParametersCreator::setParameters(){
-
     //Mass            
     m_object->setWeight(mass);
-
     m_object->real_radius = radi;
     m_renderContext->systemeSolaire->setRayon(m_object);
     m_renderContext->currentCamera->newFollowObject(m_object);
-
     m_object->setName(planeteName);
     m_manager->updateNamesFunction();
-
     next_state();
-
 }
 
 

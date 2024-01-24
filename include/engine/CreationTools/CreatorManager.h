@@ -27,13 +27,13 @@ public:
     void InitStates();
     void Exit();
 
-    CelestialObject* newCreatedObject;
+    CelestialObject* newCreatedObject = nullptr;
     bool isCreated = false;
     bool creationConfirmed = false;
 
-    Vec3 cameraCreationPosition;
+    Vec3 cameraCreationPosition = Vec3(0,125,0);
     Vec3 cameraCreationPositionInit = Vec3(0,125,0);
-    Vec3 cameraCreationTarget;
+    Vec3 cameraCreationTarget = Vec3(0,0,0);
     Vec3 cameraCreationTargetInit = Vec3(0,0,0);
     void resetCamera();
     void updateCamera();
@@ -42,8 +42,8 @@ public:
     bool isEditingConfirmed = false;
     bool showPath = false;
     void editObject(CelestialObject* object);
-    Vec3 positionInitialeEditing;
-    Vec3 vitesseInitialeEditing;
+    Vec3 positionInitialeEditing = Vec3(0,0,0);
+    Vec3 vitesseInitialeEditing = Vec3(0,0,0);
      
     std::string getStateName();
     std::map<std::string, std::unique_ptr<StateCreator>> states;

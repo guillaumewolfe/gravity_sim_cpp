@@ -14,12 +14,24 @@ GlowTool::GlowTool(CelestialObject* celestialObject, RenderContext* renderContex
 }
 // Destructeur
 GlowTool::~GlowTool() {
-    for (const auto& sphere : glowSpheres) {
-        glDeleteBuffers(1, &sphere.vboVertices);
-        glDeleteBuffers(1, &sphere.vboNormals);
-        glDeleteBuffers(1, &sphere.vboTexCoords);
+    if (!glowSpheres.empty()) {
+        for (const auto& sphere : glowSpheres) {
+            if (sphere.vboVertices != 0) {
+                glDeleteBuffers(1, &sphere.vboVertices);
+            }
+            if (sphere.vboNormals != 0) {
+                glDeleteBuffers(1, &sphere.vboNormals);
+            }
+            if (sphere.vboTexCoords != 0) {
+                glDeleteBuffers(1, &sphere.vboTexCoords);
+            }
+        }
     }
-    glDeleteProgram(shaderProgram);
+    if (shaderProgram != 0) {
+        glDeleteProgram(shaderProgram);
+    }
+    m_celestialObject = nullptr;
+    m_renderContext = nullptr;
 }
 
 
@@ -50,7 +62,8 @@ void GlowTool::initGlow() {
 }
 
 void GlowTool::drawGlow(Camera* camera) {
-    if (m_celestialObject == nullptr) {
+
+    if (m_celestialObject == nullptr || m_renderContext == nullptr) {
         return;
     }
     if(m_renderContext->currentCamera->followedObject == m_celestialObject && m_renderContext->currentCamera->firstPersonModeEnabled){
@@ -114,20 +127,20 @@ void GlowTool::initSphere(GlowSphere& sphere, int lats, int longs, float rayon) 
     std::vector<float> texCoords;
 
     for (int i = 0; i <= lats; ++i) {
-        float lat0 = M_PI * (-0.5f + (float) (i - 1) / lats);
-        float z0  = sin(lat0);
+        float lat0 = M_PI * (-0.5f + (float)(i - 1) / lats);
+        float z0 = sin(lat0);
         float zr0 = cos(lat0);
 
-        float lat1 = M_PI * (-0.5f + (float) i / lats);
+        float lat1 = M_PI * (-0.5f + (float)i / lats);
         float z1 = sin(lat1);
         float zr1 = cos(lat1);
 
         for (int j = 0; j <= longs; ++j) {
-            float lng = 2 * M_PI * (float) j / longs;
+            float lng = 2 * M_PI * (float)j / longs;
             float x = cos(lng);
             float y = sin(lng);
 
-            // Coordonnées des vertices et des normales pour les deux points
+            // Coordinates for vertices and normals
             normals.push_back(x * zr0); vertices.push_back(x * zr0 * rayon);
             normals.push_back(y * zr0); vertices.push_back(y * zr0 * rayon);
             normals.push_back(z0);      vertices.push_back(z0 * rayon);
@@ -136,38 +149,31 @@ void GlowTool::initSphere(GlowSphere& sphere, int lats, int longs, float rayon) 
             normals.push_back(y * zr1); vertices.push_back(y * zr1 * rayon);
             normals.push_back(z1);      vertices.push_back(z1 * rayon);
 
-            // Coordonnées de texture (peuvent être omises si non utilisées)
+            // Texture coordinates (optional if not used)
             texCoords.push_back((float)j / longs);
             texCoords.push_back((float)i / lats);
             texCoords.push_back((float)j / longs);
             texCoords.push_back((float)(i + 1) / lats);
         }
-        glGenBuffers(1, &sphere.vboVertices);
-        glBindBuffer(GL_ARRAY_BUFFER, sphere.vboVertices);
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-        glGenBuffers(1, &sphere.vboNormals);
-        glBindBuffer(GL_ARRAY_BUFFER, sphere.vboNormals);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
-
     }
 
-    // Création et remplissage des VBOs pour les vertices
+    // Generate and fill VBO for vertices
     glGenBuffers(1, &sphere.vboVertices);
     glBindBuffer(GL_ARRAY_BUFFER, sphere.vboVertices);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-    // Répétez le processus pour les normales et les coordonnées de texture
+    // Repeat the process for normals
     glGenBuffers(1, &sphere.vboNormals);
     glBindBuffer(GL_ARRAY_BUFFER, sphere.vboNormals);
     glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
 
+    // Repeat the process for texture coordinates
     glGenBuffers(1, &sphere.vboTexCoords);
     glBindBuffer(GL_ARRAY_BUFFER, sphere.vboTexCoords);
     glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(float), texCoords.data(), GL_STATIC_DRAW);
 
-    // Stockez le nombre de vertices
-    sphere.vertexCount = vertices.size() / 3; // Chaque vertex est composé de 3 floats
+    // Store the number of vertices
+    sphere.vertexCount = vertices.size() / 3; // Each vertex consists of 3 floats
 }
 
 

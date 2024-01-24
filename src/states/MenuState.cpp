@@ -8,8 +8,11 @@ MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
        1- Construire les bouttons
        2- Initialiser le video*/
     Enter();
+    messageBox = nullptr;
   
 }
+
+
 void MenuState::Enter() {
 glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -223,6 +226,8 @@ void MenuState::Exit() {
     // Close SDL_mixer
     Mix_CloseAudio();
     Mix_Quit();
+
+    
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -264,6 +269,9 @@ void MenuState::RestartState(){
 
 
 void MenuState::generateVideo() {
+    //Set counter to 0
+    lastTime = glfwGetTime();
+    accumulator = 0.0;
     
     std::string videoPath = getFullPath("/assets/animations/intro.mp4");
     
@@ -272,7 +280,6 @@ void MenuState::generateVideo() {
         std::cerr << "Error opening video file." << std::endl;
         return;
     }
-    
     // Only generate the texture if it hasn't been generated before
     if (videoTexture == 0) {
         glGenTextures(1, &videoTexture);

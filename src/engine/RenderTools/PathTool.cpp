@@ -13,8 +13,9 @@ PathTool::~PathTool() {
 
 
 void PathTool::Draw() {
-
-    if(!m_renderContext->showAllPaths || !m_renderContext->isCreating){
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    if(!m_renderContext->showAllPaths || *(m_renderContext->isCreating)){
         return;
     }
     // Assurez-vous que le mode de rendu OpenGL est configuré pour dessiner des lignes

@@ -25,15 +25,18 @@ public:
 
     GLuint textureID;
 
-    ImageButton* pauseButton;
+    ImageButton* pauseButton = nullptr;
 
 private:
     int winWidth, winHeight;
-    ImFont* myFont;
+    ImFont* myFont = nullptr;
     std::chrono::steady_clock::time_point lastFrameTime;
     int frameCount;
     float fps;
     void checkScroll();
+    void drawLive(ImDrawList* drawList, ImVec2 centerPos);
+    void drawConnexionFailed(ImDrawList* drawList, ImVec2 centerPos);
+
 
 };
 

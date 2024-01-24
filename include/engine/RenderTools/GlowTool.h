@@ -9,11 +9,11 @@
 
 
 struct GlowSphere {
-    GLuint vboVertices, vboNormals, vboTexCoords;
-    int vertexCount;
-    float rayon; // Rayon de la sphère
-    float alpha; // Transparence de la sphère
-    glm::vec3 color; // Couleur de la sphère
+    GLuint vboVertices, vboNormals, vboTexCoords = 0;
+    int vertexCount = 0;
+    float rayon = 1; // Rayon de la sphère
+    float alpha = 1; // Transparence de la sphère
+    glm::vec3 color = glm::vec3(1,1,1); // Couleur de la sphère
 };
 
 class GlowTool {
@@ -28,8 +28,8 @@ public:
     void initSphere(GlowSphere& sphere, int lats, int longs, float rayon);
 
 private:
-    RenderContext* m_renderContext;
-    CelestialObject* m_celestialObject; 
+    RenderContext* m_renderContext = nullptr;
+    CelestialObject* m_celestialObject = nullptr; 
     int nbreSphere = 50;
     float sizeOfGlow = 0.4;
     std::vector<GlowSphere> glowSpheres;
@@ -38,7 +38,7 @@ private:
 
 
     //Shaders
-    GLuint shaderProgram;
+    GLuint shaderProgram = 0;
     void initShaders();
     void checkCompileErrors(GLuint shader, std::string type);
     std::string readShaderFile(const std::string& shaderPath);

@@ -158,7 +158,7 @@ void ObjectsTool::drawEffects(){
             object->glowTool->drawGlow(m_camera);
         }
         if(object->athmosphereTool!=nullptr){
-            object->athmosphereTool->drawAthmosphere(m_renderContext->systemeSolaire->objects[0], m_camera);
+            object->athmosphereTool->drawAthmosphere(m_renderContext->systemeSolaire->getSun(object), m_camera);
         }
         if(object->saturnRingTool!=nullptr){
             object->saturnRingTool->Draw(m_camera);

@@ -28,9 +28,9 @@ public:
     ImVec2 getSize();
 
 private:
-    ImVec2 position;
-    ImVec2 sizePercent;
-    float imageScale;
-    GLuint texture;
-    float alpha;
+    ImVec2 position = ImVec2(0, 0);
+    ImVec2 sizePercent = ImVec2(0, 0);
+    float imageScale = 1.0f;
+    GLuint texture = 0;
+    float alpha = 1.0f;
 };

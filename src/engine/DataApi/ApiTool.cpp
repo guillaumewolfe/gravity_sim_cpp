@@ -1,6 +1,7 @@
 #include "engine/DataAPI/ApiTool.h"
 #include <chrono>
 #include <sstream>
+#include "path_util.h"
 
 
 ApiTool::ApiTool() {
@@ -72,16 +73,23 @@ std::string ApiTool::getBodyData(const std::string& bodyName) {
     std::string readBuffer;
 
     std::string url = "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='" + bodyId + "'&OBJ_DATA='YES'&MAKE_EPHEM='YES'&EPHEM_TYPE='VECTORS'&CENTER='@0'&START_TIME='" + currentDateUTC + "'&STOP_TIME='" + nextDateUTC + "'&OUT_UNITS='KM-S'";
-    
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    std::string certificatFile = getFullPath("../lib/CURL/cacert-2023-12-12.pem");       
+    curl_easy_setopt(curl, CURLOPT_CAINFO, certificatFile.c_str());
+    curl_easy_setopt(curl, CURLOPT_CAPATH, certificatFile.c_str());
+    //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); // Désactiver la vérification du certificat SSL du pair
+    //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0); // Désactiver la vérification du nom d'hôte SSL
+
 
         CURLcode res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
-            //std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            connectionSuccess = false;
             return "connexionFailed";
         }
+        connectionSuccess = true;
         return readBuffer;
     }
 Vec3 rotateToXZPlane(const Vec3& original) {
@@ -95,7 +103,7 @@ std::pair<Vec3, Vec3> ApiTool::extractBodyData(const std::string& data, const st
     std::smatch matches;
 
     if(data == "connexionFailed"){
-        std::cerr << "Connexion échouée, utilisation des données par défaut" << std::endl;
+        std::cerr << "Connexion failed, default values" << std::endl;
         return getDefaultBodyData(bodyName);
     }   
 

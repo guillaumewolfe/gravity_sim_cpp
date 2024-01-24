@@ -9,13 +9,13 @@
 
 
 struct Particule{
-    GLuint vboVertices, vboNormals, vboTexCoords;
-    int vertexCount;
-    float rayon; // Rayon de la Particule
-    float alpha; // Transparence de la Particule
-    glm::vec3 color; // Couleur de la Particule
-    GLuint textureID; 
-    glm::vec3 position; // Position de la Particule
+    GLuint vboVertices, vboNormals, vboTexCoords = 0;
+    int vertexCount = 0;
+    float rayon = 1; // Rayon de la Particule
+    float alpha = 0; // Transparence de la Particule
+    glm::vec3 color = glm::vec3(1,1,1); // Couleur de la Particule
+    GLuint textureID = 0; // ID de la texture de la Particule
+    glm::vec3 position = glm::vec3(0,0,0); // Position de la Particule
 };
 
 class SaturnRingTool {
@@ -33,9 +33,9 @@ public:
 
 private:
 
-    RenderContext* m_renderContext;
-    CelestialObject* m_celestialObject; 
-    std::vector<Particule> Particules;
+    RenderContext* m_renderContext = nullptr;
+    CelestialObject* m_celestialObject = nullptr; 
+    std::vector<Particule> Particules = std::vector<Particule>();
 
     float rotation;
     
@@ -43,7 +43,7 @@ private:
 
 
     //Shaders
-    GLuint shaderProgram;
+    GLuint shaderProgram = 0;
     void initShaders();
     void checkCompileErrors(GLuint shader, std::string type);
     std::string readShaderFile(const std::string& shaderPath);

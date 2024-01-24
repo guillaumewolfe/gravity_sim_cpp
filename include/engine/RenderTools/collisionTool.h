@@ -25,8 +25,8 @@ public:
 
 
 private:
-    CelestialObject* obj1;
-    CelestialObject* obj2;
+    CelestialObject* obj1 = nullptr;
+    CelestialObject* obj2 = nullptr;
     std::vector<ParticleCollision> particles;
     void GenerateParticle();
     void computeFactor();

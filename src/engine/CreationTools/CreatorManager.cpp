@@ -123,6 +123,7 @@ void CreatorManager::Exit(){
     isEditingConfirmed = false;
     isEditing = false;
     ChangeState("TextureCreator");
+    m_renderContext->debug = true;
 }
 
 

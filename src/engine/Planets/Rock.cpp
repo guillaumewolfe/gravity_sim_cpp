@@ -7,11 +7,10 @@ Rock::Rock() : CelestialObject() {
     std::string name_sub = "Rock";
     typeName = "Rock";
     std::string path_sub = "../assets/textures/fictionnal_terre.jpg";
-    real_radius = 24622e3/4;
     type = 2;
     textureID = loadTexture(path_sub.c_str());
-    
-
+    weight = 5.972e24*0.3;
+    real_radius = 6371e3*2;
     setName(name_sub);
     setPath(path_sub);
     setDefaultValues();

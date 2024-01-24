@@ -21,12 +21,12 @@ public:
     bool isHidden = false;
 
 private:
-    ImVec2 position;        // Position en pourcentage de la largeur et hauteur de la fenêtre
-    ImVec2 sizePercent;     // Taille en pourcentage de la largeur et hauteur de la fenêtre
-    ImVec4 color;           // Couleur du fond lorsque le bouton est désactivé  // Couleur du cercle et du bord lorsque le bouton est activé/hover
-    ImVec4 activeColor;     // Couleur du fond lorsque le bouton est activé
-    bool* value;            // Pointeur vers la variable booléenne contrôlée par le bouton
-    float cornerRadius;     // Rayon des coins arrondis du rectangle
+    ImVec2 position = ImVec2(0, 0);     
+    ImVec2 sizePercent = ImVec2(1,1);     // Taille en pourcentage de la largeur et hauteur de la fenêtre
+    ImVec4 color = ImVec4(255,255,255,255);           // Couleur du fond lorsque le bouton est désactivé  // Couleur du cercle et du bord lorsque le bouton est activé/hover
+    ImVec4 activeColor = ImVec4(255,255,255,255);     // Couleur du fond lorsque le bouton est activé
+    bool* value = nullptr;            // Pointeur vers la variable booléenne contrôlée par le bouton
+    float cornerRadius = 1;     // Rayon des coins arrondis du rectangle
 };
 
 #endif // TOGGLE_BUTTON_H

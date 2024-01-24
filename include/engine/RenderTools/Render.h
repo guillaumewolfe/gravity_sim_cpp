@@ -20,7 +20,7 @@
 #include "engine/RenderTools/minimapTool.h"
 #include "engine/RenderTools/keysUI.h"
 #include "engine/RenderTools/collisionTool.h"
-#include "engine/RenderTools/dialogBox.h"
+#include "engine/RenderTools/notificationTool.h"
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -35,28 +35,28 @@ private:
 
 public:
 /// Methodes
-RenderContext* Context;
+RenderContext* Context = nullptr;
 
 //Tools
 
-UITool* UI_Tool;
-ObjectsTool* Objects_Tool;
-BackgroundTool* Background_Tool;
-AxesTool* Axes_Tool;
-PathTool* Path_Tool;
-CreatorManager* Creator_Manager;
-MessageTool* Message_Tool;
-NameTool* Name_Tool;
-PlaneteInfoTool* PlaneteInfo_Tool;
-CameraOptionsTool* CameraOptions_Tool;
-OptionsTool* Options_Tool;
-SettingsTool* Settings_Tool;
-ZoomTool* Zoom_Tool;
-OrbitTool* Orbit_Tool;
-MinimapTool* Minimap_Tool;
-KeysUI* Keys_UI;
-CollisionTool* Collision_Tool;
-DialogBox* DialogBox_Tool;
+UITool* UI_Tool = nullptr;
+ObjectsTool* Objects_Tool = nullptr;
+BackgroundTool* Background_Tool = nullptr;
+AxesTool* Axes_Tool = nullptr;
+PathTool* Path_Tool = nullptr;
+CreatorManager* Creator_Manager = nullptr;
+MessageTool* Message_Tool = nullptr;
+NameTool* Name_Tool = nullptr;
+PlaneteInfoTool* PlaneteInfo_Tool = nullptr;
+CameraOptionsTool* CameraOptions_Tool = nullptr;
+OptionsTool* Options_Tool = nullptr;
+SettingsTool* Settings_Tool = nullptr;
+ZoomTool* Zoom_Tool = nullptr;
+OrbitTool* Orbit_Tool = nullptr;
+MinimapTool* Minimap_Tool = nullptr;
+KeysUI* Keys_UI = nullptr;
+CollisionTool* Collision_Tool = nullptr;
+NotificationTool* Notification_Tool = nullptr;
 
 
 

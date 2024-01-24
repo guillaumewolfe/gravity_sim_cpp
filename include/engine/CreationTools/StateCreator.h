@@ -18,8 +18,8 @@ public:
 
 protected:
 
-    RenderContext* m_renderContext;
-    CreatorManager* m_manager;
+    RenderContext* m_renderContext = nullptr;
+    CreatorManager* m_manager = nullptr;
 };
 
 #endif // StateCreator_H

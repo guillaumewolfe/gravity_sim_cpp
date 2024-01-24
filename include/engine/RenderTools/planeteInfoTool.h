@@ -51,7 +51,7 @@ public:
     int mode = 1;
     void setMode(int mode);
 
-    ImFont* storyFont;
+    ImFont* storyFont = nullptr;
     ChangeParametersTool* changeParametersTool;
     bool isHovering = false;
     void setConfirmBoxFunction(const std::function<void(std::function<void()> func, const std::string& message)>& confirmBoxFunc);
@@ -59,18 +59,18 @@ public:
 
 private:
 
-    CelestialObject* m_object;
+    CelestialObject* m_object = nullptr;
     CelestialObject* previousObject = nullptr;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
     std::vector<ImageButton*> imageButtons;
     std::map<int, std::pair<std::string, ImVec4>> typeDict;
     double Rotation=0;
 
-    std::vector<Labbel*> labbelsMode3;
-    std::vector<Button*> buttonsMode3;
-    std::vector<ToggleButton*> togglebuttonsMode3;
-    std::vector<ImageButton*> imageButtonsMode3;    
+    std::vector<Labbel*> labbelsMode3 = std::vector<Labbel*>();
+    std::vector<Button*> buttonsMode3 = std::vector<Button*>();
+    std::vector<ToggleButton*> togglebuttonsMode3 = std::vector<ToggleButton*>();
+    std::vector<ImageButton*> imageButtonsMode3 = std::vector<ImageButton*>();    
     void generate_mode3();
     void draw_mode3();
     void updateMode3();

@@ -1,63 +1,81 @@
 #ifndef PATH_UTIL_H
 #define PATH_UTIL_H
 
+#include <iostream>
 #include <string>
 #include <algorithm>
+#include <filesystem>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     #include <windows.h>
-#elif __APPLE__
-    #include <mach-o/dyld.h>
-#elif __linux__
-    #include <unistd.h>
-    #include <limits.h>
+    #define PATH_SEPARATOR '\\'
+#else
+    #define PATH_SEPARATOR '/'
 #endif
 
-inline std::string getExecutablePath() {
-    char buffer[1024] = {0};
+namespace fs = std::filesystem;
 
-    // Obtenez le chemin complet de l'exécutable
+inline std::string getExecutablePath() {
+    char buffer[4096] = {0}; 
+
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-        GetModuleFileName(NULL, buffer, sizeof(buffer));
+        if (GetModuleFileName(NULL, buffer, sizeof(buffer)) == 0) {
+            std::cerr << "Erreur GetModuleFileName: " << GetLastError() << std::endl;
+            buffer[0] = '\0';
+        }
     #elif __APPLE__
         uint32_t size = sizeof(buffer);
         if (_NSGetExecutablePath(buffer, &size) != 0) {
-            buffer[0] = '\0'; // Buffer trop petit
+            std::cerr << "Erreur _NSGetExecutablePath: buffer trop petit" << std::endl;
+            buffer[0] = '\0';
         } else {
-            // Résolvez le lien symbolique de l'exécutable
             char realPath[PATH_MAX];
-            if (realpath(buffer, realPath)) {
-                strcpy(buffer, realPath); // Copiez le vrai chemin dans buffer
+            if (!realpath(buffer, realPath)) {
+                std::cerr << "Erreur realpath" << std::endl;
+                strcpy(buffer, realPath);
             }
         }
     #elif __linux__
         ssize_t count = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-        if (count != -1) {
+        if (count == -1) {
+            std::cerr << "Erreur readlink: " << errno << std::endl;
+            buffer[0] = '\0';
+        } else {
             buffer[count] = '\0';
         }
     #endif
 
     std::string path(buffer);
-
-    // Modifier le chemin pour remonter de deux niveaux dans la hiérarchie des dossiers
-    size_t found = path.rfind("/build");
-    if (found != std::string::npos) {
-        path = path.substr(0, found);
-    }
+    std::replace(path.begin(), path.end(), '/', PATH_SEPARATOR);
+    std::replace(path.begin(), path.end(), '\\', PATH_SEPARATOR);
 
     return path;
 }
 
 inline std::string getFullPath(const std::string& relativePath) {
     std::string executablePath = getExecutablePath();
-    std::string modifiedPath = relativePath;
 
-    // Check if the relativePath starts with "../" and replace it with "/"
-    if (modifiedPath.rfind("../", 0) == 0) {
-        modifiedPath.replace(0, 3, "/");
+    fs::path execPath(executablePath);
+
+    // Remonte de deux niveaux dans l'arborescence des dossiers
+    execPath = execPath.parent_path().parent_path();
+
+    // Normalisation du chemin relatif
+    std::string normalizedRelativePath = relativePath;
+    if (relativePath.find("../") == 0) {
+        normalizedRelativePath = relativePath.substr(3);
+    } else if (relativePath.find("/") == 0 || relativePath.find("\\") == 0) {
+        normalizedRelativePath = relativePath.substr(1);
     }
 
-    return executablePath + modifiedPath;
+    // Construction du chemin complet
+    fs::path fullPath = execPath / normalizedRelativePath;
+
+    std::string fullPathStr = fullPath.string();
+    std::replace(fullPathStr.begin(), fullPathStr.end(), '/', PATH_SEPARATOR);
+    std::replace(fullPathStr.begin(), fullPathStr.end(), '\\', PATH_SEPARATOR);
+
+    return fullPathStr;
 }
 
 

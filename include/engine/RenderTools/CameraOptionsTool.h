@@ -57,23 +57,23 @@ private:
     ImVec2 topLeft;
     ImVec2 centerPos;
     int winWidth, winHeight;
-    ImFont* nameFont;
-    ImFont* nameFontBig;
+    ImFont* nameFont = nullptr;
+    ImFont* nameFontBig = nullptr;
 
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons,buttonsMode2;
-    std::vector<ImageButton*> imageButtons;
-    std::vector<Slider*> sliders;
-    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3;
-    std::vector<ToggleButton*> toggleButtons;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons,buttonsMode2 = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtons = std::vector<ImageButton*>();
+    std::vector<Slider*> sliders = std::vector<Slider*>();
+    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3 = std::vector<Icon*>();
+    std::vector<ToggleButton*> toggleButtons = std::vector<ToggleButton*>();
 
-    std::vector<ImageButton*> imageButtonsMode1;
-    std::vector<Labbel*> labbelsMode1;
-    std::vector<ImageButton*> imageButtonsMode2;
-    std::vector<Labbel*> labbelsMode2;
-    std::vector<ToggleButton*> toggleButtonsMode2;
-    std::vector<ImageButton*> imageButtonsMode3;
-    std::vector<Labbel*> labbelsMode3;
+    std::vector<ImageButton*> imageButtonsMode1 = std::vector<ImageButton*>();
+    std::vector<Labbel*> labbelsMode1 = std::vector<Labbel*>();
+    std::vector<ImageButton*> imageButtonsMode2 = std::vector<ImageButton*>();
+    std::vector<Labbel*> labbelsMode2 = std::vector<Labbel*>();
+    std::vector<ToggleButton*> toggleButtonsMode2 = std::vector<ToggleButton*>();
+    std::vector<ImageButton*> imageButtonsMode3 = std::vector<ImageButton*>();
+    std::vector<Labbel*> labbelsMode3 = std::vector<Labbel*>();
 
     int mode = 1;
     std::map<int, std::string> cameraMode;

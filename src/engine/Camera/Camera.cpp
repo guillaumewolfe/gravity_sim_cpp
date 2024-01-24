@@ -7,7 +7,6 @@
 Camera::Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up)
         : position(pos), target(tgt), up(up), originalPosition(pos), originalTarget(tgt), originalUp(up)  {
             globalRotationMatrix = glm::mat4(1.0f); // Ajout de la variable membre
-            resetPosition();
         }
 
 void Camera::Update() {

@@ -1,7 +1,7 @@
 #include "engine/RenderTools/RenderContext.h"
 #include <SDL_mixer.h>
 #include "engine/RenderTools/soundTool.h"
-#include "engine/RenderTools/dialogBox.h"
+#include "engine/RenderTools/notificationTool.h"
 
 RenderContext::RenderContext(float* time,float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, 
 std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe, SystemeSolaire* sysSol, int* speedIndice, std::vector<std::pair<int, std::string>> speedList,bool* iscreating, bool* showInfo, bool* showCameraOptions,bool* isLive, bool* showOptions, bool* showSettings, bool* isOrbiting, bool* isPaused,SoundTool* soundTool)

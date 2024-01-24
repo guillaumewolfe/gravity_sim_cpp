@@ -33,14 +33,14 @@ public:
 
 private:
     int winWidth, winHeight;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
-    std::vector<Slider*> sliders;
-    std::vector<ImageButton*> imageButtons;
-    Icon* icon;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons= std::vector<Button*>();
+    std::vector<Slider*> sliders = std::vector<Slider*>();
+    std::vector<ImageButton*> imageButtons = std::vector<ImageButton*>();
+    Icon* icon = nullptr;
     float hauteur, longueur;
-    ImFont* nameFont;
-    ImFont* nameFontBig;
+    ImFont* nameFont = nullptr;
+    ImFont* nameFontBig = nullptr;
 
     ImVec2 bottomRight;
     ImVec2 topLeft;
@@ -76,14 +76,14 @@ private:
     
     void generate_colors();
     std::map<std::string, ImVec4> typeDictColor;
-    ImDrawList* drawList;
+    ImDrawList* drawList = nullptr;
 
 
     std::vector<float> valuesAngle;
     float normalizeAngle(float angle);
 
     //Selection
-    CelestialObject* selectedObject;
+    CelestialObject* selectedObject = nullptr;
     bool checkSelection(CelestialObject* m_object, CelestialObject* sun, CelestialObject* otherObject, ImVec2 position, float radius);
     bool isExited;
 };

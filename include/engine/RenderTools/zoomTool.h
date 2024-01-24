@@ -19,15 +19,15 @@ public:
     void Draw() override;
     void drawImGui();
     void Open();
-    BackgroundTool* backgroundTool;
-    ObjectsTool* objectsTool;
+    BackgroundTool* backgroundTool = nullptr;
+    ObjectsTool* objectsTool = nullptr;
     void setCloseButtonFonction(const std::function<void()>& func);
 
 
 private:
     int winWidth, winHeight;
     int bufferWidth, bufferHeight;
-    Camera* zoomCamera;
+    Camera* zoomCamera = nullptr;
     float angle_pespective;
     double zoomSpeed = 0.1;
     double zoom;
@@ -35,7 +35,7 @@ private:
     void checkInputs();
     std::function<void()> closeButtonFonction;
 
-    Labbel* zoomLabbel;
+    Labbel* zoomLabbel = nullptr;
     void zoomIn();
     void zoomOut();
     void Close();

@@ -13,6 +13,9 @@ CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
+CMakeLists.txt
+include\path_util.h
+
 
 # Ignore Visual Studio Code settings
 /.vscode/

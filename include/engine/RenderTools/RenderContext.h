@@ -6,12 +6,12 @@
 #include "UI/Labbel.h"
 #include "UI/ImageButton.h"
 #include "engine/EngineIncludes.h"
-//#include "engine/RenderTools/dialogBox.h"
+//#include "engine/RenderTools/notificationTool.h"
 #include <map>
 
 class SimulationState;
 class SoundTool;
-class DialogBox;
+class NotificationTool;
 
 class RenderContext {
 public: 
@@ -19,25 +19,25 @@ public:
     RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe,
     SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions, bool* isLive, bool* showOptions, bool* showSettings, bool* isOrbiting, bool* isPaused, SoundTool* soundTool);
     
-    float* simulationTime;
-    float* timeMultiplier;
-    float* maxSize;
-    bool* showAxes;
-    bool* isCreating;
-    bool* showInfo;
-    int* currentSpeedIndex;
+    float* simulationTime = nullptr;
+    float* timeMultiplier = nullptr;
+    float* maxSize = nullptr;
+    bool* showAxes = nullptr;
+    bool* isCreating = nullptr;
+    bool* showInfo = nullptr;
+    int* currentSpeedIndex = nullptr;
     std::vector<std::pair<int, std::string>> speedSettings;
     std::vector<Labbel*> labels;
     std::vector<Button*> buttons;
     std::vector<ImageButton*> imageButtons;
     Camera* currentCamera;
     SystemeSolaire* systemeSolaire;
-    bool* showCameraOptions;
-    bool* isLive;
-    bool* showOptions;
-    bool* showSettings;
-    bool* isOrbiting;
-    bool* isPaused;
+    bool* showCameraOptions = nullptr;
+    bool* isLive = nullptr;
+    bool* showOptions = nullptr;
+    bool* showSettings = nullptr;
+    bool* isOrbiting = nullptr;
+    bool* isPaused = nullptr;
     SimulationState* simulationState;
     bool showAllOrbits = false;
     bool showAllNames = true;
@@ -49,9 +49,10 @@ public:
     bool shouldClickOnNames = true;
     bool mouseIsOnMinimap = false;
     bool isChangingParameters = false;
-    bool showDialogBox = false;
-    SoundTool* soundTool;
-    DialogBox* dialogBox;
+    bool showNotificationTool = false;
+    SoundTool* soundTool = nullptr;
+    NotificationTool* NotificationTool = nullptr;
+    bool debug = false;
 
 
     std::map<int, std::pair<std::string, ImVec4>> colorByTypeDict;

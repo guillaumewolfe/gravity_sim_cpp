@@ -13,6 +13,7 @@ AthmosphereTool::AthmosphereTool(CelestialObject* celestialObject, RenderContext
     initAthmosphere();
     initShaders();
     initCloudsShaders();
+
 }
 
 //destructeur
@@ -177,7 +178,7 @@ void AthmosphereTool::drawClouds(Camera* camera){
 
 
 void AthmosphereTool::updateLumiere(CelestialObject* object){
-    glm::vec3 positionSoleil = glm::vec3(0,0,0);
+    glm::vec3 positionSoleil = m_renderContext->systemeSolaire->getSun()->getPositionSimulation().toGlm();
     glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
     glm::vec3 lightDir = glm::normalize(positionSoleil - positionObjet);
 

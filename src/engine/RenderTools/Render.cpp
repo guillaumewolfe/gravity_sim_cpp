@@ -29,8 +29,8 @@ void Render::initTools(){
     Minimap_Tool = new MinimapTool(Context);
     Keys_UI = new KeysUI(Context);
     Collision_Tool = new CollisionTool(Context);
-    DialogBox_Tool = new DialogBox(Context);
-    Context->dialogBox = DialogBox_Tool;
+    Notification_Tool = new NotificationTool(Context);
+    Context->NotificationTool = Notification_Tool;
 
     initCamera();
 }
@@ -39,7 +39,6 @@ void Render::Draw(){
     //Clear Buffer
     glClearColor(0.00f, 0.00f, 0.00f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     //New frame pour les éléments GUI
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -54,7 +53,7 @@ void Render::Draw(){
     if(Context->showZoom){Zoom_Tool->drawImGui();}
     UI_Tool->Draw();
     if(Context->showControls){Keys_UI->Draw();}
-    if(Context->showDialogBox){DialogBox_Tool->Draw();}
+    if(Context->showNotificationTool){Notification_Tool->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
     if(*(Context->showOptions)){Options_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
@@ -66,7 +65,7 @@ void Render::Draw(){
     if(!*(Context->isCreating) or Creator_Manager->getStateName()!="PositionCreator"){Objects_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->Draw();}
     if(*(Context->showAxes)){Axes_Tool->Draw();}
-    //if(!*(Context->isCreating)){Path_Tool->Draw();}
+    if(!*(Context->isCreating)){Path_Tool->Draw();}
     if(!Context->showZoom){Path_Tool->Draw();}
     Orbit_Tool->Draw();
     if(Context->showCollision){Collision_Tool->Draw();}

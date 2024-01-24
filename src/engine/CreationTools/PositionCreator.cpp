@@ -7,12 +7,14 @@
 #include <fstream>      // Pour std::ifstream
 #include <sstream>      // Pour std::stringstream
 #include <iostream> 
+#include <iomanip>
 #include "engine/RenderTools/GlowTool.h"
 #include "engine/RenderTools/athmosphereTool.h"
 #include "engine/RenderTools/saturnRingTool.h"
 #include "engine/RenderTools/uranusRingTool.h"
 #include "engine/RenderTools/soundTool.h"
 #include "path_util.h"
+
 
 PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
     generate_buttons();
@@ -378,7 +380,6 @@ void PositionCreator::createNewObject(){
         newObj->distanceScale=m_renderContext->systemeSolaire->scale;
         newObj->isCreated=true;
         m_manager->isCreated=true;
-        createEffects(); //Ajout du glow ou de l'athmosphere ou des anneaux
     }
 }
 
@@ -431,7 +432,7 @@ void PositionCreator::DrawOrbits() {
 ImGui::PushFont(nameFont);
     // Parcourez tous les objets pour dessiner leurs orbites
     for (const auto& object : objects) {
-        if(object->type == 5){continue;}
+        if(object->type == 5 && object != m_manager->newCreatedObject){continue;}
         if(!isHoveringRectangle() && object == m_manager->newCreatedObject && !positionSelected){continue;}
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
 
@@ -679,4 +680,8 @@ void PositionCreator::drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float rad
         float shadowAngle = atan2(directionToSun.y, directionToSun.x) + IM_PI; // Ajouter PI pour que l'ombre soit opposée au Soleil
         // Dessiner l'ombre comme un demi-cercle
         draw_half_circle_shadow(planetPos, radius, IM_COL32(0, 0, 0, 100), shadowAngle, 100);
+}
+
+void PositionCreator::cameraHauteurMode(){
+
 }

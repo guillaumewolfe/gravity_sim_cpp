@@ -33,29 +33,29 @@ public:
     void CloseButton();
     void SaveButton();
 private:
-    ToggleButton* toggleButton;
+    ToggleButton* toggleButton = nullptr;
     bool testToggle = false;
     int winWidth, winHeight;
     float longueur, hauteur;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
-    std::vector<ImageButton*> imageButtons;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtons = std::vector<ImageButton*>();
 
-    std::vector<Labbel*> labbelsMode1;
-    std::vector<Button*> buttonsMode1;
-    std::vector<ImageButton*> imageButtonsMode1;
-    std::vector<Slider*> slidersMode1;
+    std::vector<Labbel*> labbelsMode1 = std::vector<Labbel*>();
+    std::vector<Button*> buttonsMode1 = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtonsMode1 = std::vector<ImageButton*>();
+    std::vector<Slider*> slidersMode1 = std::vector<Slider*>();
 
-    std::vector<Labbel*> labbelsMode2;
-    std::vector<Button*> buttonsMode2;
-    std::vector<ImageButton*> imageButtonsMode2;
-    std::vector<Slider*> slidersMode2;
+    std::vector<Labbel*> labbelsMode2 = std::vector<Labbel*>();
+    std::vector<Button*> buttonsMode2 = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtonsMode2 = std::vector<ImageButton*>();
+    std::vector<Slider*> slidersMode2 = std::vector<Slider*>();
 
-    std::vector<Labbel*> labbelsMode3;
-    std::vector<Button*> buttonsMode3;
-    std::vector<ImageButton*> imageButtonsMode3;
-    std::vector<Slider*> slidersMode3;
-    std::vector<ToggleButton*> ToggleButtonsMode3;
+    std::vector<Labbel*> labbelsMode3 = std::vector<Labbel*>();
+    std::vector<Button*> buttonsMode3 = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtonsMode3 = std::vector<ImageButton*>();
+    std::vector<Slider*> slidersMode3 = std::vector<Slider*>(); 
+    std::vector<ToggleButton*> ToggleButtonsMode3 = std::vector<ToggleButton*>();
 
     void draw_mode1();
     void draw_mode2();
@@ -64,7 +64,7 @@ private:
     void generate_UImodes2();
     void generate_UImodes3();
 
-    Icon* icon;
+    Icon* icon = nullptr;
     int mode = 1;
 
     GameSettings* gameSettings = nullptr;

@@ -13,7 +13,6 @@ SystemeSolaire::SystemeSolaire(){
     setRayonInit();
     syncWithNasa();
     
-    //for (auto& object : objects){std::cout<<object->getName()<<" : "<<object->getRayon()<<std::endl;}
     }
 
 
@@ -86,6 +85,7 @@ void SystemeSolaire::syncWithNasa(){
         object->nasaPosition = newPosition;
         object->nasaVelocity = newVelocity;
     }    
+    bool connectionSuccess = apiTool->connectionSuccess;
     
 }
 
@@ -136,12 +136,12 @@ void SystemeSolaire::addObject(CelestialObject* newObj){
     if(newObj->real_radius){
     setRayon(newObj);
     }else{
-        std::cout<<"NO RAYON"<<std::endl;
     }
     objects.push_back(newObj);
 }
 
 void SystemeSolaire::removeObject(CelestialObject* objToRemove) {
+
     auto it = std::find(objects.begin(), objects.end(), objToRemove);
     if (it != objects.end()) {
         if (!objToRemove->isCreated) {
@@ -157,20 +157,32 @@ void SystemeSolaire::removeObject(CelestialObject* objToRemove) {
 
 void SystemeSolaire::updateEffects(CelestialObject* newObj){
     if(newObj->getTypeName()=="Saturn"){
-        delete newObj->saturnRingTool;
-        newObj->saturnRingTool = new SaturnRingTool(newObj,m_renderContext);
-    }else if(newObj->getTypeName()=="Earth"){
-        delete newObj->athmosphereTool;
-        newObj->athmosphereTool = new AthmosphereTool(newObj,m_renderContext);}
-
-    else if(newObj->getTypeName()=="Sun"){
-        delete newObj->glowTool;
-        newObj->glowTool = new GlowTool(newObj,m_renderContext);}
-    else if(newObj->getTypeName()=="Uranus"){
-        delete newObj->saturnRingTool;
-        newObj->uranusRingTool = new UranusRingTool(newObj,m_renderContext);
+        if (newObj->saturnRingTool != nullptr) {
+            delete newObj->saturnRingTool;
+            newObj->saturnRingTool = nullptr;
+        }
+        newObj->saturnRingTool = new SaturnRingTool(newObj, m_renderContext);
+    } else if(newObj->getTypeName()=="Earth"){
+        if (newObj->athmosphereTool != nullptr) {
+            delete newObj->athmosphereTool;
+            newObj->athmosphereTool = nullptr;
+        }
+        newObj->athmosphereTool = new AthmosphereTool(newObj, m_renderContext);
+    } else if(newObj->getTypeName()=="Sun"){
+        if (newObj->glowTool != nullptr) {
+            delete newObj->glowTool;
+            newObj->glowTool = nullptr;
+        }
+        newObj->glowTool = new GlowTool(newObj, m_renderContext);
+    } else if(newObj->getTypeName()=="Uranus"){
+        if (newObj->uranusRingTool != nullptr) {
+            delete newObj->uranusRingTool;
+            newObj->uranusRingTool = nullptr;
+        }
+        newObj->uranusRingTool = new UranusRingTool(newObj, m_renderContext);
     }
 }
+
 
 void SystemeSolaire::setContext(RenderContext* renderContext){
     m_renderContext = renderContext;

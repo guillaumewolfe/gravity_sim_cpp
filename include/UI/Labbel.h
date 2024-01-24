@@ -10,12 +10,12 @@
 
 class Labbel {
 private:
-    ImFont* font;
-    float fontSize;
-    ImVec2 position; 
-    ImVec4 color;   
-    float alpha;
-    std::string label;
+    ImFont* font = nullptr;
+    float fontSize = 20.0f;
+    ImVec2 position = ImVec2(0, 0); 
+    ImVec4 color = ImVec4(0,0,0,0);   
+    float alpha = 1.0f;
+    std::string label = "";
 
     ImVec2 prevTextSize = ImVec2(0, 0);
     const float sizeChangeThreshold = 0.1f; 

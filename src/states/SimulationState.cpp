@@ -248,7 +248,7 @@ void SimulationState::rotateCamWithMouse(){
 }
 
 void SimulationState::Update() {
-
+    
     checkButtonState();
     if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){
         return;}
@@ -305,7 +305,7 @@ void SimulationState::Update() {
 
     if(isOrbiting){
         if(currentCamera->isGlobalFollowing)
-            {currentCamera->orbitAroundObject(0.0002,0);}
+            {currentCamera->orbitAroundObject(0.0001,0);}
         else{currentCamera->orbitAroundObject(0.0015,0);}
     }
 
@@ -331,10 +331,14 @@ void SimulationState::Update() {
 
     //Mouse dragging for mooving the camera
     if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
+    if(showCameraOptions && render->CameraOptions_Tool->mouseOnCameraOptions()){return;}
+    if(showOptions){return;}
+    if(showSettings){return;}
+    if(isCreating){return;}
+    if(renderContext->showZoom){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
-        if(showCameraOptions && !render->CameraOptions_Tool->mouseOnCameraOptions()){
-        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);}
+        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);
         if(delta.x!=0){
             isOrbiting=false;
         }
@@ -350,6 +354,7 @@ void SimulationState::UpdatePhysics(double dt){
 
 
 void SimulationState::Draw() {
+    
     render->Draw();
 
     if (gameObj->getSettings() && gameObj->getSettings()->volumeChanged) {
@@ -360,6 +365,11 @@ void SimulationState::Draw() {
         if (!musicStarted) {
         Mix_PlayMusic(bgMusic, -1);
         musicStarted = true;
+    }
+
+    if(simulation_time>1 && showFirstNotification){
+        showDialogBox();
+        showFirstNotification=false;
     }
 }
 
@@ -442,7 +452,7 @@ void SimulationState::Restart(){
     showMinimap = false;
     showSettings = false;
     showCameraOptions = false;
-    renderContext->showDialogBox = false;
+    renderContext->showNotificationTool = false;
     
     systemeSolaire->resetPosition();
     currentCamera->resetPosition();
@@ -723,10 +733,10 @@ void SimulationState::showControlsButton(){
 }
 
 void SimulationState::showDialogBox(){
-    if(renderContext->showDialogBox){
-        render->DialogBox_Tool->Close();
+    if(renderContext->showNotificationTool){
+        render->Notification_Tool->Close();
     }else{
-        render->DialogBox_Tool->Open("Notification","I have created a minimap for you","Open","Close",std::bind(&SimulationState::MinimapButton, this));
+        render->Notification_Tool->Open("Notification","I have created a minimap for you!","Open","Close",std::bind(&SimulationState::MinimapButton, this));
     }
 }
 

@@ -12,18 +12,18 @@ class MenuState : public BaseState {
 
 private:
     // For video:
-    cv::VideoCapture cap;
-    GLuint videoTexture; 
+    cv::VideoCapture cap = cv::VideoCapture(0);
+    GLuint videoTexture = 0; 
     bool videoInitialized = false;
     bool newFrameReady = false;
-    double elapsedTime;
+    double elapsedTime = 0.0;
     bool showSettings = false;
 
-    MessageTool* messageBox;
-    SettingsTool* settingsTool;
+    MessageTool* messageBox = nullptr;
+    SettingsTool* settingsTool = nullptr;
 
     //Music
-    Mix_Music* bgMusic;
+    Mix_Music* bgMusic = nullptr;
 
     //UI Elements
     std::vector<Button*> generateButtons();
@@ -52,12 +52,12 @@ public:
     void UpdateVideo();
     void drawVideo();
 
-    double lastTime;
+    double lastTime = 0.0;
     double accumulator = 0.0;
     float fadeOpacity = 1.0f;
     bool musicStarted = false;
-    SoundTool* soundTool;
-    int winWidth, winHeight;
+    SoundTool* soundTool = nullptr;
+    int winWidth, winHeight = 0;
 
 
 

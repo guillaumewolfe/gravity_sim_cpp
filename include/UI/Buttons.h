@@ -51,7 +51,7 @@ public:
     void turnOff();
     void turnOn();
     ImVec2 getPosition();
-    bool isOn;
+    bool isOn = false;
     void UpdateText(std::string newText);
     void UpdateFunction(std::function<void()> newFunction);
 

@@ -3,15 +3,53 @@ project(gravity_sim_cpp)
 
 # Variables pour les chemins des dépendances
 if(WIN32)
-    set(OpenCV_DIR "C:/Users/guill/Documents/opencv/OpenCV-MinGW-Build-OpenCV-4.5.5-x64")
-    set(GLFW_LIB "${CMAKE_SOURCE_DIR}/lib/libglfw3dll.a")
-    # Assume SDL2 is installed in a standard location on Windows or specify its path
-    find_package(SDL2 REQUIRED)
+    #OpenCV
+    set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/lib/OpenCV/include")
+    
+set(OpenCV_LIBS
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_calib3d455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_core455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_dnn455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_features2d455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_flann455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_gapi455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_highgui455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_imgcodecs455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_imgproc455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_ml455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_objdetect455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_photo455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_stitching455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_video455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_videoio455.dll"
+)
 
 
-    elseif(APPLE)
+    #GLM
+    include_directories("${CMAKE_SOURCE_DIR}/lib/glm")
+    
+    #SLD2
+    set(SDL2_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2.dll") # This is where headers are expected
+    set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/lib/SDL2/include") # This is where the SDL2 library is expected
+
+    #SLD_MIXER
+    set(SDL2_MIXER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/lib/SLD2_mixer/include") # Mettre à jour avec le bon chemin
+    set(SDL2_MIXER_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/SLD2_mixer/SDL2_mixer.dll")       # Mettre à jour avec le bon chemin
+
+    #CURL
+    set(CURL_DIRS "${CMAKE_SOURCE_DIR}/lib/CURL/include") # Mettre à jour avec le bon chemin
+    set(CURL_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/CURL/libcurl-x64.dll")       # Mettre à jour avec le bon chemin
+
+
+    
+    include_directories(${CMAKE_SOURCE_DIR}/include/GLFW)
+    include_directories(${CURL_DIRS})
+    include_directories(${OpenCV_DIR})
+
+elseif(APPLE)
     # Ajustez le chemin pour OpenCV sur macOS si nécessaire.
     set(GLFW_LIB "/opt/homebrew/lib/libglfw.3.3.dylib")
+
     
     # Manually set SDL2 paths
     set(SDL2_INCLUDE_DIRS "/opt/homebrew/include/SDL2") # This is where headers are expected
@@ -22,14 +60,11 @@ if(WIN32)
     set(SDL2_MIXER_LIBRARIES "/opt/homebrew/lib/libSDL2_mixer.dylib") # This is where the library is expected
     include_directories("/opt/homebrew/Cellar/glm/0.9.9.8/include")
     include_directories("/opt/homebrew/Cellar/opencv/4.8.1_4/include/opencv4")
+    include_directories("/opt/homebrew/Cellar/glew/2.2.0_1/include")
     find_package(CURL REQUIRED)
     include_directories(${CURL_INCLUDE_DIRS})
 
 endif()
-
-# Configuration OpenCV
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 # Include Directories
@@ -81,8 +116,24 @@ if(APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
     )
+elseif(WIN32)
+set(ALL_DLLS 
+    ${OpenCV_LIBS}
+    "${CMAKE_SOURCE_DIR}/lib/CURL/libcurl-x64.dll"
+    "${CMAKE_SOURCE_DIR}/lib/GLFW/glfw3.dll"
+    "${CMAKE_SOURCE_DIR}/lib/SLD2_mixer/SDL2_mixer.dll"
+    # Add any other DLLs here
+)
+foreach(DLL ${ALL_DLLS})
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${DLL} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+endforeach()
 endif()
-
+#set_target_properties(${PROJECT_NAME} PROPERTIES 
+#    WIN32_EXECUTABLE TRUE
+#)
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES} ${CURL_LIBRARIES})
+
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_MIXER_LIBRARIES} ${SDL2_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_SOURCE_DIR}/lib/GLFW/glfw3.dll ${OpenCV_LIBS})

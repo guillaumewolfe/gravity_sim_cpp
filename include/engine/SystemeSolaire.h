@@ -12,15 +12,16 @@ class RenderContext;
 class SystemeSolaire{
 
 public:
-ApiTool* apiTool;
+ApiTool* apiTool = nullptr;
 SystemeSolaire();
-std::vector<CelestialObject*> objects;
-std::vector<std::pair<CelestialObject*, size_t>> deletedObjects;
+std::vector<CelestialObject*> objects = std::vector<CelestialObject*>();
+
+std::vector<std::pair<CelestialObject*, size_t>> deletedObjects = std::vector<std::pair<CelestialObject*, size_t>>();
 std::vector<CelestialObject*> initSystem();
 double getScale();
-double maxSize;
-double scale;
-float radiusScale;
+double maxSize = 0.0f;
+double scale = 1.0f;
+float radiusScale = 1.0f;
 //methods
 void Draw();
 void syncWithNasa();
@@ -32,7 +33,7 @@ void resetPosition();
 void addObject(CelestialObject* newObj);
 void removeObject(CelestialObject* objToRemove);
 void updateEffects(CelestialObject* obj);
-RenderContext* m_renderContext;
+RenderContext* m_renderContext = nullptr;
 void setContext(RenderContext* renderContext);
 CelestialObject* getSun(CelestialObject* exclude = nullptr);
 

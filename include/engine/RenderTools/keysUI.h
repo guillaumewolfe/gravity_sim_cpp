@@ -30,10 +30,10 @@ private:
     void initPosition();
     void initUI();
     void hideButton();
-    std::vector<Labbel*> labbels;
-    std::vector<Labbel*> keyLabbels;
-    std::vector<Button*> buttons;
-    std::vector<ImageButton*> imageButtons;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Labbel*> keyLabbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtons = std::vector<ImageButton*>();
 
     void drawUI();
 

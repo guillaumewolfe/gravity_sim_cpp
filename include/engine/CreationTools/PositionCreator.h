@@ -32,17 +32,18 @@ public:
     void updateDistanceLabel();
     void AdjustPosition();
     void forceClose();
+    void cameraHauteurMode();
 
 
 
 private:
     int winWidth, winHeight;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
-    ImFont* nameFontBig;
-    ImFont* nameFont;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    ImFont* nameFontBig = nullptr;
+    ImFont* nameFont = nullptr;
     std::vector<ImageButton*> imageButtons;
-    Icon* icon;
+    Icon* icon = nullptr;
     float hauteur, longueur;
     bool positionSelected = false;
     bool shouldUpdate = true;
@@ -74,14 +75,14 @@ private:
     void draw_half_circle_shadow(ImVec2 center, float radius, ImU32 color, float angle, int num_segments);
     void generate_colors();
     std::map<std::string, ImVec4> typeDictColor;
-    CelestialObject* sun;
+    CelestialObject* sun = nullptr;
 
     double maxZoomOut = 2476.94;
     double maxZoomIn;
 
     void drawControls();
 
-    std::vector<Icon*> iconsControls;
+    std::vector<Icon*> iconsControls = std::vector<Icon*>();
 
 
 

@@ -1,5 +1,5 @@
 #include "engine/Physics/Physics.h"
-#include "engine/RenderTools/dialogBox.h"
+#include "engine/RenderTools/notificationTool.h"
 
 Physics::Physics(RenderContext* renderContext):m_renderContext(renderContext){
 }
@@ -73,7 +73,8 @@ void Physics::checkIfTooFar(CelestialObject* obj){
     double distanceFromOrigin = obj->getPositionSimulation().norm();
 
     if(distanceFromSun > m_renderContext->systemeSolaire->maxSize*2 or distanceFromOrigin > m_renderContext->systemeSolaire->maxSize*2){
-        m_renderContext->systemeSolaire->removeObject(obj);
+        if(*(m_renderContext->simulationTime)>100){
+        m_renderContext->systemeSolaire->removeObject(obj);}
     }
 }
 
@@ -198,7 +199,7 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
 }
 
 void Physics::sendMessageCollsion(CelestialObject* obj1, CelestialObject* obj2, CelestialObject* objectRestant){
-    m_renderContext->dialogBox->Open("Collision", "Collision between " + obj1->getName() + " and " + obj2->getName()+"!", "See", "Cancel", [this, objectRestant](){ m_renderContext->currentCamera->newFollowObject(objectRestant); });
+    m_renderContext->NotificationTool->Open("Collision", "Collision between " + obj1->getName() + " and " + obj2->getName()+"!", "See", "Cancel", [this, objectRestant](){ m_renderContext->currentCamera->newFollowObject(objectRestant); });
 }
 
 void Physics::setCollisionFunction(const std::function<void(CelestialObject*, CelestialObject*)>& func) {

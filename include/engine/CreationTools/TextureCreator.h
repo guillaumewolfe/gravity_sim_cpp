@@ -61,12 +61,12 @@ private:
     drawSphereComp selectionSphereHover;
     drawSphereComp selectionSphereClick;
     int winWidth, winHeight;
-    std::vector<Labbel*> labbels;
-    std::vector<Labbel*> planeteNames;
-    std::vector<Button*> buttons;
-    std::vector<ImageButton*> imageButtons;
-    Icon* icon;
-    std::vector<CelestialObject*> objects;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Labbel*> planeteNames = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    std::vector<ImageButton*> imageButtons = std::vector<ImageButton*>();
+    Icon* icon = nullptr;
+    std::vector<CelestialObject*> objects = std::vector<CelestialObject*>();
     std::vector<CelestialObject*> initSystem();
 
     void drawTexturedSphere(float radius, int numSegments, int numSlices, float offsetX, float offsetY,GLuint texture);

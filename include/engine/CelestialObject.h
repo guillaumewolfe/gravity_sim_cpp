@@ -16,26 +16,26 @@ class CelestialObject{
 protected:
     CelestialObject();
 public:
-    std::string name;
-    std::string typeName;
-    std::string texture_path;
+    std::string name = "Default";
+    std::string typeName = "Default";
+    std::string texture_path = "Default";
     double real_radius = 5000;
     double weight = 1;
-    double defaultWeight;
-    double defaultRadius;
-    std::string defaultName;
+    double defaultWeight= 1;
+    double defaultRadius= 1;
+    std::string defaultName= "Default";
     double distance_initiale = 1;
     double rayon_simulation = 1;
-    float inclinaison;
-    double rotationSid;
-    double rotationSidSpeed;
-    Vec3 rotationSidDirection;
+    float inclinaison= 0;
+    double rotationSid= 0;
+    double rotationSidSpeed= 0;
+    Vec3 rotationSidDirection = {0,0,0};
     bool shouldBeDrawn = true;
-    std::string orbitalString;
-    std::string story;
-    std::string temperature;
-    std::string composition;
-    Vec3 initialVelocity;
+    std::string orbitalString=  "Default";
+    std::string story= "Default";
+    std::string temperature= "Default";
+    std::string composition= "Default";
+    Vec3 initialVelocity= {0,0,0};
     double distanceFromPlanet; //For satelite
     bool isCreated = false;
     double totalDistance =0; //Distance pour le calcul de la grandeur du Path
@@ -44,28 +44,28 @@ public:
     bool showPath = true;
     bool showName = true;
     bool isDeleted = false;
-    CelestialObject* mostInfluentialObject;
+    CelestialObject* mostInfluentialObject = nullptr;
     void setMostInfluentialObject(CelestialObject* newMostInfluentialObject);
     CelestialObject* getMostInfluentialObject();
     std::vector<CelestialObject*> planetsEaten;
 
-    double initialWeight;
-    double initialRadius;
+    double initialWeight = 1;
+    double initialRadius = 1;   
     
     const int MAX_HISTORY_SIZE = 500;
     std::vector<Vec3> positionHistory;
 
-    int type;
-    GLuint textureID;
+    int type= 0;
+    GLuint textureID= 0;
 
     //SCALE
     double radiusScale = 1;
-    double distanceScale;
+    double distanceScale = 1;
 
-    GlowTool* glowTool;
-    AthmosphereTool* athmosphereTool;
-    SaturnRingTool* saturnRingTool;
-    UranusRingTool* uranusRingTool;
+    GlowTool* glowTool = nullptr;
+    AthmosphereTool* athmosphereTool = nullptr;
+    SaturnRingTool* saturnRingTool = nullptr;
+    UranusRingTool* uranusRingTool = nullptr;
     
 
     Vec3 position_real = {0,0,0};
@@ -73,12 +73,12 @@ public:
     Vec3 force = {0,0,0};
     Vec3 accel = {0,0,0};
     Vec3 position_simulation = {0,0,0};
-    Vec3 nasaPosition;
-    Vec3 nasaVelocity;
+    Vec3 nasaPosition = {0,0,0};
+    Vec3 nasaVelocity = {0,0,0};
     
-    GLuint vao;
-    GLuint vboVertices, vboNormals, vboTexCoords;
-    int vertexCount;
+    GLuint vao = 0;
+    GLuint vboVertices, vboNormals, vboTexCoords = 0;
+    int vertexCount = 0;
     // Autres données nécessaires...
 
     // Constructeur avec tout

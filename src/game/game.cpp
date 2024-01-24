@@ -25,7 +25,7 @@ void Game::setShouldClose(bool value) { shouldClose = value; }
 
 void Game::Init()
 { 
-states["loading"] = new LoadingState(this);
+//states["loading"] = new LoadingState(this);
 states["menu"] = new MenuState(this);
 states["simulation"] = new SimulationState(this);
 ChangeState("menu");
@@ -35,6 +35,7 @@ void Game::Close()
 {
     if (currentState)
         for (auto& state : states) {
+            state.second->Exit();
             delete state.second;
         }
 

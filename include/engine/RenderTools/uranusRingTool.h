@@ -33,8 +33,8 @@ public:
 
 private:
 
-    RenderContext* m_renderContext;
-    CelestialObject* m_celestialObject; 
+    RenderContext* m_renderContext = nullptr;
+    CelestialObject* m_celestialObject = nullptr;  
     std::vector<ParticuleUranus> Particules;
 
     float rotation;

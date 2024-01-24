@@ -7,6 +7,7 @@
 #include <ctime>
 #include "UI/Buttons.h"
 #include "UI/Labbel.h"
+#include <iomanip>
 #include <glm/gtc/matrix_transform.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -71,19 +72,49 @@ void UITool::draw_rect(){
 
     ImVec2 centerPos = ImVec2(leftX + longueur / 2, topY + hauteur / 2);
 
-    if(!*(m_renderContext->isLive)){return;}
-    float distanceLive = centerPos.x-winWidth*0.12;
+
+
+    bool connexionSuccess = m_renderContext->systemeSolaire->apiTool->connectionSuccess;
+    if(connexionSuccess){
+        drawLive(drawList, centerPos);
+    } else {
+        drawConnexionFailed(drawList, centerPos);
+    }
+
+
+}
+
+void UITool::drawLive(ImDrawList* drawList, ImVec2 centerPos){
+if(!*(m_renderContext->isLive)){return;}
+
+float distanceLive = centerPos.x-winWidth*0.12;
+std::string text = "Live";
+
+
     drawList->AddText(ImVec2(distanceLive+winWidth*0.035, centerPos.y-winHeight*0.01), 
                         IM_COL32(150,255,150,200), // Couleur
-                        "Live");
-               
+                        text.c_str());
+
     drawList->AddCircleFilled(ImVec2(distanceLive+winWidth*0.025, centerPos.y), 
                                 winWidth*0.004, 
                                 IM_COL32(150,250,150,200), // Couleur
                                 40);
-
 }
 
+
+
+void UITool::drawConnexionFailed(ImDrawList* drawList, ImVec2 centerPos){
+if(!*(m_renderContext->isLive)){return;}
+
+float distanceLive = centerPos.x-winWidth*0.12;
+std::string text = "Offline";
+ImVec2 textSize = ImGui::CalcTextSize(text.c_str());
+
+    drawList->AddText(ImVec2(distanceLive+winWidth*0.033-textSize.x/2, centerPos.y-winHeight*0.01), 
+                        IM_COL32(255,150,150,150), // Couleur
+                        text.c_str());
+
+}
 
 
 

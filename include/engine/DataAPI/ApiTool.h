@@ -16,6 +16,7 @@ public:
 
     // Destructor
     ~ApiTool();
+    bool connectionSuccess = false;
 
     // Function to get Mars data
     std::pair<Vec3, Vec3> extractBodyData(const std::string& data, const std::string& bodyName);
@@ -24,7 +25,7 @@ public:
     bool testConnection();
 private:
     static size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *s);
-    CURL *curl;
+    CURL *curl = nullptr;
     std::string getCurrentDateUTC();
     std::string encodeURL(const std::string &value);
     std::map<std::string, std::pair<Vec3, Vec3>> defaultData; // Données par défaut

@@ -14,9 +14,9 @@
 
 using namespace std; 
 
-/* exemple de fichier
+/*
     string executablePath = getExecutablePath();
-    string resourcePath = executablePath + "/assets/sounds/restart.mp3";
+    string resourcePath = getFullPath("../assets/sounds/restart.mp3");
 */
 
 int main() {

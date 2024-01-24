@@ -45,7 +45,7 @@ private:
     float scale;
     ImVec2 topLeft;
     ImVec2 bottomRight ;
-    ImFont* nameFont;
+    ImFont* nameFont = nullptr;
     float radius;
     std::string closestPlanetName;
     std::map<int, std::pair<std::string, ImVec4>> typeDict;

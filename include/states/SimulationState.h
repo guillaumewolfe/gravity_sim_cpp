@@ -26,14 +26,14 @@ private:
     std::vector<ImageButton*> generateImageButtons();
     std::vector<Labbel*> generateLabbels();
     std::vector<ImageButton*>  imageButtons;
-    MessageTool* messageBox;
-    SystemeSolaire* systemeSolaire;
-    Physics* physics;
+    MessageTool* messageBox = nullptr;
+    SystemeSolaire* systemeSolaire = nullptr;
+    Physics* physics = nullptr;
     void generateDialogBox(std::function<void()> func, const std::string& message);
 
     //RenderTool
-    Render* render;
-    SoundTool* soundTool;
+    Render* render = nullptr;
+    SoundTool* soundTool = nullptr;
 
     //Simulation
     bool isPaused = false;
@@ -41,6 +41,7 @@ private:
     bool showAxes = false;
     bool isCreating = false;
     bool isLive = false;
+    bool showFirstNotification = true;
 
     RenderContext* renderContext;
 
@@ -84,7 +85,7 @@ public:
     void Exit() override;
     void RestartState() override;
     std::string getDescription() override;
-    Mix_Music* bgMusic;
+    Mix_Music* bgMusic = nullptr;
     void generateMusic();
 
     // Bouttons:
@@ -105,7 +106,7 @@ public:
     void showInfos();
     void showControlsButton();
     bool showInfo=true;
-    bool showMinimap;
+    bool showMinimap = false;
     bool buttonsActivated = true;
     bool isOrbiting = true;
     bool showCameraOptions = false;

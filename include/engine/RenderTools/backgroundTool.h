@@ -28,7 +28,7 @@ public:
 private:
 
     std::vector<Star> stars;  // Liste des étoiles
-    int numberOfStars;
+    int numberOfStars = 0;
     void initStars(int numberOfStars);
     int drawIterations;
 

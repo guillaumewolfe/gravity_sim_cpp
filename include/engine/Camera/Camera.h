@@ -15,32 +15,32 @@ class RenderContext;
 
 class Camera{
 public:
-    Vec3 position;
-    Vec3 target;
-    Vec3 up;
-    Vec3 originalPosition;
-    Vec3 originalTarget;
-    Vec3 originalUp;
-    CelestialObject* followedObject;
-    CelestialObject* selectedObject;
-    CelestialObject* firstPersonTargetObject;
-    float zoomFactor;
+    Vec3 position = Vec3(0,0,0);
+    Vec3 target = Vec3(0,0,0);
+    Vec3 up = Vec3(0,0,0);
+    Vec3 originalPosition = Vec3(0,0,0);
+    Vec3 originalTarget = Vec3(0,0,0);
+    Vec3 originalUp = Vec3(0,0,0);
+    CelestialObject* followedObject = nullptr;
+    CelestialObject* selectedObject = nullptr;
+    CelestialObject* firstPersonTargetObject = nullptr;
+    float zoomFactor = 1.0f;
     GLfloat modelViewMatrix[16];
     GLfloat normalMatrix[9];
-    glm::mat4 globalRotationMatrix;
+    glm::mat4 globalRotationMatrix  = glm::mat4(1.0f);
     bool zoomChanged = false;
     bool isGlobalFollowing = false;
-    double angle_perspective;
+    double angle_perspective = 0.0;
     float distanceToFollowedObject; 
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
     double orbitalVerticalAngle = 0;
     double orbitalHorizontalAngle =0;
     float accumulatedHorizontalAngle = 0.0f;
-    glm::mat4 projectionMatrix;
-    glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix = glm::mat4(1.0f);
+    glm::mat4 viewMatrix = glm::mat4(1.0f);
     void firstPersonMode();
     void calculateSunAngleOffset(const Vec3& objectPosition, const Vec3& cameraPosition);
-    double sunAngleOffset;
+    double sunAngleOffset = 0.0;
     void resetOrbits();
     
 
@@ -52,22 +52,22 @@ public:
     void transitionToAxisFocus();
     void axisFocus();
     bool isFocusOnAxis = false;
-    std::string focusedAxis;
-    float targetOrbitalVerticalAngle;
-    float targetOrbitalHorizontalAngle;
+    std::string focusedAxis = "";
+    float targetOrbitalVerticalAngle = 0.0f;
+    float targetOrbitalHorizontalAngle = 0.0f;
     //Transition
     bool isTransiting= false;
-    double followingDistance;
+    double followingDistance = 0.0;
 
     Vec3 lerp(const Vec3& start, const Vec3& end, float t);
     float lerp(float start, float end, float t);
-    float transitionProgress;
+    float transitionProgress = 0.0f;
 
     int transitionStep = 0;
     const int transitionThreshold = 3000; // Ajustez selon la douceur souhaitée
 
-    float* zoomSensitiviy;
-    float* rotationSensitivity;
+    float* zoomSensitiviy = nullptr;
+    float* rotationSensitivity = nullptr;
     int transitionStepAxis = 0;
     bool isTransitingAxis = false;
     float followingOffset = 0.0f;
@@ -125,15 +125,15 @@ public:
     double getAnglePerspective();
     bool firstPersonModeEnabled = false;
 private: 
-    RenderContext* m_renderContext;
-    int currentSimulationSpeedIndexForTransition;
-    double currentSimulationSpeedForTransition;
+    RenderContext* m_renderContext = nullptr;
+    int currentSimulationSpeedIndexForTransition = 0;
+    double currentSimulationSpeedForTransition = 0.0;
     float firstPersonZoomPercentage = 0.0f;
     float firstPersonZoomOffset = 0.0f;
-    float maxZoomDistance;
+    float maxZoomDistance = 0.0f;
     bool globalDistanceCalcuated = false;
     float calculateDistanceForScreenOccupation(float occupationPercentage);
-    float globalFollowingDistance;
+    float globalFollowingDistance = 0.0f;
 };
 
 

@@ -17,7 +17,7 @@ public:
 
 protected:
     // Un pointeur vers le RenderContext pour accéder aux éléments de rendu nécessaires
-    RenderContext* m_renderContext;
+    RenderContext* m_renderContext = nullptr;
 };
 
 #endif // RENDERCOMPONENT_H

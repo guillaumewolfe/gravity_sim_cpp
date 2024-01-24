@@ -13,10 +13,10 @@ class Game;
 class BaseState {
 protected:
 
-    Game* gameObj;
-    GLFWwindow* window;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
+    Game* gameObj = nullptr;
+    GLFWwindow* window = nullptr;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
 
 public:
     BaseState(Game* gameObjs);

@@ -7,6 +7,7 @@
 #include <fstream>      // Pour std::ifstream
 #include <sstream>      // Pour std::stringstream
 #include <iostream> 
+#include <iomanip>
 #include "engine/RenderTools/soundTool.h"
 #include "path_util.h"
 

@@ -39,15 +39,15 @@ public:
     void getItemInitialParameters();
     void forceClose();
 
-    std::function<void()> updateNamesFunction;
+    std::function<void()> updateNamesFunction = nullptr;
 
  
 
 
 
 private:
-    int winWidth, winHeight;
-    int mode; // 0 = inactive, 1 = change weight, 2 = change radius, 3- Change Name
+    int winWidth, winHeight = 0;
+    int mode = 0; // 0 = inactive, 1 = change weight, 2 = change radius, 3- Change Name
     void nextMode();
     void previousMode();
 
@@ -63,13 +63,13 @@ private:
     void changeMode();
     void resetName();
 
-    std::vector<Labbel*> labbels,labbelsMode1,labbelsMode2,labbelsMode3,labbelsMode4,labbelsMode5;
-    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3,iconsMode4,iconsMode5;    
-    std::vector<ImageButton*> imageButtons,imageButtonsMode1,imageButtonsMode2,imageButtonsMode3,imageButtonsMode4,imageButtonsMode5;
-    std::vector<Button*> buttons,buttonsMode1,buttonsMode2,buttonsMode3,buttonsMode4,buttonsMode5;
+    std::vector<Labbel*> labbels,labbelsMode1,labbelsMode2,labbelsMode3,labbelsMode4,labbelsMode5 = std::vector<Labbel*>();
+    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3,iconsMode4,iconsMode5 = std::vector<Icon*>();    
+    std::vector<ImageButton*> imageButtons,imageButtonsMode1,imageButtonsMode2,imageButtonsMode3,imageButtonsMode4,imageButtonsMode5 = std::vector<ImageButton*>();
+    std::vector<Button*> buttons,buttonsMode1,buttonsMode2,buttonsMode3,buttonsMode4,buttonsMode5 = std::vector<Button*>();
 
     void drawPlanets();
-    std::map<std::string, ImVec4> typeDictColor;
+    std::map<std::string, ImVec4> typeDictColor = std::map<std::string, ImVec4>();
     void generate_colors();
     void drawSunEffect(ImVec2 planetPos, float radius);
     void drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float radius);
@@ -79,17 +79,17 @@ private:
     void initGeneralUI();
 
 
-    Icon* icon;
+    Icon* icon = nullptr;
     float hauteur, longueur;
-    ImFont* font;
-    ImFont* planeteNameFont;
-    ImFont* planateSelectedFont;
+    ImFont* font = nullptr;
+    ImFont* planeteNameFont = nullptr;
+    ImFont* planateSelectedFont = nullptr;
     ImVec2 bottomRight;
     ImVec2 topLeft;
     ImVec2 centerPos;
 
     //Weight
-    CelestialObject* m_object;
+    CelestialObject* m_object = nullptr;
     CelestialObject* closestWeightObject = nullptr;
     float massRatio;
     double mass;

@@ -30,17 +30,17 @@ public:
     glm::vec3 getLightDirection(CelestialObject* Sun);
 
 private:
-    RenderContext* m_renderContext;
-    CelestialObject* m_celestialObject; 
+    RenderContext* m_renderContext = nullptr;
+    CelestialObject* m_celestialObject = nullptr; 
     int nbreSphere = 30;
     float sizeOfAthmosphere = 0.3;
-    std::vector<AthmosphereSphere> AthmosphereSpheres;
+    std::vector<AthmosphereSphere> AthmosphereSpheres= std::vector<AthmosphereSphere>(nbreSphere);
     
 
 
 
     //Shaders
-    GLuint shaderProgram;
+    GLuint shaderProgram = 0;
     void initShaders();
     void checkCompileErrors(GLuint shader, std::string type);
     std::string readShaderFile(const std::string& shaderPath);
@@ -48,11 +48,11 @@ private:
 
 
     //Clouds
-    GLuint cloudTexture;
+    GLuint cloudTexture = 0;
     GLuint loadTexture(const char* filename);
     AthmosphereSphere cloudSphere;
     void drawClouds(Camera* camera);
-    GLuint cloudShaderProgram;
+    GLuint cloudShaderProgram  = 0;
     void initCloudsShaders();
     void updateLumiere(CelestialObject* object);
     float rotationOffset = 0;

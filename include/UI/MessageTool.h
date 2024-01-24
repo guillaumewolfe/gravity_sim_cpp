@@ -24,12 +24,12 @@ public:
     void CancelButtonPressed();
 
 private:
-    int winWidth, winHeight;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
-    float longueur, hauteur;
-    Icon *icon;
-    ImageButton *imageButton;
+    int winWidth, winHeight = 0;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    float longueur, hauteur = 0.0f;
+    Icon *icon = nullptr;
+    ImageButton *imageButton = nullptr;
 
 };
 

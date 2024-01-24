@@ -8,7 +8,7 @@
 
 class AxesTool : public RenderComponent {
 public:
-    float lineLength;
+    float lineLength = 0;
 
     explicit AxesTool(RenderContext* renderContext);
     void Draw() override;

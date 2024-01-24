@@ -15,12 +15,7 @@ SaturnRingTool::SaturnRingTool(CelestialObject* celestialObject, RenderContext* 
 
 // Destructeur
 SaturnRingTool::~SaturnRingTool() {
-    for (const auto& particule : Particules) {
-        glDeleteBuffers(1, &particule.vboVertices);
-        glDeleteBuffers(1, &particule.vboNormals);
-        glDeleteBuffers(1, &particule.vboTexCoords);
-    }
-    glDeleteProgram(shaderProgram);
+
 }
 
 void SaturnRingTool::initParticules() {
@@ -71,7 +66,6 @@ void SaturnRingTool::Draw(Camera* camera) {
     if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn) || !(m_renderContext->currentCamera->followedObject==m_celestialObject)) {
         return;
     }
-
     // Activer le blending pour l'effet de transparence
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

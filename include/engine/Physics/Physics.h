@@ -7,7 +7,7 @@
 
 class Physics{
 public:
-    RenderContext* m_renderContext;
+    RenderContext* m_renderContext = nullptr;
 
     Physics(RenderContext* renderContext);
     void Update(double dt);
@@ -32,7 +32,7 @@ private:
     std::function<void(CelestialObject*, CelestialObject*)> endCollisionForToolFunction;
     void checkCollision(std::vector<CelestialObject*> objects);
     void collision(CelestialObject* obj1, CelestialObject* obj2);
-    bool isColliding;
+    bool isColliding = false;
 };
 
 #endif // OBJECTSTOOL_H

@@ -26,10 +26,10 @@ public:
     void setResumeButtonFunction(const std::function<void()>& func);
 private:
     int winWidth, winHeight;
-    std::vector<Labbel*> labbels;
-    std::vector<Button*> buttons;
-    ImageButton* imageButton;
-    Icon* icon;
+    std::vector<Labbel*> labbels = std::vector<Labbel*>();
+    std::vector<Button*> buttons = std::vector<Button*>();
+    ImageButton* imageButton = nullptr;
+    Icon* icon = nullptr;
 
 
     void CloseButton();

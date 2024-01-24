@@ -34,11 +34,11 @@ private:
     GLuint shaderProgram;
     GLuint starShaderProgram;
 
-    Camera* m_camera;
+    Camera* m_camera = nullptr;
 
-    GlowTool* glowTool;
-    AthmosphereTool* athmoTool;
-    SaturnRingTool* saturnRingTool;
+    GlowTool* glowTool = nullptr;
+    AthmosphereTool* athmoTool = nullptr;
+    SaturnRingTool* saturnRingTool = nullptr;
 
     void initPlanetsShaders();
     void initStarShaders(); 
