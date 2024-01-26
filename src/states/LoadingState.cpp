@@ -23,9 +23,9 @@ void LoadingState::Draw() {
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    // Buttons settings
-   ImGui_ImplOpenGL3_NewFrame();
-   ImGui_ImplGlfw_NewFrame();
-   ImGui::NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
     ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);

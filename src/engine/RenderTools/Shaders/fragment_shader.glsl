@@ -23,4 +23,5 @@ void main() {
     } else {//Pas de soleil
         gl_FragColor = textureColor * ambientColor;
     }
+
 }

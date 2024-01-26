@@ -14,6 +14,12 @@ struct Star {
     GLfloat originalAlpha;  // Transparence originale
     int indice;
     GLfloat flickerOffset;
+    bool isMoving = false;
+    float angle = 0; // Angle autour de la sphère pour le mouvement
+    float speedPhi = 0; // Vitesse de déplacement autour de la sphère
+    float speedTheta = 0; // Vitesse de déplacement autour de la sphère
+    float theta = 0;
+    float phi = 0;
 };
 
 

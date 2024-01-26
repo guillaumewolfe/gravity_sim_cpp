@@ -18,12 +18,14 @@ public:
     void DrawOpenGL() override;
     void Exit() override;
 
+
     void drawBackground();
     void generate_buttons();
     void generate_labels();
     void draw_buttons();
     void draw_labels();
     void next_state();
+    void drawOrbitGrids(const ImVec2& sunScreenPos, float maxRadius);
     void previous_state();
     void createNewObject();
     void removeNewObject();

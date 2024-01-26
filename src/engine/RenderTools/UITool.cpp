@@ -170,11 +170,11 @@ void UITool::checkScroll(){
     if(ImGui::IsWindowHovered()){
         if(ImGui::GetIO().MouseWheel != 0){
             if(ImGui::GetIO().MouseWheel > 0){
-                bool in = false;
+                bool in = true;
                     m_renderContext->currentCamera->zoomByDistance(in,0.075);
                     }
             else{
-                bool in = true;
+                bool in = false;
                 m_renderContext->currentCamera->zoomByDistance(in,0.075);
                     }
         }

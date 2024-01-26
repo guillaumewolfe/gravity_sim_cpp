@@ -14,6 +14,7 @@
 #include "engine/RenderTools/uranusRingTool.h"
 #include "engine/RenderTools/soundTool.h"
 #include "path_util.h"
+#include <random> // Include this for random number generation
 
 
 PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* manager) : StateCreator(renderContext, manager) {
@@ -411,6 +412,17 @@ void PositionCreator::drawControls(){
 float lerp(float a, float b, float t) {
     return a + t * (b - a);
 }
+
+void PositionCreator::drawOrbitGrids(const ImVec2& sunScreenPos, float maxRadius) {
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    int numGrids = 5; // Number of circular grids
+    float spacing = maxRadius / numGrids; // Spacing between each grid
+
+    for (int i = 1; i <= numGrids; ++i) {
+        float radius = spacing * i;
+        drawList->AddCircle(sunScreenPos, radius, IM_COL32(255, 255, 255, 50)); // Change color and alpha as needed
+    }
+}
 void PositionCreator::DrawOrbits() {
     drawMainBackground();
     ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -429,6 +441,7 @@ void PositionCreator::DrawOrbits() {
     float yPercentSun = (1.0f - ndc.y) / 2.0f;
 
     ImVec2 center(xPercentSun* winWidth, yPercentSun * winHeight); // Utiliser les coordonnées d'écran du soleil comme centre
+
 ImGui::PushFont(nameFont);
     // Parcourez tous les objets pour dessiner leurs orbites
     for (const auto& object : objects) {
@@ -526,7 +539,7 @@ void PositionCreator::drawMainBackground(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueurMidSquare, topLeft.y + hauteurMidSquare), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 100), // Couleur
                             cornerRadius);
 
     drawList->AddRect(topLeft, 

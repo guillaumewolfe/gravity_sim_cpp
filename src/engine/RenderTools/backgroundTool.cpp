@@ -33,15 +33,18 @@ void BackgroundTool::Draw() {
         star.size = star.originalSize + flicker * 0.1f; // Réduire l'amplitude du scintillement
         star.alpha = star.originalAlpha + flicker;
 
+        //mouvement
+        //float radius = *(m_renderContext->maxSize)/2; // Ajuster si nécessaire
+
         glPointSize(star.size);
         glColor4f(star.r, star.g, star.b, star.alpha);
         glColor4f(star.r, star.g, star.b, star.alpha);
 
-    float camX = m_renderContext->currentCamera->position.x;
-    float camY = m_renderContext->currentCamera->position.y;
-    float camZ = m_renderContext->currentCamera->position.z;
+        float camX = m_renderContext->currentCamera->position.x;
+        float camY = m_renderContext->currentCamera->position.y;
+        float camZ = m_renderContext->currentCamera->position.z;
 
-    glVertex3f(star.x + camX, star.y + camY, star.z + camZ);
+        glVertex3f(star.x + camX, star.y + camY, star.z + camZ);
     }
     glEnd();
     glDisable(GL_BLEND);
@@ -105,6 +108,14 @@ void BackgroundTool::initStars(int numberOfStars) {
             star.r = 0.7f;
             star.g = 0.7f;
             star.b = 1.0f;
+        }
+
+        if (rand() % 100 < 10) { // 5% des étoiles
+            star.isMoving = true;
+            star.speedPhi = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.01f; // Vitesse aléatoire
+            star.speedTheta = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.01f; // Vitesse aléatoire
+        } else {
+            star.isMoving = false;
         }
         stars.push_back(star);
     }

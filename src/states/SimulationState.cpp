@@ -338,7 +338,7 @@ void SimulationState::Update() {
     if(renderContext->showZoom){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
-        currentCamera->orbitAroundObject(-delta.x*0.004, delta.y*0.004);
+        currentCamera->orbitAroundObject(-delta.x*0.005, delta.y*0.005);
         if(delta.x!=0){
             isOrbiting=false;
         }

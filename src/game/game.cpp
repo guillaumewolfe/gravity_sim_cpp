@@ -170,7 +170,7 @@ void Game::InitSettings() {
     settings.antiAliasing = true;
     settings.movementSpeed = 0.5f;
     settings.rotationSpeed = 0.5f;
-    settings.musicVolume = 0.0f;
+    settings.musicVolume = 0.3f;
     settings.sfxVolume = 0.75f;
     settings.mainVolume = 0.75f;
     settings.volumeChanged = false;

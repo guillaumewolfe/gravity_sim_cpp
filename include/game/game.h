@@ -64,6 +64,7 @@ public:
     void InitSettings();
 
     void Init();
+    void Load();
     ImFont* Create_font();
     void Update();
     void UpdatePhysics(double dt);

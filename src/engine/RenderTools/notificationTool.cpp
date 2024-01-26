@@ -59,11 +59,11 @@ void NotificationTool::generate_UI(){
     float taille_x = 0.35;
     float taille_y = 0.15;
 
-    TitleText = new Labbel(0.5,0.0750816,ImVec4(255,255,255,150),
-                title,25,0.5f);
+    TitleText = new Labbel(0.5,0.0750816,ImVec4(255,255,255,75),
+                title,25,0.4f);
 
-    PhraseText = new Labbel(0.5,0.115343,ImVec4(255,255,255,125),
-                phrase,20,0.70f);
+    PhraseText = new Labbel(0.5,0.118343,ImVec4(255,255,255,200),
+                phrase,20,0.9f);
 
     closeButton = new ImageButton(playSoundFunc,0.640136, 0.0663765, ImVec2(taille_x*0.1, taille_y*0.1),0.60,
                         button_color,button_color,
@@ -72,15 +72,15 @@ void NotificationTool::generate_UI(){
 
 
 
-    OkButton = new Button(playSoundFunc,0.525,0.171926, ImVec2(0.04, 0.03),
-                               ImVec4(150.0/255.0, 175.0/255.0, 150.0/255.0, 1.0f),
-                               ImVec4(150.0/255.0, 175.0/255.0, 150.0/255.0, 1.0f),
+    OkButton = new Button(playSoundFunc,0.525,0.171926, ImVec2(0.035, 0.0275),
+                               ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
+                               ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
                             "Ok", 0.1f,16.0,
                             std::bind(&NotificationTool::functionCalled, this),5.0); 
-    CancelButton = new Button(playSoundFunc,0.475,0.171926, ImVec2(0.04, 0.03),
-                               ImVec4(150.0/255.0, 175.0/255.0, 150.0/255.0, 1.0f),
-                               ImVec4(150.0/255.0, 175.0/255.0, 150.0/255.0, 1.0f),
-                            "Cancel", 0.025f,16.0,
+    CancelButton = new Button(playSoundFunc,0.475,0.171926, ImVec2(0.035, 0.0275),
+                               ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
+                               ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
+                            "Cancel", 0.05f,16.0,
                             std::bind(&NotificationTool::Close, this),5.0); 
 
 

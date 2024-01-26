@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(gravity_sim_cpp)
 
+
 # Variables pour les chemins des dépendances
 if(WIN32)
     #OpenCV
@@ -22,6 +23,17 @@ set(OpenCV_LIBS
     "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_stitching455.dll"
     "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_video455.dll"
     "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/libopencv_videoio455.dll"
+    "${CMAKE_SOURCE_DIR}/lib/OpenCV/bin/opencv_videoio_ffmpeg455_64.dll"
+    "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2.dll"
+    "${CMAKE_SOURCE_DIR}/lib/SDL2/SDL2.dll"
+    "${CMAKE_SOURCE_DIR}/lib/GNU/libmpdec++-2.dll"
+    "${CMAKE_SOURCE_DIR}/lib/GNU/libgcc_s_seh-1.dll"
+    "${CMAKE_SOURCE_DIR}/lib/GNU/libstdc++-6.dll"
+    "${CMAKE_SOURCE_DIR}/lib/GNU/libwinpthread-1.dll"
+
+
+
+
 )
 
 
@@ -40,7 +52,8 @@ set(OpenCV_LIBS
     set(CURL_DIRS "${CMAKE_SOURCE_DIR}/lib/CURL/include") # Mettre à jour avec le bon chemin
     set(CURL_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/CURL/libcurl-x64.dll")       # Mettre à jour avec le bon chemin
 
-
+    set(GCC_STATIC_LIBRARIES "-static-libgcc -static-libstdc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_STATIC_LIBRARIES}")
     
     include_directories(${CMAKE_SOURCE_DIR}/include/GLFW)
     include_directories(${CURL_DIRS})
@@ -130,10 +143,46 @@ foreach(DLL ${ALL_DLLS})
     ${DLL} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endforeach()
 endif()
-#set_target_properties(${PROJECT_NAME} PROPERTIES 
-#    WIN32_EXECUTABLE TRUE
-#)
+set_target_properties(${PROJECT_NAME} PROPERTIES 
+    WIN32_EXECUTABLE TRUE
+)
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_MIXER_LIBRARIES} ${SDL2_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_SOURCE_DIR}/lib/GLFW/glfw3.dll ${OpenCV_LIBS})
+
+
+
+# Configuration de base de CPack
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/License.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "2")
+set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION_PATCH "2")
+
+# Spécification du générateur (par exemple, NSIS sous Windows)
+if(WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_NSIS_MODIFY_PATH ON)
+elseif(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+endif()
+
+include(CPack)
+
+# Installer l'exécutable
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION .)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/engine/RenderTools/Shaders DESTINATION src/engine/RenderTools)
+# Installer les bibliothèques nécessaires et les fichiers de ressources
+install(FILES ${ALL_DLLS} DESTINATION bin)
+
+if(WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_NSIS_MODIFY_PATH ON)
+
+    # Ajout de commandes pour créer un raccourci sur le bureau
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+        CreateShortCut \\\"$DESKTOP\\\\Gravity Simulator.lnk\\\" \\\"$INSTDIR\\\\bin\\\\${PROJECT_NAME}.exe\\\"
+    ")
+endif()

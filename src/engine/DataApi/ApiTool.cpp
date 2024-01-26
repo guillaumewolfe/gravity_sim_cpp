@@ -76,7 +76,7 @@ std::string ApiTool::getBodyData(const std::string& bodyName) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    std::string certificatFile = getFullPath("../lib/CURL/cacert-2023-12-12.pem");       
+    std::string certificatFile = getFullPath("../assets/CurlCertif/cacert-2023-12-12.pem");       
     curl_easy_setopt(curl, CURLOPT_CAINFO, certificatFile.c_str());
     curl_easy_setopt(curl, CURLOPT_CAPATH, certificatFile.c_str());
     //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); // Désactiver la vérification du certificat SSL du pair
