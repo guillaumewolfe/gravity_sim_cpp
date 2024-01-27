@@ -95,6 +95,12 @@ public:
     float calculateGlobalFollowingDistance();
     void followObject();
 
+    //comparer
+    bool isComparing = false;
+    float comparingDistance = 0.0f;
+    bool useCompareDistance = false;
+    void applyOffsetProjection();
+
     glm::mat4 getViewMatrix();
     glm::mat4 getProjectionMatrix();
     Vec3 getPosition();
@@ -109,6 +115,7 @@ public:
 
     void setPosition(Vec3 newPos);
     void setInitPosition(Vec3 newPos);
+
 
 
     void updateViewMatrix();

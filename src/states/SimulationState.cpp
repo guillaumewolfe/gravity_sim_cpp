@@ -32,8 +32,14 @@ void SimulationState::Enter() {
     render->Settings_Tool->setSaveButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setGameSettings(gameObj->getSettings());
     render->Settings_Tool->init();
+
     currentCamera->zoomSensitiviy = &(gameObj->getSettings()->movementSpeed);
     currentCamera->rotationSensitivity = &(gameObj->getSettings()->rotationSpeed);
+    render->Zoom_Tool->zoomCamera->zoomSensitiviy = &(gameObj->getSettings()->movementSpeed);
+    render->Zoom_Tool->zoomCamera->rotationSensitivity = &(gameObj->getSettings()->rotationSpeed);
+    render->Zoom_Tool->escapeClicked = &isShowZoomClose;
+
+
 
     render->Zoom_Tool->setCloseButtonFonction(std::bind(&SimulationState::TelescopeButton, this));
 
@@ -170,7 +176,7 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                             std::bind(&SimulationState::MinimapButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *telescopeButton = new ImageButton(playSoundFunc,position_x_left-3*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
-                        "../assets/button/minimap.png", 0,
+                        "../assets/button/compare.png", 0,
                             std::bind(&SimulationState::TelescopeButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *menuButton = new ImageButton(playSoundFunc,0.015f, 0.025, ImVec2(0.05, 0.05),0.50,
                         button_color,button_color,
@@ -305,7 +311,7 @@ void SimulationState::Update() {
 
     if(isOrbiting){
         if(currentCamera->isGlobalFollowing)
-            {currentCamera->orbitAroundObject(0.0001,0);}
+            {currentCamera->orbitAroundObject(0.00005,0);}
         else{currentCamera->orbitAroundObject(0.0015,0);}
     }
 
@@ -568,6 +574,7 @@ void SimulationState::CreateObjectButton(){
         if(renderContext->showControls){showControlsButton();}
         if(renderContext->showZoom){TelescopeButton();}
         if(showInfo){showInfos();}
+        if(renderContext->showNotificationTool){render->Notification_Tool->Close();}
         if(showCameraOptions){ShowCameraOptionsButton();}
         resetView();
         isCreating = true;
@@ -622,6 +629,7 @@ void SimulationState::RestartState(){
     showMinimap = false;
     showSettings = false;
     showCameraOptions = false;
+    renderContext->showNotificationTool = false;
     resetButtons();
     Restart();
 
@@ -695,22 +703,29 @@ void SimulationState::OptionsButton(){
 }
 
 void SimulationState::TelescopeButton(){
-    if(renderContext->showZoom){
-        renderContext->showZoom = false;
-        imageButtons[9]->isOn=false;
-    }
-    else{
-        if(showCameraOptions){ShowCameraOptionsButton();}
-        if(showOptions){OptionsButton();}
-        if(showSettings){render->Settings_Tool->CloseButton();}
-        if(isCreating){CreateObjectButton();}
-        if(showInfo){showInfos();}
-        render->Zoom_Tool->Open();
-        renderContext->showZoom = true;
-        imageButtons[9]->isOn=true;
-        isShowZoomClose = false;
-        }
+    //Comparing Tool
+   if(renderContext->showZoom){
+       renderContext->showZoom = false;
+       imageButtons[9]->isOn=false;
+   }
+   else{
+       if(showCameraOptions){ShowCameraOptionsButton();}
+       if(showOptions){OptionsButton();}
+       if(isCreating){CreateObjectButton();}
+       if(showInfo){showInfos();}
+       if(renderContext->showControls){showControlsButton();}
+       if(renderContext->showNotificationTool){render->Notification_Tool->Close();}
+       if(renderContext->showMinimap){MinimapButton();}
+       render->Zoom_Tool->Open();
+       renderContext->showZoom = true;
+       imageButtons[9]->isOn=true;
+       isShowZoomClose = false;
+       forcePause = true;
+       Pause();
+       }
 }
+
+
 
 void SimulationState::changeGlobalFollowing(){
     //Change between follow object and global isGlobalFollowing

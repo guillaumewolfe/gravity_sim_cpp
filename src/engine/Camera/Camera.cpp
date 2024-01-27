@@ -50,90 +50,146 @@ Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
 }
     
 void Camera::transitionToFollowObject() {
-    up = Vec3(0,1,0);
-    if (!followedObject or isTransitingAxis) {return;}
-    
-    Vec3 objectPosition = followedObject->getPositionSimulation();
-    float objectRadius;
-    float pourcentOfScreen;
-    if(followedObject->type != 1){
-        objectRadius = followedObject->getRayon();
-        pourcentOfScreen = 0.30f;
-    }
-    else{
-        objectRadius = followedObject->getRayon();
-        pourcentOfScreen = 0.70f;
-    }
-    // Calculer la distance de suivi désirée
-    float verticalFOV = angle_perspective * (M_PI / 180.0f);
-    float desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
+   up = Vec3(0,1,0);
+   if (!followedObject or isTransitingAxis) {return;}
+  
+   Vec3 objectPosition = followedObject->getPositionSimulation();
+   float objectRadius;
+   float pourcentOfScreen;
+   if(followedObject->type != 1){
+       objectRadius = followedObject->getRayon();
+       pourcentOfScreen = 0.30f;
+   }
+   else{
+       objectRadius = followedObject->getRayon();
+       pourcentOfScreen = 0.70f;
+   }
+   // Calculer la distance de suivi désirée
+   float verticalFOV = angle_perspective * (M_PI / 180.0f);
+   float desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
 
-    if(!globalDistanceCalcuated){
-    globalFollowingDistance = calculateGlobalFollowingDistance();}
 
-    this->followingDistance = isGlobalFollowing ? globalFollowingDistance : desiredDistance;
-    // Calculer la position finale
-    Vec3 finalOffset;
-    finalOffset.x = followingDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
-    finalOffset.y = followingDistance * sin(orbitalVerticalAngle);
-    finalOffset.z = followingDistance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
-    Vec3 finalPosition = objectPosition + finalOffset;
+   if(!globalDistanceCalcuated){
+   globalFollowingDistance = calculateGlobalFollowingDistance();}
 
-    // Interpolation temporelle
-    float t = (float)transitionStep / transitionThreshold;
-    position = lerp(position, finalPosition, t);
-    target = lerp(target, objectPosition, t);
 
-    if (glm::abs((position-followedObject->getPositionSimulation()).norm()-followingDistance)<0.01){
-        //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
-        isTransiting = false;
-        transitionStep = 0;
-        if(!isGlobalFollowing){
-            *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
-            *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
-        }
-        return;
-    }
+   this->followingDistance = isGlobalFollowing ? globalFollowingDistance : desiredDistance;
+   this->followingDistance = (isComparing && useCompareDistance) ? comparingDistance : this->followingDistance;
+   // Calculer la position finale
+   Vec3 finalOffset;
+   finalOffset.x = followingDistance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
+   finalOffset.y = followingDistance * sin(orbitalVerticalAngle);
+   finalOffset.z = followingDistance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+   Vec3 finalPosition = objectPosition + finalOffset;
 
-    transitionStep++;
 
-    if (transitionStep >= transitionThreshold) {
-        isTransiting = false;
-        transitionStep = 0;
-        if(!isGlobalFollowing){
-            *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
-            *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
-        }
-        return;
-    }
+   // Interpolation temporelle
+   float t = (float)transitionStep / transitionThreshold;
+   position = lerp(position, finalPosition, t);
+   target = lerp(target, objectPosition, t);
+
+
+   if (glm::abs((position-followedObject->getPositionSimulation()).norm()-followingDistance)<0.01){
+       //std::cout<<"Position - final pos: "<<(position-finalPosition).norm()<<" Desired distance: "<<desiredDistance<<std::endl;
+       isTransiting = false;
+       transitionStep = 0;
+       if(!isGlobalFollowing){
+           *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+           *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+       }
+       return;
+   }
+
+
+   transitionStep++;
+
+
+   if (transitionStep >= transitionThreshold) {
+       isTransiting = false;
+       transitionStep = 0;
+       if(!isGlobalFollowing){
+           *(m_renderContext->currentSpeedIndex) = currentSimulationSpeedIndexForTransition;
+           *(m_renderContext->timeMultiplier) = currentSimulationSpeedForTransition;
+       }
+       return;
+   }
+   if(isComparing){
+   applyOffsetProjection();}
 }
+
 
 void Camera::followObject() {
-    if (!followedObject) return;
-    if (firstPersonModeEnabled) return;
-    float distance;
-    if(isGlobalFollowing){
-        distance = globalFollowingDistance;
-    }else{
-        distance = followingDistance;
-    }
-    Vec3 objectPosition = followedObject->getPositionSimulation();
-    // Utiliser les angles orbitaux pour calculer la position
-    Vec3 offset;
-    offset.x = distance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
-    offset.y = distance * sin(orbitalVerticalAngle);
-    offset.z = distance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+   if (!followedObject) return;
+   if (firstPersonModeEnabled) return;
+  
+   float distance;
+   if(isGlobalFollowing){
+       distance = globalFollowingDistance;
+   } else if (isComparing && useCompareDistance){
+       distance = comparingDistance;
+   }else{
+       distance = followingDistance;
+   }
 
-    position = objectPosition + offset;
-    target = objectPosition;
-    // Calculate forward vector
-    Vec3 forward = (target - position).normalize();
 
-    // Calculate right vector as cross product of forward and global up
-    Vec3 globalUp(0, 1, 0);
-    Vec3 right = forward.cross(globalUp).normalize();
+   Vec3 objectPosition = followedObject->getPositionSimulation();
 
+
+   // Utiliser les angles orbitaux pour calculer la position
+   Vec3 offset;
+   offset.x = distance * cos(orbitalVerticalAngle) * sin(orbitalHorizontalAngle);
+   offset.y = distance * sin(orbitalVerticalAngle);
+   offset.z = distance * cos(orbitalVerticalAngle) * cos(orbitalHorizontalAngle);
+
+
+   position = objectPosition + offset;
+   target = objectPosition;
+
+
+   // Appliquer une matrice de projection personnalisée pour le décalage
+   if(isComparing){
+   applyOffsetProjection();}
 }
+
+
+void Camera::applyOffsetProjection() {
+   int winWidth, winHeight;
+   glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+   float aspectRatio = static_cast<float>(winWidth) / winHeight;
+   float zNear = 0.001;
+   float zFar = 10000;
+   float fovy = angle_perspective * (M_PI / 180.0f);
+   float fH = tan(fovy / 2) * zNear;
+   float fW = fH * aspectRatio;
+
+
+   // Calculer la largeur totale du frustum à zNear
+   float totalWidth = 2 * fW;
+
+
+   // Décalage pour que le bord gauche du frustum soit à 25% de la largeur de l'écran
+   float offsetX = fW - 0.25 * totalWidth;
+
+
+   // Ajuster les paramètres left et right du frustum
+   float left = -fW + offsetX;
+   float right = fW + offsetX;
+
+
+
+
+   // Appliquer la matrice de projection personnalisée
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glFrustum(left, right, -fH, fH, zNear, zFar);
+
+
+   // Revenir à la matrice de modèle-vue
+   glMatrixMode(GL_MODELVIEW);
+   projectionMatrix = glm::frustum(left, right, -fH, fH, zNear, zFar);
+}
+
+
 
 float Camera::calculateGlobalFollowingDistance() {
     float maxDistance = 0.0f;
@@ -510,7 +566,6 @@ void Camera::newFollowObject(CelestialObject* obj) {
     isTransiting = true;
     followedObject = obj;
     isFocusOnAxis = false;
-
     // Exemple de définition d'un nouvel offset
     Vec3 objectPosition = followedObject->getPositionSimulation();
     transitionStep = 0;
@@ -562,6 +617,8 @@ void Camera::resetPosition() {
     // target = originalTarget;
     // up = originalUp;
     angle_perspective=40;
+    isComparing = false;
+    useCompareDistance = false;
     followedObject = nullptr;
     selectedObject = nullptr;
     firstPersonTargetObject = nullptr;

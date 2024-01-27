@@ -5,7 +5,7 @@
 BlackHole::BlackHole() : CelestialObject() {
     std::string name_sub = "Black Hole";
     typeName = "BlackHole";
-    std::string path_sub = "../assets/textures/background.jpg";
+    std::string path_sub = "../assets/textures/bh.jpg";
     type = 0;
     textureID = loadTexture(path_sub.c_str());
     real_radius = 2*696340e3;

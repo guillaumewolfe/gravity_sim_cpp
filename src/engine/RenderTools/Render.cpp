@@ -51,7 +51,7 @@ void Render::Draw(){
     if(Context->showMinimap){Minimap_Tool->Draw();}
     if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->drawImGui();}
-    UI_Tool->Draw();
+    if(!Context->showZoom){UI_Tool->Draw();}
     if(Context->showControls){Keys_UI->Draw();}
     if(Context->showNotificationTool){Notification_Tool->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
@@ -65,9 +65,8 @@ void Render::Draw(){
     if(!*(Context->isCreating) or Creator_Manager->getStateName()!="PositionCreator"){Objects_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->Draw();}
     if(*(Context->showAxes)){Axes_Tool->Draw();}
-    if(!*(Context->isCreating)){Path_Tool->Draw();}
-    if(!Context->showZoom){Path_Tool->Draw();}
-    Orbit_Tool->Draw();
+    if(!*(Context->isCreating) && !Context->showZoom){Path_Tool->Draw();}
+    if(!*(Context->isCreating) && !Context->showZoom){Orbit_Tool->Draw();}
     if(Context->showCollision){Collision_Tool->Draw();}
 
 
