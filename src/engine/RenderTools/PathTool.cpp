@@ -19,7 +19,7 @@ void PathTool::Draw() {
         return;
     }
     // Assurez-vous que le mode de rendu OpenGL est configuré pour dessiner des lignes
-    glLineWidth(2.0f);  // Définissez l'épaisseur de la ligne selon vos besoins
+    glLineWidth(1.0f);  // Définissez l'épaisseur de la ligne selon vos besoins
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -68,7 +68,7 @@ void Physics::updateRotation(CelestialObject* obj, double dt){
 
 void Physics::checkIfTooFar(CelestialObject* obj){
     CelestialObject* sun = m_renderContext->systemeSolaire->getSun(obj);
-
+    if(sun == nullptr){return;}
     double distanceFromSun = (obj->getPositionSimulation()-sun->getPositionSimulation()).norm();
     double distanceFromOrigin = obj->getPositionSimulation().norm();
 

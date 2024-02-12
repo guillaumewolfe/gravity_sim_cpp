@@ -12,9 +12,16 @@ SystemeSolaire::SystemeSolaire(){
     scale = getScale();
     setRayonInit();
     syncWithNasa();
-    
     }
-
+// Destructeur
+SystemeSolaire::~SystemeSolaire() {
+    for (auto& object : objects) {
+        delete object;
+    }
+    objects.clear();
+    deletedObjects.clear();
+    delete apiTool;
+}
 
 
 std::vector<CelestialObject*> SystemeSolaire::initSystem(){

@@ -14,6 +14,7 @@ class SystemeSolaire{
 public:
 ApiTool* apiTool = nullptr;
 SystemeSolaire();
+~SystemeSolaire();
 std::vector<CelestialObject*> objects = std::vector<CelestialObject*>();
 
 std::vector<std::pair<CelestialObject*, size_t>> deletedObjects = std::vector<std::pair<CelestialObject*, size_t>>();

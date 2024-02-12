@@ -12,7 +12,7 @@ public:
 
 
     explicit PositionCreator(RenderContext* renderContext, CreatorManager* manager);
-
+    ~PositionCreator() override;
     void Draw() override;
     void Enter() override;
     void DrawOpenGL() override;

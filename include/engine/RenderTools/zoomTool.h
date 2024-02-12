@@ -18,6 +18,7 @@
 class ZoomTool : public RenderComponent {
 public:
    explicit ZoomTool(RenderContext* renderContext);
+   ~ZoomTool() override;
    // Override de la méthode Draw pour implémenter le dessin spécifique de l'UI
    void Draw() override;
    void drawImGui();

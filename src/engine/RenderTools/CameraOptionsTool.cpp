@@ -16,23 +16,38 @@ CameraOptionsTool::CameraOptionsTool(RenderContext* renderContext) : RenderCompo
 }
 // Destructeur
 CameraOptionsTool::~CameraOptionsTool() {
-    for (Button* btn : buttons) {
-        delete btn;
+    for (auto& button : buttons) {
+        delete button;
     }
-    for (Labbel* label : labbels) {
+    for (auto& label : labbels) {
         delete label;
     }
-    for (ImageButton* imgbtn : imageButtons) {
+    for (auto& imgbtn : imageButtons) {
         delete imgbtn;
     }
-    for (Slider* slider : sliders) {
+    for (auto& slider : sliders) {
         delete slider;
     }
-    for (Icon* icon : icons) {
+    for (auto& toggle : toggleButtons) {
+        delete toggle;
+    }
+    for (auto& icon : iconsMode1) {
         delete icon;
     }
-    for (ToggleButton* toggle : toggleButtons) {
-        delete toggle;
+    for (auto& button : imageButtonsMode1) {
+        delete button;
+    }
+    for (auto& icon : iconsMode2) {
+        delete icon;
+    }
+    for (auto& button : buttonsMode2) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode3) {
+        delete button;
+    }
+    for (auto& icon : iconsMode3) {
+        delete icon;
     }
 
 }

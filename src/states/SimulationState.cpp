@@ -62,7 +62,7 @@ void SimulationState::Enter() {
 //destructeur
 
 SimulationState::~SimulationState() {
-    
+    Exit();
 }
 //Labels
 std::vector<Labbel*> SimulationState::generateLabbels(){
@@ -411,6 +411,9 @@ void SimulationState::Exit() {
         delete label;
     }
     labbels.clear(); // Clear the vector after deleting the labels
+    for(ImageButton* button : imageButtons){
+        delete button;
+    }
 
     //detruit les outils    
     delete render;
@@ -418,6 +421,9 @@ void SimulationState::Exit() {
     delete systemeSolaire;
     delete currentCamera;
     delete renderContext;
+    delete soundTool;
+    Mix_FreeMusic(bgMusic);
+    Mix_CloseAudio();
 }
 
 std::string SimulationState::getDescription() {

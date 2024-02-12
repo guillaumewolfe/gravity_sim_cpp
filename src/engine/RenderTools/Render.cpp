@@ -31,6 +31,8 @@ void Render::initTools(){
     Collision_Tool = new CollisionTool(Context);
     Notification_Tool = new NotificationTool(Context);
     Context->NotificationTool = Notification_Tool;
+    BackgroundImage_Tool = new BackgroundImageTool(Context);
+    
 
     initCamera();
 }
@@ -61,11 +63,12 @@ void Render::Draw(){
     ImGui::Render();
 
     updateCamera();
+    BackgroundImage_Tool->Draw();
     Background_Tool->Draw();
     if(!*(Context->isCreating) or Creator_Manager->getStateName()!="PositionCreator"){Objects_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->Draw();}
     if(*(Context->showAxes)){Axes_Tool->Draw();}
-    if(!*(Context->isCreating) && !Context->showZoom){Path_Tool->Draw();}
+    if(!Context->showZoom){Path_Tool->Draw();}
     if(!*(Context->isCreating) && !Context->showZoom){Orbit_Tool->Draw();}
     if(Context->showCollision){Collision_Tool->Draw();}
 
@@ -146,4 +149,8 @@ Render::~Render(){
     delete Orbit_Tool;
     delete Minimap_Tool;
     delete Keys_UI;
+    delete Collision_Tool;
+    delete Notification_Tool;
+    delete BackgroundImage_Tool;
+    
 }

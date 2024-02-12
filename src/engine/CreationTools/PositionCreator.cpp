@@ -26,8 +26,29 @@ PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* m
 
 }
 
+PositionCreator::~PositionCreator() {
+    for (Button* btn : buttons) {
+        delete btn;
+    }
+    for (Labbel* label : labbels) {
+        delete label;
+    }
+    for (ImageButton* btn : imageButtons) {
+        delete btn;
+    }
+    for (Icon* icon : iconsControls) {
+        delete icon;
+    }
+    delete icon;
+    buttons.clear();
+    labbels.clear();
+    imageButtons.clear();
+    iconsControls.clear();
+}
+
 void PositionCreator::Enter(){
     CelestialObject* sun = m_renderContext->systemeSolaire->getSun();
+    
     Vec3 positionCameraInit = Vec3(sun->getPositionSimulation().x,125,sun->getPositionSimulation().z);
     m_manager->cameraCreationPositionInit = Vec3(positionCameraInit);
     m_manager->cameraCreationTargetInit = sun->getPositionSimulation();
@@ -343,7 +364,7 @@ void PositionCreator::draw_labels(){
 
 void PositionCreator::updateDistanceLabel(){
     if(m_manager->newCreatedObject == nullptr){return;}
-    double distance = m_manager->newCreatedObject->getPositionSimulation().norm();
+    double distance = (m_manager->newCreatedObject->getPositionSimulation()-m_renderContext->systemeSolaire->getSun(m_manager->newCreatedObject)->getPositionSimulation()).norm();
     distance = distance/m_renderContext->systemeSolaire->scale;
     distance = distance/149597870e3;
 
@@ -427,8 +448,9 @@ void PositionCreator::DrawOrbits() {
     drawMainBackground();
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     auto& objects = m_renderContext->systemeSolaire->objects;
-    CelestialObject* centerObject = m_renderContext->systemeSolaire->getSun();
+    CelestialObject* centerObject = m_renderContext->systemeSolaire->getSun(m_manager->newCreatedObject);
     sun = centerObject;
+    if(sun == nullptr){return;}
     // Obtenir la position du soleil (premier objet)
     const glm::vec3& sunPos3D = centerObject->getPositionSimulation().toGlm();
 

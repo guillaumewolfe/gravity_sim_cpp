@@ -30,7 +30,26 @@ ZoomTool::ZoomTool(RenderContext* renderContext) : RenderComponent(renderContext
    generate_colors();
    nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 22.0);
 }
-
+// Destructeur
+ZoomTool::~ZoomTool() {
+   delete zoomCamera;
+   delete backgroundTool;
+   delete objectsTool;
+   delete zoomLabbel;
+   delete title;
+   delete radius1;
+   delete radius1Static;
+   delete radius2;
+   delete mass1;
+   delete mass1Static;
+   delete mass2;
+   delete pourcentageMass;
+   delete pourcentageRadius;
+   delete selectLabbel1;
+   delete selectLabbel2;
+   delete exitButton;
+   delete nameFont;
+}
 
 void ZoomTool::Draw() {
    checkInputs();

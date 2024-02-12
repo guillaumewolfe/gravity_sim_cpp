@@ -175,8 +175,9 @@ void ObjectsTool::drawEffects(){
 void ObjectsTool::updateLumiere(CelestialObject* object){
     CelestialObject* sun = m_renderContext->systemeSolaire->getSun(object);
     bool isSunPresent = (sun != nullptr && sun->type == 1);
-
-    glm::vec3 positionSoleil = m_renderContext->systemeSolaire->getSun(object)->position_simulation.toGlm();
+    CelestialObject* soleil = m_renderContext->systemeSolaire->getSun(object);
+    if(soleil==nullptr){return;}
+    glm::vec3 positionSoleil = soleil->position_simulation.toGlm();
     glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
     glm::vec3 lightDir = glm::normalize(positionSoleil - positionObjet);
 

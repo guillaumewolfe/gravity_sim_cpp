@@ -29,6 +29,85 @@ planateSelectedFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("../a
 
 // Desctructeur
 ChangeParametersTool::~ChangeParametersTool() {
+    /*remove all buttons and object in :
+        std::vector<Labbel*> labbels,labbelsMode1,labbelsMode2,labbelsMode3,labbelsMode4,labbelsMode5;
+    std::vector<Icon*> icons,iconsMode1,iconsMode2,iconsMode3,iconsMode4,iconsMode5;    
+    std::vector<ImageButton*> imageButtons,imageButtonsMode1,imageButtonsMode2,imageButtonsMode3,imageButtonsMode4,imageButtonsMode5;
+    std::vector<Button*> buttons,buttonsMode1,buttonsMode2,buttonsMode3,buttonsMode4,buttonsMode5;
+
+    */
+    for (auto& label : labbels) {
+        delete label;
+    }
+    for (auto& label : labbelsMode1) {
+        delete label;
+    }
+    for (auto& label : labbelsMode2) {
+        delete label;
+    }
+    for (auto& label : labbelsMode3) {
+        delete label;
+    }
+    for (auto& label : labbelsMode4) {
+        delete label;
+    }
+    for (auto& label : labbelsMode5) {
+        delete label;
+    }
+    for (auto& icon : icons) {
+        delete icon;
+    }
+    for (auto& icon : iconsMode1) {
+        delete icon;
+    }
+    for (auto& icon : iconsMode2) {
+        delete icon;
+    }
+    for (auto& icon : iconsMode3) {
+        delete icon;
+    }
+    for (auto& icon : iconsMode4) {
+        delete icon;
+    }
+    for (auto& icon : iconsMode5) {
+        delete icon;
+    }
+    for (auto& button : imageButtons) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode1) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode2) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode3) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode4) {
+        delete button;
+    }
+    for (auto& button : imageButtonsMode5) {
+        delete button;
+    }
+    for (auto& button : buttons) {
+        delete button;
+    }
+    for (auto& button : buttonsMode1) {
+        delete button;
+    }
+    for (auto& button : buttonsMode2) {
+        delete button;
+    }
+    for (auto& button : buttonsMode3) {
+        delete button;
+    }
+    for (auto& button : buttonsMode4) {
+        delete button;
+    }
+    for (auto& button : buttonsMode5) {
+        delete button;
+    }
 }
 
 void ChangeParametersTool::initGeneralUI(){

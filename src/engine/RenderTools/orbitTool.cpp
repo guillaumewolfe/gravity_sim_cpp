@@ -55,7 +55,7 @@ void OrbitTool::Draw() {
 void OrbitTool::DrawEllipse(const Vec3& center, float a, float b, const Vec3& axis, float angle, CelestialObject* object) {
     const int numSegments = 100; // Plus ce nombre est élevé, plus l'ellipse sera lisse
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(axis.x, axis.y, axis.z));
-    glLineWidth(5.0f);  // Définissez l'épaisseur de la ligne selon vos besoins
+    glLineWidth(1.0f);  // Définissez l'épaisseur de la ligne selon vos besoins
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -70,7 +70,7 @@ void OrbitTool::DrawEllipse(const Vec3& center, float a, float b, const Vec3& ax
         glm::vec4 point = rotationMatrix * glm::vec4(x, 0.0f, z, 1.0f); // Y est maintenant 0
 
         ImVec4 color = getTypeColor(object->type);
-        glColor4f(color.x/255,color.y/255,color.z/255, 0.2f);
+        glColor4f(color.x/255,color.y/255,color.z/255, 0.1f);
         glVertex3f(center.x + point.x, center.y, center.z + point.z); // Utilisez center.y pour la coordonnée Y
     }
 

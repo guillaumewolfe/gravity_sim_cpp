@@ -21,6 +21,7 @@
 #include "engine/RenderTools/keysUI.h"
 #include "engine/RenderTools/collisionTool.h"
 #include "engine/RenderTools/notificationTool.h"
+#include "engine/RenderTools/backgroundImageTool.h"
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -57,6 +58,7 @@ MinimapTool* Minimap_Tool = nullptr;
 KeysUI* Keys_UI = nullptr;
 CollisionTool* Collision_Tool = nullptr;
 NotificationTool* Notification_Tool = nullptr;
+BackgroundImageTool* BackgroundImage_Tool = nullptr;
 
 
 
