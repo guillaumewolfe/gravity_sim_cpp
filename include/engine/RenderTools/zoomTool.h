@@ -11,6 +11,7 @@
 #include "engine/RenderTools/backgroundTool.h"
 #include "engine/RenderTools/objectsTool.h"
 #include <functional>
+#include "engine/RenderTools/backgroundImageTool.h"
 
 
 
@@ -27,8 +28,9 @@ public:
    BackgroundTool* backgroundTool = nullptr;
    ObjectsTool* objectsTool = nullptr;
    Camera* zoomCamera = nullptr;
+   BackgroundImageTool* backgroundImageTool = nullptr;
    void setCloseButtonFonction(const std::function<void()>& func);
-    bool* escapeClicked = nullptr;
+   bool* escapeClicked = nullptr;
 
 
 

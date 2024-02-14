@@ -96,6 +96,7 @@ file(GLOB_RECURSE SOURCES
      src/engine/Planets/*.cpp
      src/engine/PhysicsTools/*.cpp
      src/engine/CreationTools/*.cpp
+     src/engine/QuizTools/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
      src/states/*.cpp
@@ -143,9 +144,9 @@ foreach(DLL ${ALL_DLLS})
     ${DLL} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endforeach()
 endif()
-set_target_properties(${PROJECT_NAME} PROPERTIES 
-    WIN32_EXECUTABLE TRUE
-)
+#set_target_properties(${PROJECT_NAME} PROPERTIES 
+    #WIN32_EXECUTABLE TRUE
+#)
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 

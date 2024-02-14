@@ -19,7 +19,7 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderComponent(renderContext),m_camera(camera) {
     initPlanetsShaders();
     initStarShaders();
-    //m_renderContext->currentCamera
+
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         initSphere(*object, 200, 200); 
 

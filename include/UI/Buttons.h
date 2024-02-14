@@ -45,6 +45,7 @@ public:
     void updateLabel(const std::string& newLabel);
     bool enabled = true;
     bool hidden = false;
+    bool isDisabled = false;
     void changeColor(ImVec4 newColor);
     void UpdatePosition(float xPerc, float yPerc);
     void UpdateLabelColor(float x,float y,float z,float w);

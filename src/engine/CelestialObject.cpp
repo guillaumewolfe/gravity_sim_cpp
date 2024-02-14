@@ -90,6 +90,11 @@ void CelestialObject::addPositionHistory(const Vec3& point) {
     static const int MAX_HISTORY_SIZE = 1000; // Limite maximale pour les objets éloignés
     static const float MIN_DISTANCE_INCREMENT = 0.01f; // Distance minimale pour un nouvel enregistrement
 
+    if (positionHistory.size() < MAX_HISTORY_SIZE) {
+        positionHistory.push_back(point);
+        return;
+    }
+
     if(positionHistory.empty()){
         positionHistory.push_back(point);
         return;

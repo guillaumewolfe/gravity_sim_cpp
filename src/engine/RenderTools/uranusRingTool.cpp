@@ -65,7 +65,7 @@ void UranusRingTool::initParticules() {
 
 
 void UranusRingTool::Draw(Camera* camera) {
-    if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn) || !(m_renderContext->currentCamera->followedObject==m_celestialObject)) {
+    if (m_celestialObject == nullptr || !(m_celestialObject->shouldBeDrawn) || !(camera->followedObject==m_celestialObject)) {
         return;
     }
 
@@ -87,7 +87,7 @@ void UranusRingTool::Draw(Camera* camera) {
     glRotatef(98, 1.0f, 0.0f, 0.0f); // Inclinaison
     glRotatef(m_celestialObject->rotationSid / 10, 0.0f, 1.0f, 0.0f); // Rotation
 
-    float distanceToCamera = glm::length(m_renderContext->currentCamera->position.toGlm() - m_celestialObject->position_simulation.toGlm());
+    float distanceToCamera = glm::length(camera->position.toGlm() - m_celestialObject->position_simulation.toGlm());
     float maxDistance = 9.5f; // Distance maximale
     float minPointSize = 0.0f; // Taille minimale des points
     float maxPointSize = 1.0f; // Taille maximale des points

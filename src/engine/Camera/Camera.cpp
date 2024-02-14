@@ -641,7 +641,7 @@ void Camera::resetPosition() {
     selectedObject = followedObject;
 }
 void Camera::resetOrbits(){
-        orbitalVerticalAngle = (M_PI/2)/5;
+        orbitalVerticalAngle = 0.1;
         orbitalHorizontalAngle = -1.18;
 }
 

@@ -85,19 +85,19 @@ void TextureCreator::drawBackground(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     float cornerRadius = 10.0f;
 
+    drawList->AddRectFilled(topLeft, 
+                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                            IM_COL32(0, 0, 0, 100), // Color
+                            cornerRadius);
+    drawList->AddRectFilled(topLeft, 
+                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                            IM_COL32(20, 25, 30, 100), // Color
+                            cornerRadius);
 
-    drawList->AddRectFilled(topLeft, 
-                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
-                            cornerRadius);
-    drawList->AddRectFilled(topLeft, 
-                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
-                            cornerRadius);
     drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
+                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                      IM_COL32(255, 255, 255, 40), // Color
+                      cornerRadius, 0, 0.2f);
 }
 
 

@@ -30,7 +30,7 @@ public:
 private:
     RenderContext* m_renderContext = nullptr;
     CelestialObject* m_celestialObject = nullptr; 
-    int nbreSphere = 50;
+    int nbreSphere = 30;
     float sizeOfGlow = 0.4;
     std::vector<GlowSphere> glowSpheres;
     

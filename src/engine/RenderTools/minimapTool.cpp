@@ -16,12 +16,12 @@
 MinimapTool::MinimapTool(RenderContext* renderContext) : RenderComponent(renderContext){
     typeDict = m_renderContext->colorByTypeDict;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    longueur = winHeight* 0.3; // Exemple de taille
-    hauteur = winHeight * 0.3; // Exemple de taille
+    longueur = winHeight* 0.295; // Exemple de taille
+    hauteur = winHeight * 0.295; // Exemple de taille
     scale = 0.95;
     longueurScene = longueur * scale;
     hauteurScene = hauteur * scale;
-    initialCenterX = 0.096f;
+    initialCenterX = 0.0825f;
     initialCenterY = 0.845;
     float fontsize = 17.0f;
     float fontSizeScaled = fontsize * winWidth / 1920;
@@ -100,19 +100,17 @@ void MinimapTool::draw_rect(){
     float cornerRadius = 10.0f;
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
-                            cornerRadius);    // Dessiner le premier rectangle avec coins arrondis
- 
-    //drawList->AddCircleFilled(centerPos, 0.96*hauteur/2, IM_COL32(0,0,0,255),100);
+                            IM_COL32(0, 0, 0, 20), // Color
+                            cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(15, 20, 25, 120), // Couleur
+                            IM_COL32(20, 25, 30, 100), // Color
                             cornerRadius);
 
     drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
+                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                      IM_COL32(255, 255, 255, 40), // Color
+                      cornerRadius, 0, 0.2f);
 }
 
 

@@ -43,7 +43,7 @@ glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     glTranslatef(position_cam.x, position_cam.y, position_cam.z);
 
     // Optional: Adjust these rotations based on camera orientation if needed
-    glRotatef(70, 0, 1, 0); // Adjust as necessary for correct orientation
+    glRotatef(-60, 0, 1, 0); // Adjust as necessary for correct orientation
     glRotatef(90, 1, 0, 0); // Adjust as necessary for correct orientation
     // Sphere drawing logic (unchanged, ensure it uses scaledRadius for size)
     const float PI = 3.14159265358979323846f;
@@ -93,7 +93,7 @@ for (int i = 0; i < numSlices; ++i) {
 }
 
 void BackgroundImageTool::loadImage(){
-    const char* filename = "assets/textures/background.jpg";
+    const char* filename = "../assets/textures/background.jpg";
     std::string fileNameTransformed = getFullPath(filename);
     cv::Mat image = cv::imread(fileNameTransformed);
     if (image.empty()) {
@@ -101,15 +101,10 @@ void BackgroundImageTool::loadImage(){
         return;
     }
 
-    // Redimensionnement de l'image
-    cv::Mat resizedImage;
-    cv::resize(image, resizedImage, cv::Size(), 4.0, 4.0, cv::INTER_LINEAR);
-
-    cv::flip(resizedImage, resizedImage, 0); // Inversion verticale de l'image
-
+ 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, resizedImage.cols, resizedImage.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, resizedImage.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR, GL_UNSIGNED_BYTE, image.data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

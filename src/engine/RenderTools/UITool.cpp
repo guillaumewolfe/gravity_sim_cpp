@@ -45,7 +45,7 @@ ImGui::End();
 }
 
 void UITool::draw_rect(){
-    float longueur = winWidth * 0.60; // Exemple de taille
+    float longueur = winWidth * 0.67; // Exemple de taille
     float hauteur = winHeight * 0.06; // Exemple de taille
 
     // Position Y du bord supérieur du rectangle pour que le bas du rectangle soit au bas de la fenêtre

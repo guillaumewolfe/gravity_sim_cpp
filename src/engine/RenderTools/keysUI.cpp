@@ -47,17 +47,17 @@ void KeysUI::draw_rect(){
     // Dessinez le rectangle
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 255), // Couleur
+                            IM_COL32(0, 0, 0, 20), // Color
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 100), // Couleur
+                            IM_COL32(20, 25, 30, 100), // Color
                             cornerRadius);
 
     drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,20), // Couleur
-                        cornerRadius,0,0.2f);
+                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                      IM_COL32(255, 255, 255, 40), // Color
+                      cornerRadius, 0, 0.2f);
 }
 
 void KeysUI::initPosition(){

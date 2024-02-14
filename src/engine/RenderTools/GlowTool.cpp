@@ -49,14 +49,14 @@ void GlowTool::initGlow() {
         sphere.rayon = rayonSphere;
 
         // Utiliser une fonction exponentielle inversée pour l'alpha
-        sphere.alpha =0.012* exp(-progression * 2); // Ajustez le facteur 5.0f selon vos besoins
+        sphere.alpha =0.015* exp(-progression * 2); // Ajustez le facteur 5.0f selon vos besoins
         // Ajustement des couleurs
         glm::vec3 yellowColor = glm::vec3(1.0, 0.5, 0.3); // Jaune
         glm::vec3 whiteColor = glm::vec3(1.0, 1.0, 1.0); // Blanc
         float colorProgression = pow(progression, 0.5);
         sphere.color = glm::mix(whiteColor, yellowColor, colorProgression);
 
-        initSphere(sphere, 50, 50, rayonSphere);
+        initSphere(sphere, 30, 30, rayonSphere);
         glowSpheres.push_back(sphere);
     }
 }

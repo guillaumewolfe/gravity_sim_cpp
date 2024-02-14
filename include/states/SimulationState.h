@@ -97,6 +97,7 @@ public:
     void CreateObjectButton();
     void SettingsButton();
     void MinimapButton();
+    void QuizButton();
     void OptionsButton();
     void TelescopeButton();
     void changeSimulationSpeed(bool increase);

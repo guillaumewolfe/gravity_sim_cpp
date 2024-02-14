@@ -53,6 +53,7 @@ public:
     SoundTool* soundTool = nullptr;
     NotificationTool* NotificationTool = nullptr;
     bool debug = false;
+    bool showQuiz = false;
 
 
     std::map<int, std::pair<std::string, ImVec4>> colorByTypeDict;

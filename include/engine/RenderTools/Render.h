@@ -22,6 +22,8 @@
 #include "engine/RenderTools/collisionTool.h"
 #include "engine/RenderTools/notificationTool.h"
 #include "engine/RenderTools/backgroundImageTool.h"
+#include "engine/RenderTools/ISSTool.h"
+#include "engine/RenderTools/quizTool.h"
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -59,6 +61,8 @@ KeysUI* Keys_UI = nullptr;
 CollisionTool* Collision_Tool = nullptr;
 NotificationTool* Notification_Tool = nullptr;
 BackgroundImageTool* BackgroundImage_Tool = nullptr;
+ISSTool* ISS_Tool = nullptr;
+QuizTool* Quiz_Tool = nullptr;
 
 
 

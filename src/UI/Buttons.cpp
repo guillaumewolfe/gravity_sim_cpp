@@ -59,26 +59,33 @@ if(hidden){return;}
         isHovered = ImGui::IsMouseHoveringRect(cursorPos, ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y));
     }
 
+    if (isDisabled or !enabled) {
+        isHovered = false;
+    }
+
     // Hover sound logic
-    if (isHovered && !hoverSoundPlayed&&enabled) {
+    if (isHovered && !hoverSoundPlayed&&enabled && !isDisabled) {
         if(soundFunctionValid){playSoundFunc("hover");}
         hoverSoundPlayed = true;
     } else if (!isHovered && hoverSoundPlayed) {
         hoverSoundPlayed = false;
     }
 
+    float newTextAlpha = (isDisabled) ? 0.2*alpha : alpha;
     // Determine button shape
     if (isRound) {
         // Draw a circle if isRound is true
         ImVec2 center = ImVec2(cursorPos.x + actualSize.x * 0.5, cursorPos.y + actualSize.y * 0.5);
         float radius = (actualSize.x < actualSize.y ? actualSize.x : actualSize.y) * 0.5;
         drawList->AddCircleFilled(center, radius,
-                                    IM_COL32(color.x * 255, color.y * 255, color.z * 255, alpha * 255));
+                                    IM_COL32(color.x * 255, color.y * 255, color.z * 255, newTextAlpha * 255));
     } else {
         // Draw a rectangle if isRound is false
+        ImVec4 colorRect = color;
+        if(isDisabled){colorRect = ImVec4(color.x*0.5,color.y*0.5,color.z*0.5,color.w*0.5);}
         drawList->AddRectFilled(cursorPos,
                                 ImVec2(cursorPos.x + actualSize.x, cursorPos.y + actualSize.y),
-                                IM_COL32(color.x * 255, color.y * 255, color.z * 255, alpha * 255), cornerRadius);
+                                IM_COL32(colorRect.x * 255, colorRect.y * 255, colorRect.z * 255, newTextAlpha * 255), cornerRadius);
 
     }
 
@@ -90,7 +97,9 @@ ImGui::PopFont();
                             cursorPos.y + (actualSize.y - textSize.y) * 0.5);
 
 ImU32 labelColorIM32 = IM_COL32((int)labelColor.x, (int)labelColor.y, (int)labelColor.z, (int)labelColor.w);
-if(isOn){ImU32 labelColorIM32 = IM_COL32((int)255, (int)255, (int)255, (int)255);}
+if(isDisabled){labelColorIM32 = IM_COL32((int)labelColor.x, (int)labelColor.y, (int)labelColor.z, (int)labelColor.w*0.5);}
+
+if(isOn){ImU32 labelColorIM32 = IM_COL32((int)255, (int)255, (int)255, (int)newTextAlpha*255);}
 if (font) {
     drawList->AddText(font, font->FontSize, textPos,
                       labelColorIM32,
@@ -102,7 +111,7 @@ if (font) {
     }
 
     // Button hover effect
-    if (isHovered && enabled) {
+    if (((isHovered && enabled) or isOn) && !isDisabled) {
         if (isRound) {
             // Hover effect for circle
             ImVec2 center = ImVec2(cursorPos.x + actualSize.x * 0.5, cursorPos.y + actualSize.y * 0.5);
@@ -122,7 +131,7 @@ if (font) {
                     label.c_str());
         }
     }
-    if(isOn){
+    if(isOn && !isDisabled){
     float rectHeight = actualSize.y * 0.075; // 10% de la hauteur du bouton
     float rectWidth = actualSize.x * 0.70;// 10% de la largeur du bouton
     float offsetX = (actualSize.x - rectWidth) / 2; // Demi-différence entre les largeurs du bouton et du rectangle
@@ -134,10 +143,10 @@ if (font) {
                             IM_COL32(255, 255, 255, 5), cornerRadius);}
 
     // Button click detection
-    if (isHovered && ImGui::IsMouseClicked(0)) {
+    if (isHovered && ImGui::IsMouseClicked(0) && !isDisabled) {
         mouseButtonPressed = true;
     }
-    if (!isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed) {
+    if (!isHovered && ImGui::IsMouseReleased(0) && mouseButtonPressed ) {
         mouseButtonPressed = false;
     }
     if (mouseButtonPressed && isHovered) {

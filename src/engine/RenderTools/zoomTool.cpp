@@ -27,6 +27,8 @@ ZoomTool::ZoomTool(RenderContext* renderContext) : RenderComponent(renderContext
    backgroundTool = new BackgroundTool(m_renderContext);
    objectsTool = new ObjectsTool(m_renderContext, zoomCamera);
    zoomLabbel = new Labbel(0.5,0.9,ImVec4(255,255,255,255),"Zoom",30.0f,0.7);
+   backgroundImageTool = new BackgroundImageTool(m_renderContext);
+   backgroundImageTool->m_camera = zoomCamera;
    generate_colors();
    nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 22.0);
 }
@@ -114,6 +116,7 @@ void ZoomTool::Draw() {
        zoomCamera->followingDistance = m_renderContext->currentCamera->followingDistance;
    }
    // Rendu de la scène avec la caméra de zoom
+   backgroundImageTool->Draw();
    backgroundTool->Draw();
    objectsTool->Draw();
 

@@ -57,6 +57,8 @@ void SimulationState::Enter() {
     render->PlaneteInfo_Tool->changeParametersTool->setCloseMinimapFunction(std::bind(&SimulationState::MinimapButton, this));
     render->PlaneteInfo_Tool->changeParametersTool->setEditPositionFunction(std::bind(&CreatorManager::editObject, render->Creator_Manager, std::placeholders::_1));
     render->PlaneteInfo_Tool->setConfirmBoxFunction(std::bind(&SimulationState::generateDialogBox, this, std::placeholders::_1, std::placeholders::_2));
+    
+    render->Quiz_Tool->setConfirmBoxFunction(std::bind(&SimulationState::generateDialogBox, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 //destructeur
@@ -166,10 +168,14 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         "../assets/button/planet.png", 0,
                             std::bind(&SimulationState::CreateObjectButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     
-    ImageButton *optionButton = new ImageButton(playSoundFunc,position_x_left, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+    ImageButton *optionButton = new ImageButton(playSoundFunc,position_x_left+diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
                         "../assets/button/settings.png", 0,
                             std::bind(&SimulationState::SettingsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *quizButton = new ImageButton(playSoundFunc,position_x_left, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+                        button_color,button_color,
+                        "../assets/button/quiz.png", 0,
+                            std::bind(&SimulationState::QuizButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *minimap = new ImageButton(playSoundFunc,position_x_left-4*diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
                         "../assets/button/solarsystem.png", 0,
@@ -179,6 +185,10 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         "../assets/button/compare.png", 0,
                             std::bind(&SimulationState::TelescopeButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *menuButton = new ImageButton(playSoundFunc,0.015f, 0.025, ImVec2(0.05, 0.05),0.50,
+                        button_color,button_color,
+                        "../assets/button/menu.png", 0,
+                        std::bind(&SimulationState::OptionsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    ImageButton *menuButton2 = new ImageButton(playSoundFunc,position_x_right-diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.325,
                         button_color,button_color,
                         "../assets/button/menu.png", 0,
                         std::bind(&SimulationState::OptionsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -230,6 +240,8 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
     imageButtons_list.push_back(minimap);
     imageButtons_list.push_back(controls);
     imageButtons_list.push_back(resetView);
+    imageButtons_list.push_back(quizButton);
+    imageButtons_list.push_back(menuButton2);
     return imageButtons_list;
 
 }
@@ -256,7 +268,7 @@ void SimulationState::rotateCamWithMouse(){
 void SimulationState::Update() {
     
     checkButtonState();
-    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){
+    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz){
         return;}
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
@@ -334,7 +346,17 @@ void SimulationState::Update() {
     if (ImGui::IsKeyPressed(ImGuiKey_M)){MinimapButton();}
 
     if (ImGui::IsKeyPressed(ImGuiKey_L)){showDialogBox();}
+    if (ImGui::IsKeyPressed(ImGuiKey_Z)){
+        if(renderContext->showQuiz == false){
+            renderContext->showQuiz = true;
+            render->Quiz_Tool->Open();
+            if(renderContext->showNotificationTool){
+                showDialogBox();}
+        }else{
+            renderContext->showQuiz = false;
+            render->Quiz_Tool->Close();
 
+        }}
     //Mouse dragging for mooving the camera
     if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
     if(showCameraOptions && render->CameraOptions_Tool->mouseOnCameraOptions()){return;}
@@ -557,6 +579,9 @@ void SimulationState::checkButtonState(){
         showControlsButton();
     }
 
+    if(renderContext->showQuiz){imageButtons[13]->turnOn();}
+    else{imageButtons[13]->turnOff();}
+
 }
 
 
@@ -757,7 +782,26 @@ void SimulationState::showDialogBox(){
     if(renderContext->showNotificationTool){
         render->Notification_Tool->Close();
     }else{
-        render->Notification_Tool->Open("Notification","I have created a minimap for you!","Open","Close",std::bind(&SimulationState::MinimapButton, this));
+        //render->Notification_Tool->Open("Notification","I have created a minimap for you!","Open","Close",std::bind(&SimulationState::MinimapButton, this));
+    }
+}
+
+void SimulationState::QuizButton(){
+    if(renderContext->showQuiz){
+        renderContext->showQuiz = false;
+        render->Quiz_Tool->Close();
+    }else{
+        forcePause = true;
+        Pause();
+        renderContext->showQuiz = true;
+        render->Quiz_Tool->Open();
+        if(renderContext->showNotificationTool){
+            showDialogBox();
+        }
+        if(renderContext->showZoom){TelescopeButton();}
+        if(isCreating){CreateObjectButton();}
+        if(showCameraOptions){ShowCameraOptionsButton();}
+        if(renderContext->showMinimap){MinimapButton();}
     }
 }
 

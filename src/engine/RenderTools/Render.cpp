@@ -32,6 +32,8 @@ void Render::initTools(){
     Notification_Tool = new NotificationTool(Context);
     Context->NotificationTool = Notification_Tool;
     BackgroundImage_Tool = new BackgroundImageTool(Context);
+    ISS_Tool = new ISSTool(Context);
+    Quiz_Tool = new QuizTool(Context);
     
 
     initCamera();
@@ -60,6 +62,7 @@ void Render::Draw(){
     if(*(Context->showOptions)){Options_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
+    if(Context->showQuiz){Quiz_Tool->Draw();}
     ImGui::Render();
 
     updateCamera();
@@ -71,6 +74,7 @@ void Render::Draw(){
     if(!Context->showZoom){Path_Tool->Draw();}
     if(!*(Context->isCreating) && !Context->showZoom){Orbit_Tool->Draw();}
     if(Context->showCollision){Collision_Tool->Draw();}
+    //ISS_Tool->Draw();
 
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -117,6 +121,9 @@ void Render::updateShouldClick(){
     else if(Message_Tool != nullptr){
         Context->shouldClickOnNames = false;
     }
+    else if(Context->showQuiz){
+        Context->shouldClickOnNames = false;
+    }
     else{
         Context->shouldClickOnNames = true;
     }
@@ -152,5 +159,7 @@ Render::~Render(){
     delete Collision_Tool;
     delete Notification_Tool;
     delete BackgroundImage_Tool;
+    delete ISS_Tool;
+    delete Quiz_Tool;
     
 }
