@@ -10,6 +10,9 @@
 #include <states/LoadingState.h>
 #include <states/MenuState.h>
 #include <states/SimulationState.h>
+#include <cmath> // Include the cmath library for sin function
+
+
 
 Game::Game() : currentState(nullptr), window(nullptr), 
                requestedState(nullptr), changeStateRequested(false) {
@@ -25,10 +28,15 @@ void Game::setShouldClose(bool value) { shouldClose = value; }
 
 void Game::Init()
 { 
-//states["loading"] = new LoadingState(this);
+states["loading"] = new LoadingState(this);
+std::thread loadingThread(&Game::InitLoadingWindow, this);
+loadingThread.detach();
 states["menu"] = new MenuState(this);
 states["simulation"] = new SimulationState(this);
+loadingThreadShouldExit = true;
 ChangeState("menu");
+showMainWindow();
+
 }
 
 void Game::Close()
@@ -40,6 +48,16 @@ void Game::Close()
         }
 
     CleanupOpenGL();
+    if (settings.soundTool) {
+        delete settings.soundTool;
+    }
+    delete currentState;
+    delete requestedState;
+    ImGui::DestroyContext(loadingIMGUIContext);
+    ImGui::DestroyContext(mainIMGUIContext);
+    delete loadingIMGUIContext;
+    delete mainIMGUIContext;
+
 }
 
 void Game::Update()
@@ -109,10 +127,9 @@ bool Game::InitOpenGL()
 
     // Configurer la fenêtre pour être "windowed borderless"
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-
     // Création de la fenêtre en utilisant les dimensions de l'espace de travail
     window = glfwCreateWindow(workAreaWidth, workAreaHeight, "Space Query", NULL, NULL);
-
+    glfwHideWindow(window);
     if (!window)
     {
         glfwTerminate();
@@ -143,7 +160,6 @@ bool Game::InitOpenGL()
     ImGui_ImplOpenGL3_Init("#version 120");
 
     ImGui::StyleColorsDark();
-
     return true;
 }
 
@@ -157,7 +173,6 @@ void Game::CleanupOpenGL()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
     glfwTerminate();
@@ -179,3 +194,50 @@ void Game::InitSettings() {
 
 //getSoundTool
 SoundTool* Game::getSoundTool() { return settings.soundTool; }
+
+void Game::InitLoadingWindow() {
+    // Initialize GLFW for this thread
+    glfwInit();
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+
+    // Obtenez les dimensions de l'espace de travail de l'écran
+    int workAreaX, workAreaY, workAreaWidth, workAreaHeight;
+    glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaWidth, &workAreaHeight);
+
+    // Configurer la fenêtre pour être "windowed borderless"
+    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    // Création de la fenêtre en utilisant les dimensions de l'espace de travail
+    loadingWindow = glfwCreateWindow(workAreaWidth, workAreaHeight, "Space Query", NULL, NULL);
+    if (!loadingWindow) {
+        glfwTerminate();
+        return;
+    }
+
+    dynamic_cast<LoadingState*>(states["loading"])->setWindow(loadingWindow);
+
+    // Make the context of the loading window current on this thread
+    glfwMakeContextCurrent(loadingWindow);
+    // Initialize GLAD for this thread/context
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return;
+    }
+
+
+    //Check font atlas
+    // Simple loading loop
+    while (!glfwWindowShouldClose(loadingWindow) && !loadingThreadShouldExit) {
+        glfwPollEvents();
+        dynamic_cast<LoadingState*>(states["loading"])->Draw();
+        // Swap buffers
+        glfwSwapBuffers(loadingWindow);
+    }
+    glfwDestroyWindow(loadingWindow);
+}
+
+void Game::showMainWindow() {
+    if (window != nullptr) {
+        glfwShowWindow(window);
+    }
+}

@@ -59,6 +59,8 @@ Button* bouttonQuestion1 = nullptr;
 Button* bouttonQuestion2 = nullptr;
 Button* bouttonQuestion3 = nullptr;
 Button* bouttonQuestion4 = nullptr;
+Button* playAgainButton = nullptr;
+Button* quitEndOfQuizButton = nullptr;
 ImageButton* quitBtn = nullptr;
 void resetButtons();
 bool quizStarted = false;

@@ -6,6 +6,7 @@
 BackgroundTool::BackgroundTool(RenderContext* renderContext) : RenderComponent(renderContext){
     srand(static_cast<unsigned>(time(nullptr)));
     initStars(50000);
+    camera = m_renderContext->currentCamera;
 }
 
 // Destructeur
@@ -40,9 +41,9 @@ void BackgroundTool::Draw() {
         glColor4f(star.r, star.g, star.b, star.alpha);
         glColor4f(star.r, star.g, star.b, star.alpha);
 
-        float camX = m_renderContext->currentCamera->position.x;
-        float camY = m_renderContext->currentCamera->position.y;
-        float camZ = m_renderContext->currentCamera->position.z;
+        float camX = camera->position.x;
+        float camY = camera->position.y;
+        float camZ = camera->position.z;
 
         glVertex3f(star.x + camX, star.y + camY, star.z + camZ);
     }

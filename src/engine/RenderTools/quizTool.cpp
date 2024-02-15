@@ -51,6 +51,9 @@ QuizTool::~QuizTool() {
     delete progressBar;
     delete questionExplanationLabel;
     delete progressTitleLabel;
+    delete progressNumberLabel;
+    delete playAgainButton;
+    delete quitEndOfQuizButton;
 
 }
 
@@ -122,6 +125,17 @@ void QuizTool::initUI() {
                         "../assets/button/close.png", 0,
                             std::bind(&QuizTool::askToClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
+    quitEndOfQuizButton = new Button(playSoundFunc,0.465, closeBtn_PositionInitiale.y, ImVec2(0.045, 0.035),
+                            ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                            ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                            "Close", 0.05f,19.0f,
+                            std::bind(&QuizTool::Close, this),5); 
+
+    playAgainButton  = new Button(playSoundFunc,0.535, closeBtn_PositionInitiale.y, ImVec2(0.045, 0.035),
+                            ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                            ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                            "Play again", 0.2f,19.0f,
+                            std::bind(&QuizTool::Open, this),5); 
     //Boutton pour les questions, centrer en x et espacés en y, 4 questions
     float beginY = 0.4;
     float spaceY = 0.05;
@@ -467,8 +481,11 @@ void QuizTool::drawTransitingResult(){
 void QuizTool::drawResults() {
     resultLabel->Draw();
     resultTitleLabel->Draw();
-    closeBtn->Draw();
     if(isTransitingResult){drawTransitingResult();}
+    if(!isTransitingResult){
+        playAgainButton->Draw();
+        quitEndOfQuizButton->Draw();
+    }
 }
 
 

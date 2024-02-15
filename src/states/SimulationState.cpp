@@ -4,7 +4,6 @@
 SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
     Enter();
 }
-
 void SimulationState::Enter() {
     //Constructions des éléments
     generateMusic();
@@ -22,7 +21,6 @@ void SimulationState::Enter() {
     render = new Render(renderContext);
     physics = new Physics(renderContext);
     currentCamera->setContext(renderContext);
-
     //Bind function to toolss
     render->Options_Tool->setMenuButtonFunction(std::bind(&SimulationState::MenuButton, this));
     render->Options_Tool->setSettingsButtonFunction(std::bind(&SimulationState::SettingsButton, this));

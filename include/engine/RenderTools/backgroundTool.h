@@ -29,6 +29,7 @@ public:
     explicit BackgroundTool(RenderContext* renderContext);
     ~BackgroundTool() override;
     void Draw() override;
+    Camera* camera;
 
 
 private:

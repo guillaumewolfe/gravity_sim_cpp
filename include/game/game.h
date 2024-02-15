@@ -33,8 +33,6 @@ struct GameSettings {
     SoundTool* soundTool = nullptr;
 
 
-
-    // Autres paramètres...
 };
 
 
@@ -43,6 +41,7 @@ class Game {
 private:
     BaseState* currentState = nullptr; 
     GLFWwindow* window = nullptr;
+    GLFWwindow* loadingWindow = nullptr;
     std::vector<Button*> buttons = std::vector<Button*>();
     bool shouldClose = false;
     GameSettings settings;;
@@ -64,7 +63,8 @@ public:
     void InitSettings();
 
     void Init();
-    void Load();
+    void LoadResourcesAsync();
+    void CheckLoadResources();
     ImFont* Create_font();
     void Update();
     void UpdatePhysics(double dt);
@@ -77,14 +77,14 @@ public:
     void InitGameStates();
     bool loadingComplete = false;
     void ApplyFadeOut(GLFWwindow* loadingWindow);
-    GLFWwindow* loadingWindow = nullptr;
-    void initLoadingWindow();
+    void InitLoadingWindow();
     //getSoundTool
-    SoundTool* getSoundTool();
-
-    ImGuiContext* mainContext = ImGui::CreateContext();
-    ImGuiContext* loadingContext = ImGui::CreateContext();
-
+    SoundTool* getSoundTool(); 
+    bool loadingThreadShouldExit = false;
+    void showMainWindow();
+    //ImGuiContext for loading
+    ImGuiContext* loadingIMGUIContext = nullptr;
+    ImGuiContext* mainIMGUIContext = nullptr;
 
 };
 

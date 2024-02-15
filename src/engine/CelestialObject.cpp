@@ -72,7 +72,8 @@ GLuint CelestialObject::loadTexture(const char* filename) {
         return 0;
     }
     cv::flip(image, image, 0); // Inversion verticale de l'image
-
+    //Flip horizontale
+    cv::flip(image, image, 1);
     GLuint texture = 0;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

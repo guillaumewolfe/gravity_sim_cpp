@@ -29,6 +29,7 @@ ZoomTool::ZoomTool(RenderContext* renderContext) : RenderComponent(renderContext
    zoomLabbel = new Labbel(0.5,0.9,ImVec4(255,255,255,255),"Zoom",30.0f,0.7);
    backgroundImageTool = new BackgroundImageTool(m_renderContext);
    backgroundImageTool->m_camera = zoomCamera;
+   backgroundTool->camera = zoomCamera;
    generate_colors();
    nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 22.0);
 }
