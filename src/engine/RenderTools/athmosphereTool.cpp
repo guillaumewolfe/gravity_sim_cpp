@@ -123,6 +123,9 @@ void AthmosphereTool::drawAthmosphere(CelestialObject* Sun, Camera* camera) {
 }
 
 glm::vec3 AthmosphereTool::getLightDirection(CelestialObject* Sun){
+    if(Sun == nullptr or Sun == m_celestialObject or Sun->type != 1){
+        return glm::vec3(0.0, 0.0, 0.0);
+    }
     glm::vec3 positionSoleil = Sun->getPositionSimulation().toGlm();
     glm::vec3 positionObjet = glm::vec3(m_celestialObject->position_simulation.x, m_celestialObject->position_simulation.y, m_celestialObject->position_simulation.z);
     glm::vec3 lightDir = glm::normalize(positionSoleil - positionObjet);

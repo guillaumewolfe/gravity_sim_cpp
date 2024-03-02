@@ -34,7 +34,10 @@ void Render::initTools(){
     BackgroundImage_Tool = new BackgroundImageTool(Context);
     ISS_Tool = new ISSTool(Context);
     Quiz_Tool = new QuizTool(Context);
-    
+    SaveSimulation_Tool = new SaveSimulationTool(Context);
+    Restart_Tool = new RestartTool(Context);
+    //Success_Tool = new SuccessTool(Context);
+    //Success_Tool->setNotificationTool(Notification_Tool);
 
     initCamera();
 }
@@ -55,7 +58,6 @@ void Render::Draw(){
     if(Context->showMinimap){Minimap_Tool->Draw();}
     if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->drawImGui();}
-    if(!Context->showZoom){UI_Tool->Draw();}
     if(Context->showControls){Keys_UI->Draw();}
     if(Context->showNotificationTool){Notification_Tool->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
@@ -63,6 +65,11 @@ void Render::Draw(){
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(Context->showQuiz){Quiz_Tool->Draw();}
+    if(Context->showSaveSimulation){SaveSimulation_Tool->Draw();}
+    if(!Context->showZoom){UI_Tool->Draw();}
+    if(Context->showRestartTool){Restart_Tool->Draw();}
+    //Success_Tool->Draw();
+
     ImGui::Render();
 
     updateCamera();
@@ -80,6 +87,7 @@ void Render::Draw(){
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     if((Context->currentCamera->followedObject!=nullptr||Context->currentCamera->selectedObject!=nullptr) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->drawTexturedSphere();}
     if(*(Context->isCreating)){Creator_Manager->DrawOpenGL();}
+    if(UI_Tool->isSearching){UI_Tool->drawPlanet();}
 
 }
 
@@ -124,9 +132,16 @@ void Render::updateShouldClick(){
     else if(Context->showQuiz){
         Context->shouldClickOnNames = false;
     }
+    else if(UI_Tool->musicPlayerTool->mouseHoveringPlayer()){
+        Context->shouldClickOnNames = false;
+    }
+    else if(Context->showSaveSimulation){
+        Context->shouldClickOnNames = false;
+    }
     else{
         Context->shouldClickOnNames = true;
     }
+
 
 
 
@@ -161,5 +176,8 @@ Render::~Render(){
     delete BackgroundImage_Tool;
     delete ISS_Tool;
     delete Quiz_Tool;
+    delete SaveSimulation_Tool;
+    delete Restart_Tool;
     
 }
+

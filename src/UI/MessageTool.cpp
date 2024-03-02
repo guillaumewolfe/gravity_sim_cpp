@@ -43,13 +43,14 @@ void MessageTool::draw_rectangles(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
     // Rayon des coins arrondis
-    float cornerRadius = 10.0f; // Vous pouvez ajuster ce rayon selon vos besoins
-
+    float cornerRadius = winWidth*0.01; // Vous pouvez ajuster ce rayon selon vos besoins
+    
     //Carré pour tout le fond d'écran
     drawList->AddRectFilled(ImVec2(0,0), 
-                            ImVec2(winHeight*2,winHeight*2), 
-                            IM_COL32(0, 0, 0, 200), // Couleur
-                            cornerRadius);
+                            ImVec2(winWidth, winHeight), 
+                            IM_COL32(0,0,0,200), // Couleur
+                            cornerRadius);     
+
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(0,0,0,255), // Couleur
@@ -59,11 +60,6 @@ void MessageTool::draw_rectangles(){
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     // Définir la taille du deuxième rectangle (10% plus grand)
     float enlargementFactor = 1.01f; 

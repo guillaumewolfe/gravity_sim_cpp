@@ -50,6 +50,7 @@ private:
     int mode = 0; // 0 = inactive, 1 = change weight, 2 = change radius, 3- Change Name
     void nextMode();
     void previousMode();
+    std::vector<CelestialObject*> objects;
 
     void initMode1();
     void initMode2();

@@ -8,7 +8,8 @@ SystemeSolaire::SystemeSolaire(){
     maxSize = 1000;
     radiusScale = 2.0f;
     apiTool = new ApiTool();
-    objects = initSystem();
+    initialStateObjects = initSystem();
+    objects = initialStateObjects;
     scale = getScale();
     setRayonInit();
     syncWithNasa();
@@ -80,12 +81,14 @@ void SystemeSolaire::setRayon(CelestialObject* obj){
 void SystemeSolaire::syncWithNasa(){
     if(objects.empty()){return;}
     std::string sunString = apiTool->getBodyData("Sun");
-    std::pair<Vec3, Vec3> sunPositionAndVelocity = apiTool->extractBodyData(sunString, "Sun");
+    bool connexionFailed = false;
+    std::pair<Vec3, Vec3> sunPositionAndVelocity = apiTool->extractBodyData(sunString, "Sun", &connexionFailed);
+    if(connexionFailed){return;}
     Vec3 sunPosition = sunPositionAndVelocity.first;
     Vec3 sunVelocity = sunPositionAndVelocity.second;
     for(auto& object : objects){
         std::string buffer = apiTool->getBodyData(object->getName());
-        std::pair<Vec3, Vec3> positionAndVelocity = apiTool->extractBodyData(buffer,object->getName());
+        std::pair<Vec3, Vec3> positionAndVelocity = apiTool->extractBodyData(buffer,object->getName(), &connexionFailed);
         // Multipliez les valeurs par 1000
         Vec3 newPosition = positionAndVelocity.first * 1000;
         Vec3 newVelocity = positionAndVelocity.second * 1000;
@@ -98,34 +101,27 @@ void SystemeSolaire::syncWithNasa(){
 
 
 void SystemeSolaire::resetPosition() {
-    // Enlever tous les objets créés pendant la simulation
-    objects.erase(std::remove_if(objects.begin(), objects.end(), [](CelestialObject* obj) { 
-        return obj->isCreated; 
-    }), objects.end());
+    for (auto& object : objects) {
+        if (!object) continue; // Sautez les pointeurs nuls
 
-    // Trier le vecteur deletedObjects par position originale pour conserver l'ordre
-    std::sort(deletedObjects.begin(), deletedObjects.end(), 
-              [](const std::pair<CelestialObject*, size_t>& a, const std::pair<CelestialObject*, size_t>& b) {
-                  return a.second < b.second;
-              });
-
-    // Réintégrer les objets originaux supprimés dans leurs positions originales
-    for (const auto& pair : deletedObjects) {
-        CelestialObject* deletedObject = pair.first;
-        size_t position = pair.second;
-        if (position <= objects.size()) {
-            objects.insert(objects.begin() + position, deletedObject);
-        }
+        // Votre logique existante ici...
     }
-    deletedObjects.clear(); // Vider le vecteur des objets supprimés après les avoir réintégrés
-
     // Réinitialiser la position et la vitesse des objets originaux
     for (auto& object : objects) {
         object->resetPlanetEaten();
         bool rayonChanged = false;
         if (!object->isCreated) {
-            object->updatePositionReal(object->nasaPosition);
-            object->updateVelocity(object->nasaVelocity);
+            if(isLoadedState){
+                object->distanceScale = scale;
+                object->updatePositionReal(object->defaultPosition);
+                object->updatePositionSimulation();
+                object->updateVelocity(object->defaultVelocity);
+                
+            }else{
+                object->updatePositionReal(object->nasaPosition);
+                object->updateVelocity(object->nasaVelocity);
+            }
+
             object->clearPositionHistory();
             if (object->real_radius != object->initialRadius) {
                 rayonChanged = true;
@@ -226,3 +222,33 @@ CelestialObject* SystemeSolaire::getSun(CelestialObject* excludeObject) {
     return mostMassive;
 }
 
+std::vector<CelestialObject*> SystemeSolaire::getObjects() {
+    return objects;
+}
+
+
+void SystemeSolaire::loadState(std::vector<CelestialObject*> loadedObjects) {
+    // Nettoyez l'état actuel
+    for (auto& object : objects) {
+        if(object->isCreated) delete object; // Assurez-vous de libérer la mémoire si nécessaire
+    }
+    objects.clear();
+
+    // Chargez le nouvel état
+    objects = loadedObjects;
+    if(isLoadedState){
+        loadedStateObjects = loadedObjects;
+    }
+
+    resetPosition();
+}
+
+void SystemeSolaire::reset(bool toInitialState) {
+
+    isLoadedState = !toInitialState;
+    if (toInitialState) {
+        loadState(initialStateObjects); // Réinitialisez à l'état initial
+    } else {
+        loadState(loadedStateObjects); // Réinitialisez à l'état chargé
+    }
+}

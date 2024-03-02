@@ -32,6 +32,7 @@ void MenuState::Enter() {
     settingsTool->setCloseButtonFunction(std::bind(&MenuState::settingsButton, this));
     settingsTool->setSaveButtonFunction(std::bind(&MenuState::settingsButton, this));
     settingsTool->setGameSettings(gameObj->getSettings());
+    settingsTool->setDefaultSettings(gameObj->getDefaultSettings());
     settingsTool->init();
 }
 
@@ -349,6 +350,7 @@ void MenuState::drawVideo() {
     ImGui::End();
 }
 
+
 void MenuState::generateMusic(){
     // Initialize SDL_mixer
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
@@ -358,7 +360,7 @@ void MenuState::generateMusic(){
 
     // Load music
     
-    bgMusic = Mix_LoadMUS(getFullPath("../assets/sounds/music_background.mp3").c_str());
+    bgMusic = Mix_LoadMUS(getFullPath("../assets/music/particles.mp3").c_str());
     if (!bgMusic) {
         std::cerr << "Failed to load background music! SDL_mixer Error: " << Mix_GetError() << std::endl;
         return;

@@ -45,7 +45,7 @@ void Slider::Draw() {
     ImVec2 detectionSize = ImVec2(actualSize.x, detectionHeight);
 
     isHovered = ImGui::IsMouseHoveringRect(detectionPos, ImVec2(detectionPos.x + detectionSize.x, detectionPos.y + detectionSize.y));
-
+    if(isHovered)ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     if (isHovered && ImGui::IsMouseDown(0)) {
         isDragging = true;
     } else if (!ImGui::IsMouseDown(0)) {

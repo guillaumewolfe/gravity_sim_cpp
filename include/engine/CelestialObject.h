@@ -44,6 +44,7 @@ public:
     bool showPath = true;
     bool showName = true;
     bool isDeleted = false;
+    bool isColliding = false;
     CelestialObject* mostInfluentialObject = nullptr;
     void setMostInfluentialObject(CelestialObject* newMostInfluentialObject);
     CelestialObject* getMostInfluentialObject();
@@ -75,6 +76,9 @@ public:
     Vec3 position_simulation = {0,0,0};
     Vec3 nasaPosition = {0,0,0};
     Vec3 nasaVelocity = {0,0,0};
+
+    Vec3 defaultPosition = {0,0,0};
+    Vec3 defaultVelocity = {0,0,0};
     
     GLuint vao = 0;
     GLuint vboVertices, vboNormals, vboTexCoords = 0;
@@ -125,6 +129,7 @@ public:
     std::string getDefaultName();
     void setDefaultValues();
     void resetToDefaultValues();
+    Vec3 getVelocity();
     
 
 

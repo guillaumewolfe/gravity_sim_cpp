@@ -6,6 +6,7 @@
 #include <chrono>
 #include "UI/ImageButton.h"
 #include "UI/Icon.h"
+#include "engine/RenderTools/MusicPlayerTool.h"
 
 class UITool : public RenderComponent {
 public:
@@ -26,17 +27,36 @@ public:
     GLuint textureID;
 
     ImageButton* pauseButton = nullptr;
+    MusicPlayerTool* musicPlayerTool = nullptr;
+    void drawPlanet();
 
+    bool isSearching = false;
 private:
     int winWidth, winHeight;
     ImFont* myFont = nullptr;
+    ImFont* fontUI = nullptr;
     std::chrono::steady_clock::time_point lastFrameTime;
     int frameCount;
     float fps;
     void checkScroll();
     void drawLive(ImDrawList* drawList, ImVec2 centerPos);
     void drawConnexionFailed(ImDrawList* drawList, ImVec2 centerPos);
+    
 
+    //SearchTool
+    void drawSearchTool();
+    Icon* searchIcon = nullptr;
+    Icon* selectionIcon = nullptr;
+    Labbel* searchLabbel = nullptr;
+    std::string searchInput = "";
+    ImFont* searchFont = nullptr;
+    ImFont* typeFont = nullptr;
+    void searchItem();
+    void DrawSearchBoxes();
+    void planetSelectionSearch(CelestialObject* planet);
+    bool isHoveringSearchBoxes = false;
+    float Rotation = 0.0f;
+    std::vector<CelestialObject*> foundObjects;
 
 };
 

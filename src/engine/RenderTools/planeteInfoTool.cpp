@@ -464,20 +464,19 @@ void PlaneteInfoTool::drawBackground(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     ImVec2 bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
     isHovering = ImGui::IsMouseHoveringRect(topLeft, bottomRight);
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.02;
 
 
 ImVec4 color = getTypeColor(m_object->type);
-
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 150), // Couleur
+                            IM_COL32(0, 0, 0, 100), // Couleur
+                            cornerRadius);
+    drawList->AddRectFilled(topLeft, 
+                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                            IM_COL32(20, 25, 30, 100), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(color.x,color.y,color.z,50), // Couleur
-                        cornerRadius,0,winWidth*0.001);
 //IM_COL32(90, 120, 149, 120), // Couleur
     float taille_y = 0.06f*0.8;
     float yPosition = 0.350+taille_y*1.01; // Juste en dessous des boutons, ajustez 0.02f si nécessaire
@@ -653,6 +652,7 @@ std::string PlaneteInfoTool::formatScientific(double value) {
 
 
 void PlaneteInfoTool::drawTexturedSphere() {
+    if(!m_object){return;}
     if(m_object->isDeleted){
         return;
     }
@@ -741,7 +741,7 @@ void PlaneteInfoTool::drawTexturedSphere() {
 void PlaneteInfoTool::draw_story(){
 if(mode != 2){return;}
 ImGui::SetNextWindowPos(ImVec2(winWidth*0.78, winHeight*0.43)); // Position de la fenêtre
-ImGui::SetNextWindowSize(ImVec2(winWidth*0.19, winWidth*0.135)); // Taille de la fenêtre
+ImGui::SetNextWindowSize(ImVec2(winWidth*0.19, winHeight*0.2)); // Taille de la fenêtre
 ImGuiStyle& style = ImGui::GetStyle();
 style.Colors[ImGuiCol_Text].w = 0.7; // alphaValue est compris entre 0.0f (complètement transparent) et 1.0f (complètement opaque)
 // Créer la nouvelle fenêtre

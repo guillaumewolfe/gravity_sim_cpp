@@ -97,6 +97,7 @@ file(GLOB_RECURSE SOURCES
      src/engine/PhysicsTools/*.cpp
      src/engine/CreationTools/*.cpp
      src/engine/QuizTools/*.cpp
+     src/save/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
      src/states/*.cpp
@@ -175,6 +176,7 @@ include(CPack)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION .)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/engine/RenderTools/Shaders DESTINATION src/engine/RenderTools)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/save DESTINATION src/save)
 # Installer les bibliothèques nécessaires et les fichiers de ressources
 install(FILES ${ALL_DLLS} DESTINATION bin)
 

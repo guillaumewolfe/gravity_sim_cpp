@@ -8,6 +8,7 @@
 #include "engine/EngineIncludes.h"
 //#include "engine/RenderTools/notificationTool.h"
 #include <map>
+#include <chrono>
 
 class SimulationState;
 class SoundTool;
@@ -27,6 +28,7 @@ public:
     bool* showInfo = nullptr;
     int* currentSpeedIndex = nullptr;
     std::vector<std::pair<int, std::string>> speedSettings;
+    std::map<std::string, ImVec4> typeDictColor;
     std::vector<Labbel*> labels;
     std::vector<Button*> buttons;
     std::vector<ImageButton*> imageButtons;
@@ -50,10 +52,19 @@ public:
     bool mouseIsOnMinimap = false;
     bool isChangingParameters = false;
     bool showNotificationTool = false;
+    bool showRestartTool = false;
     SoundTool* soundTool = nullptr;
     NotificationTool* NotificationTool = nullptr;
     bool debug = false;
     bool showQuiz = false;
+    bool showSaveSimulation = false;
+    bool isCollidingQuest = false;
+    ImVec4 getTypeColor(const std::string& type);
+    void setCurrentTime(std::chrono::system_clock::time_point time);
+    std::chrono::system_clock::time_point getCurrentTime();
+    std::string getDateTime();
+    std::chrono::system_clock::time_point currentDateTime;
+
 
 
     std::map<int, std::pair<std::string, ImVec4>> colorByTypeDict;

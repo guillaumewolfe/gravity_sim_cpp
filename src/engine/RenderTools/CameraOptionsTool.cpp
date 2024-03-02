@@ -91,7 +91,7 @@ void CameraOptionsTool::drawBackground(){
     hauteur = winHeight * 0.3; // Example size
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 5.0f;
+    float cornerRadius = winWidth*0.01;
 
     // Le point central sera utilisé comme référence pour le coin inférieur droit
     centerPos = ImVec2(winWidth * posX, winHeight * 0.775f);
@@ -122,10 +122,6 @@ void CameraOptionsTool::drawBackground(){
                             IM_COL32(20, 25, 30, 100), // Color
                             cornerRadius);
 
-    drawList->AddRect(currentTopLeft, 
-                      bottomRight, // Le coin inférieur droit reste fixe
-                      IM_COL32(255, 255, 255, 40), // Color
-                      cornerRadius, 0, 0.2f);
 }
 
 void CameraOptionsTool::generate_buttons(){

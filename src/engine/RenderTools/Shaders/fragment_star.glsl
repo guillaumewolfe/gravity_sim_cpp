@@ -30,7 +30,7 @@ void main() {
     finalIntensity = clamp(finalIntensity, 0.0, 1.0);
 
     // Mélanger la couleur de l'éclat avec la texture
-    vec4 finalColor = mix(textureColor*1, glowColor, finalIntensity * 0.2); // Ajuster le facteur de mélange selon le besoin
-
+    vec4 finalColor = mix(textureColor*0.9, glowColor, finalIntensity * 0.2); // Ajuster le facteur de mélange selon le besoin
+    finalColor = textureColor;
     gl_FragColor = finalColor;
 }

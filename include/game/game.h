@@ -32,7 +32,6 @@ struct GameSettings {
 
     SoundTool* soundTool = nullptr;
 
-
 };
 
 
@@ -44,10 +43,12 @@ private:
     GLFWwindow* loadingWindow = nullptr;
     std::vector<Button*> buttons = std::vector<Button*>();
     bool shouldClose = false;
-    GameSettings settings;;
+    GameSettings settings;
+    GameSettings defaultSettings;
 
     BaseState* requestedState = nullptr;
     bool changeStateRequested = false;
+    void loadSettings();
 public:
     Game();
     ~Game();
@@ -60,7 +61,9 @@ public:
     void setShouldClose(bool value);
     void getState();
     GameSettings* getSettings();
+    GameSettings* getDefaultSettings();
     void InitSettings();
+
 
     void Init();
     void LoadResourcesAsync();

@@ -43,9 +43,12 @@ void NameTool::Draw() {
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
 updateLabelPositions();
-for (Labbel* label : labbels) {
-    label->Draw();
+if(!m_renderContext->systemeSolaire->objects.empty()){
+    for (Labbel* label : labbels) {
+        label->Draw();
+    }
 }
+
 if(m_renderContext->shouldClickOnNames){detectClickAndPrintName();}
 ImGui::End(); 
 }
@@ -115,6 +118,7 @@ void NameTool::updateLabelPositions() {
             drawList->AddCircle(ImVec2(xPercent * screenWidth, yPercent * screenHeight), screenWidth*0.0030, IM_COL32(circleColor.x, circleColor.y, circleColor.z, 255),32,2.0f);}
         }else if(object == hoverObject){
             labbels[i]->UpdateAlpha(0.8f);
+            ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
             if(!*(m_renderContext->isCreating)){
             drawList->AddCircle(ImVec2(xPercent * screenWidth, yPercent * screenHeight), screenWidth*0.0030, IM_COL32(circleColor.x, circleColor.y, circleColor.z, ((1-alpha)/2+alpha)*255),32,2.0f);}}
         else{
@@ -126,6 +130,7 @@ void NameTool::updateLabelPositions() {
         } else {
             labbels[i]->UpdateAlpha(0.0f); // Object is not visible on screen
         }
+
     }
 
     constexpr float minDistance = 0.01f; // Distance minimale pour éviter la superposition (à ajuster selon vos besoins)
@@ -178,6 +183,7 @@ void NameTool::detectClickAndPrintName() {
     float closestDistance = std::numeric_limits<float>::max();
     std::string closestPlanetName = "";
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
+        if((object->type == 5 && m_renderContext->currentCamera->followedObject->getDefaultName() != "Earth") or (object->type == 5 && m_renderContext->currentCamera->isGlobalFollowing == true)){continue;}
         glm::vec3 planetPos3D = object->getPositionSimulation().toGlm();
         glm::vec2 screenPos = convert3DPosToScreenPos(planetPos3D, viewMatrix, projectionMatrix, screenWidth, screenHeight);
 

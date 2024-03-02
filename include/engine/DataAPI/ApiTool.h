@@ -19,7 +19,7 @@ public:
     bool connectionSuccess = false;
 
     // Function to get Mars data
-    std::pair<Vec3, Vec3> extractBodyData(const std::string& data, const std::string& bodyName);
+    std::pair<Vec3, Vec3> extractBodyData(const std::string& data, const std::string& bodyName, bool* connexionFailed);
     std::string getBodyData(const std::string& bodyName);
     void printCurrentDataForManualEntry();
     bool testConnection();

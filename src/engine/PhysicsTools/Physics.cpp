@@ -83,7 +83,9 @@ void Physics::checkCollision(std::vector<CelestialObject*> objects){
     isColliding = false;
     float collisionThreshold = 0.30; // Seuil pour la fonction collision
     float collidingThreshold = 1.00; // Seuil pour activer isColliding
-
+    if(m_renderContext->isCollidingQuest == true){
+        m_renderContext->isCollidingQuest = false;
+    }
     for (int i = 0; i < objects.size(); i++){
         for (int j = i + 1; j < objects.size(); j++){
             Vec3 positionObj = objects[i]->getPositionSimulation();
@@ -141,6 +143,7 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
     new_velocity.z = (v1.z * m1 + v2.z * m2) / new_mass;
 
     CelestialObject* objectRestant;
+    m_renderContext->isCollidingQuest = true;
 
     if(obj1->getTypeName() == "BlackHole"){
         if(!(obj2->getTypeName() == "BlackHole") && !(obj2->getRayon()>obj1->getRayon())){

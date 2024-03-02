@@ -90,7 +90,16 @@ void CreatorManager::AddState(const std::string& stateName, std::unique_ptr<Stat
 
 }
 
-
+void CreatorManager::createNewObject(){
+    CelestialObject* newObj = newCreatedObject;
+    if (newObj) {
+        m_renderContext->systemeSolaire->addObject(newObj);
+        m_renderContext->systemeSolaire->setRayon(newObj);
+        newObj->distanceScale=m_renderContext->systemeSolaire->scale;
+        newObj->isCreated=true;
+        isCreated=true;
+    }
+}
 
 void CreatorManager::Exit(){
     currentState->Exit();

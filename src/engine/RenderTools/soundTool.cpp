@@ -6,6 +6,7 @@
 
 SoundTool::SoundTool(GameSettings * settings):settings(settings){
     initAllSounds();
+    currentMusicVolume = settings->mainVolume*settings->musicVolume;
 }
 
 SoundTool::~SoundTool(){
@@ -35,7 +36,6 @@ void SoundTool::initAllSounds(){
     soundMap["badAnswer"] = Mix_LoadWAV(getFullPath("/assets/sounds/restart.mp3").c_str());
     soundMap["endQuiz"] = Mix_LoadWAV(getFullPath("/assets/sounds/endQuiz.wav").c_str());
     //Planets
-    soundMap["Mars"] = Mix_LoadWAV(getFullPath("/assets/sounds/planets/test.wav").c_str());
     // Check for loading errors
     for (const auto& pair : soundMap) {
         if (pair.second == nullptr) {
@@ -47,6 +47,7 @@ void SoundTool::initAllSounds(){
 }
 
 void SoundTool::changeButtonVolume(float volume){
+    currentMusicVolume = volume;
     for (const auto& pair : soundMap) {
         if(pair.first == "hover"){
             Mix_VolumeChunk(pair.second, volume*MIX_MAX_VOLUME*0.25);
@@ -54,6 +55,7 @@ void SoundTool::changeButtonVolume(float volume){
         }
         Mix_VolumeChunk(pair.second, volume*MIX_MAX_VOLUME*0.75);
     }
+
 }
 
 void SoundTool::playSound(const std::string& soundName) {

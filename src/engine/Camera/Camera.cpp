@@ -27,6 +27,11 @@ void Camera::Update() {
             
         }
     }}
+    if(*(m_renderContext->isOrbiting)){
+        if(isGlobalFollowing)
+            {orbitAroundObject(0.00005,0);}
+        else{orbitAroundObject(0.0015,0);}
+    }
     lookAt();
 }
 
@@ -193,6 +198,7 @@ void Camera::applyOffsetProjection() {
 
 float Camera::calculateGlobalFollowingDistance() {
     float maxDistance = 0.0f;
+    float minDistance = calculateDistanceForScreenOccupation(80.0f);
     float verticalFOV = angle_perspective * (M_PI / 180.0f);
     float halfFOV = tan(verticalFOV / 2);
 
@@ -200,14 +206,14 @@ float Camera::calculateGlobalFollowingDistance() {
         Vec3 objectPosition = object->getPositionSimulation();
         
         // Calculez la position relative à la caméra
-        Vec3 relativePosition = objectPosition - target; // Ici target est la position que la caméra vise
+        Vec3 relativePosition = objectPosition - target; // 'target' est la position que la caméra vise
 
         // Utilisez la projection de cette position sur l'axe de la caméra
         Vec3 forward = (target - position).normalize();
         float distanceAlongCameraAxis = relativePosition.dot(forward); // 'forward' est le vecteur directionnel de la caméra
 
         // Calculez la distance perpendiculaire à l'axe de la caméra
-        float perpendicularDistance = sqrt(pow(relativePosition.norm(),2) - distanceAlongCameraAxis * distanceAlongCameraAxis);
+        float perpendicularDistance = sqrt(pow(relativePosition.norm(),2) - pow(distanceAlongCameraAxis, 2));
 
         // Calculez la distance maximale à laquelle l'objet est visible
         float visibleDistance = perpendicularDistance / halfFOV;
@@ -216,10 +222,11 @@ float Camera::calculateGlobalFollowingDistance() {
             maxDistance = visibleDistance;
         }
     }
+    // Utiliser le plus grand entre la distance maximale calculée et la distance minimale
+    maxDistance = std::max(maxDistance / 5, minDistance); // Diviser par 5 comme dans l'original, mais après avoir pris en compte minDistance
     globalDistanceCalcuated = true;
-    return maxDistance/5;
+    return maxDistance;
 }
-
 
 
 
@@ -271,9 +278,11 @@ void Camera::zoomFirstPerson(bool in) {
 
 
 float Camera::calculateDistanceForScreenOccupation(float occupationPercentage) {
-    if (!firstPersonTargetObject) return 0.0f;
+    if (!firstPersonTargetObject && followedObject == nullptr) return 0.0f;
 
-    float objectRadius = firstPersonTargetObject->getRayon();
+    CelestialObject* object = firstPersonTargetObject ? firstPersonTargetObject : followedObject;
+
+    float objectRadius = object->getRayon();
     float verticalFOV = this->angle_perspective * (M_PI / 180.0f);
 
     // Calculer la taille angulaire attendue pour le pourcentage d'occupation donné
@@ -352,15 +361,23 @@ void Camera::zoomByDistance(bool in, float speedOffset){
     float speed = *zoomSensitiviy*0.02+speedOffset;
 
     //Global
+    float screenOccupation;
     if(isGlobalFollowing){
+        screenOccupation = calculateScreenOccupationPercentage(followedObject);
+        float sunScreenOccupation = calculateScreenOccupationPercentage(m_renderContext->systemeSolaire->getSun());
 
-        if(in){globalFollowingDistance /= (1.0+speed);}
-        else{globalFollowingDistance *= (1.01+speed);}
+        if(in){
+            if(screenOccupation>80){return;}
+            globalFollowingDistance /= (1.0+speed);
+            }
+        else{
+            if(sunScreenOccupation<0.05){return;}
+            globalFollowingDistance *= (1.01+speed);
+            }
         }
-
     //Focus 
     else{
-        float screenOccupation = calculateScreenOccupationPercentage(followedObject);
+        screenOccupation = calculateScreenOccupationPercentage(followedObject);
         //Si screenOccupation > 80%, return; sinon zoom out/in comme d'habitude
         if(in){
             if(screenOccupation>80){return;}
@@ -572,7 +589,7 @@ void Camera::newFollowObject(CelestialObject* obj) {
     angle_perspective = 40;
     setPerspective();
     currentSimulationSpeedIndexForTransition = *(m_renderContext->currentSpeedIndex);
-    *(m_renderContext->currentSpeedIndex) = 6; 
+    *(m_renderContext->currentSpeedIndex) = 0; 
     currentSimulationSpeedForTransition = *(m_renderContext->timeMultiplier);
     *(m_renderContext->timeMultiplier) = 0;
     isGlobalFollowing = false;
@@ -625,18 +642,20 @@ void Camera::resetPosition() {
     firstPersonModeEnabled = false;
     isGlobalFollowing = false;
     isFocusOnAxis = false;
-    orbitalHorizontalAngle = 0;
-    orbitalVerticalAngle = 0;
     isTransitingAxis = false;
     transitionStep = 0;
     transitionStepAxis = 0;
     setPerspective();
     lookAt();
-    if (m_renderContext && !m_renderContext->systemeSolaire->objects.empty()) {
+    if (m_renderContext && !m_renderContext->systemeSolaire->objects.empty() && m_renderContext->systemeSolaire->objects.size() > 1) {
         resetOrbits();
         newFollowObjectGlobal(m_renderContext->systemeSolaire->getSun());
         *(m_renderContext->showInfo) = false;
         globalDistanceCalcuated = false;
+    }else if (m_renderContext->systemeSolaire->objects.size() == 1){
+        resetOrbits();
+        newFollowObject(m_renderContext->systemeSolaire->getSun());
+        *(m_renderContext->showInfo) = false;
     }
     selectedObject = followedObject;
 }

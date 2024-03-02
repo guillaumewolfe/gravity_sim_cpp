@@ -83,27 +83,23 @@ void TextureCreator::Draw() {
 void TextureCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.015;
+    ImVec2 bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
+
 
     drawList->AddRectFilled(topLeft, 
-                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 100), // Color
+                            bottomRight, 
+                            IM_COL32(0, 0, 0, 255), // Color
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
-                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 100), // Color
+                            bottomRight, 
+                            IM_COL32(20, 25, 30, 150), // Color
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                      IM_COL32(255, 255, 255, 40), // Color
-                      cornerRadius, 0, 0.2f);
 }
-
 
 void TextureCreator::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.5f,0.25f,ImVec4(255,255,255,255),
-                            "Type of object",28.0f,0.7f);
+                            "Type of object",28.0f,0.8f);
     labbels.push_back(MessageLabel);
 }
 void TextureCreator::updateClickStatus() {
@@ -294,7 +290,7 @@ void TextureCreator::generate_buttons(){
     buttons[1]->hidden=true;
 
     ImVec4 button_color = ImVec4(0.17f, 0.27f, 0.17f, 1.0f);
-    ImageButton* closeButton = new ImageButton(playSoundFunc,(0.5+longueur/(2*winWidth))-0.010,(0.5-hauteur/(2*winHeight))*1.15,ImVec2(0.025f,0.025f),0.6f,
+    ImageButton* closeButton = new ImageButton(playSoundFunc,(0.5+longueur/(2*winWidth))-0.015,(0.5-hauteur/(2*winHeight))*1.15,ImVec2(0.0225f,0.0225f),0.6f,
                         button_color, button_color,
                         "../assets/button/close.png", 0,
                             std::bind(&TextureCreator::CloseButtonPressed, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -319,6 +315,15 @@ void TextureCreator::NextButtonPressed(){
     CelestialObject* clickedObject = objects[selectedIndex];
     CelestialObject* clickedObjectCopy = new CelestialObject(*clickedObject); // Copie de l'objet
     m_manager->newCreatedObject = clickedObjectCopy;
+
+    if(m_renderContext->systemeSolaire->getObjects().size() == 0){
+        m_manager->createNewObject();
+        m_manager->newCreatedObject->position_real = Vec3(0,0,0);
+        m_manager->newCreatedObject->position_simulation = Vec3(0,0,0);
+        m_manager->newCreatedObject->velocity = Vec3(0,0,0);
+        m_manager->ChangeState("ParametersCreator");
+        return;
+    }
     m_manager->ChangeState("PositionCreator");
 }
 

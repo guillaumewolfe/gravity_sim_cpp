@@ -16,6 +16,7 @@ public:
     void changeButtonVolume(float volume);
     void updateVolume();
     void test();
+    float currentMusicVolume = 1.0f;
 
 private:
 

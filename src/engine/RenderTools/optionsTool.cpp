@@ -56,24 +56,24 @@ void OptionsTool::generate_buttons(){
                         "../assets/button/close.png", 0,
                             std::bind(&OptionsTool::CloseButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     
-    float taille_y = 0.05;
-    float taille_x = 0.175*0.5;
-    float diff = taille_y+0.2*taille_y;
+    float taille_y = 0.045;
+    float taille_x = 0.175*0.4;
+    float diff = taille_y+0.25*taille_y;
    Button *RestartButton = new Button(playSoundFunc,0.50f, 0.5, ImVec2(taille_x, taille_y),
-                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Resume", 0.2f,25.0f,
+                               "Resume", 0.2f,21.0f,
                             std::bind(&OptionsTool::CloseButton, this),5);       
    Button *OptionsButton = new Button(playSoundFunc,0.50f, 0.5+diff, ImVec2(taille_x, taille_y),
-                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Settings", 0.2f,25.0f,
+                               "Settings", 0.2f,21.0f,
                             std::bind(&OptionsTool::OptionsButton, this),5);   
 
    Button *MainMenuButton = new Button(playSoundFunc,0.50f, 0.5+2*diff, ImVec2(taille_x, taille_y),
-                               ImVec4(200.0/255.0, 250.0/255.0, 200.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
-                               "Main Menu", 0.2f,25.0f,
+                               "Main Menu", 0.2f,21.0f,
                             std::bind(&OptionsTool::MenuButton, this),5);   
 
 
@@ -117,7 +117,7 @@ void OptionsTool::draw_rect(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
     // Rayon des coins arrondis
-    float cornerRadius = 10.0f; // Vous pouvez ajuster ce rayon selon vos besoins
+    float cornerRadius = winWidth*0.01;
 
     //Carré pour tout le fond d'écran
     drawList->AddRectFilled(ImVec2(0,0), 
@@ -134,10 +134,6 @@ void OptionsTool::draw_rect(){
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
 
     

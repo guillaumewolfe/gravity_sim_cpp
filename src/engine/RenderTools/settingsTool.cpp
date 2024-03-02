@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include "game/game.h"
 #include "engine/RenderTools/soundTool.h"
-
+#include "save/saveTool.h"
 
 SettingsTool::SettingsTool(RenderContext* renderContext) : RenderComponent(renderContext){
 }
@@ -136,6 +136,11 @@ void SettingsTool::generate_buttons(){
                         buttonColor, buttonColor,
                         "../assets/button/close.png", 0,
                             std::bind(&SettingsTool::CloseButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+    resetToDefaultButton = new Button(playSoundFunc,0.5, (0.5-0.15)+ 0.06f*0.9f-0.01, ImVec2(taille_x*1.2, taille_y/1.5),
+                               ImVec4(255.0/255.0, 255.0/255.0, 255.0/255.0, 1.0f),
+                               ImVec4(255.0/255.0, 255.0/255.0, 255.0/255.0, 1.0f),
+                               "Default settings", 0.05f,16.0f,
+                            std::bind(&SettingsTool::resetToDefault, this),5);   
 
     position_y = (0.5-0.17);
     taille_x = 0.035f*0.9;
@@ -182,6 +187,9 @@ void SettingsTool::generate_UImodes1(){
     labbelsMode1.push_back(mainVolumeLabel);
     labbelsMode1.push_back(musicVolume);
     labbelsMode1.push_back(effectVolume);
+    mainVolumeLabel->alignLeft = true;
+    musicVolume->alignLeft = true;
+    effectVolume->alignLeft = true;
 
     Slider *MainVolumeSlider = new Slider(0.5f,0.47,ImVec2((0.5-position_x)*2, 0.40*0.0175),ImVec4(225,225,225,225),
                                 ImVec4(150.0*0.6, 250.0*0.6, 150.0*0.6, 255),&gameSettings->mainVolume,ImVec2(0,1),20);
@@ -335,6 +343,7 @@ void SettingsTool::draw_buttons(){
         btn->Draw();
     }
     icon->Draw();
+    resetToDefaultButton->Draw();
 }
 
 void SettingsTool::draw_labbels(){
@@ -354,12 +363,12 @@ void SettingsTool::draw_rect(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
     // Rayon des coins arrondis
-    float cornerRadius = 10.0f; // Vous pouvez ajuster ce rayon selon vos besoins
+    float cornerRadius = winWidth*0.02; // Vous pouvez ajuster ce rayon selon vos besoins
 
     //Carré pour tout le fond d'écran
     drawList->AddRectFilled(ImVec2(0,0), 
                             ImVec2(winHeight*2,winHeight*2), 
-                            IM_COL32(0, 0, 0, 200), // Couleur
+                            IM_COL32(0, 0, 0, 175), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
@@ -368,13 +377,8 @@ void SettingsTool::draw_rect(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     float yPosition = (0.5-0.15)+ 0.06f*0.9f-0.03; // Juste en dessous des boutons, ajustez 0.02f si nécessaire
     float lineWidth = winWidth * 2*0.06f*0.9;  // La longueur de la ligne, ajustez selon vos besoins
@@ -390,6 +394,9 @@ void SettingsTool::draw_rect(){
 
 void SettingsTool::setGameSettings(GameSettings* settings){
     gameSettings = settings;
+}
+void SettingsTool::setDefaultSettings(GameSettings* settings){
+    defaultSettings = settings;
 }
 
 void SettingsTool::setCloseButtonFunction(std::function<void()> function) {
@@ -461,6 +468,35 @@ void SettingsTool::SaveButton(){
         gameSettings->volumeChanged = true;
     }
     saveButtonFunction();
+    SaveTool saveTool;
+    saveTool.saveGameSettings(*gameSettings);
+
+}
+
+void SettingsTool::resetToDefault(){
+    if (gameSettings && defaultSettings) {
+        if(mode==1){
+            gameSettings->mainVolume = defaultSettings->mainVolume;
+            gameSettings->musicVolume = defaultSettings->musicVolume;
+            gameSettings->sfxVolume = defaultSettings->sfxVolume;
+            gameSettings->volumeChanged = true;
+            gameSettings->soundTool->updateVolume();
+        }
+        if(mode==2){
+            gameSettings->movementSpeed = defaultSettings->movementSpeed;
+            gameSettings->rotationSpeed = defaultSettings->rotationSpeed;
+        }
+        if(mode==3){
+
+        gameSettings->textureQuality = defaultSettings->textureQuality;
+        gameSettings->resolutionX = defaultSettings->resolutionX;
+        gameSettings->resolutionY = defaultSettings->resolutionY;
+        gameSettings->antiAliasing = defaultSettings->antiAliasing;
+        gameSettings->fullscreen = defaultSettings->fullscreen;
+        gameSettings->highQuality = defaultSettings->highQuality;
+        gameSettings->vsync = defaultSettings->vsync;
+        }
+    }
 }
 
 void SettingsTool::setScreen(int screen){

@@ -35,7 +35,7 @@ void LoadingState::Draw() {
     glLoadIdentity();
 
     // Clear the buffers
-    glClearColor(0,0,0,255);
+    glClearColor(0,0,0,0.5f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw the sphere in 2D
@@ -47,10 +47,10 @@ void LoadingState::Draw() {
 }
 
 void LoadingState::drawSolarSystem(){
-    float pourcentageX = 0.5f;
-    float pourcentageY = 0.5f;
-    float pourcentageSize = 0.15f;
-    ImVec2 positionCentre = ImVec2(winWidth * pourcentageX, winHeight * pourcentageY);
+    float pourcentageX = 0.3f;
+    float pourcentageY = 0.3f;
+    float pourcentageSize = 0.45f;
+    ImVec2 positionCentre = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     float maxSize = winHeight * pourcentageSize;
     float normalRadius = maxSize/(9*4);
     float spacing = maxSize / 9;
@@ -72,19 +72,21 @@ void LoadingState::drawSolarSystem(){
         float distance = indice * spacing;// Assurez-vous que les planètes ne sont pas sur le Soleil
 
         // La vitesse orbitale diffère pour chaque planète
-        float orbitSpeed = 0.2f + (10-indice) * 0.3f;
+        float orbitSpeed = 0.2f + (10-indice) * 0.75f;
 
         float angle = -(globalAngle * orbitSpeed + initialAngles[indice]); // Utilisez l'angle initial aléatoire stocké
 
         // Calculez la position de la planète sur son orbite
         ImVec2 position = ImVec2(positionCentre.x + cos(angle) * distance, positionCentre.y + sin(angle) * distance);
-        drawFullCircle(position.x, position.y, normalRadius, color.x, color.y, color.z, 0.3f);
+
         if(planet == "Sun"){
+            drawFullCircle(position.x, position.y, normalRadius*1.2, color.x, color.y, color.z, 0.8f);
             drawSunEffect(position, normalRadius);
         }else{
+        drawFullCircle(position.x, position.y, normalRadius, color.x, color.y, color.z, 0.8f);
         drawPlanetLightNOSHADOW(position, normalRadius, color);}
 
-        drawCircle(positionCentre.x,positionCentre.y, distance,1.0,1.0,1.0,1.0,0.02); // Dessinez l'orbite
+        //drawCircle(positionCentre.x,positionCentre.y, distance,1.0,1.0,1.0,1.0,0.2); // Dessinez l'orbite
         indice++;
     }
 

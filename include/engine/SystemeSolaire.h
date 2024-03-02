@@ -16,6 +16,8 @@ ApiTool* apiTool = nullptr;
 SystemeSolaire();
 ~SystemeSolaire();
 std::vector<CelestialObject*> objects = std::vector<CelestialObject*>();
+std::vector<CelestialObject*> initialStateObjects;
+std::vector<CelestialObject*> loadedStateObjects;
 
 std::vector<std::pair<CelestialObject*, size_t>> deletedObjects = std::vector<std::pair<CelestialObject*, size_t>>();
 std::vector<CelestialObject*> initSystem();
@@ -37,6 +39,10 @@ void updateEffects(CelestialObject* obj);
 RenderContext* m_renderContext = nullptr;
 void setContext(RenderContext* renderContext);
 CelestialObject* getSun(CelestialObject* exclude = nullptr);
+std::vector<CelestialObject*> getObjects();
+void reset(bool toInitialState = true);
+void loadState(std::vector<CelestialObject*> loadedObjects);
+bool isLoadedState = false;
 
 private:
 

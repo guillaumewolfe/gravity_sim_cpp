@@ -1,12 +1,12 @@
 #include "states/SimulationState.h"
 #include "path_util.h"
+#include "save/saveTool.h"
 
 SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
     Enter();
 }
 void SimulationState::Enter() {
     //Constructions des éléments
-    generateMusic();
     soundTool = gameObj->getSoundTool();
     labbels = generateLabbels();
     buttons = generateButtons();
@@ -29,6 +29,7 @@ void SimulationState::Enter() {
     render->Settings_Tool->setCloseButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setSaveButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setGameSettings(gameObj->getSettings());
+    render->Settings_Tool->setDefaultSettings(gameObj->getDefaultSettings());
     render->Settings_Tool->init();
 
     currentCamera->zoomSensitiviy = &(gameObj->getSettings()->movementSpeed);
@@ -57,6 +58,12 @@ void SimulationState::Enter() {
     render->PlaneteInfo_Tool->setConfirmBoxFunction(std::bind(&SimulationState::generateDialogBox, this, std::placeholders::_1, std::placeholders::_2));
     
     render->Quiz_Tool->setConfirmBoxFunction(std::bind(&SimulationState::generateDialogBox, this, std::placeholders::_1, std::placeholders::_2));
+
+    render->UI_Tool->musicPlayerTool->setVolumeButtonFunction(std::bind(&SimulationState::SettingsButton, this));
+    render->SaveSimulation_Tool->updateNamesFunction = std::bind(&NameTool::initLabbels, render->Name_Tool);
+
+    render->Restart_Tool->setRestartFunction(std::bind(&SimulationState::Restart, this, std::placeholders::_1));
+
 }
 
 //destructeur
@@ -71,7 +78,7 @@ std::vector<Labbel*> SimulationState::generateLabbels(){
     float topY = 1 - taille_y;
     float buttonCenterY = topY + taille_y / 2; 
     Labbel *TimeLabel = new Labbel(0.33f,buttonCenterY,ImVec4(255,255,255,255),
-                                "Simulation time : ",22.0f,0.8f);
+                                "Simulation time : ",18.0f,0.8f);
     Labbel *TimeMultiplier = new Labbel(0.585f,buttonCenterY,ImVec4(200,200,200,200),
                                 "Time speed: x ",16.0f,0.8f);
     Labbel *Speed = new Labbel(0.61f,0.94f,ImVec4(255,255,255,255),
@@ -101,12 +108,7 @@ std::vector<Button*> SimulationState::generateButtons(){
                                [this]() {
     auto boundFunction = std::bind(&SimulationState::MenuButton, this);
     this->generateDialogBox(boundFunction, "Do you want to return to the main menu?");},1);
-
-   Button *RestartButton = new Button(playSoundFunc,0.40f, 0.95, ImVec2(0.034, 0.0275),
-                        ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
-                        ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
-                               "Restart", 0.9f,16.0f,
-                            std::bind(&SimulationState::Restart, this),5);   
+   
    Button *PauseButton = new Button(playSoundFunc,0.35f, 0.95, ImVec2(0.0275, 0.0275),
                         ImVec4(0.075f, 0.075f, 0.12f, 0.0f),
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
@@ -186,10 +188,10 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         button_color,button_color,
                         "../assets/button/menu.png", 0,
                         std::bind(&SimulationState::OptionsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
-    ImageButton *menuButton2 = new ImageButton(playSoundFunc,position_x_right-diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.325,
+    ImageButton *saveButton = new ImageButton(playSoundFunc,position_x_right-diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
-                        "../assets/button/menu.png", 0,
-                        std::bind(&SimulationState::OptionsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+                        "../assets/button/save.png", 0,
+                        std::bind(&SimulationState::SaveButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
     ImageButton *pauseButton = new ImageButton(playSoundFunc,0.5, buttonCenterY, ImVec2(taille_x, taille_y),0.325,
                         button_color,button_color,
@@ -212,9 +214,7 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
     ImageButton *restartButton = new ImageButton(playSoundFunc,position_x_right+diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.45,
                         button_color,button_color,
                         "../assets/button/restart.png", 0,
-                            [this]() {
-                            auto boundFunction = std::bind(&SimulationState::Restart, this);
-                            this->generateDialogBox(boundFunction, "Do you want to restart the simulation?");},
+                        std::bind(&SimulationState::RestartButton, this),
                             3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *controls = new ImageButton(playSoundFunc,0.055f, 0.025, ImVec2(0.05, 0.05),0.50,
                         button_color,button_color,
@@ -225,21 +225,21 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         "../assets/button/resetPosition.png", 0,
                         std::bind(&SimulationState::resetView, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
-    imageButtons_list.push_back(cameraButton);
-    imageButtons_list.push_back(addButton);
-    imageButtons_list.push_back(optionButton);
-    imageButtons_list.push_back(menuButton);
-    imageButtons_list.push_back(pauseButton);
-    imageButtons_list.push_back(playButton);
-    imageButtons_list.push_back(forwardButton);
-    imageButtons_list.push_back(backwardButton);
-    imageButtons_list.push_back(restartButton);
-    imageButtons_list.push_back(telescopeButton);
-    imageButtons_list.push_back(minimap);
-    imageButtons_list.push_back(controls);
-    imageButtons_list.push_back(resetView);
-    imageButtons_list.push_back(quizButton);
-    imageButtons_list.push_back(menuButton2);
+    imageButtons_list.push_back(cameraButton);//0
+    imageButtons_list.push_back(addButton);//1
+    imageButtons_list.push_back(optionButton);//2
+    imageButtons_list.push_back(menuButton); //3
+    imageButtons_list.push_back(pauseButton);   //4
+    imageButtons_list.push_back(playButton);   //5
+    imageButtons_list.push_back(forwardButton); //6
+    imageButtons_list.push_back(backwardButton); //7
+    imageButtons_list.push_back(restartButton); //8
+    imageButtons_list.push_back(telescopeButton); //9
+    imageButtons_list.push_back(minimap); //10
+    imageButtons_list.push_back(controls); //11
+    imageButtons_list.push_back(resetView); //12
+    imageButtons_list.push_back(quizButton); //13
+    imageButtons_list.push_back(saveButton); //14
     return imageButtons_list;
 
 }
@@ -263,11 +263,31 @@ void SimulationState::rotateCamWithMouse(){
     }
 }
 
+void SimulationState::setButtonActive(bool active, ImageButton* buttonExeption){
+    for(auto imageButton : imageButtons){
+        if(imageButton != buttonExeption){
+        imageButton->enabled = active;
+        }
+    }
+    if(!active){
+        buttonsAreDeactivated = true;
+    }else{
+        buttonsAreDeactivated = false;
+        buttonExeption = nullptr;
+    }
+
+}
+
 void SimulationState::Update() {
     
     checkButtonState();
-    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz){
+    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz || renderContext->showSaveSimulation ||  renderContext->showRestartTool || showSettings || render->UI_Tool->isSearching ) {
+        if(!buttonsAreDeactivated)setButtonActive(false, buttonExeption);
         return;}
+    else if(buttonsAreDeactivated){
+        setButtonActive(true);
+    }
+
     if (ImGui::IsKeyPressed(ImGuiKey_Space)) {Pause();}
     if (ImGui::IsKeyReleased(ImGuiKey_Escape)) {
         if(!isShowZoomClose){isShowZoomClose = true;}
@@ -319,17 +339,11 @@ void SimulationState::Update() {
     if (ImGui::IsKeyDown(ImGuiKey_Z)) {bool in = true;currentCamera->changeValue(in);} 
     if (ImGui::IsKeyDown(ImGuiKey_C)) {bool in = false;currentCamera->changeValue(in);}
 
-    if(isOrbiting){
-        if(currentCamera->isGlobalFollowing)
-            {currentCamera->orbitAroundObject(0.00005,0);}
-        else{currentCamera->orbitAroundObject(0.0015,0);}
-    }
-
     if (ImGui::IsKeyDown(ImGuiKey_W) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0,0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_S)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0,-0.01);}
     if (ImGui::IsKeyDown(ImGuiKey_D)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(0.01,0);isOrbiting=false;}
     if (ImGui::IsKeyDown(ImGuiKey_A)&& currentCamera->followedObject) {currentCamera->orbitAroundObject(-0.01,0);isOrbiting=false;}
-
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftShift)) {render->UI_Tool->isSearching = true;}
     /*if ((!ImGui::IsKeyDown(ImGuiKey_W) && !ImGui::IsKeyDown(ImGuiKey_A) &&
             !ImGui::IsKeyDown(ImGuiKey_S) && !ImGui::IsKeyDown(ImGuiKey_D) &&
             !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}*/
@@ -357,12 +371,16 @@ void SimulationState::Update() {
         }}
     //Mouse dragging for mooving the camera
     if(render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0){return;}
+    if(render->PlaneteInfo_Tool->isHovering){return;}
     if(showCameraOptions && render->CameraOptions_Tool->mouseOnCameraOptions()){return;}
     if(showOptions){return;}
     if(showSettings){return;}
     if(isCreating){return;}
     if(renderContext->showZoom){return;}
+    if(renderContext->showSaveSimulation){return;}
+    if(render->UI_Tool->musicPlayerTool->mouseHoveringPlayer()){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
+        //Set cursor to resize
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
         currentCamera->orbitAroundObject(-delta.x*0.005, delta.y*0.005);
         if(delta.x!=0){
@@ -398,6 +416,7 @@ void SimulationState::Draw() {
         showFirstNotification=false;
     }
 }
+
 
 void SimulationState::generateMusic(){
     // Initialize SDL_mixer
@@ -474,7 +493,7 @@ void SimulationState::Pause(){
     }
 }
 
-void SimulationState::Restart(){
+void SimulationState::Restart(bool defaultState){
     simulation_time = 0;
     showAxes=false;
     isCreating = false;
@@ -485,20 +504,20 @@ void SimulationState::Restart(){
     showSettings = false;
     showCameraOptions = false;
     renderContext->showNotificationTool = false;
-    
-    systemeSolaire->resetPosition();
+    systemeSolaire->reset(defaultState);
     currentCamera->resetPosition();
     render->Name_Tool->initLabbels();
     render->Collision_Tool->reset();
-    isLive = true;
+    isLive = defaultState;
     render->UI_Tool->update_time();
     //Time multiplier
     isPaused = false;
-    currentSpeedIndex = 6;
+    currentSpeedIndex = 0;
     followedObjectIndex = 0;
     renderContext->showZoom = false;
     time_multiplier = speedSettings[currentSpeedIndex].first;
     physics->Update(0.001);
+    buttonExeption = nullptr;
 }
 
 void SimulationState::MenuButton(){
@@ -580,6 +599,13 @@ void SimulationState::checkButtonState(){
     if(renderContext->showQuiz){imageButtons[13]->turnOn();}
     else{imageButtons[13]->turnOff();}
 
+    if(renderContext->showSaveSimulation){imageButtons[14]->turnOn();}
+    else{imageButtons[14]->turnOff();}
+
+    //Si moins que 2 objects, deactivate button
+    if(systemeSolaire->objects.size()<2){
+        imageButtons[9]->enabled=false;
+    }
 }
 
 
@@ -609,6 +635,7 @@ void SimulationState::CreateObjectButton(){
         isCreating = true;
         forcePause = true;
         Pause();
+        buttonExeption = imageButtons[1];
     }
 }
 
@@ -629,6 +656,7 @@ void SimulationState::changeSimulationSpeed(bool increase) {
 
 void SimulationState::changeFollowedObject(){
         if(currentCamera->followedObject == nullptr){return;}
+        if(systemeSolaire->objects.empty()){return;}
         if(currentCamera->firstPersonModeEnabled){currentCamera->firstPersonModeEnabled=false;}
         if(currentCamera->isGlobalFollowing){
             currentCamera->newFollowObjectGlobal(systemeSolaire->objects[followedObjectIndex]); 
@@ -659,6 +687,7 @@ void SimulationState::RestartState(){
     showSettings = false;
     showCameraOptions = false;
     renderContext->showNotificationTool = false;
+    render->UI_Tool->musicPlayerTool->restartSong();
     resetButtons();
     Restart();
 
@@ -694,6 +723,7 @@ void SimulationState::SettingsButton(){
         render->Settings_Tool->Open();
         imageButtons[2]->isOn=true;
         showSettings = true;
+        buttonExeption = imageButtons[2];
         }
 }
 
@@ -738,6 +768,8 @@ void SimulationState::TelescopeButton(){
        imageButtons[9]->isOn=false;
    }
    else{
+    //Si moins que 2 objets, return
+    if(systemeSolaire->objects.size()<2){return;}
        if(showCameraOptions){ShowCameraOptionsButton();}
        if(showOptions){OptionsButton();}
        if(isCreating){CreateObjectButton();}
@@ -759,6 +791,7 @@ void SimulationState::TelescopeButton(){
 void SimulationState::changeGlobalFollowing(){
     //Change between follow object and global isGlobalFollowing
     if(currentCamera->followedObject == nullptr){return;}
+    currentCamera->resetOrbits();
     if(currentCamera->isGlobalFollowing){
         currentCamera->newFollowObject(currentCamera->followedObject);
         showInfo = true;
@@ -800,6 +833,34 @@ void SimulationState::QuizButton(){
         if(isCreating){CreateObjectButton();}
         if(showCameraOptions){ShowCameraOptionsButton();}
         if(renderContext->showMinimap){MinimapButton();}
+        buttonExeption = imageButtons[13];
     }
 }
 
+void SimulationState::SaveButton(){
+    //SaveTool saveTool;
+    //saveTool.saveGameState(renderContext);
+    if(renderContext->showSaveSimulation == true){
+        renderContext->showSaveSimulation = false;
+        render->SaveSimulation_Tool->Close();
+    }else{
+        forcePause = true;
+        Pause();
+        renderContext->showSaveSimulation = true;
+        render->SaveSimulation_Tool->Open();
+        buttonExeption = imageButtons[14];
+    }
+}
+
+void SimulationState::RestartButton(){
+    if(renderContext->showRestartTool){
+        renderContext->showRestartTool = false;
+        render->Restart_Tool->Close();
+    }else{
+        forcePause = true;
+        Pause();
+        renderContext->showRestartTool = true;
+        render->Restart_Tool->Open();
+        buttonExeption = imageButtons[8];
+    }
+}

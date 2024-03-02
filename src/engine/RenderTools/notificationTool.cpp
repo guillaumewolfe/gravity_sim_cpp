@@ -59,34 +59,34 @@ void NotificationTool::generate_UI(){
     float taille_x = 0.35;
     float taille_y = 0.15;
 
-    TitleText = new Labbel(0.5,0.0750816,ImVec4(255,255,255,75),
+    TitleText = new Labbel(0.5,0.0750816+0.08f,ImVec4(255,255,255,75),
                 title,25,0.4f);
 
-    PhraseText = new Labbel(0.5,0.118343,ImVec4(255,255,255,200),
+    PhraseText = new Labbel(0.5,0.118343+0.08f,ImVec4(255,255,255,200),
                 phrase,20,0.9f);
 
-    closeButton = new ImageButton(playSoundFunc,0.640136, 0.0663765, ImVec2(taille_x*0.1, taille_y*0.1),0.60,
+    closeButton = new ImageButton(playSoundFunc,0.640136, 0.0663765+0.08f, ImVec2(taille_x*0.1, taille_y*0.1),0.60,
                         button_color,button_color,
                         "../assets/button/close.png", 0,
                             std::bind(&NotificationTool::Close, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
 
 
-    OkButton = new Button(playSoundFunc,0.525,0.171926, ImVec2(0.035, 0.0275),
+    OkButton = new Button(playSoundFunc,0.525,0.171926+0.08f, ImVec2(0.035, 0.0275),
                                ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
                                ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
                             "Ok", 0.1f,16.0,
                             std::bind(&NotificationTool::functionCalled, this),5.0); 
-    CancelButton = new Button(playSoundFunc,0.475,0.171926, ImVec2(0.035, 0.0275),
+    CancelButton = new Button(playSoundFunc,0.475,0.171926+0.08f, ImVec2(0.035, 0.0275),
                                ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
                                ImVec4(175.0/255.0, 175.0/255.0, 175.0/255.0, 1.0f),
                             "Cancel", 0.05f,16.0,
                             std::bind(&NotificationTool::Close, this),5.0); 
 
 
-    posButtonCancel = ImVec2(0.475,0.171926);
-    posButtonCancelMiddle = ImVec2(0.5,0.171926);
-    posButtonOkRight = ImVec2(0.525,0.171926);
+    posButtonCancel = ImVec2(0.475,0.171926+0.08f);
+    posButtonCancelMiddle = ImVec2(0.5,0.171926+0.08f);
+    posButtonOkRight = ImVec2(0.525,0.171926+0.08f);
 
 
 }
@@ -98,10 +98,10 @@ void NotificationTool::draw_rect(){
     hauteur = winHeight * 0.15; // Example size
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 15.0f;
+    float cornerRadius = winWidth*0.01f;
 
     // Le point central sera utilisé comme référence pour le coin inférieur droit
-    centerPos = ImVec2(winWidth * 0.5, winHeight * 0.125f);
+    centerPos = ImVec2(winWidth * 0.5, winHeight * 0.205f);
     
     float progress;
     if (isTransitioning) {
@@ -121,18 +121,14 @@ void NotificationTool::draw_rect(){
 
     drawList->AddRectFilled(currentTopLeft, 
                             currentBottomRight,
-                            IM_COL32(0,0,0, 100), // Couleur
+                            IM_COL32(0,0,0, 225), // Couleur
                             cornerRadius);
 
     drawList->AddRectFilled(currentTopLeft, 
                             currentBottomRight,
-                            IM_COL32(20, 25, 30, 100), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(currentTopLeft, 
-                      currentBottomRight,
-                      IM_COL32(255, 255, 255, 50), // Couleur
-                      cornerRadius, 0, winWidth*0.001);
 }
 
 void NotificationTool::draw_UI(){

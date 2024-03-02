@@ -69,9 +69,6 @@ void QuizTool::Draw() {
     //print mouse click % of planetScreenPos
     ImVec2 mousePos = ImGui::GetMousePos();
     //if mouseClicked, print position %
-    if (ImGui::IsMouseClicked(0)) {
-        std::cout<<"mouse click position: "<<mousePos.x/winWidth<<", "<<mousePos.y/winHeight<<std::endl;
-    }
 
     ImGui::End(); 
 }
@@ -83,7 +80,7 @@ void QuizTool::initUI() {
     float taille_x = 0.35;
     float taille_y = 0.15;
     title = new Labbel(0.5f,0.25f,ImVec4(255,255,255,255),
-                            "Quiz",40.0f,0.9f);
+                            "Quiz",28.0f,0.8f);
     introText = new Labbel(0.5f,0.55,ImVec4(255,255,255,255),
                             "Choose a difficulty",23.0f,0.6f);
     questionLabel = new Labbel(0.5f,0.325,ImVec4(255,255,255,255),
@@ -187,7 +184,7 @@ void QuizTool::drawUI() {
     hauteur = currentState == State::Intro ? winHeight * 0.5 : winHeight * 0.6;
     center = ImVec2(winWidth * 0.5, winHeight * 0.5);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = currentState == State::Intro ? winWidth*0.015 : winWidth*0.02;
     topLeft = ImVec2(winWidth * 0.5 - longueur * 0.5, winHeight * 0.5 - hauteur * 0.5);
     bottomRight = ImVec2(winWidth * 0.5 + longueur * 0.5, winHeight * 0.5 + hauteur * 0.5);
     if(isTransiting){
@@ -199,24 +196,23 @@ void QuizTool::drawUI() {
         isTransiting = false;
         transitionStep = 0;
     }
-    drawList->AddRectFilled(topLeft, 
-                            bottomRight, 
-                            IM_COL32(0, 0, 0, 225), // Color
+    drawList->AddRectFilled(ImVec2(0,0), 
+                            ImVec2(winWidth, winHeight), 
+                            IM_COL32(0, 0, 0, 175), // Color
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             bottomRight, 
-                            IM_COL32(20, 25, 30, 100), // Color
+                            IM_COL32(0, 0, 0, 255), // Color
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                      bottomRight, 
-                      IM_COL32(255, 255, 255, 40), // Color
-                      cornerRadius, 0, 0.2f);
+    drawList->AddRectFilled(topLeft, 
+                            bottomRight, 
+                            IM_COL32(20, 25, 30, 150), // Color
+                            cornerRadius);
     if(isTransiting){return;}
     ImVec2 titlePosition = currentState == State::Intro ?  ImVec2(0.5, 0.3) : ImVec2(0.5, 0.25f);
     title->UpdatePosition(titlePosition.x, titlePosition.y);
     title->Draw();
-    ImVec2 quitBtnPosition = currentState == State::Intro ? ImVec2(0.627083, 0.270349) : ImVec2(0.738542, 0.218147);
+    ImVec2 quitBtnPosition = currentState == State::Intro ? ImVec2(0.627083, 0.270349) : ImVec2(0.735542, 0.22147);
     quitBtn->UpdatePosition(quitBtnPosition.x, quitBtnPosition.y);
     quitBtn->Draw();
 
@@ -259,6 +255,7 @@ void QuizTool::drawState() {
 }
 
 void QuizTool::Open() {
+    *(m_renderContext->showInfo) = false;
     closeBtn->hidden = false;
     nextBtn->hidden = true;
     currentState = State::Intro;

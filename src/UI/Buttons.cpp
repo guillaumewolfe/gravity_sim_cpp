@@ -183,6 +183,10 @@ if (font) {
             mouseButtonPressed = false; // Réinitialiser le statut du bouton pressé
         }
     }
+
+    if(isHovered){
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
 }
 
 

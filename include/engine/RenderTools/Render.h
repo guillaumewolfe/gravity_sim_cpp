@@ -24,6 +24,10 @@
 #include "engine/RenderTools/backgroundImageTool.h"
 #include "engine/RenderTools/ISSTool.h"
 #include "engine/RenderTools/quizTool.h"
+#include "engine/RenderTools/saveSimulation.h"
+#include "engine/RenderTools/restartTool.h"
+#include "engine/RenderTools/successTool.h"
+
 
 #ifndef RENDER_H
 #define RENDER_H
@@ -63,6 +67,9 @@ NotificationTool* Notification_Tool = nullptr;
 BackgroundImageTool* BackgroundImage_Tool = nullptr;
 ISSTool* ISS_Tool = nullptr;
 QuizTool* Quiz_Tool = nullptr;
+SaveSimulationTool* SaveSimulation_Tool = nullptr;
+RestartTool* Restart_Tool = nullptr;
+SuccessTool* Success_Tool = nullptr;
 
 
 

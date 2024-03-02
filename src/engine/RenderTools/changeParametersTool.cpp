@@ -156,13 +156,13 @@ void ChangeParametersTool::Draw() {
 }
 
 void ChangeParametersTool::drawUI(){
-    float longueur = winWidth* 0.35; // Exemple de taille
-    float hauteur = winHeight * 0.35; // Exemple de taille
+    float longueur = winWidth* 0.375; // Exemple de taille
+    float hauteur = winHeight * 0.375; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.02;
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
@@ -173,10 +173,6 @@ void ChangeParametersTool::drawUI(){
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     for (auto& button : imageButtons) {
         button->Draw();
@@ -353,7 +349,7 @@ void ChangeParametersTool::initMode3(){
 void ChangeParametersTool::initMode4(){
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
-    Labbel* changeName = new Labbel(0.5,0.43,ImVec4(255,255,255,255),
+    Labbel* changeName = new Labbel(0.5,0.44,ImVec4(255,255,255,255),
                 "Change Name",28,0.85f);
     Labbel* name =new Labbel(0.45,0.5,ImVec4(255,255,255,200),
                 "Name: ",20,0.85f);
@@ -370,7 +366,7 @@ void ChangeParametersTool::initMode4(){
                         "../assets/button/close.png", 0,
                             std::bind(&ChangeParametersTool::closeButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     imageButtonsMode4.push_back(closeButton);
-    ImageButton* reset = new ImageButton(playSoundFunc,0.6, 0.505, ImVec2(taille_y*0.9, taille_y*0.9),0.6f,
+    ImageButton* reset = new ImageButton(playSoundFunc,0.56, 0.505, ImVec2(taille_y*0.9, taille_y*0.9),0.6f,
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                         "../assets/button/reset2.png", 0,
                             std::bind(&ChangeParametersTool::resetName, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -988,7 +984,7 @@ void ChangeParametersTool::drawMode4(){ // Change Name
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.01;
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
@@ -999,10 +995,6 @@ void ChangeParametersTool::drawMode4(){ // Change Name
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     for (auto& label : labbelsMode4) {
         label->Draw();
@@ -1026,7 +1018,7 @@ void ChangeParametersTool::drawMode4(){ // Change Name
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 0.8f)); // Texte
 
-    char charBuffer[64];
+    char charBuffer[14];
     const char* buffer = "mercuremercure";
     ImVec2 textSize = ImGui::CalcTextSize(buffer, NULL, false, 0.0f);
     ImVec2 cursorPos = ImVec2(0.47*winWidth, 0.5*winHeight-textSize.y/2);
@@ -1066,6 +1058,9 @@ if(planeteName!=m_object->getName()){
     imageButtonsMode4[1]->hidden = true;
 }
 }
+
+
+
 void ChangeParametersTool::drawMode5(){}
 
 void ChangeParametersTool::closeButton(){

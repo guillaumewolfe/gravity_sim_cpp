@@ -32,12 +32,19 @@ void ParametersCreator::DrawOpenGL(){}
 
 void ParametersCreator::Enter(){
     mode = 1;
+    bool systemEmpty = m_renderContext->systemeSolaire->getObjects().size() == 1 ;
+    objects = systemEmpty ? m_renderContext->systemeSolaire->initialStateObjects : m_renderContext->systemeSolaire->getObjects();
+    if(systemEmpty){
+        objects.push_back(m_manager->newCreatedObject);
+    }
+    if(!systemEmpty){
     m_renderContext->currentCamera->resetPosition();
     m_renderContext->currentCamera->newFollowObject(m_manager->newCreatedObject);
+    }
     *(m_renderContext->showInfo)=false;
     m_object = m_manager->newCreatedObject;
     changeMode();
-} 
+}
 
 
 void ParametersCreator::Draw(){
@@ -106,9 +113,9 @@ void ParametersCreator::initMode1(){
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
     Labbel* changeWeight = new Labbel(0.5,0.355,ImVec4(255,255,255,255),
-                "Change Mass",28,0.85f);
+                "Change Mass",28,0.80f);
     Labbel* weight = new Labbel(0.6,0.45,ImVec4(255,255,255,255),
-                "Select mass:",23,0.85f);
+                "Select mass:",23,0.8f);
     labbelsMode1.push_back(changeWeight);
     labbelsMode1.push_back(weight);
 
@@ -135,9 +142,9 @@ void ParametersCreator::initMode2(){
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
     Labbel* changeRadius = new Labbel(0.5,0.355,ImVec4(255,255,255,255),
-                "Change Radius",28,0.85f);
+                "Change Radius",28,0.8f);
     Labbel* radius = new Labbel(0.6,0.45,ImVec4(255,255,255,255),
-                "Radius:",23,0.85f);
+                "Radius:",23,0.8f);
     labbelsMode2.push_back(changeRadius);
     labbelsMode2.push_back(radius);
 
@@ -145,7 +152,7 @@ void ParametersCreator::initMode2(){
     Icon* radiusI = new Icon(0.5-(0.35/2)*0.925, 0.5-(0.35/2)*0.9, ImVec2(taille_y*0.5, taille_y*0.5),0.6f,"../assets/button/changeRadius.png",0.5);
     iconsMode2.push_back(radiusI);
 
-    ImageButton* reset = new ImageButton(playSoundFunc,0.6, 0.6, ImVec2(taille_y, taille_y),0.6f,
+    ImageButton* reset = new ImageButton(playSoundFunc,0.575, 0.6, ImVec2(taille_y, taille_y),0.6f,
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                         "../assets/button/reset2.png", 0,
                             std::bind(&ParametersCreator::resetRadius, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -154,12 +161,12 @@ void ParametersCreator::initMode2(){
 void ParametersCreator::initMode3(){
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
-    Labbel* changeName = new Labbel(0.5,0.43,ImVec4(255,255,255,255),
-                "Change Name",28,0.85f);
+    Labbel* changeName = new Labbel(0.5,0.44,ImVec4(255,255,255,255),
+                "Change Name",23,0.8f);
     Labbel* name =new Labbel(0.45,0.5,ImVec4(255,255,255,200),
-                "Name: ",20,0.85f);
+                "Name: ",20,0.8f);
     Labbel* nameTaken =new Labbel(0.5,0.53,ImVec4(255,0,0,150),
-                "This name is taken",17,0.85f);
+                "This name is taken",17,0.8f);
     labbelsMode4.push_back(changeName);
     labbelsMode4.push_back(name);
     labbelsMode4.push_back(nameTaken);
@@ -171,7 +178,7 @@ void ParametersCreator::initMode3(){
                         "../assets/button/close.png", 0,
                             std::bind(&ParametersCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     imageButtonsMode4.push_back(closeButton);
-    ImageButton* reset = new ImageButton(playSoundFunc,0.6, 0.505, ImVec2(taille_y*0.9, taille_y*0.9),0.6f,
+    ImageButton* reset = new ImageButton(playSoundFunc,0.56, 0.505, ImVec2(taille_y*0.9, taille_y*0.9),0.6f,
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f),ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
                         "../assets/button/reset2.png", 0,
                             std::bind(&ParametersCreator::resetName, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -226,27 +233,27 @@ void ParametersCreator::generate_buttons(){
 
 
 void ParametersCreator::drawUI(){
-    float longueur = winWidth* 0.35; // Exemple de taille
-    float hauteur = winHeight * 0.35; // Exemple de taille
+    float longueur = winWidth* 0.375; // Exemple de taille
+    float hauteur = winHeight * 0.375; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.02;
 
+    drawList->AddRectFilled(topLeft, 
+                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
+                            IM_COL32(0,0,0,255), // Couleur
+                            cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(0,0,0, 255), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     for (auto& button : imageButtons) {
         button->Draw();
@@ -311,7 +318,7 @@ if(lastClosestWeightObject == nullptr) lastClosestWeightObject = closestWeightOb
     //Get drawList
     
     if (ImGui::BeginCombo("##Choose mass", closestWeightObject->getName().c_str(), ImGuiComboFlags_NoArrowButton)) {
-        for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+        for (auto& otherObj : objects) {
             std::string name = otherObj->getName();
             
             std::string item = name;
@@ -363,7 +370,7 @@ if(lastClosestWeightObject == nullptr) lastClosestWeightObject = closestWeightOb
             double weightObject = mass;
             CelestialObject* closest = nullptr;
             double minWeightDifference = std::numeric_limits<double>::max(); // Initialise avec la plus grande valeur possible
-            for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+            for (auto& otherObj : objects) {
                 double weightDifference = std::abs(otherObj->getWeight() - weightObject); // Calcule la différence de masse
                 if (weightDifference < minWeightDifference) {
                     minWeightDifference = weightDifference; // Mise à jour de la plus petite différence
@@ -395,7 +402,7 @@ void ParametersCreator::drawMode2(){
     for (auto& label : labbelsMode2) {
         label->Draw();
     }
-    for (auto& icon : icons) {
+    for (auto& icon : iconsMode2) {
         icon->Draw();
     }
     for (auto& button : imageButtonsMode2) {
@@ -441,7 +448,7 @@ void ParametersCreator::drawMode2(){
     //Get drawList
     
     if (ImGui::BeginCombo("##Choose mass", closestRadiusObject->getName().c_str(), ImGuiComboFlags_NoArrowButton)) {
-        for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+        for (auto& otherObj : objects) {
             std::string name = otherObj->getName();
 
             std::string item = name;
@@ -493,7 +500,7 @@ void ParametersCreator::drawMode2(){
             double radiusObject = radi;
             CelestialObject* closest = nullptr;
             double minRadiusDifference = std::numeric_limits<double>::max(); // Initialise avec la plus grande valeur possible
-            for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+            for (auto& otherObj : objects) {
                 double radiusDifference = std::abs(otherObj->real_radius - radiusObject); // Calcule la différence de masse
                 if (radiusDifference < minRadiusDifference) {
                     minRadiusDifference = radiusDifference; // Mise à jour de la plus petite différence
@@ -518,13 +525,13 @@ void ParametersCreator::drawMode2(){
 
 
 void ParametersCreator::drawMode3(){
-    float longueur = winWidth* 0.25; // Exemple de taille
-    float hauteur = winHeight * 0.2; // Exemple de taille
+    float longueur = winWidth* 0.26; // Exemple de taille
+    float hauteur = winHeight * 0.21; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.01;
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
@@ -532,13 +539,9 @@ void ParametersCreator::drawMode3(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     for (auto& label : labbelsMode4) {
         label->Draw();
@@ -562,7 +565,7 @@ void ParametersCreator::drawMode3(){
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 1.0f, 0.6f, 1.0f)); // Sélectionné
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 0.8f)); // Texte
 
-    char charBuffer[64];
+    char charBuffer[14];
     const char* buffer = "mercuremercure";
     ImVec2 textSize = ImGui::CalcTextSize(buffer, NULL, false, 0.0f);
     ImVec2 cursorPos = ImVec2(0.47*winWidth, 0.5*winHeight-textSize.y/2);
@@ -579,11 +582,11 @@ if (ImGui::InputText("##Planete Name", charBuffer, sizeof(charBuffer))) {
     planeteName = std::string(charBuffer);
 }
 bool nameAlreadyExist = false;
-for (auto& object : m_renderContext->systemeSolaire->objects){
+for (auto& object : objects){
     if(object == m_object){
         continue;
     }
-    if(object->getName() == planeteName){
+    if(object->getName() == planeteName && m_renderContext->systemeSolaire->getObjects().size()!=1){
         nameAlreadyExist = true;
     }}
 if(nameAlreadyExist){
@@ -632,7 +635,7 @@ void ParametersCreator::drawPlanets(){
             IM_COL32(255,255,255, 50),20);
 
 
-    std::vector<decltype(m_renderContext->systemeSolaire->objects)::value_type> sortedObjects(m_renderContext->systemeSolaire->objects.begin(), m_renderContext->systemeSolaire->objects.end());
+    std::vector<decltype(objects)::value_type> sortedObjects(objects.begin(), objects.end());
 
     // Triez le nouveau vecteur par masse
     std::sort(sortedObjects.begin(), sortedObjects.end(),
@@ -772,7 +775,7 @@ void ParametersCreator::drawPlanetsMode2(){
             IM_COL32(255,255,255, 50),20);
 
 
-    std::vector<decltype(m_renderContext->systemeSolaire->objects)::value_type> sortedObjects(m_renderContext->systemeSolaire->objects.begin(), m_renderContext->systemeSolaire->objects.end());
+    std::vector<decltype(objects)::value_type> sortedObjects(objects.begin(), objects.end());
 
     // Triez le nouveau vecteur par masse
     std::sort(sortedObjects.begin(), sortedObjects.end(),
@@ -937,6 +940,8 @@ void ParametersCreator::next_state(){
     m_manager->creationConfirmed=true;
     m_manager->Exit();
 }
+
+
 void ParametersCreator::previous_state(){
     m_manager->ChangeState("VelocityCreator");
 }
@@ -1004,7 +1009,7 @@ void ParametersCreator::changeMode(){
             double weightObject = m_object->getWeight();
             closestWeightObject = nullptr;
             double minWeightDifference = std::numeric_limits<double>::max(); // Initialise avec la plus grande valeur possible
-            for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+            for (auto& otherObj : objects) {
                 double weightDifference = std::abs(otherObj->getWeight() - weightObject); // Calcule la différence de masse
                 if (weightDifference < minWeightDifference) {
                     minWeightDifference = weightDifference; // Mise à jour de la plus petite différence
@@ -1026,7 +1031,7 @@ void ParametersCreator::changeMode(){
             double radiusObject = m_object->real_radius;
             closestRadiusObject = nullptr;
             double minRadiusDifference = std::numeric_limits<double>::max(); // Initialise avec la plus grande valeur possible
-            for (auto& otherObj : m_renderContext->systemeSolaire->objects) {
+            for (auto& otherObj : objects) {
                 double radiusDifference = std::abs(otherObj->real_radius - radiusObject); // Calcule la différence de masse
                 if (radiusDifference < minRadiusDifference) {
                     minRadiusDifference = radiusDifference; // Mise à jour de la plus petite différence

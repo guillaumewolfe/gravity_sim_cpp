@@ -42,7 +42,7 @@ ImGui::End();
 
 void KeysUI::draw_rect(){
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 5.0f;
+    float cornerRadius = winWidth*0.02;
 
     // Dessinez le rectangle
     drawList->AddRectFilled(topLeft, 
@@ -54,10 +54,6 @@ void KeysUI::draw_rect(){
                             IM_COL32(20, 25, 30, 100), // Color
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                      IM_COL32(255, 255, 255, 40), // Color
-                      cornerRadius, 0, 0.2f);
 }
 
 void KeysUI::initPosition(){
@@ -105,8 +101,7 @@ void KeysUI::init_key_icons(){
     float diff = 0.035;
     float hauteurk = (center.y-hauteur/3.25)/(winHeight);
     float longueurk = (center.x-longueur/3.2)/winWidth;
-    float grandeur = 0.025;
-
+    float grandeur = 0.0275;
     // Création et ajout des touches dans le vecteur 'keys'
     keys.push_back({"esc", "Options", new Icon(longueurk, hauteurk, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/esc.png", 0.5)});
     keys.push_back({"e", "Zoom In", new Icon(longueurk, hauteurk + diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/e.png", 0.5)});
@@ -118,10 +113,13 @@ void KeysUI::init_key_icons(){
     keys.push_back({"I", "Show/Hide infos", new Icon(longueurk, hauteurk + 7*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/i.png", 0.5)});
     keys.push_back({"wasd", "Move around", new Icon(longueurk, hauteurk + 8*diff, ImVec2(grandeur*1.5, 1.5*grandeur), 0.5f, "../assets/button/keys/wasd.png", 0.5)});
     keys.push_back({"mouse", "Select Object", new Icon(longueurk, hauteurk + 9*diff, ImVec2(grandeur, grandeur), 0.5f, "../assets/button/keys/mouse.png", 0.5)});
+    int indice = 0;
     for (const auto& key : keys) {
         ImVec4 labelColor = ImVec4(255, 255, 255, 255); // Couleur du label
-        keyLabbels.push_back(new Labbel((center.x/winWidth)*1.25, hauteurk, labelColor, key.controlPhrase, 20.0f, 0.6f));
+        keyLabbels.push_back(new Labbel((center.x/winWidth)*1.25-0.025, hauteurk, labelColor, key.controlPhrase, 16.0f, 0.6f));
+        keyLabbels[indice]->alignLeft = true;
         hauteurk += diff; // Incrémenter la hauteur pour la prochaine clé
+        indice++;
     }
 
     hauteurk = (center.y-hauteur/3.25)/(winHeight);

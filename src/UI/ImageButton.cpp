@@ -112,6 +112,9 @@ if(hidden){return;}
             
         }
     }
+    if(isHovered){
+        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
     if(isOn){
     float rectHeight = actualSize.y * 0.075; // 10% de la hauteur du bouton
     float rectWidth = actualSize.x * imageScale;// 10% de la largeur du bouton
@@ -125,9 +128,9 @@ if(hidden){return;}
     GLuint texture;
     if(isOn){
         texture = textureClicked;}
-    else if(isHovered && ImGui::IsMouseDown(0)){
+    else if(isHovered && ImGui::IsMouseDown(0) && enabled){
         texture = textureClicked;
-    }else if(isHovered){
+    }else if(isHovered && enabled){
         texture = textureHover;
     }else{
         texture = textureNormal;

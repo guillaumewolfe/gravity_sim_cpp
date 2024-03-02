@@ -98,12 +98,13 @@ Vec3 rotateToXZPlane(const Vec3& original) {
     double newZ = -original.y;
     return Vec3(original.x, newY, newZ);
 }
-std::pair<Vec3, Vec3> ApiTool::extractBodyData(const std::string& data, const std::string& bodyName) {
+std::pair<Vec3, Vec3> ApiTool::extractBodyData(const std::string& data, const std::string& bodyName, bool* connexionFailed) {
     std::regex regex_pattern("\\$\\$SOE[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)[\\s\\S]*?(-?\\d+\\.\\d+E[+-]\\d+)");
     std::smatch matches;
 
     if(data == "connexionFailed"){
         std::cerr << "Connexion failed, default values" << std::endl;
+        *connexionFailed = true;
         return getDefaultBodyData(bodyName);
     }   
 
@@ -134,7 +135,8 @@ void ApiTool::printCurrentDataForManualEntry() {
 
     for (const auto& bodyName : bodies) {
         std::string bodyData = getBodyData(bodyName);
-        std::pair<Vec3, Vec3> positionAndVelocity = extractBodyData(bodyData, bodyName);
+        bool nullptrBool = false;
+        std::pair<Vec3, Vec3> positionAndVelocity = extractBodyData(bodyData, bodyName, &nullptrBool);
 
         // Imprimer les données
         std::cout << "defaultData[\"" << bodyName << "\"] = {Vec3(" 

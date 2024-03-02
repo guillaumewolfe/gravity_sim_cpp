@@ -27,6 +27,7 @@ public:
     void setMode(int newMode);
     void Open();
     void setGameSettings(GameSettings* settings);
+    void setDefaultSettings(GameSettings* settings);
 
     void setCloseButtonFunction(std::function<void()> function);
     void setSaveButtonFunction(std::function<void()> function);
@@ -57,6 +58,9 @@ private:
     std::vector<Slider*> slidersMode3 = std::vector<Slider*>(); 
     std::vector<ToggleButton*> ToggleButtonsMode3 = std::vector<ToggleButton*>();
 
+    Button* resetToDefaultButton = nullptr;
+    void resetToDefault();
+
     void draw_mode1();
     void draw_mode2();
     void draw_mode3();
@@ -68,6 +72,7 @@ private:
     int mode = 1;
 
     GameSettings* gameSettings = nullptr;
+    GameSettings* defaultSettings = nullptr;
     GameSettings originalSettings;
 
 

@@ -22,7 +22,7 @@ PositionCreator::PositionCreator(RenderContext* renderContext, CreatorManager* m
     generate_labels();
     generate_colors();
     nameFontBig = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 14.0);
-    nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 12.0);
+    nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), 14.0);
 
 }
 
@@ -53,7 +53,7 @@ void PositionCreator::Enter(){
     m_manager->cameraCreationPositionInit = Vec3(positionCameraInit);
     m_manager->cameraCreationTargetInit = sun->getPositionSimulation();
     m_manager->resetCamera();
-    if(!(m_manager->isCreated) && !m_manager->isEditing){createNewObject();}
+    if(!(m_manager->isCreated) && !m_manager->isEditing){m_manager->createNewObject();}
 } 
 
 
@@ -97,10 +97,10 @@ void PositionCreator::checkInputs(){
     if(ImGui::IsWindowHovered()){
         if(ImGui::GetIO().MouseWheel != 0){
             if(ImGui::GetIO().MouseWheel > 0 && isHoveringRectangle()){
-                zoomIn(4.0);}
+                zoomIn(7.0);}
 
             else if (ImGui::GetIO().MouseWheel < 0 && isHoveringRectangle()){
-                zoomOut(4.0);
+                zoomOut(7.0);
             }
         }
     }
@@ -112,13 +112,13 @@ void PositionCreator::generate_buttons(){
     float taille_y = 0.06f*1.0;
 
 
-   Button *ReturnButton = new Button(playSoundFunc,0.13, 0.75, ImVec2(taille_x*1.2, taille_y*0.55),
+   Button *ReturnButton = new Button(playSoundFunc,0.13, 0.775, ImVec2(taille_x*1.2, taille_y*0.55),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Previous", 0.05,19.0f,
                                std::bind(&PositionCreator::previous_state, this),5); 
 
-   Button *NextButton = new Button(playSoundFunc,0.165f, 0.75, ImVec2(taille_x*1.2, taille_y*0.55),
+   Button *NextButton = new Button(playSoundFunc,0.165f, 0.775, ImVec2(taille_x*1.2, taille_y*0.55),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Select", 0.2,20.0f,
@@ -139,12 +139,12 @@ void PositionCreator::generate_buttons(){
                         "../assets/button/reset2.png", 0,std::bind(&PositionCreator::AdjustPosition,this),
                             3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     resetPosition->hidden=true;
-    ImageButton* closeButton = new ImageButton(playSoundFunc,0.193878, 0.223069,ImVec2(0.025f,0.025f),0.6f,
+    ImageButton* closeButton = new ImageButton(playSoundFunc,0.193878, 0.2,ImVec2(0.025f,0.025f),0.6f,
                         button_color, button_color,
                         "../assets/button/close.png", 0,
                             std::bind(&PositionCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
         
-    icon = new Icon(0.0666667, 0.223069,ImVec2(0.025f,0.025f),0.35f,"../assets/button/position.png",0.85);
+    icon = new Icon(0.0666667, 0.2,ImVec2(0.025f,0.025f),0.35f,"../assets/button/position.png",0.85);
 
 
     imageButtons.push_back(resetPosition);
@@ -175,7 +175,7 @@ void PositionCreator::drawPlanets(){
     float planetRadius = winWidth * 0.008;
 
     CelestialObject* planet = m_manager->newCreatedObject;
-
+    if(planet == nullptr){return;}
     ImVec4 sunColor = typeDictColor[sun->typeName];
     ImVec4 planetColor = typeDictColor[planet->typeName];
 
@@ -252,7 +252,7 @@ m_manager->updateCamera();
 
 void PositionCreator::generate_labels(){
     Labbel *MessageLabel = new Labbel(0.13f,0.255f,ImVec4(255,255,255,255),
-                            "Position",25.0f,0.9f);
+                            "Position",28.0f,0.8f);
     Labbel *DistanceStaticLabel = new Labbel(0.075f,0.35f,ImVec4(255,255,255,255),
                         "Distance from star",21.0f,0.7f);
     Labbel *DistanceLabel = new Labbel(0.155f,0.42f,ImVec4(255,255,255,150),
@@ -287,27 +287,24 @@ void PositionCreator::generate_labels(){
 void PositionCreator::drawBackground(){
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.01;
 
     centerPos = ImVec2(winWidth * 0.13f, winHeight * 0.5f);
     float longueur = winWidth* 0.16; // Exemple de taille
-    float hauteur = winHeight * 0.60; // Exemple de taille
+    float hauteur = winHeight * 0.65; // Exemple de taille
 
     topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);   
+
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(0, 0, 0, 255), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
     
 }
 bool PositionCreator::isHoveringRectangle(){
@@ -391,7 +388,7 @@ void PositionCreator::Exit(){
     positionSelected = false;
     buttons[1]->hidden=true;
     //imageButtons[0]->hidden=true;
-    buttons[0]->UpdatePosition(0.13, 0.75);
+    buttons[0]->UpdatePosition(0.13, 0.775);
 } 
 
 void PositionCreator::createNewObject(){
@@ -541,7 +538,9 @@ for (int i = 0; i < segments; ++i) {
             drawSunEffect(planetScreenPos, planetRadius);
         }else if(object->type != 1 && object->type != 0 && sun->type == 1){
             if(isWithinBounds(planetScreenPos,ImVec2(planetRadius*2,planetRadius*2))){
-            drawPlanetLight(planetScreenPos, center, planetRadius);}
+            drawPlanetLightNOSHADOW(planetScreenPos, planetRadius, object);
+            drawPlanetLight(planetScreenPos, center, planetRadius);
+            }
         }
 
     }
@@ -550,26 +549,21 @@ for (int i = 0; i < segments; ++i) {
 
 void PositionCreator::drawMainBackground(){
     longueurMidSquare = winWidth * 0.45; // Exemple de taille
-    hauteurMidSquare = winHeight * 0.6; // Exemple de taille
+    hauteurMidSquare = winHeight * 0.65; // Exemple de taille
     centerPosMidSquare = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPosMidSquare.x - longueurMidSquare * 0.5f, centerPosMidSquare.y - hauteurMidSquare * 0.5f);
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.02;
     ImDrawList* drawList = ImGui::GetWindowDrawList();
+    
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueurMidSquare, topLeft.y + hauteurMidSquare), 
                             IM_COL32(0,0,0, 255), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueurMidSquare, topLeft.y + hauteurMidSquare), 
-                            IM_COL32(20, 25, 30, 100), // Couleur
+                            IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueurMidSquare, topLeft.y + hauteurMidSquare), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 }
-
 Vec3 PositionCreator::calculateIntersection(const glm::vec3& rayDirection, const glm::vec3& cameraPosition) {
     // Si le rayon pointe vers le haut, pas d'intersection avec le plan XZ
     if (rayDirection.y >= 0) {
@@ -616,7 +610,7 @@ void PositionCreator::checkClick(){
     if(ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !positionSelected && isHoveringRectangle()){
         //Position Sélectionnée
         positionSelected = true;
-        buttons[0]->UpdatePosition(0.095, 0.75);  
+        buttons[0]->UpdatePosition(0.095, 0.775);  
         buttons[1]->hidden=false;
         //imageButtons[0]->hidden=false;
         return;
@@ -630,7 +624,7 @@ void PositionCreator::checkClick(){
 void PositionCreator::AdjustPosition(){
     positionSelected = false;
     buttons[1]->hidden=true;
-    buttons[0]->UpdatePosition(0.13, 0.75);
+    buttons[0]->UpdatePosition(0.13, 0.775);
     //imageButtons[0]->hidden=true;
 }
 
@@ -720,3 +714,4 @@ void PositionCreator::drawPlanetLight(ImVec2 planetPos, ImVec2 sunPos, float rad
 void PositionCreator::cameraHauteurMode(){
 
 }
+

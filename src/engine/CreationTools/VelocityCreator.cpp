@@ -76,12 +76,13 @@ void VelocityCreator::DrawOpenGL(){}
 void VelocityCreator::drawUI(){
     if(isExited){return;}
     float longueur = winWidth* 0.55; // Exemple de taille
-    float hauteur = winHeight * 0.6; // Exemple de taille
+    float hauteur = winHeight * 0.65; // Exemple de taille
 
     ImVec2 centerPos = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     ImVec2 topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.01;
+
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(0,0,0, 255), // Couleur
@@ -90,11 +91,6 @@ void VelocityCreator::drawUI(){
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(20, 25, 30, 200), // Couleur
                             cornerRadius);
-
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
 
     //Print mousePos % if clicked
 
@@ -118,12 +114,12 @@ void VelocityCreator::generate_buttons(){
     float taille_y = 0.06f*1.0;
 
 
-   Button *SaveButton = new Button(playSoundFunc,0.55, 0.765, ImVec2(taille_x*1.6, taille_y*0.65),
+   Button *SaveButton = new Button(playSoundFunc,0.55, 0.78, ImVec2(taille_x*1.4, taille_y*0.60),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Select", 0.2f,20.0f,
                             std::bind(&VelocityCreator::next_state, this),5);   
-    Button *Cancel = new Button(playSoundFunc,0.45, 0.765, ImVec2(taille_x*1.6, taille_y*0.65),
+    Button *Cancel = new Button(playSoundFunc,0.45, 0.78, ImVec2(taille_x*1.4, taille_y*0.60),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                             "Previous", 0.05f,19.0f,
@@ -131,10 +127,10 @@ void VelocityCreator::generate_buttons(){
     buttons.push_back(SaveButton);
     buttons.push_back(Cancel);
 
-icon = new Icon(0.239456, 0.223069,ImVec2(0.025f,0.025f),0.35f,"../assets/button/speed.png",0.85);
+icon = new Icon(0.239456, 0.21,ImVec2(0.025f,0.025f),0.35f,"../assets/button/speed.png",0.85);
 
 
-    ImageButton* closeButton = new ImageButton(playSoundFunc,0.756782, 0.223069,ImVec2(0.025f,0.025f),0.6f,
+    ImageButton* closeButton = new ImageButton(playSoundFunc,0.756782, 0.21,ImVec2(0.025f,0.025f),0.6f,
                         button_color, button_color,
                         "../assets/button/close.png", 0,
                             std::bind(&VelocityCreator::forceClose, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
@@ -156,26 +152,26 @@ void VelocityCreator::generate_sliders(){
 
 void VelocityCreator::generate_labels(){
     float midx = 0.329932;
-    Labbel *MessageLabel = new Labbel(midx, 0.334059,ImVec4(255,255,255,255),
-                            "Velocity:",26.0f,0.9f);
+    Labbel *MessageLabel = new Labbel(midx, 0.34,ImVec4(255,255,255,255),
+                            "Velocity:",28.0f,0.8f);
     
     Labbel *VelocityLabel = new Labbel(midx,0.398259,ImVec4(255,255,255,200),
-                        "",26.0f,0.8f);
+                        "",22.0f,0.6f);
     
     Labbel *infoOrbitLabel = new Labbel(midx,0.45049,ImVec4(150,255,220,200),
                     "Stationary",18.0f,0.8f);
 
     Labbel *direction = new Labbel(midx,0.536453,ImVec4(255,255,255,200),
                     "Direction:",26.0f,0.8f);
-    Labbel *minimap = new Labbel(0.6, 0.334059,ImVec4(255,255,255,255),
-                            "Select an object:",26.0f,0.9f);
+    Labbel *minimap = new Labbel(0.6, 0.31,ImVec4(255,255,255,255),
+                            "Select an object:",26.0f,0.8f);
     labbels.push_back(MessageLabel);
     labbels.push_back(VelocityLabel);
     labbels.push_back(infoOrbitLabel);
     labbels.push_back(direction);
     labbels.push_back(minimap);
-    Labbel* changeWeight = new Labbel(0.5,0.2525,ImVec4(255,255,255,255),
-                "Select velocity",37,0.85f);
+    Labbel* changeWeight = new Labbel(0.5,0.2475,ImVec4(255,255,255,255),
+                "Select velocity",32,0.85f);
 
     labbels.push_back(changeWeight);
 
@@ -501,12 +497,9 @@ void VelocityCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
-    drawList->AddRect(topLeft, 
-                        ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                        IM_COL32(255,255,255,40), // Couleur
-                        cornerRadius,0,0.2f);
+
 
 }
 

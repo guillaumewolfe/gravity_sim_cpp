@@ -203,13 +203,13 @@ void ZoomTool::drawImGui() {
    ImDrawList* drawList = ImGui::GetWindowDrawList();
    checkScroll();
    //Add rect in top center of screen
-   rectWidth = winWidth*0.7;
+   rectWidth = winWidth*0.72;
    rectHeight = winHeight*0.15;
    float rectX = winWidth/2 - rectWidth/2;
    float rectY = winHeight*1-rectHeight;
    ImVec2 currentTopLeft = ImVec2(rectX, rectY);
-   ImVec2 bottomRight = ImVec2(rectX + rectWidth, rectY + rectHeight);
-   float cornerRadius = 10.0f;
+   ImVec2 bottomRight = ImVec2(rectX + rectWidth, rectY + rectHeight*1.4);
+   float cornerRadius = winWidth*0.02;
    drawList->AddLine(ImVec2(winWidth/2, 0), ImVec2(winWidth/2, winHeight), ImColor(255, 255, 255, 100), winWidth*0.002);
 
 
@@ -219,7 +219,7 @@ void ZoomTool::drawImGui() {
                            cornerRadius);
    drawList->AddRectFilled(currentTopLeft,
                            bottomRight, // Le coin inférieur droit reste fixe
-                           IM_COL32(20, 25, 30, 100), // Color
+                           IM_COL32(20, 25, 30, 150), // Color
                            cornerRadius);
 
 
@@ -254,10 +254,24 @@ void ZoomTool::drawImGui() {
 
 
 void ZoomTool::Open(){
+    obj1 = nullptr;
+    obj2 = nullptr;
 
+    for(auto& obj : m_renderContext->systemeSolaire->objects){
+        if(obj2 == nullptr){
+            obj2 = obj;
+        }else if(obj1 == nullptr){
+            obj1 = obj;
+        }else{
+            if(obj->getRayon() > obj2->getRayon()){
+                obj1 = obj2;
+                obj2 = obj;
+            }else if(obj->getRayon() > obj1->getRayon()){
+                obj1 = obj;
+            }
+        }
+    }
 
-   obj1 = m_renderContext->systemeSolaire->objects[6];
-   obj2 = m_renderContext->systemeSolaire->objects[0];
    selectedObject = obj1;
    changeOjects();
    zoomCamera->newFollowObject(obj2);
@@ -290,8 +304,6 @@ void ZoomTool::changeOjects(){
    m_renderContext->currentCamera->newFollowObject(obj1);
 
    updateLabels();
-
-
 }
 
 
@@ -400,8 +412,8 @@ std::string radiusRatioString = formatNumberWithSpaces(radiusRatio);
 
 pourcentageMass->UpdateText("(x" + massRatioString + ")");
 pourcentageRadius->UpdateText("(x" + radiusRatioString + ")");
-pourcentageRadius->UpdatePosition(0.5+distance_x/2*coeffRadius,1-1.8*Height/3);
-pourcentageMass->UpdatePosition(0.5+distance_x/2*coeffMass,1-1*Height/3);
+pourcentageRadius->UpdatePosition(0.5+distance_x/2*coeffRadius,1-1.8*Height/3+0.01);
+pourcentageMass->UpdatePosition(0.5+distance_x/2*coeffMass,1-1*Height/3+0.01);
 
 
 
@@ -711,19 +723,23 @@ void ZoomTool::generate_colors() {
    float rectY = winHeight*1-rectHeight;
 
 
+    float top = 1-0.15;
+    float top1_3 = 1-0.15/3;
+    float top2_3 = 1-0.15*2/3;
+    float diff = 0.01;
    float distance_x = rectWidth/5;
-   title = new Labbel(0.5,1-0.13,ImVec4(255,255,255,255),"Comparison",27.0f,0.7);
-   radius1 = new Labbel(0.5-distance_x,1-1.8*rectHeight/3,ImVec4(255,255,255,255),"200 KM",24.0f,0.7);
-   radius1Static = new Labbel(0.5,1-1.8*rectHeight/3,ImVec4(255,255,255,255),"Diameter",22.0f,0.3);
-   radius2 = new Labbel(0.5+distance_x,1-1.8*rectHeight/3,ImVec4(255,255,255,255),"200 KM",24.0f,0.7);
+   title = new Labbel(0.5,1-0.13+diff,ImVec4(255,255,255,255),"Comparison",27.0f,0.7);
+   radius1 = new Labbel(0.5-distance_x,1-1.8*rectHeight/3+diff,ImVec4(255,255,255,255),"200 KM",24.0f,0.7);
+   radius1Static = new Labbel(0.5,1-1.8*rectHeight/3+diff,ImVec4(255,255,255,255),"Diameter",22.0f,0.3);
+   radius2 = new Labbel(0.5+distance_x,1-1.8*rectHeight/3+diff,ImVec4(255,255,255,255),"200 KM",24.0f,0.7);
 
 
-   mass1 = new Labbel(0.5-distance_x,1-1*rectHeight/3,ImVec4(255,255,255,255),"3400 KG",24.0f,0.7);
-   mass1Static = new Labbel(0.5,1-1*rectHeight/3,ImVec4(255,255,255,255),"Mass",22.0f,0.3);
-   mass2 = new Labbel(0.5+distance_x,1-1*rectHeight/3,ImVec4(255,255,255,255),"26700 KG",24.0f,0.7);
+   mass1 = new Labbel(0.5-distance_x,1-1*rectHeight/3+diff,ImVec4(255,255,255,255),"3400 KG",24.0f,0.7);
+   mass1Static = new Labbel(0.5,1-1*rectHeight/3+diff,ImVec4(255,255,255,255),"Mass",22.0f,0.3);
+   mass2 = new Labbel(0.5+distance_x,1-1*rectHeight/3+diff,ImVec4(255,255,255,255),"26700 KG",24.0f,0.7);
   
-   pourcentageMass = new Labbel(0.5-distance_x/2,1-1*rectHeight/3,ImVec4(150,255,150,255),"(x10003)",22.0f,0.6);
-   pourcentageRadius = new Labbel(0.5-distance_x/2,1-1.8*rectHeight/3,ImVec4(150,255,150,255),"(x231)",22.0f,0.6);
+   pourcentageMass = new Labbel(0.5-distance_x/2,1-1*rectHeight/3+diff,ImVec4(150,255,150,255),"(x10003)",22.0f,0.6);
+   pourcentageRadius = new Labbel(0.5-distance_x/2,1-1.8*rectHeight/3+diff,ImVec4(150,255,150,255),"(x231)",22.0f,0.6);
 
 
 
@@ -736,11 +752,11 @@ void ZoomTool::generate_colors() {
    pos2Name = ImVec2(0.5+rectWidth/2*0.725,1-rectHeight/2);
 
 
-   exitButton = new Button(playSoundFunc,1-0.026, 0.030, ImVec2(0.05, 0.05),
+   exitButton = new Button(playSoundFunc,0.075, 1-0.15/2, ImVec2(0.04, 0.04),
                               ImVec4(75.0/255.0, 25.0/255.0, 30.0/255.0, 1.0f),
                               ImVec4(75.0/255.0, 25.0/255.0, 30.0/255.0,  1.0f),
-                              "Exit", 0.6f,30.0,
-                              std::bind(&ZoomTool::exitButtonFunction, this),1.0);
+                              "Exit", 0.6f,20.0,
+                              std::bind(&ZoomTool::exitButtonFunction, this),0);
 
 
 

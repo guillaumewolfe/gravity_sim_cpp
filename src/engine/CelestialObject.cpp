@@ -207,10 +207,16 @@ void CelestialObject::setDefaultValues(){
     defaultWeight = weight;
     defaultRadius = real_radius;
     defaultName = name;
+    defaultPosition = position_real;
+    defaultVelocity = velocity;
 }
 
 void CelestialObject::resetToDefaultValues(){
     weight = defaultWeight;
     real_radius = defaultRadius;
     name = defaultName;
+}
+
+Vec3 CelestialObject::getVelocity(){
+    return velocity;
 }

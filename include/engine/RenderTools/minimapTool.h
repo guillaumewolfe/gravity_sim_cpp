@@ -92,6 +92,8 @@ private:
     void transitionCamera();
     float positionCible;
     float zoom=1;
+    
+
 
 
 };  

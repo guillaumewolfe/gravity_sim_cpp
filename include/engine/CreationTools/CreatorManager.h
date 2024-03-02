@@ -48,6 +48,8 @@ public:
     std::string getStateName();
     std::map<std::string, std::unique_ptr<StateCreator>> states;
     std::function<void()> updateNamesFunction;
+    void createNewObject();
+    
 
 private:
 

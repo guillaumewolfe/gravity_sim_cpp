@@ -176,6 +176,8 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
     CelestialObject* sun = m_renderContext->systemeSolaire->getSun(object);
     bool isSunPresent = (sun != nullptr && sun->type == 1);
     CelestialObject* soleil = m_renderContext->systemeSolaire->getSun(object);
+    GLint isThereSunUniform = glGetUniformLocation(shaderProgram, "isThereSun");
+    glUniform1i(isThereSunUniform, isSunPresent ? GL_TRUE : GL_FALSE); 
     if(soleil==nullptr){return;}
     glm::vec3 positionSoleil = soleil->position_simulation.toGlm();
     glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
@@ -192,8 +194,6 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection");
     glUniform3f(lightDirUniform, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
 
-    GLint isThereSunUniform = glGetUniformLocation(shaderProgram, "isThereSun");
-    glUniform1i(isThereSunUniform, isSunPresent ? GL_TRUE : GL_FALSE); 
 }
 
 

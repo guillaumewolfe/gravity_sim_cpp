@@ -11,12 +11,13 @@
 #include <states/MenuState.h>
 #include <states/SimulationState.h>
 #include <cmath> // Include the cmath library for sin function
-
+#include "save/saveTool.h"
 
 
 Game::Game() : currentState(nullptr), window(nullptr), 
                requestedState(nullptr), changeStateRequested(false) {
     InitSettings();
+    loadSettings();
                }
 
 Game::~Game()
@@ -179,17 +180,19 @@ void Game::CleanupOpenGL()
 }
 
 GameSettings* Game::getSettings() { return &settings; }
+GameSettings* Game::getDefaultSettings() { return &defaultSettings; }
 
 void Game::InitSettings() {
     settings.textureQuality = 1;
     settings.antiAliasing = true;
     settings.movementSpeed = 0.5f;
     settings.rotationSpeed = 0.5f;
-    settings.musicVolume = 0.3f;
-    settings.sfxVolume = 0.75f;
-    settings.mainVolume = 0.75f;
+    settings.musicVolume = 0.6f;
+    settings.sfxVolume = 0.6f;
+    settings.mainVolume = 0.6f;
     settings.volumeChanged = false;
     settings.soundTool = new SoundTool(&settings);
+    defaultSettings = settings;
 }
 
 //getSoundTool
@@ -204,18 +207,24 @@ void Game::InitLoadingWindow() {
     // Obtenez les dimensions de l'espace de travail de l'écran
     int workAreaX, workAreaY, workAreaWidth, workAreaHeight;
     glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaWidth, &workAreaHeight);
+    int windowWidth = workAreaWidth * 0.2;
+    int windowHeight = workAreaWidth * 0.2; // Utilisez workAreaHeight si vous voulez baser la hauteur proportionnellement
 
     // Configurer la fenêtre pour être "windowed borderless"
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
     // Création de la fenêtre en utilisant les dimensions de l'espace de travail
-    loadingWindow = glfwCreateWindow(workAreaWidth, workAreaHeight, "Space Query", NULL, NULL);
+    loadingWindow = glfwCreateWindow(windowWidth, windowHeight, "Space Query", NULL, NULL);
     if (!loadingWindow) {
         glfwTerminate();
         return;
     }
 
     dynamic_cast<LoadingState*>(states["loading"])->setWindow(loadingWindow);
+    int centerX = workAreaX + (workAreaWidth - windowWidth) / 2;
+    int centerY = workAreaY + (workAreaHeight - windowHeight) / 2;
 
+    // Positionner la fenêtre au centre
+    glfwSetWindowPos(loadingWindow, centerX, centerY);
     // Make the context of the loading window current on this thread
     glfwMakeContextCurrent(loadingWindow);
     // Initialize GLAD for this thread/context
@@ -239,5 +248,15 @@ void Game::InitLoadingWindow() {
 void Game::showMainWindow() {
     if (window != nullptr) {
         glfwShowWindow(window);
+    }
+}
+
+void Game::loadSettings(){
+    SaveTool saveTool;
+    bool alreadyWritten = saveTool.checkIfSettingsAlreadyWritten(false);
+    if (!alreadyWritten) {
+        saveTool.saveGameSettings(settings);
+    }else{
+        saveTool.loadSettings(&settings);
     }
 }

@@ -48,16 +48,16 @@ private:
     Camera* currentCamera;
 
 public:
-    int currentSpeedIndex = 6;
+    int currentSpeedIndex = 0;
     int followedObjectIndex = 0;
     std::vector<std::pair<int, std::string>> speedSettings = {
 
-            {-604800, " -1 week/second"},
-            {-86400*2, "-2 day/second"},
-            {-86400, "-1 day/second"},
-            {-86400/2, "-0.5 day/second"},
-            {-3600, "-1 hour/second"},
-            {-3600/2, "-0.5 hour/second"},
+            //{-604800, " -1 week/second"},
+            //{-86400*2, "-2 day/second"},
+            //{-86400, "-1 day/second"},
+            //{-86400/2, "-0.5 day/second"},
+            //{-3600, "-1 hour/second"},
+            //{-3600/2, "-0.5 hour/second"},
             {1, "Normal speed"},
             {60, "1 minute/second"},
             {600, "10 minutes/second"},
@@ -67,7 +67,7 @@ public:
             {86400, "1 day/second"},
             {86400*2, "2 day/second"},
             {604800 , "1 week/second"},
-            {86400*30,"1 month/second"}
+            {604800*2,"2 weeks/second"}
             // Ajoutez d'autres vitesses ici
         };
 
@@ -90,16 +90,21 @@ public:
 
     // Bouttons:
     void Pause();
-    void Restart();
+    void Restart(bool defaultState = true);
     void MenuButton();
     void ShowAxesButton();
     void ShowCameraOptionsButton();
     void CreateObjectButton();
+    void setButtonActive(bool active, ImageButton* buttonExeption = nullptr);
+    bool buttonsAreDeactivated = false;
+    ImageButton* buttonExeption = nullptr;
     void SettingsButton();
     void MinimapButton();
     void QuizButton();
     void OptionsButton();
     void TelescopeButton();
+    void SaveButton();
+    void RestartButton();
     void changeSimulationSpeed(bool increase);
     void changeFollowedObject();
     void resetView();

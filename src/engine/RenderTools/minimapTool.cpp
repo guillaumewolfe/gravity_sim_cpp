@@ -97,20 +97,16 @@ void MinimapTool::draw_rect(){
     topLeft = ImVec2(centerPos.x - longueur * 0.5f, centerPos.y - hauteur * 0.5f);
     bottomRight = ImVec2(topLeft.x + longueur, topLeft.y + hauteur);
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    float cornerRadius = 10.0f;
+    float cornerRadius = winWidth*0.01;
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0, 0, 0, 20), // Color
+                            IM_COL32(0, 0, 0, 40), // Color
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
                             IM_COL32(20, 25, 30, 100), // Color
                             cornerRadius);
 
-    drawList->AddRect(topLeft, 
-                      ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                      IM_COL32(255, 255, 255, 40), // Color
-                      cornerRadius, 0, 0.2f);
 }
 
 
@@ -140,6 +136,8 @@ void MinimapTool::draw_Scene(){
 }
 
 void MinimapTool::setup_dimension(){
+    //If empty, return
+    if(m_renderContext->systemeSolaire->objects.empty()){return;}
     radius = winHeight * 0.004 *zoom;
     minDistance = std::numeric_limits<float>::max();
     scaledDistance = hauteurScene / m_renderContext->systemeSolaire->maxSize;
@@ -160,6 +158,7 @@ void MinimapTool::setup_dimension(){
 }
 
 void MinimapTool::draw_planets(){
+    if(m_renderContext->systemeSolaire->objects.empty()){return;}
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     for(auto& planete : m_renderContext->systemeSolaire->objects){
@@ -249,6 +248,7 @@ void MinimapTool::draw_camera(){
 }
 
 void MinimapTool::draw_text(){
+    if(m_renderContext->systemeSolaire->objects.empty()){return;}
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     for(auto& planete : m_renderContext->systemeSolaire->objects) {
         std::string planetName = planete->getName();
