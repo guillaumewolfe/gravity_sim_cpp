@@ -24,8 +24,13 @@ void Icon::Draw() {
     ImVec2 actualSize = ImVec2(sizePercent.x * winWidth, sizePercent.y * winHeight);
 
     // Ensure the icon is square by using the minimum dimension for both width and height
-    float minDimension = std::min(actualSize.x, actualSize.y);
-    ImVec2 squareSize = ImVec2(minDimension, minDimension);
+    ImVec2 squareSize;
+    if(isSquare){
+        float minDimension = std::min(actualSize.x, actualSize.y);
+        squareSize = ImVec2(minDimension, minDimension);
+    }else{
+        squareSize = ImVec2(actualSize.x, actualSize.y);
+    }
 
     // Calculate the position based on the logical window size
     ImVec2 actualPos = ImVec2((position.x * winWidth) - (squareSize.x * 0.5),

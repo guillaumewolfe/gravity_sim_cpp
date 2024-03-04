@@ -23,6 +23,8 @@ public:
     std::chrono::system_clock::time_point start_time;
     void update_time();
     float lastScroll = 0.0f;
+    bool mouseHoveringUI();
+    bool isMouseHoveringUI = false;
 
     GLuint textureID;
 
@@ -31,6 +33,7 @@ public:
     void drawPlanet();
 
     bool isSearching = false;
+    bool* showFPS = nullptr;
 private:
     int winWidth, winHeight;
     ImFont* myFont = nullptr;
@@ -45,6 +48,7 @@ private:
 
     //SearchTool
     void drawSearchTool();
+    void drawFPS();
     Icon* searchIcon = nullptr;
     Icon* selectionIcon = nullptr;
     Labbel* searchLabbel = nullptr;

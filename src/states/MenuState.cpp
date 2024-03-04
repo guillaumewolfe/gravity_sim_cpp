@@ -2,6 +2,7 @@
 #include "states/SimulationState.h"
 #include "engine/RenderTools/soundTool.h"
 #include "path_util.h"
+#include "engine/RenderTools/welcomeTool.h"
 
 MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
    /*Constructeur :
@@ -9,7 +10,7 @@ MenuState::MenuState(Game* gameObj) : BaseState(gameObj),elapsedTime(0.0){
        2- Initialiser le video*/
     Enter();
     messageBox = nullptr;
-  
+    drawWelcomeMessage = gameObj->getSettings()->firstLaunch;
 }
 
 
@@ -27,6 +28,10 @@ void MenuState::Enter() {
 
    generateVideo();
    generateMusic();
+
+    welcomeTool = new WelcomeTool();
+    welcomeTool->shouldDraw = &drawWelcomeMessage;
+    welcomeTool->Open();
 
     settingsTool = new SettingsTool(nullptr);
     settingsTool->setCloseButtonFunction(std::bind(&MenuState::settingsButton, this));
@@ -80,10 +85,16 @@ std::vector<Button*> MenuState::generateButtons(){
                                "Options", 0.2f,24.0f,
                                std::bind(&MenuState::settingsButton, this),5,"restart");
 
+   Button *ControlsButton = new Button(playSoundFunc,0.035f, 0.975f, ImVec2(0.055, 0.035),
+                               ImVec4(30/255+50, 45/255+50, 45/255+50, 1.0f),
+                               ImVec4(1.0f, 1.0f, 0.5f, 1.0f),
+                               "About", 0.2f,18.0f,
+                               std::bind(&MenuState::showWelcome, this),5,"restart");
 
    buttons_list.push_back(exitButton);
    buttons_list.push_back(OptionButton);
    buttons_list.push_back(StartButton);
+    buttons_list.push_back(ControlsButton);
    return buttons_list;
 }
 
@@ -92,7 +103,10 @@ std::vector<Button*> MenuState::generateButtons(){
 
 
 
-
+void MenuState::showWelcome(){
+    drawWelcomeMessage = true;
+    welcomeTool->Open();
+}
 
 void MenuState::Update() {
     if (fadeOpacity > 0.0f) {
@@ -158,7 +172,7 @@ ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
 
     ImGui::SetNextWindowFocus();
     drawUiElements();
-
+    if(drawWelcomeMessage)drawWelcome();
 
    ImGui::End();
     //Message Box
@@ -183,6 +197,7 @@ ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
 }
 
 void MenuState::drawUiElements(){
+    if(drawWelcomeMessage)return;
    // Draw your custom buttons
    for (Button *btn : buttons) {
        btn->Draw();
@@ -254,9 +269,11 @@ void MenuState::startButton(){
 void MenuState::RestartState(){
     accumulator = 0.0;
     lastTime = glfwGetTime();
-
 }
 
+void MenuState::drawWelcome(){
+    welcomeTool->Draw();
+}
 
 
 

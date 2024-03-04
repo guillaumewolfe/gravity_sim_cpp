@@ -49,6 +49,7 @@ public:
     void setVolumeButtonFunction(std::function<void()> function);
     void volumeButtonFunctionCalled();
     void StartCounting();
+    bool firstUpdate = true;
 
 private:
     //Vector of songs

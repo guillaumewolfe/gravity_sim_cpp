@@ -112,6 +112,12 @@ file(GLOB_RECURSE SOURCES
 # Executable
 # Executable
 # Configurez le fichier .icns pour qu'il soit copié dans le répertoire de build
+if(WIN32)
+  # Append the .rc file for Windows build
+  list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/assets/icons/ressources.rc")
+endif()
+
+if(APPLE)
 set(APP_ICON ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/myIcon.icns)
 configure_file(${APP_ICON} ${CMAKE_CURRENT_BINARY_DIR}/myIcon.icns COPYONLY)
 
@@ -123,7 +129,6 @@ add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${APP_ICON})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
 
 
-if(APPLE)
     # Configuration supplémentaire pour le bundle macOS
     set_target_properties(${PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
@@ -132,6 +137,9 @@ if(APPLE)
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
     )
 elseif(WIN32)
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
+
 set(ALL_DLLS 
     ${OpenCV_LIBS}
     "${CMAKE_SOURCE_DIR}/lib/CURL/libcurl-x64.dll"
@@ -146,7 +154,7 @@ foreach(DLL ${ALL_DLLS})
 endforeach()
 endif()
 #set_target_properties(${PROJECT_NAME} PROPERTIES 
-    #WIN32_EXECUTABLE TRUE
+#    WIN32_EXECUTABLE TRUE
 #)
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
@@ -176,7 +184,6 @@ include(CPack)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION .)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/engine/RenderTools/Shaders DESTINATION src/engine/RenderTools)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/save DESTINATION src/save)
 # Installer les bibliothèques nécessaires et les fichiers de ressources
 install(FILES ${ALL_DLLS} DESTINATION bin)
 

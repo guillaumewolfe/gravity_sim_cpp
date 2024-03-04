@@ -59,17 +59,22 @@ void OptionsTool::generate_buttons(){
     float taille_y = 0.045;
     float taille_x = 0.175*0.4;
     float diff = taille_y+0.25*taille_y;
-   Button *RestartButton = new Button(playSoundFunc,0.50f, 0.5, ImVec2(taille_x, taille_y),
+   Button *RestartButton = new Button(playSoundFunc,0.50f, 0.5-diff, ImVec2(taille_x, taille_y),
                                ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Resume", 0.2f,21.0f,
                             std::bind(&OptionsTool::CloseButton, this),5);       
-   Button *OptionsButton = new Button(playSoundFunc,0.50f, 0.5+diff, ImVec2(taille_x, taille_y),
+                            
+   Button *OptionsButton = new Button(playSoundFunc,0.50f, 0.5, ImVec2(taille_x, taille_y),
                                ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
                                "Settings", 0.2f,21.0f,
                             std::bind(&OptionsTool::OptionsButton, this),5);   
-
+   Button *AboutButton = new Button(playSoundFunc,0.50f, 0.5+diff, ImVec2(taille_x, taille_y),
+                               ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
+                               ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
+                               "About", 0.2f,21.0f,
+                            std::bind(&OptionsTool::AboutButton, this),5);  
    Button *MainMenuButton = new Button(playSoundFunc,0.50f, 0.5+2*diff, ImVec2(taille_x, taille_y),
                                ImVec4(150.0/255.0, 150.0/255.0, 150.0/255.0, 1.0f),
                                ImVec4(150.0/255.0, 250.0/255.0, 150.0/255.0, 1.0f),
@@ -80,11 +85,12 @@ void OptionsTool::generate_buttons(){
     buttons.push_back(RestartButton);
     buttons.push_back(OptionsButton);
     buttons.push_back(MainMenuButton);
+    buttons.push_back(AboutButton);
 
 }
 
 void OptionsTool::generate_labels(){
-    Labbel* menuLabbel = new Labbel(0.5f,0.425f,ImVec4(255,255,255,255),
+    Labbel* menuLabbel = new Labbel(0.5f,0.375f,ImVec4(255,255,255,255),
                                 "Options",28.0f,0.8f);
 
     labbels.push_back(menuLabbel);
@@ -126,7 +132,7 @@ void OptionsTool::draw_rect(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
+                            IM_COL32(0,0,0,175), // Couleur
                             cornerRadius);    // Dessiner le premier rectangle avec coins arrondis
 
     drawList->AddRectFilled(topLeft, 
@@ -145,6 +151,10 @@ void OptionsTool::setMenuButtonFunction(const std::function<void()>& func) {
     menuButtonFunction = func;
 }
 
+void OptionsTool::setAboutButtonFunction(const std::function<void()>& func) {
+    aboutButtonFunction = func;
+}
+
 void OptionsTool::setSettingsButtonFunction(const std::function<void()>& func) {
     settingsButtonFunction = func;
 }
@@ -157,6 +167,10 @@ void OptionsTool::CloseButton(){
     resumeButtonFunction();
 }
 
+void OptionsTool::AboutButton(){
+    aboutButtonFunction();
+    *(m_renderContext->showOptions) = false;
+}
 void OptionsTool::MenuButton(){
     menuButtonFunction();
 }

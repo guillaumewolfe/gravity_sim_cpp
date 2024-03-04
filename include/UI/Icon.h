@@ -26,6 +26,7 @@ public:
     std::string imagePath;
     ImVec2 getPosition();
     ImVec2 getSize();
+    bool isSquare = true;
 
 private:
     ImVec2 position = ImVec2(0, 0);

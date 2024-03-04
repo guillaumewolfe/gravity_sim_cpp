@@ -12,7 +12,8 @@
 #include <states/SimulationState.h>
 #include <cmath> // Include the cmath library for sin function
 #include "save/saveTool.h"
-
+#include "opencv2/opencv.hpp"
+#include "path_util.h"
 
 Game::Game() : currentState(nullptr), window(nullptr), 
                requestedState(nullptr), changeStateRequested(false) {
@@ -47,18 +48,10 @@ void Game::Close()
             state.second->Exit();
             delete state.second;
         }
-
     CleanupOpenGL();
     if (settings.soundTool) {
         delete settings.soundTool;
     }
-    delete currentState;
-    delete requestedState;
-    ImGui::DestroyContext(loadingIMGUIContext);
-    ImGui::DestroyContext(mainIMGUIContext);
-    delete loadingIMGUIContext;
-    delete mainIMGUIContext;
-
 }
 
 void Game::Update()
@@ -145,6 +138,7 @@ bool Game::InitOpenGL()
     settings.fullscreen = false;
 
     glfwMakeContextCurrent(window);
+    loadIcon(window);
     gladLoadGL();
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -164,6 +158,31 @@ bool Game::InitOpenGL()
     return true;
 }
 
+void Game::loadIcon(GLFWwindow* window){
+    std::string relativeFilename = "../assets/icons/logo2.jpg";
+    std::string fullPath = getFullPath(relativeFilename);
+    cv::Mat image = cv::imread(fullPath, cv::IMREAD_UNCHANGED);
+
+    if (!image.empty()) {
+        GLFWimage icons[1];
+        icons[0].width = image.cols;
+        icons[0].height = image.rows;
+
+        // Convert image data if necessary and set it as the icon
+        cv::Mat imageRGBA;
+        if (image.channels() == 4) {
+            imageRGBA = image;
+        } else {
+            cv::cvtColor(image, imageRGBA, cv::COLOR_BGR2RGBA);
+        }
+
+        icons[0].pixels = imageRGBA.data; // This assumes the data is stored as 8-bit unsigned int
+        std::cout << "Loaded icon at " << fullPath << std::endl;
+        glfwSetWindowIcon(window, 1, icons);
+    } else {
+        std::cout << "Failed to load icon at " << fullPath << std::endl;
+    }
+}
 
 GLFWwindow *Game::getWindow()
 {
@@ -184,6 +203,7 @@ GameSettings* Game::getDefaultSettings() { return &defaultSettings; }
 
 void Game::InitSettings() {
     settings.textureQuality = 1;
+    settings.showFPS = false;
     settings.antiAliasing = true;
     settings.movementSpeed = 0.5f;
     settings.rotationSpeed = 0.5f;
@@ -191,6 +211,7 @@ void Game::InitSettings() {
     settings.sfxVolume = 0.6f;
     settings.mainVolume = 0.6f;
     settings.volumeChanged = false;
+    settings.firstLaunch = true;
     settings.soundTool = new SoundTool(&settings);
     defaultSettings = settings;
 }
@@ -207,17 +228,19 @@ void Game::InitLoadingWindow() {
     // Obtenez les dimensions de l'espace de travail de l'écran
     int workAreaX, workAreaY, workAreaWidth, workAreaHeight;
     glfwGetMonitorWorkarea(primaryMonitor, &workAreaX, &workAreaY, &workAreaWidth, &workAreaHeight);
-    int windowWidth = workAreaWidth * 0.2;
-    int windowHeight = workAreaWidth * 0.2; // Utilisez workAreaHeight si vous voulez baser la hauteur proportionnellement
+    int windowWidth = workAreaWidth;
+    int windowHeight = workAreaWidth; // Utilisez workAreaHeight si vous voulez baser la hauteur proportionnellement
 
     // Configurer la fenêtre pour être "windowed borderless"
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+    //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
     // Création de la fenêtre en utilisant les dimensions de l'espace de travail
     loadingWindow = glfwCreateWindow(windowWidth, windowHeight, "Space Query", NULL, NULL);
     if (!loadingWindow) {
         glfwTerminate();
         return;
     }
+    glfwFocusWindow(loadingWindow);
 
     dynamic_cast<LoadingState*>(states["loading"])->setWindow(loadingWindow);
     int centerX = workAreaX + (workAreaWidth - windowWidth) / 2;
@@ -227,6 +250,8 @@ void Game::InitLoadingWindow() {
     glfwSetWindowPos(loadingWindow, centerX, centerY);
     // Make the context of the loading window current on this thread
     glfwMakeContextCurrent(loadingWindow);
+    //Logo
+    loadIcon(loadingWindow);
     // Initialize GLAD for this thread/context
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -257,6 +282,7 @@ void Game::loadSettings(){
     if (!alreadyWritten) {
         saveTool.saveGameSettings(settings);
     }else{
+        settings.firstLaunch = false;
         saveTool.loadSettings(&settings);
     }
 }

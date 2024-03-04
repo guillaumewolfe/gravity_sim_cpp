@@ -2,6 +2,8 @@
 #include "path_util.h"
 #include "save/saveTool.h"
 
+
+
 SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
     Enter();
 }
@@ -25,6 +27,7 @@ void SimulationState::Enter() {
     render->Options_Tool->setMenuButtonFunction(std::bind(&SimulationState::MenuButton, this));
     render->Options_Tool->setSettingsButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Options_Tool->setResumeButtonFunction(std::bind(&SimulationState::OptionsButton, this));
+    render->Options_Tool->setAboutButtonFunction(std::bind(&SimulationState::OpenWelcomeTool, this));
 
     render->Settings_Tool->setCloseButtonFunction(std::bind(&SimulationState::SettingsButton, this));
     render->Settings_Tool->setSaveButtonFunction(std::bind(&SimulationState::SettingsButton, this));
@@ -60,16 +63,18 @@ void SimulationState::Enter() {
     render->Quiz_Tool->setConfirmBoxFunction(std::bind(&SimulationState::generateDialogBox, this, std::placeholders::_1, std::placeholders::_2));
 
     render->UI_Tool->musicPlayerTool->setVolumeButtonFunction(std::bind(&SimulationState::SettingsButton, this));
+    render->UI_Tool->showFPS = &(gameObj->getSettings()->showFPS);
     render->SaveSimulation_Tool->updateNamesFunction = std::bind(&NameTool::initLabbels, render->Name_Tool);
 
     render->Restart_Tool->setRestartFunction(std::bind(&SimulationState::Restart, this, std::placeholders::_1));
+
+    render->Welcome_Tool->shouldDraw = &(renderContext->showWelcomeTool);
 
 }
 
 //destructeur
 
 SimulationState::~SimulationState() {
-    Exit();
 }
 //Labels
 std::vector<Labbel*> SimulationState::generateLabbels(){
@@ -281,7 +286,7 @@ void SimulationState::setButtonActive(bool active, ImageButton* buttonExeption){
 void SimulationState::Update() {
     
     checkButtonState();
-    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz || renderContext->showSaveSimulation ||  renderContext->showRestartTool || showSettings || render->UI_Tool->isSearching ) {
+    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz || renderContext->showSaveSimulation ||  renderContext->showRestartTool || showSettings || render->UI_Tool->isSearching || renderContext->showWelcomeTool) {
         if(!buttonsAreDeactivated)setButtonActive(false, buttonExeption);
         return;}
     else if(buttonsAreDeactivated){
@@ -348,15 +353,14 @@ void SimulationState::Update() {
             !ImGui::IsKeyDown(ImGuiKey_S) && !ImGui::IsKeyDown(ImGuiKey_D) &&
             !ImGui::IsKeyDown(ImGuiKey_R)) && currentCamera->followedObject) {currentCamera->orbitAroundObject(0.001,0);}*/
 
-
-    if (ImGui::IsKeyReleased(ImGuiKey_F)) {changeGlobalFollowing();isOrbiting=true;}
+        //ImGuiRightClick
+    if (ImGui::IsKeyReleased(ImGuiKey_F) or ImGui::IsMouseClicked(1)) {changeGlobalFollowing();isOrbiting=true;}
 
 
     if (ImGui::IsKeyPressed(ImGuiKey_R)) {resetView();isOrbiting=true;}
     if (ImGui::IsKeyPressed(ImGuiKey_Tab)) {changeFollowedObject();}
     if (ImGui::IsKeyPressed(ImGuiKey_C)) {ShowCameraOptionsButton();}
     if (ImGui::IsKeyPressed(ImGuiKey_M)){MinimapButton();}
-
     if (ImGui::IsKeyPressed(ImGuiKey_L)){showDialogBox();}
     if (ImGui::IsKeyPressed(ImGuiKey_Z)){
         if(renderContext->showQuiz == false){
@@ -379,6 +383,7 @@ void SimulationState::Update() {
     if(renderContext->showZoom){return;}
     if(renderContext->showSaveSimulation){return;}
     if(render->UI_Tool->musicPlayerTool->mouseHoveringPlayer()){return;}
+    if(render->UI_Tool->mouseHoveringUI()){return;}
     if (ImGui::IsMouseDragging(0, 0.0f)) {
         //Set cursor to resize
         ImVec2 delta = ImGui::GetMouseDragDelta(0, 0.0f);
@@ -440,7 +445,8 @@ void SimulationState::generateMusic(){
 
 
 void SimulationState::Exit() {
-//std::cout << "Exiting Simulation State" << std::endl;
+
+    imageButtons.clear(); // Clear the vector after deleting the buttons
     for (Button* button : buttons) {
         delete button;
     }
@@ -450,9 +456,7 @@ void SimulationState::Exit() {
         delete label;
     }
     labbels.clear(); // Clear the vector after deleting the labels
-    for(ImageButton* button : imageButtons){
-        delete button;
-    }
+
 
     //detruit les outils    
     delete render;
@@ -460,7 +464,6 @@ void SimulationState::Exit() {
     delete systemeSolaire;
     delete currentCamera;
     delete renderContext;
-    delete soundTool;
     Mix_FreeMusic(bgMusic);
     Mix_CloseAudio();
 }
@@ -521,13 +524,11 @@ void SimulationState::Restart(bool defaultState){
 }
 
 void SimulationState::MenuButton(){
+    render->UI_Tool->musicPlayerTool->firstUpdate = true;
     OptionsButton();
     std::string newstate = "menu";
     gameObj->ChangeState(newstate);
-    if (musicStarted) {
-        Mix_HaltMusic();
-        musicStarted = false;
-    }
+
 }
 
 void SimulationState::generateDialogBox(std::function<void()> func, const std::string& message){
@@ -687,9 +688,10 @@ void SimulationState::RestartState(){
     showSettings = false;
     showCameraOptions = false;
     renderContext->showNotificationTool = false;
-    render->UI_Tool->musicPlayerTool->restartSong();
+
     resetButtons();
     Restart();
+    //render->UI_Tool->musicPlayerTool->play();
 
 }
 
@@ -715,6 +717,7 @@ void SimulationState::SettingsButton(){
     if(showSettings){
         showSettings = false;
         imageButtons[2]->isOn=false;
+        render->Settings_Tool->setPlaneteInfoToolOpen();
     }
     else{
         if(showOptions){OptionsButton();}
@@ -862,5 +865,17 @@ void SimulationState::RestartButton(){
         renderContext->showRestartTool = true;
         render->Restart_Tool->Open();
         buttonExeption = imageButtons[8];
+    }
+}
+
+void SimulationState::OpenWelcomeTool(){
+    if(renderContext->showWelcomeTool){
+        renderContext->showWelcomeTool = false;
+        render->Welcome_Tool->Close();
+    }else{
+        forcePause = true;
+        Pause();
+        renderContext->showWelcomeTool = true;
+        render->Welcome_Tool->Open();
     }
 }

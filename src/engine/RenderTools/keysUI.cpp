@@ -73,9 +73,9 @@ void KeysUI::initUI(){
 
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
-    ImageButton* hide = new ImageButton(playSoundFunc,(topLeft.x+longueur*0.90)/winWidth,topLeft.y*1.1/winHeight,ImVec2(0.030f,0.030f),0.7f,
+    ImageButton* hide = new ImageButton(playSoundFunc,(topLeft.x+longueur*0.89)/winWidth,topLeft.y*1.15/winHeight,ImVec2(0.0175f,0.0175f),0.6f,
                         ImVec4(0.17f, 0.27f, 0.17f, 1.0f), ImVec4(0.17f, 0.27f, 0.17f, 1.0f),
-                        "../assets/button/hide.png", 0,
+                        "../assets/button/close.png", 0,
                             std::bind(&KeysUI::hideButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
 
     imageButtons.push_back(hide);

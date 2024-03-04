@@ -243,11 +243,7 @@ void ParametersCreator::drawUI(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
-                            cornerRadius);
-    drawList->AddRectFilled(topLeft, 
-                            ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0, 255), // Couleur
+                            IM_COL32(0,0,0, 175), // Couleur
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 

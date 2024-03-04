@@ -12,8 +12,8 @@
 
 
 MusicPlayerTool::MusicPlayerTool(RenderContext* renderContext) : RenderComponent(renderContext){
-    initSongs();
     initUI();
+    initSongs();
 
 
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
@@ -38,13 +38,13 @@ void MusicPlayerTool::initSDL_Mixer(){
 
 void MusicPlayerTool::initSongs() {
     // Exemple d'ajout de chansons
+    songs.push_back({"../assets/music/peacefulness.mp3", "Peacefulness","Simon Folwar", 151, "../assets/music/albumCover/peacefulness.jpg", ImVec4(122,164,154,255)});
     songs.push_back({"../assets/music/genesis.mp3", "Genesis","Movediz", 134, "../assets/music/albumCover/genesis.jpg", ImVec4(206,185,205,255)});
     songs.push_back({"../assets/music/deep.mp3", "Deep","Custesy Chamber Ensemble", 242, "../assets/music/albumCover/deep.jpg", ImVec4(221,200,210,255)}); // 180 secondes comme exemple
     songs.push_back({"../assets/music/frontiers.mp3", "Frontiers","Revo", 157, "../assets/music/albumCover/revo.jpg", ImVec4(137,157,161,255)});
     songs.push_back({"../assets/music/otherworld.mp3", "Otherworldly","All Good Folks", 357, "../assets/music/albumCover/allGoodFolks.jpg", ImVec4(250,82,50,255)});
     songs.push_back({"../assets/music/looking-forward.mp3", "Looking Forward","Caleb Fincher", 284, "../assets/music/albumCover/lookingForward.jpg", ImVec4(124,96,118,255)});
     songs.push_back({"../assets/music/universal.mp3", "Universal","Revo", 204, "../assets/music/albumCover/revo.jpg", ImVec4(137,157,161,255)});
-    songs.push_back({"../assets/music/peacefulness.mp3", "Peacefulness","Simon Folwar", 151, "../assets/music/albumCover/peacefulness.jpg", ImVec4(122,164,154,255)});
     songs.push_back({"../assets/music/violet-haze.mp3", "Violet Haze","Ambient Boy", 597, "../assets/music/albumCover/VioletHaze.jpg", ImVec4(203,142,150,255)});
     songs.push_back({"../assets/music/oblivious.mp3", "Oblivious","Jonathan Doherty", 154, "../assets/music/albumCover/oblivious.jpg", ImVec4(154,137,127,255)});
     songs.push_back({"../assets/music/oneMomentInTime.mp3", "On Moment In Time","All Good Folks", 171, "../assets/music/albumCover/allGoodFolks.jpg", ImVec4(250,82,50,255)});
@@ -203,6 +203,10 @@ void MusicPlayerTool::setSongTime(float time){
 }
 
 void MusicPlayerTool::updateProgress() {
+    if(firstUpdate){
+        lastUpdateTime = std::chrono::steady_clock::now();
+        firstUpdate = false;
+    }
     if (playbackState != PlaybackState::Playing) return;
 
     auto now = std::chrono::steady_clock::now();

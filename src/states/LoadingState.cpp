@@ -7,7 +7,6 @@ LoadingState::LoadingState(Game* gameObj) : BaseState(gameObj) {
     generate_colors();
     initializePlanetAngles();
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    generateRandomStars();
 }
 
 void LoadingState::Enter() {
@@ -35,11 +34,10 @@ void LoadingState::Draw() {
     glLoadIdentity();
 
     // Clear the buffers
-    glClearColor(0,0,0,0.5f);
+    glClearColor(0,0,0,0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw the sphere in 2D
-    //drawFixedStars();
+
 
     // Draw the solar system
     drawSolarSystem();
@@ -47,9 +45,7 @@ void LoadingState::Draw() {
 }
 
 void LoadingState::drawSolarSystem(){
-    float pourcentageX = 0.3f;
-    float pourcentageY = 0.3f;
-    float pourcentageSize = 0.45f;
+    float pourcentageSize = 0.05f;
     ImVec2 positionCentre = ImVec2(winWidth * 0.5f, winHeight * 0.5f);
     float maxSize = winHeight * pourcentageSize;
     float normalRadius = maxSize/(9*4);
@@ -62,7 +58,7 @@ void LoadingState::drawSolarSystem(){
     lastUpdateTime = now;
 
     // Mettez à jour l'angle global basé sur le temps écoulé
-    globalAngle += deltaTime * 0.2f;
+    globalAngle += deltaTime * 0.25f;
 
     float indice = 0;
 
@@ -86,7 +82,7 @@ void LoadingState::drawSolarSystem(){
         drawFullCircle(position.x, position.y, normalRadius, color.x, color.y, color.z, 0.8f);
         drawPlanetLightNOSHADOW(position, normalRadius, color);}
 
-        //drawCircle(positionCentre.x,positionCentre.y, distance,1.0,1.0,1.0,1.0,0.2); // Dessinez l'orbite
+        //drawCircle(positionCentre.x,positionCentre.y, distance,5.0,color.x, color.y, color.z,0.05); // Dessinez l'orbite
         indice++;
     }
 
@@ -131,12 +127,12 @@ void LoadingState::drawFullCircle(float screenPosX, float screenPosY, float radi
 
 void LoadingState::drawCircle(float screenPosX, float screenPosY, float radius, float lineWidth, float red, float green, float blue, float alpha) {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-
+    glfwWindowHint(GLFW_SAMPLES, 4);
     // Convert screen percentage positions to actual coordinates
     float posX = screenPosX;
     float posY = screenPosY;
 
-    int numSegments = 100; // Increase for a smoother circle
+    int numSegments = 100; // Augmenter pour un cercle plus lisse
 
     // Set color and alpha
     glColor4f(red, green, blue, alpha);
@@ -144,16 +140,17 @@ void LoadingState::drawCircle(float screenPosX, float screenPosY, float radius, 
     // Set line width
     glLineWidth(lineWidth);
 
-    glBegin(GL_LINES);
+    // Enable line smooth
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    // Utiliser GL_LINE_LOOP au lieu de GL_LINES
+    glBegin(GL_LINE_LOOP);
     for (int i = 0; i < numSegments; i++) {
-        float theta1 = 2.0f * M_PI * (float)i / (float)numSegments;
-        float theta2 = 2.0f * M_PI * (float)(i + 1) / (float)numSegments;
-        float x1 = radius * cos(theta1);
-        float y1 = radius * sin(theta1);
-        float x2 = radius * cos(theta2);
-        float y2 = radius * sin(theta2);
-        glVertex2f(posX + x1, posY + y1);
-        glVertex2f(posX + x2, posY + y2);
+        float theta = 2.0f * M_PI * (float)i / (float)numSegments;
+        float x = radius * cos(theta);
+        float y = radius * sin(theta);
+        glVertex2f(posX + x, posY + y);
     }
     glEnd();
 
@@ -162,6 +159,9 @@ void LoadingState::drawCircle(float screenPosX, float screenPosY, float radius, 
 
     // Reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Disable line smooth
+    glDisable(GL_LINE_SMOOTH);
 }
 
 
@@ -193,7 +193,6 @@ void LoadingState::drawSunEffect(ImVec2 planetPos, float radius){
 
 
 void LoadingState::Exit() {
-    std::cout << "Exiting Loading State" << std::endl;
 }
 
 std::string LoadingState::getDescription() {
@@ -231,22 +230,3 @@ void LoadingState::generate_colors() {
 
 }
 
-void LoadingState::drawFixedStars() {
-
-    for (const auto& star : stars) {
-        drawPlanetLightNOSHADOW(ImVec2(star.first, star.second), 0.5f, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-    }
-}
-
-void LoadingState::generateRandomStars() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> disX(0.0f, static_cast<float>(winWidth));
-    std::uniform_real_distribution<float> disY(0.0f, static_cast<float>(winHeight));
-
-    for (int i = 0; i < numStars; ++i) {
-        float x = disX(gen);
-        float y = disY(gen);
-        stars.push_back(std::make_pair(x, y));
-    }
-}

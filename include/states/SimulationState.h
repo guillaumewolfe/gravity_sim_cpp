@@ -102,6 +102,7 @@ public:
     void MinimapButton();
     void QuizButton();
     void OptionsButton();
+    void OpenWelcomeTool();
     void TelescopeButton();
     void SaveButton();
     void RestartButton();

@@ -33,6 +33,7 @@ public:
     void setSaveButtonFunction(std::function<void()> function);
     void CloseButton();
     void SaveButton();
+    void setPlaneteInfoToolOpen();
 private:
     ToggleButton* toggleButton = nullptr;
     bool testToggle = false;
@@ -87,6 +88,8 @@ private:
     float originalSfxVolume;
     void checkVolumeChange();
     void setScreen(int screen);
+
+    bool isPlaneteInfoToolOpen = false;
 
 };
 

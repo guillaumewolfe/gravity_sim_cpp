@@ -17,7 +17,12 @@ ImageButton::ImageButton(std::function<void(std::string)> playSoundFunc,float xP
 }
 
 ImageButton::~ImageButton() {
-
+    playSoundFunc = nullptr;
+    glDeleteTextures(1, &textureNormal);
+    glDeleteTextures(1, &textureHover);
+    glDeleteTextures(1, &textureClicked);
+    
+    
 }
 
 void ImageButton::Draw() {
@@ -112,7 +117,7 @@ if(hidden){return;}
             
         }
     }
-    if(isHovered){
+    if(isHovered && enabled){
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
     if(isOn){

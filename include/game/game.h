@@ -17,7 +17,7 @@ struct GameSettings {
     int resolutionX = 1920;
     int resolutionY = 1080;
     bool fullscreen = false;
-    bool vsync = true;
+    bool showFPS = false;
     bool antiAliasing = true;
     int textureQuality = 2;
     bool highQuality = true;
@@ -29,6 +29,7 @@ struct GameSettings {
     float musicVolume = 0.5f;
     float sfxVolume = 0.5f;
     bool volumeChanged = false;
+    bool firstLaunch = true;
 
     SoundTool* soundTool = nullptr;
 
@@ -63,6 +64,7 @@ public:
     GameSettings* getSettings();
     GameSettings* getDefaultSettings();
     void InitSettings();
+    void loadIcon(GLFWwindow* window);
 
 
     void Init();

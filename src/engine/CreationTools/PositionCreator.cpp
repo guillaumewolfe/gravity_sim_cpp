@@ -561,7 +561,7 @@ void PositionCreator::drawMainBackground(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueurMidSquare, topLeft.y + hauteurMidSquare), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 }
 Vec3 PositionCreator::calculateIntersection(const glm::vec3& rayDirection, const glm::vec3& cameraPosition) {

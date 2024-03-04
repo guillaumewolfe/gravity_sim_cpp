@@ -10,10 +10,16 @@ SoundTool::SoundTool(GameSettings * settings):settings(settings){
 }
 
 SoundTool::~SoundTool(){
-    for (const auto& pair : soundMap) {
+    if(isDestroyed) return;
+    for (auto& pair : soundMap) {
+        if(pair.second != nullptr){
         Mix_FreeChunk(pair.second);
+        pair.second = nullptr;
+        }
     }
+    soundMap.clear();
     Mix_CloseAudio();
+    isDestroyed = true;
 }
 
 

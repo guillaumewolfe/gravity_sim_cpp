@@ -40,7 +40,7 @@ ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlag
 auto now = std::chrono::steady_clock::now();
 frameCount++;
 std::chrono::duration<float> elapsed = now - lastFrameTime;
-if (elapsed.count() >= 1.0f) { // Update every second
+if (elapsed.count() >= 2.0f) { // Update every second
     fps = frameCount / elapsed.count();
     frameCount = 0;
     lastFrameTime = now;
@@ -50,15 +50,22 @@ draw_rect();
 draw_labbels();
 draw_buttons();
 drawSearchTool();
-std::ostringstream fpsStream;
-fpsStream << std::fixed << std::setprecision(2) << fps << " FPS";
-ImGui::SetCursorPos(ImVec2(winWidth*0.93, winHeight*0.01));
-ImGui::Text("%s", fpsStream.str().c_str());
 checkScroll();
+drawFPS();
 musicPlayerTool->Draw();
 ImGui::End(); 
+}
 
-
+void UITool::drawFPS(){
+    if(!*(showFPS)){return;}
+    std::ostringstream fpsStream;
+    fpsStream << std::fixed << std::setprecision(0) << fps << " FPS";
+    ImGui::SetCursorPos(ImVec2(winWidth*0.94, winHeight*0.01));
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 0.75f));
+    ImGui::PushFont(fontUI);
+    ImGui::Text("%s", fpsStream.str().c_str());
+    ImGui::PopStyleColor();
+    ImGui::PopFont();
 }
 
 void UITool::draw_rect(){
@@ -89,7 +96,7 @@ void UITool::draw_rect(){
 
     ImVec2 centerPos = ImVec2(leftX + longueur / 2, topY + hauteur / 2);
 
-
+    isMouseHoveringUI = ImGui::IsMouseHoveringRect(topLeft, ImVec2(topLeft.x + longueur, topLeft.y + hauteur));
 
     bool connexionSuccess = m_renderContext->systemeSolaire->apiTool->connectionSuccess;
     if(connexionSuccess){
@@ -99,6 +106,10 @@ void UITool::draw_rect(){
     }
 
 
+}
+
+bool UITool::mouseHoveringUI(){
+    return isMouseHoveringUI;
 }
 
 void UITool::drawLive(ImDrawList* drawList, ImVec2 centerPos){

@@ -59,6 +59,7 @@ public:
     bool showQuiz = false;
     bool showSaveSimulation = false;
     bool isCollidingQuest = false;
+    bool showWelcomeTool = false;
     ImVec4 getTypeColor(const std::string& type);
     void setCurrentTime(std::chrono::system_clock::time_point time);
     std::chrono::system_clock::time_point getCurrentTime();

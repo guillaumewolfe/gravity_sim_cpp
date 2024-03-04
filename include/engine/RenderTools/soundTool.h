@@ -23,6 +23,7 @@ private:
     void initAllSounds();
     std::map<std::string, Mix_Chunk*> soundMap = std::map<std::string, Mix_Chunk*>();
     GameSettings* settings = nullptr; 
+    bool isDestroyed = false;
 
 
 };

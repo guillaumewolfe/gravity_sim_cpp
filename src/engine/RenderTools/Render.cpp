@@ -32,10 +32,11 @@ void Render::initTools(){
     Notification_Tool = new NotificationTool(Context);
     Context->NotificationTool = Notification_Tool;
     BackgroundImage_Tool = new BackgroundImageTool(Context);
-    ISS_Tool = new ISSTool(Context);
+    //ISS_Tool = new ISSTool(Context);
     Quiz_Tool = new QuizTool(Context);
     SaveSimulation_Tool = new SaveSimulationTool(Context);
     Restart_Tool = new RestartTool(Context);
+    Welcome_Tool = new WelcomeTool();
     //Success_Tool = new SuccessTool(Context);
     //Success_Tool->setNotificationTool(Notification_Tool);
 
@@ -66,6 +67,7 @@ void Render::Draw(){
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(Context->showQuiz){Quiz_Tool->Draw();}
     if(Context->showSaveSimulation){SaveSimulation_Tool->Draw();}
+    if(Context->showWelcomeTool){Welcome_Tool->Draw();}
     if(!Context->showZoom){UI_Tool->Draw();}
     if(Context->showRestartTool){Restart_Tool->Draw();}
     //Success_Tool->Draw();
@@ -138,6 +140,9 @@ void Render::updateShouldClick(){
     else if(Context->showSaveSimulation){
         Context->shouldClickOnNames = false;
     }
+    else if(Context->showWelcomeTool){
+        Context->shouldClickOnNames = false;
+    }
     else{
         Context->shouldClickOnNames = true;
     }
@@ -155,29 +160,89 @@ void Render::updateShouldClick(){
     }
 }
 //destructeur
-Render::~Render(){
-    delete UI_Tool;
-    delete Objects_Tool;
-    delete Background_Tool;
-    delete Axes_Tool;
-    delete Path_Tool;
-    delete Creator_Manager;
-    delete Name_Tool;
-    delete PlaneteInfo_Tool;
-    delete CameraOptions_Tool;
-    delete Options_Tool;
-    delete Settings_Tool;
-    delete Zoom_Tool;
-    delete Orbit_Tool;
-    delete Minimap_Tool;
-    delete Keys_UI;
-    delete Collision_Tool;
-    delete Notification_Tool;
-    delete BackgroundImage_Tool;
-    delete ISS_Tool;
-    delete Quiz_Tool;
-    delete SaveSimulation_Tool;
-    delete Restart_Tool;
-    
+Render::~Render(){  
+
+
+    if(Background_Tool != nullptr){
+        delete Background_Tool;
+    }
+
+    if(Axes_Tool != nullptr){
+        delete Axes_Tool;
+    }
+
+    if(Path_Tool != nullptr){
+        delete Path_Tool;
+    }
+
+    if(Creator_Manager != nullptr){
+        delete Creator_Manager;
+    }
+
+    if(Name_Tool != nullptr){
+        delete Name_Tool;
+    }
+
+    if(PlaneteInfo_Tool != nullptr){
+        delete PlaneteInfo_Tool;
+    }
+
+    if(CameraOptions_Tool != nullptr){
+        delete CameraOptions_Tool;
+    }
+
+    if(Options_Tool != nullptr){
+        delete Options_Tool;
+    }
+
+    if(Settings_Tool != nullptr){
+        delete Settings_Tool;
+    }
+
+    if(Zoom_Tool != nullptr){
+        delete Zoom_Tool;
+    }
+
+    if(Orbit_Tool != nullptr){
+        delete Orbit_Tool;
+    }
+
+    if(Minimap_Tool != nullptr){
+        delete Minimap_Tool;
+    }
+
+    if(Keys_UI != nullptr){
+        delete Keys_UI;
+    }
+
+    if(Collision_Tool != nullptr){
+        delete Collision_Tool;
+    }
+
+    if(Notification_Tool != nullptr){
+        delete Notification_Tool;
+    }
+
+    if(BackgroundImage_Tool != nullptr){
+        delete BackgroundImage_Tool;
+    }
+
+    if(Quiz_Tool != nullptr){
+        delete Quiz_Tool;
+    }
+
+    if(SaveSimulation_Tool != nullptr){
+        delete SaveSimulation_Tool;
+    }
+
+    if(Restart_Tool != nullptr){
+        delete Restart_Tool;
+    }
+
+    if(Welcome_Tool != nullptr){
+        delete Welcome_Tool;
+    }
+
+
 }
 

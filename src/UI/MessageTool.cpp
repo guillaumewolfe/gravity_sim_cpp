@@ -53,12 +53,12 @@ void MessageTool::draw_rectangles(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
+                            IM_COL32(0,0,0,175), // Couleur
                             cornerRadius);    // Dessiner le premier rectangle avec coins arrondis
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
     // Définir la taille du deuxième rectangle (10% plus grand)

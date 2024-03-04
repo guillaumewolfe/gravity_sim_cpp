@@ -228,8 +228,8 @@ void SettingsTool::generate_UImodes3(){
                             "High-Quality",16.0f,0.8f);
     Labbel* fullScreen = new Labbel(0.45f,0.59f,ImVec4(255,255,255,255),
                                 "Full Screen",16.0f,0.8f);
-    Labbel* vsync = new Labbel(0.45f,0.63f,ImVec4(255,255,255,255),
-                                "Vertical Synchronization",16.0f,0.8f);
+    Labbel* fps = new Labbel(0.45f,0.63f,ImVec4(255,255,255,255),
+                                "Show FPS",16.0f,0.8f);
     Labbel* antiAliasing = new Labbel(0.45f,0.67f,ImVec4(255,255,255,255),
                             "Anti Aliasing",16.0f,0.8f);
 
@@ -237,7 +237,7 @@ void SettingsTool::generate_UImodes3(){
     labbelsMode3.push_back(screen2);
     labbelsMode3.push_back(highQuality);
     labbelsMode3.push_back(fullScreen);
-    labbelsMode3.push_back(vsync);
+    labbelsMode3.push_back(fps);
     labbelsMode3.push_back(antiAliasing);
     std::function<void(std::string)> playSoundFunc;
     if(m_renderContext!=nullptr){
@@ -261,16 +261,16 @@ void SettingsTool::generate_UImodes3(){
     ImVec4 color = ImVec4(200,200,200,150);
     ImVec4 active = ImVec4(150,255,150,200);
     float xPosition = 0.55f;
-    ToggleButton* qualityToggle = new ToggleButton(xPosition,0.55f,ImVec2(0.035f,0.025f),color,
+    ToggleButton* qualityToggle = new ToggleButton(xPosition,0.55f,ImVec2(0.0275f,0.020),color,
                                     active,
                                     &gameSettings->highQuality,50);
-    ToggleButton* fullScreenToggle = new ToggleButton(xPosition,0.59f,ImVec2(0.035f,0.025f),color,
+    ToggleButton* fullScreenToggle = new ToggleButton(xPosition,0.59f,ImVec2(0.0275f,0.020),color,
                                     active,
                                     &gameSettings->fullscreen,50);
-    ToggleButton* vsyncToggle = new ToggleButton(xPosition,0.63f,ImVec2(0.035f,0.025f),color,
+    ToggleButton* vsyncToggle = new ToggleButton(xPosition,0.63f,ImVec2(0.0275f,0.020),color,
                                 active,
-                                &gameSettings->vsync,50);
-    ToggleButton* antiAliashingToggle = new ToggleButton(xPosition,0.67f,ImVec2(0.035f,0.025f),color,
+                                &gameSettings->showFPS,50);
+    ToggleButton* antiAliashingToggle = new ToggleButton(xPosition,0.67f,ImVec2(0.0275f,0.020),color,
                                     active,
                                     &gameSettings->antiAliasing,50);
 
@@ -372,7 +372,7 @@ void SettingsTool::draw_rect(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
+                            IM_COL32(0,0,0,175), // Couleur
                             cornerRadius);    // Dessiner le premier rectangle avec coins arrondis
 
     drawList->AddRectFilled(topLeft, 
@@ -454,6 +454,11 @@ void SettingsTool::Open(){
     }
     mode = 1;
     checkButtonState();
+    if(m_renderContext != nullptr){
+        isPlaneteInfoToolOpen = *(m_renderContext->showInfo);
+    if(isPlaneteInfoToolOpen){
+        *(m_renderContext->showInfo) = false;
+    }}
 }
 
 void SettingsTool::CloseButton() {
@@ -461,8 +466,17 @@ void SettingsTool::CloseButton() {
     if (gameSettings) {
         *gameSettings = originalSettings; // Restaurez les paramètres originaux
     }
+    setPlaneteInfoToolOpen();
 }
 
+void SettingsTool::setPlaneteInfoToolOpen(){
+    if(m_renderContext == nullptr){
+        return;
+    }
+    if(isPlaneteInfoToolOpen){
+        *(m_renderContext->showInfo) = true;
+    }
+}
 void SettingsTool::SaveButton(){
     if(gameSettings){
         gameSettings->volumeChanged = true;
@@ -494,7 +508,7 @@ void SettingsTool::resetToDefault(){
         gameSettings->antiAliasing = defaultSettings->antiAliasing;
         gameSettings->fullscreen = defaultSettings->fullscreen;
         gameSettings->highQuality = defaultSettings->highQuality;
-        gameSettings->vsync = defaultSettings->vsync;
+        gameSettings->showFPS = defaultSettings->showFPS;
         }
     }
 }

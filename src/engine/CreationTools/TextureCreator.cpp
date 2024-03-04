@@ -89,7 +89,7 @@ void TextureCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             bottomRight, 
-                            IM_COL32(0, 0, 0, 255), // Color
+                            IM_COL32(0, 0, 0, 175), // Color
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             bottomRight, 

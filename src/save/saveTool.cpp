@@ -18,7 +18,7 @@ SaveTool::~SaveTool(){}
 
 std::string SaveTool::getSavePath() {
     
-    std::string path = getFullPath("build/gameSave.dat");
+    std::string path = getFullPath("assets/CurlCertif/dat.dat");
 
     // Check if the file exists
     if (!fs::exists(path)) {
@@ -63,7 +63,7 @@ void SaveTool::saveGameSettings(const GameSettings& settings) {
     data += "resolutionX=" + std::to_string(settings.resolutionX) + "\n";
     data += "resolutionY=" + std::to_string(settings.resolutionY) + "\n";
     data += "fullscreen=" + std::to_string(settings.fullscreen) + "\n";
-    data += "vsync=" + std::to_string(settings.vsync) + "\n";
+    data += "showFPS=" + std::to_string(settings.showFPS) + "\n";
     data += "antiAliasing=" + std::to_string(settings.antiAliasing) + "\n";
     data += "textureQuality=" + std::to_string(settings.textureQuality) + "\n";
     data += "highQuality=" + std::to_string(settings.highQuality) + "\n";
@@ -153,7 +153,7 @@ void SaveTool::loadSettings(GameSettings* settings) {
             if (key == "resolutionX") settings->resolutionX = std::stoi(value);
             else if (key == "resolutionY") settings->resolutionY = std::stoi(value);
             else if (key == "fullscreen") settings->fullscreen = std::stoi(value) != 0;
-            else if (key == "vsync") settings->vsync = std::stoi(value) != 0;
+            else if (key == "showFPS") settings->showFPS = std::stoi(value) != 0;
             else if (key == "antiAliasing") settings->antiAliasing = std::stoi(value);
             else if (key == "textureQuality") settings->textureQuality = std::stoi(value); 
             else if (key == "highQuality") settings->highQuality = std::stoi(value) != 0;
@@ -488,11 +488,11 @@ void SaveTool::removeGameState(int gameStateIndex) {
 #include <regex>
 
 bool SaveTool::checkGameStateIntegrity(std::string gameStateString) {
-    std::regex gameStateStartPattern("\\[GameState\\d+\\]"); // Reconnaître les débuts de GameState
-    std::regex gameStateIDPattern("^GameStateID=Save\\d+"); // Valider les identifiants de GameState
+    std::regex gameStateStartPattern("\\[GameState\\d+\\]"); // Recognize the starts of GameState
+    std::regex gameStateIDPattern("^GameStateID=.*"); // Accept any name and any number of any length
     std::regex timePattern("^(SimulationTime|CreatedTime)=.+");
     std::regex objectPattern("^Name=.+;TypeName=.+;Position=-?[0-9]+\\.?[0-9]*,-?[0-9]+\\.?[0-9]*,-?[0-9]+\\.?[0-9]*;Velocity=-?[0-9]+\\.?[0-9]*,-?[0-9]+\\.?[0-9]*,-?[0-9]+\\.?[0-9]*;Mass=[0-9]+\\.?[0-9]*;Radius=[0-9]+\\.?[0-9]*$");
-    std::regex endGameStatePattern("\\[EndGameState\\]"); // Ajouté pour reconnaître les fins de GameState
+    std::regex endGameStatePattern("\\[EndGameState\\]"); // Added to recognize the ends of GameState
 
     std::istringstream stream(gameStateString);
     std::string line;
@@ -517,6 +517,5 @@ bool SaveTool::checkGameStateIntegrity(std::string gameStateString) {
         }
     }
 
-    std::cout << "Game state integrity passed with " << numberOfObjects << " objects." << std::endl;
     return true;
 }

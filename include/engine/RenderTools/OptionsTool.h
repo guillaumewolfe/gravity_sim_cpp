@@ -24,6 +24,7 @@ public:
     void setMenuButtonFunction(const std::function<void()>& func);
     void setSettingsButtonFunction(const std::function<void()>& func);
     void setResumeButtonFunction(const std::function<void()>& func);
+    void setAboutButtonFunction(const std::function<void()>& func);
 private:
     int winWidth, winHeight;
     std::vector<Labbel*> labbels = std::vector<Labbel*>();
@@ -35,9 +36,11 @@ private:
     void CloseButton();
     void MenuButton();
     void OptionsButton();
+    void AboutButton();
     std::function<void()> menuButtonFunction;
     std::function<void()> settingsButtonFunction;
     std::function<void()> resumeButtonFunction;
+    std::function<void()> aboutButtonFunction;
 
 };
 

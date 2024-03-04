@@ -87,6 +87,8 @@ void QuizTool::initUI() {
                             "Quel est le cheval blanc de napoléon?",25.0f,0.85f);
     questionExplanationLabel = new Labbel(0.5f,0.60,ImVec4(255,255,255,255),
                             "Le cheval de napoléon est blanc car c'est écrit dans la question, depuis 1959 le cheval blanc est blanc.",18.0f,0.85f);
+    questionExplainationLabel2 = new Labbel(0.5f,0.625,ImVec4(255,255,255,255),
+                            "Le cheval de napoléon est blanc car c'est écrit dans la question, depuis 1959 le cheval blanc est blanc.",18.0f,0.85f);
     resultLabel = new Labbel(0.5f,0.5f,ImVec4(255,255,255,255),
                             "2",70.0f,0.8f);
     resultTitleLabel = new Labbel(0.5f,0.4f,ImVec4(255,255,255,255),
@@ -342,6 +344,7 @@ void QuizTool::drawQuestion(){
     buttonNextQuestion->Draw();
     progressNumberLabel->Draw();
     questionExplanationLabel->Draw();
+    questionExplainationLabel2->Draw();
     progressBar->Draw(ImGui::GetWindowDrawList(), ImVec2(0.5, 0.7), ImVec2(0.3, 0.01), winWidth, winHeight);
     progressTitleLabel->Draw();
 }
@@ -350,6 +353,7 @@ void QuizTool::nextQuestion() {
     questionTrials = 0;
     forceAnswer = false;
     questionExplanationLabel->isHidden = true;
+    questionExplainationLabel2->isHidden = true;
     buttonNextQuestion->hidden = true;
     if (currentQuestionIndex < currentQuiz->numberOfQuestionsPosed - 1) {
         currentQuestionIndex++;
@@ -407,6 +411,9 @@ void QuizTool::goodAnswer(int answer){
         bouttonQuestion4->enabled = false;
     }
     questionExplanationLabel->isHidden = false;
+    if(explanationTooLong){
+        questionExplainationLabel2->isHidden = false;
+    }
     if(!forceAnswer){
     m_renderContext->soundTool->playSound("goodAnswer");}
     progressBar->addAnswer(4-questionTrials);
@@ -432,7 +439,19 @@ void QuizTool::resetButtons(){
     bouttonQuestion2->UpdateText(currentQuiz->getChoices(currentQuestionIndex)[1]);
     bouttonQuestion3->UpdateText(currentQuiz->getChoices(currentQuestionIndex)[2]);
     bouttonQuestion4->UpdateText(currentQuiz->getChoices(currentQuestionIndex)[3]);
-    questionExplanationLabel->UpdateText(currentQuiz->getExplanation(currentQuestionIndex));
+
+    //If explaination is too long, split it in 2 after the next space. 
+    std::string explanation = currentQuiz->getExplanation(currentQuestionIndex);
+    if(explanation.size() > 100){
+        explanationTooLong = true;
+        int spaceIndex = explanation.find(" ", 100);
+        questionExplanationLabel->UpdateText(explanation.substr(0, spaceIndex));
+        questionExplainationLabel2->UpdateText(explanation.substr(spaceIndex+1, explanation.size()));
+    }else{
+        explanationTooLong = false;
+        questionExplanationLabel->UpdateText(explanation);
+        questionExplainationLabel2->UpdateText("");
+    }
     progressNumberLabel->UpdateText(std::to_string(currentQuestionIndex+1) + "/" + std::to_string(currentQuiz->numberOfQuestionsPosed));
     bouttonQuestion1->isDisabled = false;
     bouttonQuestion2->isDisabled = false;
@@ -455,7 +474,6 @@ void QuizTool::resetButtons(){
 
 void QuizTool::newResult() {
     resultLabel->UpdateText("0 %");
-    m_renderContext->soundTool->playSound("endQuiz");
     isTransitingResult = true;
     transitionScore = 0;
 }

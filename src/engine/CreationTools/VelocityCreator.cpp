@@ -89,7 +89,7 @@ void VelocityCreator::drawUI(){
                             cornerRadius);
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(20, 25, 30, 200), // Couleur
+                            IM_COL32(20, 25, 30, 150), // Couleur
                             cornerRadius);
 
     //Print mousePos % if clicked
@@ -492,7 +492,7 @@ void VelocityCreator::drawBackground(){
 
     drawList->AddRectFilled(topLeft, 
                             ImVec2(topLeft.x + longueur, topLeft.y + hauteur), 
-                            IM_COL32(0,0,0,255), // Couleur
+                            IM_COL32(0,0,0,175), // Couleur
                             cornerRadius);
 
     drawList->AddRectFilled(topLeft, 

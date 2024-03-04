@@ -48,15 +48,14 @@ void SaveSimulationTool::initUI() {
     float taille_y = 0.15;
     title = new Labbel(0.5f,0.47f,ImVec4(255,255,255,255),
                             "Do you wish to save or load a state?",22.0f,0.9f);
-
     saveTitleLabbel = new Labbel(0.5f,0.2525,ImVec4(255,255,255,255),
-                            "Save current state",30.0f,0.80f);
+                            "Save current state",26.0f,0.8f);
     loadTitleLabbel = new Labbel(0.5f,0.2525,ImVec4(255,255,255,255),
-                            "Load a game state",30.0f,0.80f);
+                            "Load a game state",26.0f,0.8f);
     simulationTimeLabel = new Labbel(0.5f,0.2525,ImVec4(255,255,255,255),
-                            "2024-02-02 22:33:44",22.0f,0.80f);
+                            "2024-02-02 22:33:44",18.0f,0.7f);
     saveHistorySave = new Labbel(0.631771, 0.290698,ImVec4(255,255,255,255),
-                            "Save history",25.0f,0.80f);
+                            "Save history",22.0f,0.80f);
     loadingLabbel = new Labbel(0.5,0.5,ImVec4(255,255,255,255),
                             "Loading...",22.0f,0.75f);
     removeLabbel = new Labbel(0.5f,0.475,ImVec4(255,255,255,255),

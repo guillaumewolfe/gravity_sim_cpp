@@ -41,6 +41,10 @@ private:
     void drawFixedStars();
     int numStars = 500;
     std::vector<std::pair<float, float>> stars;
+    GLuint loadTexture(const char* relativeFilename);
+    void drawImage(ImVec2 pos, ImVec2 size, GLuint textureID);
+    void initImages();
+    GLuint sunTexture;
 
 };
 #endif

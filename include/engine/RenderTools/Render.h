@@ -27,6 +27,7 @@
 #include "engine/RenderTools/saveSimulation.h"
 #include "engine/RenderTools/restartTool.h"
 #include "engine/RenderTools/successTool.h"
+#include "engine/RenderTools/welcomeTool.h"
 
 
 #ifndef RENDER_H
@@ -70,6 +71,7 @@ QuizTool* Quiz_Tool = nullptr;
 SaveSimulationTool* SaveSimulation_Tool = nullptr;
 RestartTool* Restart_Tool = nullptr;
 SuccessTool* Success_Tool = nullptr;
+WelcomeTool* Welcome_Tool = nullptr;
 
 
 

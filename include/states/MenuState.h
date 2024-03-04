@@ -6,8 +6,11 @@
 #include "UI/MessageTool.h"
 #include "engine/RenderTools/settingsTool.h"
 
+
+
 #ifndef MENUSTATE_H
 #define MENUSTATE_H
+class WelcomeTool;
 class MenuState : public BaseState {
 
 private:
@@ -21,6 +24,7 @@ private:
 
     MessageTool* messageBox = nullptr;
     SettingsTool* settingsTool = nullptr;
+    WelcomeTool* welcomeTool = nullptr;
 
     //Music
     Mix_Music* bgMusic = nullptr;
@@ -41,6 +45,7 @@ public:
     void RestartState() override;
     void Exit() override;
     std::string getDescription() override;
+    void showWelcome();
     
 
     //UI
@@ -58,6 +63,9 @@ public:
     bool musicStarted = false;
     SoundTool* soundTool = nullptr;
     int winWidth, winHeight = 0;
+
+    bool drawWelcomeMessage = true;
+    void drawWelcome();
 
 
 
