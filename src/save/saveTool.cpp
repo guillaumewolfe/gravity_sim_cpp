@@ -8,6 +8,9 @@
 #include "engine/CelestialObject.h"
 #include "engine/RenderTools/RenderContext.h"
 #include <regex>
+#include <winsock2.h>
+#include <windows.h>
+#include "engine/RenderTools/SuccessTool.h"
 
 
 SaveTool::SaveTool(){
@@ -17,15 +20,32 @@ SaveTool::SaveTool(){
 SaveTool::~SaveTool(){}
 
 std::string SaveTool::getSavePath() {
-    
-    std::string path = getFullPath("assets/CurlCertif/dat.dat");
 
-    // Check if the file exists
-    if (!fs::exists(path)) {
-        // Create and immediately close the file, resulting in an empty file
-        std::ofstream(path).close();
+    char* appDataPath = std::getenv("APPDATA");
+    if (appDataPath == nullptr) {
+        std::cerr << "Impossible de trouver le dossier AppData.\n";
     }
 
+    //folder path
+    std::filesystem::path spaceQueryPath = std::filesystem::path(appDataPath) / "SpaceQuery";
+    //File path
+    std::filesystem::path datFilePath = spaceQueryPath / "dat.dat";
+
+    if (!std::filesystem::exists(spaceQueryPath)) {
+        std::filesystem::create_directories(spaceQueryPath);
+    }
+    // Vérifier si le fichier dat.dat existe, le créer si nécessaire
+    if (!std::filesystem::exists(datFilePath)) {
+        std::ofstream file(datFilePath); // Créer le fichier
+        if (file.is_open()) {
+            file.close();
+        } else {
+            std::cerr << "Impossible de créer le fichier " << datFilePath << ".\n";
+        }
+    } 
+
+    // Convertir le chemin en chaîne de caractères
+    std::string path = datFilePath.string();
     return path;
 }
 
@@ -518,4 +538,318 @@ bool SaveTool::checkGameStateIntegrity(std::string gameStateString) {
     }
 
     return true;
+}
+
+
+
+
+void SaveTool::checkGameSuccessTag(){
+
+    //Check if the tags  [GameSuccess] and [EndGameSuccess] exist, if not create them
+
+    std::ifstream file(saveFilepath, std::ios::binary);
+        if (!file.is_open()) {
+            std::cerr << "Failed to open file for reading." << std::endl;
+            return;
+        }
+
+        std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        file.close();
+
+        // Decrypt the content
+        std::string decryptedContent = encryptDecrypt(encryptedContent);
+        size_t start = decryptedContent.find("[GameSuccess]");
+        size_t end = decryptedContent.find("[EndGameSuccess]");
+
+        bool tagExist = start != std::string::npos && end != std::string::npos;
+
+        if (!tagExist) {
+            std::string successSection = decryptedContent + "[GameSuccess]\n[EndGameSuccess]\n";
+            std::string encryptedData = encryptDecrypt(successSection);
+            std::ofstream fileOut(saveFilepath, std::ios::binary);
+            if (!fileOut.is_open()) {
+                std::cerr << "Failed to open file for writing." << std::endl;
+                return;
+            }
+            fileOut.write(encryptedData.c_str(), encryptedData.size());
+            fileOut.close();
+        }
+}
+
+void SaveTool::checkSuccessList(std::vector<Success*> successList){
+    checkGameSuccessTag(); // Assurez-vous que cette fonction crée correctement les tags si absents
+    std::ifstream file(saveFilepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for reading." << std::endl;
+        return;
+    }
+    std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    std::string decryptedContent = encryptDecrypt(encryptedContent);
+
+    // Mapping des IDs de succès à leur progression dans le fichier
+    std::map<std::string, std::string> fileSuccessProgress;
+
+    size_t start = decryptedContent.find("[GameSuccess]");
+    size_t end = decryptedContent.find("[EndGameSuccess]");
+
+    if (start != std::string::npos && end != std::string::npos) {
+        std::string successSection = decryptedContent.substr(start + 13, end - start - 13);
+        std::istringstream ss(successSection);
+        std::string line;
+        while (std::getline(ss, line)) {
+            if (line.find("SUCCESS") != std::string::npos) {
+                auto pos = line.find("=");
+                if (pos != std::string::npos) {
+                    std::string id = line.substr(0, pos);
+                    fileSuccessProgress[id] = line.substr(pos + 1);
+                }
+            }
+        }
+    }
+
+    std::string newSuccessSection = "[GameSuccess]\n";
+    for (const auto& success : successList) {
+        std::string successId = "SUCCESS" + std::to_string(success->id);
+        // Utiliser la progression du fichier si disponible, sinon utiliser la progression de successList
+        auto it = fileSuccessProgress.find(successId);
+        if (it != fileSuccessProgress.end()) {
+            newSuccessSection += successId + "=" + it->second + "\n";
+        } else {
+            newSuccessSection += successId + "=" + std::to_string(success->stepsDone) + "/" + std::to_string(success->totalSteps) + "\n";
+        }
+    }
+    newSuccessSection += "[EndGameSuccess]\n";
+
+    // Reconstruction du contenu final
+    std::string before = start > 0 ? decryptedContent.substr(0, start) : "";
+    std::string after = end > 0 ? decryptedContent.substr(end + strlen("[EndGameSuccess]")) : decryptedContent;
+    std::string finalContent = before + newSuccessSection + after;
+
+    // Réécriture du fichier avec le contenu modifié
+    std::string encryptedData = encryptDecrypt(finalContent);
+    std::ofstream fileOut(saveFilepath, std::ios::binary);
+    if (!fileOut.is_open()) {
+        std::cerr << "Failed to open file for writing." << std::endl;
+        return;
+    }
+    fileOut.write(encryptedData.c_str(), encryptedData.size());
+    fileOut.close();
+    // Après avoir écrit dans le fichier, réouvrez-le pour le débogage
+    std::ifstream fileDebug(saveFilepath, std::ios::binary);
+    if (!fileDebug.is_open()) {
+        std::cerr << "Failed to open file for reading (debug)." << std::endl;
+        return;
+    }
+
+    std::string encryptedContentDebug((std::istreambuf_iterator<char>(fileDebug)), std::istreambuf_iterator<char>());
+    fileDebug.close();
+
+    // Decrypt the content for debugging
+    std::string decryptedContentDebug = encryptDecrypt(encryptedContentDebug);
+
+    // Print the whole content for debugging
+    //std::cout << "File content after adding successes:" << std::endl;
+    //std::cout << decryptedContentDebug << std::endl;
+}
+
+void SaveTool::SyncSuccessList(std::vector<Success*> successList) {
+    std::ifstream file(saveFilepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for reading." << std::endl;
+        return;
+    }
+    std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    std::string decryptedContent = encryptDecrypt(encryptedContent);
+
+    // Trouver la section des succès
+    size_t start = decryptedContent.find("[GameSuccess]");
+    size_t end = decryptedContent.find("[EndGameSuccess]");
+    
+    if (start == std::string::npos || end == std::string::npos) {
+        std::cerr << "GameSuccess section not found." << std::endl;
+        return;
+    }
+
+    // Extraire et parcourir la section des succès
+    std::string successSection = decryptedContent.substr(start + 13, end - start - 13);
+    std::istringstream ss(successSection);
+    std::string line;
+    while (std::getline(ss, line)) {
+        if (line.find("SUCCESS") != std::string::npos) {
+            auto pos = line.find("=");
+            auto slashPos = line.find("/");
+            if (pos != std::string::npos && slashPos != std::string::npos) {
+                int id = std::stoi(line.substr(7, pos - 7)); // Extrait l'ID après "SUCCESS"
+                int stepsDone = std::stoi(line.substr(pos + 1, slashPos - pos - 1)); // Extrait stepsDone
+
+                // Trouver et mettre à jour le succès correspondant dans la liste
+                for (auto& success : successList) {
+                    if (success->id == id) {
+                        success->stepsDone = stepsDone;
+                        if(success->stepsDone == success->totalSteps){
+                            success->isDone = true;
+                        }
+                        break; // Sortir de la boucle une fois le succès mis à jour
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+void SaveTool::SaveSuccessList(const std::vector<Success*> successList) {
+    // Lecture du contenu existant
+    std::ifstream file(saveFilepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for reading." << std::endl;
+        return;
+    }
+    std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    std::string decryptedContent = encryptDecrypt(encryptedContent);
+
+    // Trouver la section des succès
+    size_t start = decryptedContent.find("[GameSuccess]");
+    size_t end = decryptedContent.find("[EndGameSuccess]");
+
+    // Préparation de la nouvelle section des succès
+    std::string newSuccessSection = "[GameSuccess]\n";
+    for (const auto& success : successList) {
+        newSuccessSection += "SUCCESS" + std::to_string(success->id) + "=" + std::to_string(success->stepsDone) + "/" + std::to_string(success->totalSteps) + "\n";
+    }
+    newSuccessSection += "[EndGameSuccess]\n";
+
+    std::string finalContent;
+    if (start != std::string::npos && end != std::string::npos) {
+        // Remplacer la vieille section par la nouvelle
+        std::string before = decryptedContent.substr(0, start);
+        std::string after = decryptedContent.substr(end + strlen("[EndGameSuccess]"));
+        finalContent = before + newSuccessSection + after;
+    } else {
+        // Ajouter la nouvelle section des succès si elle n'existait pas
+        finalContent = decryptedContent + newSuccessSection;
+    }
+
+    // Réécrire le fichier avec le contenu mis à jour
+    std::string encryptedData = encryptDecrypt(finalContent);
+    std::ofstream fileOut(saveFilepath, std::ios::binary);
+    if (!fileOut.is_open()) {
+        std::cerr << "Failed to open file for writing." << std::endl;
+        return;
+    }
+    fileOut.write(encryptedData.c_str(), encryptedData.size());
+    fileOut.close();
+}
+
+void SaveTool::saveElementsToVerify(const std::vector<std::string>* elementsToVerify, int ID) {
+    if (!elementsToVerify) return;
+
+    // Lecture du contenu existant et décryptage
+    std::ifstream file(saveFilepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for reading." << std::endl;
+        return;
+    }
+    std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+    std::string decryptedContent = encryptDecrypt(encryptedContent);
+    
+    // Construction des gardes avec l'ID
+    std::string startGuard = "[ElementsToVerify" + std::to_string(ID) + "]";
+    std::string endGuard = "[EndElementsToVerify" + std::to_string(ID) + "]";
+    
+    // Recherche des positions des gardes dans le contenu
+    size_t startPos = decryptedContent.find(startGuard);
+    size_t endPos = decryptedContent.find(endGuard, startPos);
+    
+    // Construction de la nouvelle section avec les éléments à vérifier
+    std::string updatedSection = startGuard + "\n";
+    for (const auto& element : *elementsToVerify) {
+        updatedSection += element + "\n";
+    }
+    updatedSection += endGuard + "\n";
+    
+    std::string updatedContent;
+    if (startPos != std::string::npos && endPos != std::string::npos) {
+        // Si les gardes existent, remplacer la section existante
+        std::string before = decryptedContent.substr(0, startPos);
+        std::string after = decryptedContent.substr(endPos + endGuard.length());
+        updatedContent = before + updatedSection + after;
+    } else {
+        // Si les gardes n'existent pas, ajouter la nouvelle section à la fin
+        updatedContent = decryptedContent + updatedSection;
+    }
+
+    // Chiffrer et écrire le contenu mis à jour dans le fichier
+    std::string encryptedData = encryptDecrypt(updatedContent);
+    std::ofstream fileOut(saveFilepath, std::ios::binary);
+    if (!fileOut.is_open()) {
+        std::cerr << "Failed to open file for writing." << std::endl;
+        return;
+    }
+    fileOut.write(encryptedData.c_str(), encryptedData.size());
+    fileOut.close();
+
+    // Section de débogage pour vérifier le contenu mis à jour
+    // Réouverture du fichier pour lire et afficher le contenu mis à jour pour le débogage
+    std::ifstream fileDebug(saveFilepath, std::ios::binary);
+    if (!fileDebug.is_open()) {
+        std::cerr << "Failed to open file for reading (debug)." << std::endl;
+        return;
+    }
+    std::string encryptedContentDebug((std::istreambuf_iterator<char>(fileDebug)), std::istreambuf_iterator<char>());
+    fileDebug.close();
+    std::string decryptedContentDebug = encryptDecrypt(encryptedContentDebug);
+    //std::cout << "Updated file content for debug:" << std::endl;
+    //std::cout << decryptedContentDebug << std::endl;
+}
+
+
+void SaveTool::loadElementsToVerify(std::vector<std::string>& elementsToVerify, int ID) {
+    // Ouvrir le fichier et lire son contenu
+    std::ifstream file(saveFilepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for reading." << std::endl;
+        return; // Terminer si le fichier ne peut pas être ouvert
+    }
+    std::string encryptedContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+
+    // Décrypter le contenu du fichier
+    std::string decryptedContent = encryptDecrypt(encryptedContent);
+
+    // Construire les noms des gardes basés sur l'ID
+    std::string startGuard = "[ElementsToVerify" + std::to_string(ID) + "]";
+    std::string endGuard = "[EndElementsToVerify" + std::to_string(ID) + "]";
+
+    // Trouver les positions des gardes dans le contenu décrypté
+    size_t startPos = decryptedContent.find(startGuard);
+    size_t endPos = decryptedContent.find(endGuard, startPos);
+
+    // Vérifier si les gardes ont été trouvés
+    if (startPos == std::string::npos || endPos == std::string::npos) {
+        return; // Terminer la fonction si les gardes ne sont pas trouvés
+    }
+
+    // Extraire la section entre les gardes
+    std::string elementsSection = decryptedContent.substr(startPos + startGuard.length(), endPos - (startPos + startGuard.length()));
+
+    // Nettoyer le vecteur existant
+    elementsToVerify.clear();
+
+    // Parcourir la section extraite et peupler le vecteur
+    std::istringstream iss(elementsSection);
+    std::string line;
+    while (std::getline(iss, line)) {
+        // Ignorer les lignes vides ou les lignes qui ne contiennent que des espaces
+        line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+        if (!line.empty()) {
+            elementsToVerify.push_back(line);
+        }
+    }
+
+
 }

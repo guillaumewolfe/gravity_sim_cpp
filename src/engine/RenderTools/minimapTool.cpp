@@ -11,18 +11,19 @@
 #include <opencv2/opencv.hpp>
 #include "engine/RenderTools/soundTool.h"
 #include "path_util.h"
+#include "engine/RenderTools/SuccessTool.h"
 
 
 MinimapTool::MinimapTool(RenderContext* renderContext) : RenderComponent(renderContext){
     typeDict = m_renderContext->colorByTypeDict;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-    longueur = winHeight* 0.295; // Exemple de taille
-    hauteur = winHeight * 0.295; // Exemple de taille
+    longueur = winWidth* 0.15; // Exemple de taille
+    hauteur = winWidth * 0.15; // Exemple de taille
     scale = 0.95;
     longueurScene = longueur * scale;
     hauteurScene = hauteur * scale;
     initialCenterX = 0.0825f;
-    initialCenterY = 0.845;
+    initialCenterY = 1-(hauteur/(2*winHeight));
     float fontsize = 17.0f;
     float fontSizeScaled = fontsize * winWidth / 1920;
     nameFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/Roboto.ttf").c_str(), fontSizeScaled);
@@ -404,6 +405,7 @@ void MinimapTool::CloseButton(){
 
 void MinimapTool::SelectObject(CelestialObject* object) {
     if(object == nullptr) {return;}
+    m_renderContext->successTool->QUEST_MINIMAP_TRAVEL();
     m_renderContext->currentCamera->newFollowObject(object);
     *(m_renderContext->showInfo) = true;
 }

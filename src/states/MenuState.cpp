@@ -46,13 +46,23 @@ std::vector<Labbel*> MenuState::generateLabbels(){
     std::vector<Labbel*> labbel_list;
 
     Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
-                                "Space Query",100.0f,0.7f);
+                                "Space Query",120.0f,0.95f);
+    Labbel *GameTitle2 = new Labbel(0.5015f,0.2f,ImVec4(255,102,255,255),
+                                "Space Query",120.0f,0.6f);
+    Labbel *GameTitle3 = new Labbel(0.4985f,0.2f,ImVec4(0,255,255,255),
+                                "Space Query",120.0f,0.6f);
     /*Labbel *GameTitle2 = new Labbel(0.501f,0.201f,ImVec4(0,0,0,255),
                             "Space Querry",gameObj->getFont("Title"),0.4f);*/
     Labbel *MainMenu= new Labbel(0.5f,0.75f,ImVec4(255,255,255,255),
-                                    "Main Menu",30.0f,0.9f);
+                                    "Main Menu",25.0f,0.9f);
 
-    labbel_list.push_back(GameTitle);
+    float badgeFontScale = 110.0f;
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    menuFont = ImGui::GetIO().Fonts->AddFontFromFileTTF(getFullPath("/assets/fonts/zing.otf").c_str(), badgeFontScale*winWidth / 1920);
+
+    //labbel_list.push_back(GameTitle3);
+    //labbel_list.push_back(GameTitle2);
+    //labbel_list.push_back(GameTitle);
     labbel_list.push_back(MainMenu);
     return labbel_list;
 }
@@ -167,9 +177,9 @@ void MenuState::Draw() {
 glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
 ImGui::SetNextWindowPos(ImVec2(0, 0));
 ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
-   ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
-
-
+ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
+ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiKey_Tab, ImGuiKeyOwner_None);
+ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab, ImGuiKeyOwner_None);
     ImGui::SetNextWindowFocus();
     drawUiElements();
     if(drawWelcomeMessage)drawWelcome();
@@ -205,6 +215,36 @@ void MenuState::drawUiElements(){
    for (Labbel *label : labbels) {
        label->Draw();
    }
+
+   //Draw Menu text
+
+/*    Labbel *GameTitle = new Labbel(0.5f,0.2f,ImVec4(255,255,255,255),
+                                "Space Query",120.0f,0.95f);
+    Labbel *GameTitle2 = new Labbel(0.5015f,0.2f,ImVec4(255,102,255,255),
+                                "Space Query",120.0f,0.6f);
+    Labbel *GameTitle3 = new Labbel(0.4985f,0.2f,ImVec4(0,255,255,255),
+                                "Space Query",120.0f,0.6f);*/
+
+    ImVec2 centerPosText = ImVec2(winWidth*0.5, winHeight*0.2);
+    ImVec2 centerPosText2 = ImVec2(winWidth*0.5015, winHeight*0.2);
+    ImVec2 centerPosText3 = ImVec2(winWidth*0.4985, winHeight*0.2);
+    ImGui::PushFont(menuFont);
+    ImVec2 textSize = ImGui::CalcTextSize("Space Query", NULL, false, 0.0f);
+    ImVec2 textPos = ImVec2(centerPosText.x - textSize.x * 0.5f, centerPosText.y - textSize.y * 0.5f);
+    ImVec2 textPos2 = ImVec2(centerPosText2.x - textSize.x * 0.5f, centerPosText2.y - textSize.y * 0.5f);
+    ImVec2 textPos3 = ImVec2(centerPosText3.x - textSize.x * 0.5f, centerPosText3.y - textSize.y * 0.5f);
+
+
+    //Drawlst: 
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    //Text1 = bleu
+    drawList->AddText(menuFont, menuFont->FontSize, textPos3, IM_COL32(0, 255, 255, 0.6f*255), "Space Query");
+    //Text2 = rose
+    drawList->AddText(menuFont, menuFont->FontSize, textPos2, IM_COL32(255, 102, 255, 0.6f*255), "Space Query");
+    //Text3 = blanc
+    drawList->AddText(menuFont, menuFont->FontSize, textPos, IM_COL32(255, 255, 255, 0.95f*255), "Space Query");
+
+    ImGui::PopFont();
 }
 
 

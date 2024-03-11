@@ -28,6 +28,7 @@ public:
     void UpdateAlpha(const float opp);
     void UpdatePosition(float xPercent, float yPercent);
     ImVec2 getPosition();
+    ImVec2 getSize();
     void UpdateColor(ImVec4 newColor);
     bool isHidden = false;
     bool alignLeft = false;

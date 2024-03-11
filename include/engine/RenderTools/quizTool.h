@@ -105,7 +105,7 @@ void badAnswer(int answer);
 void drawResults();
 void newResult();
 bool isTransitingResult = false;
-float transitionSpeed = 0.25;
+float transitionSpeed = 0.15;
 float transitionScore = 0;
 ImVec4 lerpColor(const ImVec4& start, const ImVec4& end, float t);
 void drawTransitingResult();

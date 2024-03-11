@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "engine/RenderTools/Render.h"
-
+#include "engine/RenderTools/successTool.h"
 
 Render::Render(RenderContext* Context): Context(Context){
     initTools();
@@ -60,16 +60,18 @@ void Render::Draw(){
     if((Context->currentCamera->followedObject!=nullptr ||Context->currentCamera->selectedObject!=nullptr ) && *(Context->showInfo) && !Context->showZoom){PlaneteInfo_Tool->Draw();}
     if(Context->showZoom){Zoom_Tool->drawImGui();}
     if(Context->showControls){Keys_UI->Draw();}
-    if(Context->showNotificationTool){Notification_Tool->Draw();}
     if(*(Context->showSettings)){Settings_Tool->Draw();}
     if(*(Context->showOptions)){Options_Tool->Draw();}
     if (Message_Tool != nullptr) {Message_Tool->Draw();}
     if (Message_Tool != nullptr && Message_Tool->shouldClose){delete Message_Tool;Message_Tool = nullptr;}
     if(Context->showQuiz){Quiz_Tool->Draw();}
     if(Context->showSaveSimulation){SaveSimulation_Tool->Draw();}
+    if(Context->showSuccessTool){Context->successTool->Draw();}
+    Context->successTool->checkSuccess();
     if(Context->showWelcomeTool){Welcome_Tool->Draw();}
     if(!Context->showZoom){UI_Tool->Draw();}
     if(Context->showRestartTool){Restart_Tool->Draw();}
+    if(Context->showNotificationTool){Notification_Tool->Draw();}
     //Success_Tool->Draw();
 
     ImGui::Render();
@@ -141,6 +143,9 @@ void Render::updateShouldClick(){
         Context->shouldClickOnNames = false;
     }
     else if(Context->showWelcomeTool){
+        Context->shouldClickOnNames = false;
+    }
+    else if(Context->showSuccessTool){
         Context->shouldClickOnNames = false;
     }
     else{

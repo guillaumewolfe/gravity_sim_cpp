@@ -2,83 +2,97 @@
 #include <GLFW/glfw3.h>
 #include "engine/RenderTools/SuccessTool.h"
 #include <algorithm>
-
+#include "save/saveTool.h"
 
 SuccessTool::SuccessTool(RenderContext* renderContext) : RenderComponent(renderContext){
+    saveTool = new SaveTool();
     initSuccess();
+    initUI();
+
 }
 
-SuccessTool::~SuccessTool(){}
+SuccessTool::~SuccessTool(){
+    delete saveTool;
+}
 
 
 void SuccessTool::Draw() {
+    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
+    ImGui::SetNextWindowFocus();
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(winWidth, winHeight));
+    ImGui::Begin("MessageBox", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+
     checkSuccess();
+    drawUI();
+ 
+
+    ImGui::End();
 }
 
 void SuccessTool::Open(){
-
-}
-
-std::vector<Success*> SuccessTool::getSuccessList() {return successList;}
-
-int SuccessTool::getSuccessCount() {return successList.size();}
-
-void SuccessTool::setNotificationTool(NotificationTool* notificationTool) {this->notificationTool = notificationTool;}
-
-
-void SuccessTool::checkSuccess() {
-    for (auto success : successList) {
-        if (!success->isDone && success->checkSuccess()) {
-            success->stepsDone++;
-            std::cout<<success->title<<" : "<<success->stepsDone<<"/"<<success->totalSteps<<std::endl;
-        }
-
-        if(!success->isDone && success->stepsDone >= success->totalSteps) {
-            success->isDone = true;
-            notificationTool->Open("Success done!", "You have completed the task: " + success->title, "See", "Close", [this](){Open();});
-        }
+    if(!m_renderContext->showSuccessTool){
+        m_renderContext->showSuccessTool = true;
+    }
+    isTransiting = true;
+    transitionStep = 0;
+    badgeOffset = 0;
+    selectedSuccess = nullptr;
+    setShowMode(3);
+    if(successToShow.empty()){
+        setShowMode(1);
     }
 }
 
-void SuccessTool::initSuccess(){
-    elementsToVerify = {"Sun", "Mercury", "Venus", "Earth","Moon", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"};
-        auto exploreSolarSystenFunc = [&]() -> bool {
-            if(m_renderContext->currentCamera->followedObject == nullptr) return false;
-            if (m_renderContext->currentCamera->followedObject->isCreated == true) return false;
-            if(m_renderContext->currentCamera->isGlobalFollowing == true) return false;
+void SuccessTool::getSuccessListToShow(){
+    successToShow.clear();
 
-            std::string currentObjectName = m_renderContext->currentCamera->followedObject->getDefaultName();
-            auto it = std::find(elementsToVerify.begin(), elementsToVerify.end(), currentObjectName);
-
-            if (it != elementsToVerify.end()) {
-                elementsToVerify.erase(it);
-                return true;
-            }
-            return false;
-        };
-
-    //Succès 1, explore tout le système solaire
-    successList.push_back(new Success(m_renderContext, 10, "Explore Solar System","Explore every object in our System and focus on it!", exploreSolarSystenFunc));
-
-
-    auto checkCollision = [&]() -> bool {
-        if(m_renderContext->isCollidingQuest == true){
-            return true;
+    for(auto& success : successList){
+        if(showMode == ShowMode::showCompleted){
+            if(success->isCompleted()){
+                successToShow.push_back(success);
+                continue;   
+                }
+    }else if(showMode == ShowMode::showInProgress){
+        if(!success->isCompleted()){
+            successToShow.push_back(success);
+            continue;
         }
-        return false;
-    };
+    }else{
+        successToShow.push_back(success);
+    }
 
-    //Succès 2, check collision
-    successList.push_back(new Success(m_renderContext, 1, "Collision : Beginner","Make 2 objects collide!", checkCollision));
+}}
 
-    //Succès 3: check collision 10 times
-    successList.push_back(new Success(m_renderContext, 10, "Collision : Intermediate","Make 10 objects collide!", checkCollision));
 
-    //Succès 4: check collision 100 times
-    successList.push_back(new Success(m_renderContext, 50, "Collision : Expert","Make 50 objects collide!", checkCollision));
+void SuccessTool::setShowMode(int mode){
+    if(mode == 1){//Show all
+        showMode = ShowMode::showAll;
 
-    //Succès 5: check collision 500 times
-    successList.push_back(new Success(m_renderContext, 100, "Collision : Master","Make 100 objects collide!", checkCollision));
-    
+        viewAllButton->isOn = true;
+        viewCompletedButton->isOn = false;
+        viewInProgressButton->isOn = false;
+
+    }else if(mode == 2){//Show completed
+        showMode = ShowMode::showCompleted;
+
+        viewAllButton->isOn = false;
+        viewCompletedButton->isOn = true;
+        viewInProgressButton->isOn = false;
+
+    }else if(mode == 3){//Show in progress
+        showMode = ShowMode::showInProgress;
+
+        viewAllButton->isOn = false;
+        viewCompletedButton->isOn = false;
+        viewInProgressButton->isOn = true;
+
+    }
+    getSuccessListToShow();
+    questOffset = 0;
+}
+
+void SuccessTool::Close(){
+    m_renderContext->showSuccessTool = false;
 }
 

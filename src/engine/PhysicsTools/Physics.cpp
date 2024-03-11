@@ -1,11 +1,13 @@
 #include "engine/Physics/Physics.h"
 #include "engine/RenderTools/notificationTool.h"
+#include "engine/RenderTools/SuccessTool.h"
 
 Physics::Physics(RenderContext* renderContext):m_renderContext(renderContext){
 }
 
 void Physics::Update(double dt){
     for (auto& object : m_renderContext->systemeSolaire->objects){
+
         updateAccel(object, dt);
         updateVelocity(object, dt);
         updatePosition(object, dt);
@@ -83,9 +85,6 @@ void Physics::checkCollision(std::vector<CelestialObject*> objects){
     isColliding = false;
     float collisionThreshold = 0.30; // Seuil pour la fonction collision
     float collidingThreshold = 1.00; // Seuil pour activer isColliding
-    if(m_renderContext->isCollidingQuest == true){
-        m_renderContext->isCollidingQuest = false;
-    }
     for (int i = 0; i < objects.size(); i++){
         for (int j = i + 1; j < objects.size(); j++){
             Vec3 positionObj = objects[i]->getPositionSimulation();
@@ -126,6 +125,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
     float r1 = obj1->real_radius;
     float r2 = obj2->real_radius;
 
+    m_renderContext->successTool->checkCollision(obj1, obj2);
+
 
     Vec3 v1 = obj1->velocity;
     Vec3 v2 = obj2->velocity;
@@ -143,7 +144,6 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
     new_velocity.z = (v1.z * m1 + v2.z * m2) / new_mass;
 
     CelestialObject* objectRestant;
-    m_renderContext->isCollidingQuest = true;
 
     if(obj1->getTypeName() == "BlackHole"){
         if(!(obj2->getTypeName() == "BlackHole") && !(obj2->getRayon()>obj1->getRayon())){
@@ -152,7 +152,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj1->addPlanetEaten(obj2);
         m_renderContext->systemeSolaire->removeObject(obj2);
         objectRestant = obj1;
-        sendMessageCollsion(obj1, obj2, objectRestant);
+        if(obj1->typeName != "Moon" && obj2->typeName != "Moon"){
+        sendMessageCollsion(obj1, obj2, objectRestant);}
         return;}
     }if(obj2->getTypeName() == "BlackHole"){
         obj2->setWeight(new_mass);
@@ -160,7 +161,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         obj2->addPlanetEaten(obj1);
         m_renderContext->systemeSolaire->removeObject(obj1);
         objectRestant = obj2;
-        sendMessageCollsion(obj1, obj2, objectRestant);
+        if(obj1->typeName != "Moon" && obj2->typeName != "Moon"){
+        sendMessageCollsion(obj1, obj2, objectRestant);}
         return;
     }
 
@@ -173,7 +175,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
         objectRestant = obj1;
-        sendMessageCollsion(obj1, obj2, objectRestant);
+        if(obj1->typeName != "Moon" && obj2->typeName != "Moon"){
+        sendMessageCollsion(obj1, obj2, objectRestant);}
         return;
     } else if(m2 > m1){
         obj2->setWeight(new_mass);
@@ -183,7 +186,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         m_renderContext->systemeSolaire->setRayon(obj2);
         m_renderContext->systemeSolaire->removeObject(obj1);
         objectRestant = obj2;
-        sendMessageCollsion(obj1, obj2, objectRestant);
+        if(obj1->typeName != "Moon" && obj2->typeName != "Moon"){
+        sendMessageCollsion(obj1, obj2, objectRestant);}
         return;
     }
     else{
@@ -194,7 +198,8 @@ void Physics::collision(CelestialObject* obj1, CelestialObject* obj2){
         m_renderContext->systemeSolaire->setRayon(obj1);
         m_renderContext->systemeSolaire->removeObject(obj2);
         objectRestant = obj1;
-        sendMessageCollsion(obj1, obj2, objectRestant);
+        if(obj1->typeName != "Moon" && obj2->typeName != "Moon"){
+        sendMessageCollsion(obj1, obj2, objectRestant);}
         return;
     }
     }

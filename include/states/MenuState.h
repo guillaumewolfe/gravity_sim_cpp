@@ -66,6 +66,7 @@ public:
 
     bool drawWelcomeMessage = true;
     void drawWelcome();
+    ImFont* menuFont = nullptr;
 
 
 

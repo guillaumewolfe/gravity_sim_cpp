@@ -3,7 +3,7 @@
 #include "engine/RenderTools/quizTool.h"
 #include "path_util.h"
 #include "engine/RenderTools/soundTool.h"
-
+#include "engine/RenderTools/SuccessTool.h"
 
 QuizTool::QuizTool(RenderContext* renderContext) : RenderComponent(renderContext){
     float fontSize = 16.0f; // Taille de police
@@ -93,10 +93,12 @@ void QuizTool::initUI() {
                             "2",70.0f,0.8f);
     resultTitleLabel = new Labbel(0.5f,0.4f,ImVec4(255,255,255,255),
                             "Quiz Results:",35.0f,0.6f);
-    progressTitleLabel = new Labbel(0.5f,0.67f,ImVec4(255,255,255,255),
-                            "Progress:",21.0f,0.6f);
+    progressTitleLabel = new Labbel(0.5f,0.675f,ImVec4(255,255,255,255),
+                            "Progress:",18.0f,0.5f);
     progressNumberLabel = new Labbel(0.5f,0.72f,ImVec4(255,255,255,255),
                             "1/10",16.0f,0.6f);
+
+    questionExplainationLabel2->isHidden = true;
 //Buttons
     std::function<void(std::string)> playSoundFunc = 
     std::bind(&SoundTool::playSound, m_renderContext->soundTool, std::placeholders::_1);
@@ -444,9 +446,16 @@ void QuizTool::resetButtons(){
     std::string explanation = currentQuiz->getExplanation(currentQuestionIndex);
     if(explanation.size() > 100){
         explanationTooLong = true;
-        int spaceIndex = explanation.find(" ", 100);
-        questionExplanationLabel->UpdateText(explanation.substr(0, spaceIndex));
-        questionExplainationLabel2->UpdateText(explanation.substr(spaceIndex+1, explanation.size()));
+        int spaceIndex = explanation.find(" ", 100); // Trouver le premier espace après le 100e caractère
+        if(spaceIndex != std::string::npos){ // Vérifier si un espace a été trouvé
+            questionExplanationLabel->UpdateText(explanation.substr(0, spaceIndex));
+            // S'assurer de commencer le substring suivant après l'espace trouvé
+            questionExplainationLabel2->UpdateText(explanation.substr(spaceIndex + 1));
+        }else{
+            // Si aucun espace n'est trouvé après le 100e caractère, afficher tout dans le premier label
+            questionExplanationLabel->UpdateText(explanation);
+            questionExplainationLabel2->UpdateText("");
+        }
     }else{
         explanationTooLong = false;
         questionExplanationLabel->UpdateText(explanation);
@@ -476,6 +485,8 @@ void QuizTool::newResult() {
     resultLabel->UpdateText("0 %");
     isTransitingResult = true;
     transitionScore = 0;
+    int difficulty = difficultyLevel;
+    m_renderContext->successTool->QUEST_QUIZ_DONE(difficulty, currentQuiz->getScore());
 }
 
 void QuizTool::drawTransitingResult(){

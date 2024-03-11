@@ -37,7 +37,6 @@ states["menu"] = new MenuState(this);
 states["simulation"] = new SimulationState(this);
 loadingThreadShouldExit = true;
 ChangeState("menu");
-showMainWindow();
 
 }
 
@@ -177,10 +176,7 @@ void Game::loadIcon(GLFWwindow* window){
         }
 
         icons[0].pixels = imageRGBA.data; // This assumes the data is stored as 8-bit unsigned int
-        std::cout << "Loaded icon at " << fullPath << std::endl;
         glfwSetWindowIcon(window, 1, icons);
-    } else {
-        std::cout << "Failed to load icon at " << fullPath << std::endl;
     }
 }
 
@@ -267,6 +263,12 @@ void Game::InitLoadingWindow() {
         // Swap buffers
         glfwSwapBuffers(loadingWindow);
     }
+    if(glfwWindowShouldClose(loadingWindow)){
+
+        shouldClose = true;
+    
+    }
+    showMainWindow();
     glfwDestroyWindow(loadingWindow);
 }
 

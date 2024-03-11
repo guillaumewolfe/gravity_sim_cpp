@@ -30,7 +30,7 @@ void Quiz::addQuestion(Question question){
     questions.push_back(question);
 }
 
-int Quiz::getScore() const{
+float Quiz::getScore() const{
     //return score/nbre de question
     return score/numberOfQuestionsPosed;
 }
@@ -46,7 +46,7 @@ void Quiz::generateEasyQuiz() {
     addQuestion(Question("What is the name of our galaxy?", {"The Milky Way", "Andromeda", "Sombrero", "Whirlpool"}, 0, "Our galaxy is called the Milky Way, and it contains billions of stars, including our Sun."));
     addQuestion(Question("Which planet is known as the Earth's twin?", {"Venus", "Mars", "Jupiter", "Saturn"}, 0, "Venus is often called Earth's twin because it is similar in size and composition, but it has a thick, toxic atmosphere."));
     addQuestion(Question("What is the main component of the Sun?", {"Hydrogen", "Oxygen", "Carbon", "Iron"}, 0, "The Sun is primarily composed of hydrogen, which fuels its nuclear fusion reactions."));
-    addQuestion(Question("What unit is used to measure distances in space?", {"Light-year", "Kilometer", "Mile", "Astronomical unit"}, 0, "A light-year is the distance that light travels in one year, and it is often used to measure vast distances in space."));
+    addQuestion(Question("What unit is used to measure distances in space?", {"Light-year", "Kilometer", "Mile", "Femtometer"}, 0, "A light-year is the distance that light travels in one year, and it is often used to measure vast distances in space."));
     addQuestion(Question("Which force keeps the planets in orbit around the Sun?", {"Gravity", "Magnetic", "Electrical", "Nuclear"}, 0, "Gravity is the force that keeps the planets in orbit around the Sun, and it also holds galaxies together."));
     addQuestion(Question("What type of star is the Sun?", {"Yellow dwarf", "Red giant", "White dwarf", "Neutron star"}, 0, "The Sun is classified as a yellow dwarf star, and it is in the middle of its life cycle."));
     addQuestion(Question("What is a light-year?", {"A unit of time", "A unit of speed", "A unit of distance", "A unit of light intensity"}, 2,  "A light-year is a unit of distance, equal to the distance that light travels in one year."));
@@ -68,7 +68,7 @@ void Quiz::generateEasyQuiz() {
     addQuestion(Question("What is the nearest planet to the Sun?", {"Mercury", "Venus", "Earth", "Mars"}, 0, "Mercury is the closest planet to the Sun, and it has a rocky, cratered surface."));
     addQuestion(Question("What galaxy is Earth located in?", {"The Milky Way", "Andromeda", "The Whirlpool", "The Sombrero"}, 0, "Earth is located in the Milky Way galaxy, which is a spiral galaxy containing billions of stars."));
     addQuestion(Question("What is the main component of the Sun's gas?", {"Hydrogen", "Helium", "Oxygen", "Carbon"}, 0, "The Sun is primarily composed of hydrogen gas, which fuels its nuclear fusion reactions."));
-    addQuestion(Question("Which planet is known as the Earth’s Twin?", {"Venus", "Mars", "Jupiter", "Mercury"}, 0, "Venus is often called Earth's twin because it is similar in size and composition, but it has a thick, toxic atmosphere."));
+    addQuestion(Question("Which planet is known as the Earth's Twin?", {"Venus", "Mars", "Jupiter", "Mercury"}, 0, "Venus is often called Earth's twin because it is similar in size and composition, but it has a thick, toxic atmosphere."));
     addQuestion(Question("How long does it take for the Earth to orbit the Sun?", {"365 days", "24 hours", "30 days", "10 years"}, 0, "It takes the Earth approximately 365 days, or one year, to orbit the Sun."));
     addQuestion(Question("What is the primary component of a comet's tail?", {"Ice and dust", "Rock", "Lava", "Metal"}, 0, "A comet's tail is primarily made of ice and dust particles that are illuminated by the Sun as the comet approaches it."));
     addQuestion(Question("Which celestial event is caused by the Earth passing through the debris left by a comet?", {"Meteor shower", "Solar eclipse", "Lunar eclipse", "Aurora"}, 0, "Meteor showers occur when Earth passes through the debris left by a comet, causing the debris to burn up in Earth's atmosphere."));
@@ -79,7 +79,6 @@ void Quiz::generateEasyQuiz() {
     addQuestion(Question("What type of galaxy is the Milky Way?", {"Spiral", "Elliptical", "Irregular", "Lenticular"}, 0, "The Milky Way is a spiral galaxy, characterized by its flat, disk-like shape with a bulging center and spiral arms."));
     addQuestion(Question("What is the term for the explosion of a star at the end of its life?", {"Supernova", "Nova", "Red giant collapse", "Black hole formation"}, 0, "A supernova is the explosion of a star at the end of its life, resulting in a massive release of energy."));
     addQuestion(Question("What is the term used to describe the boundary around a black hole from which nothing can escape?", {"Event horizon", "Schwarzschild radius", "Accretion disk", "Singularity"}, 0, "The event horizon is the boundary around a black hole from which nothing, not even light, can escape."));
-    addQuestion(Question("What is an astronomical unit (AU)?", {"The average distance from the Earth to the Sun", "The distance from the Earth to the Moon", "The distance light travels in one year", "The radius of the Earth's orbit around the Sun"}, 0, "An astronomical unit (AU) is the average distance from the Earth to the Sun, about 93 million miles or 150 million kilometers."));
     addQuestion(Question("How much does a teaspoon of neutron star material weigh?", {"As much as a mountain", "10 million tons", "The same as a car", "About 6 billion tons"}, 1, "A teaspoon of neutron star material weighs about 10 million tons, due to its incredibly dense composition."));
     addQuestion(Question("Approximately how long does it take for light from the Sun to reach Earth?", {"8 seconds", "1 second", "8 minutes", "20 minutes"}, 2, "We're seeing the Sun from 'the past'; it takes light approximately 8 minutes to travel from the Sun to Earth."));
 }
@@ -90,7 +89,7 @@ void Quiz::generateMediumQuiz() {
     addQuestion(Question("What is the temperature on the surface of Venus?", {"462°C", "100°C", "-5°C", "15°C"}, 0, "The surface of Venus is extremely hot, with temperatures reaching up to 462°C due to its thick atmosphere and greenhouse effect."));
     addQuestion(Question("What is the Great Red Spot on Jupiter?", {"A storm", "A mountain", "A desert", "A lake"}, 0, "The Great Red Spot is a giant storm on Jupiter, which has been raging for at least 400 years."));
     addQuestion(Question("Which planet has the longest day?", {"Venus", "Earth", "Jupiter", "Mars"}, 0, "Venus has the longest day of any planet in our solar system, with a day lasting longer than its year."));
-    addQuestion(Question("What is the Kuiper Belt?", {"A region of icy bodies", "A single asteroid", "A star system", "A galaxy"}, 0, "The Kuiper Belt is a region of icy bodies beyond Neptune, including dwarf planets like Pluto and Eris."));
+    addQuestion(Question("What is the Kuiper Belt?", {"A region of icy bodies", "A single asteroid", "A star system", "A galaxy"}, 0, "The Kuiper Belt is a region of icy bodies beyond Neptune, including dwarf  planets like Pluto and Eris."));
     addQuestion(Question("What causes a solar eclipse?", {"The Moon passing between the Sun and Earth", "Earth passing between the Sun and the Moon", "Jupiter passing between the Sun and Earth", "The Sun moving behind the Moon"}, 0, "A solar eclipse occurs when the Moon passes between the Sun and Earth, blocking the Sun's light."));
     addQuestion(Question("What is the brightest planet in the night sky?", {"Venus", "Mars", "Jupiter", "Saturn"}, 0, "Venus is the brightest planet in the night sky, and it is often called the 'evening star' or 'morning star.'"));
     addQuestion(Question("What is the dwarf planet located in the asteroid belt?", {"Ceres", "Pluto", "Eris", "Makemake"}, 0, "Ceres is the largest object in the asteroid belt between Mars and Jupiter, and it is classified as a dwarf planet."));

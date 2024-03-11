@@ -58,6 +58,7 @@ public:
 
     int type= 0;
     GLuint textureID= 0;
+    GLuint textureID2= 0;
 
     //SCALE
     double radiusScale = 1;

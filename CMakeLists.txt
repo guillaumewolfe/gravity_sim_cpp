@@ -30,11 +30,14 @@ set(OpenCV_LIBS
     "${CMAKE_SOURCE_DIR}/lib/GNU/libgcc_s_seh-1.dll"
     "${CMAKE_SOURCE_DIR}/lib/GNU/libstdc++-6.dll"
     "${CMAKE_SOURCE_DIR}/lib/GNU/libwinpthread-1.dll"
+    "${CMAKE_SOURCE_DIR}/lib/Steam/steam_api64.dll"
+    
 
 
 
 
 )
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -v")
 
 
     #GLM
@@ -47,6 +50,11 @@ set(OpenCV_LIBS
     #SLD_MIXER
     set(SDL2_MIXER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/lib/SLD2_mixer/include") # Mettre à jour avec le bon chemin
     set(SDL2_MIXER_LIBRARIES "${CMAKE_SOURCE_DIR}/lib/SLD2_mixer/SDL2_mixer.dll")       # Mettre à jour avec le bon chemin
+
+    #steam
+    set(STEAM_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/lib/Steam/steam") # Mettre à jour avec le bon chemin
+    set(STEAM_LIB_DIR "${CMAKE_SOURCE_DIR}/lib/Steam/")
+    find_library(STEAM_LIB NAMES steam_api64 PATHS ${STEAM_LIB_DIR})
 
     #CURL
     set(CURL_DIRS "${CMAKE_SOURCE_DIR}/lib/CURL/include") # Mettre à jour avec le bon chemin
@@ -86,6 +94,8 @@ include_directories(${CMAKE_SOURCE_DIR}/external/imgui)
 include_directories(${CMAKE_SOURCE_DIR}/external/imgui/backends)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_MIXER_INCLUDE_DIRS})
+include_directories(${STEAM_INCLUDE_DIRS})
+message(STATUS "Steam include directory: ${STEAM_INCLUDE_DIRS}")
 
 # Source Files
 file(GLOB_RECURSE SOURCES 
@@ -97,6 +107,7 @@ file(GLOB_RECURSE SOURCES
      src/engine/PhysicsTools/*.cpp
      src/engine/CreationTools/*.cpp
      src/engine/QuizTools/*.cpp
+     src/engine/SuccessTools/*.cpp
      src/save/*.cpp
      src/game/*.cpp
      src/UI/*.cpp
@@ -137,7 +148,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
     )
 elseif(WIN32)
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+add_executable(${PROJECT_NAME}  ${SOURCES})
+########add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
 
 set(ALL_DLLS 
@@ -159,7 +171,7 @@ endif()
 # Link Directories and Libraries
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_MIXER_LIBRARIES} ${SDL2_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_SOURCE_DIR}/lib/GLFW/glfw3.dll ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${GLFW_LIB} ${SDL2_MIXER_LIBRARIES} ${SDL2_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_SOURCE_DIR}/lib/GLFW/glfw3.dll ${OpenCV_LIBS} ${STEAM_LIB})
 
 
 

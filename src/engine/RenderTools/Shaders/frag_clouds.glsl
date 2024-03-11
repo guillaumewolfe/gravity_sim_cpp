@@ -13,15 +13,24 @@ void main() {
 
     // Calcul du produit scalaire
     float dotProduct = dot(norm, lightDir);
+    // Adoucir la transition
+    float smoothStepDot = smoothstep(-0.2, 1.0, dotProduct); // Ajustez les valeurs selon le besoin
 
-    vec4 diffuseColor = dotProduct * vec4(1.0, 1.0, 1.0, 1.0);
+    // Couleur diffuse plus douce
+    vec4 diffuseColor = smoothStepDot * vec4(1.0, 1.0, 1.0, 1.0);
     vec4 ambientColor = vec4(0.05, 0.05, 0.05, 1.0);
     vec4 textureColor = texture2D(textureSampler, TexCoord);
 
-    // Vérifier si la couleur est proche du noir
-    float threshold = 0.35; // Ajustez ce seuil si nécessaire
-    bool isNearlyBlack = (textureColor.r < threshold) && (textureColor.g < threshold) && (textureColor.b < threshold);
-    float alpha = isNearlyBlack ? 0.0 : 0.250;
+    // Calcul de l'alpha avec lissage
+    float alpha = mix(0.3, textureColor.a, smoothStepDot); // Mix entre le côté ombragé et le côté éclairé
 
-    gl_FragColor = vec4(textureColor.rgb, alpha);
+    // Vérifier si la couleur est proche du noir
+    float threshold = 0.35;
+    bool isNearlyBlack = (textureColor.r < threshold) && (textureColor.g < threshold) && (textureColor.b < threshold);
+    float alphaBlack = isNearlyBlack ? alpha*0.0 : alpha*0.5;
+
+    // Mélange des couleurs avec le facteur alpha ajusté
+    vec4 finalColor = vec4(mix(ambientColor.rgb, diffuseColor.rgb, smoothStepDot) * textureColor.rgb, alphaBlack);
+
+    gl_FragColor = finalColor;
 }

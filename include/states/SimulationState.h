@@ -67,7 +67,7 @@ public:
             {86400, "1 day/second"},
             {86400*2, "2 day/second"},
             {604800 , "1 week/second"},
-            {604800*2,"2 weeks/second"}
+            {604800*10,"2 weeks/second"}
             // Ajoutez d'autres vitesses ici
         };
 
@@ -112,6 +112,7 @@ public:
     void changeGlobalFollowing();
     void showInfos();
     void showControlsButton();
+    void SuccessToolButton();
     bool showInfo=true;
     bool showMinimap = false;
     bool buttonsActivated = true;

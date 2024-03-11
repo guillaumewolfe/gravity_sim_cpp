@@ -194,7 +194,12 @@ void AthmosphereTool::updateLumiere(CelestialObject* object){
 
     // Passer la direction de la lumière ajustée au shader
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection");
+    GLint lightDirUniformClouds = glGetUniformLocation(cloudShaderProgram, "lightDirection");
     glUniform3f(lightDirUniform, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+    glUniform3f(lightDirUniformClouds, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+
+
+
 }
 
 

@@ -1,8 +1,8 @@
 #include "states/SimulationState.h"
 #include "path_util.h"
 #include "save/saveTool.h"
-
-
+#include "engine/RenderTools/successTool.h"
+#include "engine/RenderTools/steamTool.h"
 
 SimulationState::SimulationState(Game* gameObj) : BaseState(gameObj){
     Enter();
@@ -69,6 +69,7 @@ void SimulationState::Enter() {
     render->Restart_Tool->setRestartFunction(std::bind(&SimulationState::Restart, this, std::placeholders::_1));
 
     render->Welcome_Tool->shouldDraw = &(renderContext->showWelcomeTool);
+    renderContext->successTool->setNotificationTool(render->Notification_Tool);
 
 }
 
@@ -173,10 +174,10 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
                         "../assets/button/planet.png", 0,
                             std::bind(&SimulationState::CreateObjectButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     
-    ImageButton *optionButton = new ImageButton(playSoundFunc,position_x_left+diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
+    ImageButton *SuccessTool = new ImageButton(playSoundFunc,position_x_left+diffx, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
-                        "../assets/button/settings.png", 0,
-                            std::bind(&SimulationState::SettingsButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
+                        "../assets/button/trophy.png", 0,
+                            std::bind(&SimulationState::SuccessToolButton, this),3,false,ImVec4(0.17f, 0.27f, 0.17f, 1.0f),false);
     ImageButton *quizButton = new ImageButton(playSoundFunc,position_x_left, buttonCenterY, ImVec2(taille_x, taille_y),0.50,
                         button_color,button_color,
                         "../assets/button/quiz.png", 0,
@@ -232,7 +233,7 @@ std::vector<ImageButton*> SimulationState::generateImageButtons(){
 
     imageButtons_list.push_back(cameraButton);//0
     imageButtons_list.push_back(addButton);//1
-    imageButtons_list.push_back(optionButton);//2
+    imageButtons_list.push_back(SuccessTool);//2
     imageButtons_list.push_back(menuButton); //3
     imageButtons_list.push_back(pauseButton);   //4
     imageButtons_list.push_back(playButton);   //5
@@ -286,7 +287,7 @@ void SimulationState::setButtonActive(bool active, ImageButton* buttonExeption){
 void SimulationState::Update() {
     
     checkButtonState();
-    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz || renderContext->showSaveSimulation ||  renderContext->showRestartTool || showSettings || render->UI_Tool->isSearching || renderContext->showWelcomeTool) {
+    if (isCreating || renderContext->showZoom || render->PlaneteInfo_Tool->changeParametersTool->getMode()!=0 || renderContext->showQuiz || renderContext->showSaveSimulation ||  renderContext->showRestartTool || showSettings || render->UI_Tool->isSearching || renderContext->showWelcomeTool || renderContext->showSuccessTool) {
         if(!buttonsAreDeactivated)setButtonActive(false, buttonExeption);
         return;}
     else if(buttonsAreDeactivated){
@@ -403,8 +404,10 @@ void SimulationState::UpdatePhysics(double dt){
 
 
 void SimulationState::Draw() {
-    
+    ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiKey_Tab, ImGuiKeyOwner_None);
+ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab, ImGuiKeyOwner_None);
     render->Draw();
+    renderContext->steamTool->Draw();
 
     if (gameObj->getSettings() && gameObj->getSettings()->volumeChanged) {
         int sdlVolume = static_cast<int>(gameObj->getSettings()->musicVolume * gameObj->getSettings()->mainVolume * 128);
@@ -506,6 +509,7 @@ void SimulationState::Restart(bool defaultState){
     showMinimap = false;
     showSettings = false;
     showCameraOptions = false;
+    renderContext->showControls = true;
     renderContext->showNotificationTool = false;
     systemeSolaire->reset(defaultState);
     currentCamera->resetPosition();
@@ -575,7 +579,7 @@ void SimulationState::checkButtonState(){
     if(showCameraOptions){imageButtons[0]->turnOn();}
     else{imageButtons[0]->turnOff();}
 
-    if(showSettings){imageButtons[2]->turnOn();}
+    if(renderContext->showSuccessTool){imageButtons[2]->turnOn();}
     else{imageButtons[2]->turnOff();}
 
     //Pause for live
@@ -606,6 +610,10 @@ void SimulationState::checkButtonState(){
     //Si moins que 2 objects, deactivate button
     if(systemeSolaire->objects.size()<2){
         imageButtons[9]->enabled=false;
+    }
+
+    if(renderContext->showSuccessTool){
+        buttonExeption = imageButtons[2];
     }
 }
 
@@ -878,4 +886,18 @@ void SimulationState::OpenWelcomeTool(){
         renderContext->showWelcomeTool = true;
         render->Welcome_Tool->Open();
     }
+}
+
+void SimulationState::SuccessToolButton(){
+    if(renderContext->showSuccessTool){
+        renderContext->showSuccessTool = false;
+        renderContext->successTool->Close();
+    }else{
+        buttonExeption = imageButtons[2];
+        forcePause = true;
+        Pause();
+        renderContext->showSuccessTool = true;
+        renderContext->successTool->Open();
+    }
+
 }

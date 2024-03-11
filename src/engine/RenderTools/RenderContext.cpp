@@ -6,6 +6,8 @@
 #include <ctime>
 #include <sstream>
 #include <iomanip>
+#include "engine/RenderTools/successTool.h"
+#include "engine/RenderTools/steamTool.h"
 
 RenderContext::RenderContext(float* time,float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, 
 std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe, SystemeSolaire* sysSol, int* speedIndice, std::vector<std::pair<int, std::string>> speedList,bool* iscreating, bool* showInfo, bool* showCameraOptions,bool* isLive, bool* showOptions, bool* showSettings, bool* isOrbiting, bool* isPaused,SoundTool* soundTool)
@@ -35,8 +37,17 @@ std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, b
     typeDictColor["Rock"] = ImVec4(137, 80, 77, 1); // Gris pour les objets rocheux
     typeDictColor["Volcanic"] = ImVec4(62, 95, 86, 1); // Gris foncé pour les objets volcaniques
     typeDictColor["Moon"] = ImVec4(200, 200, 200, 1); // Gris pour les lunes
+    steamTool = new SteamTool(this);
+    successTool = new SuccessTool(this);
+
+
 }
 
+RenderContext::~RenderContext() {
+    delete successTool;
+    delete steamTool;
+    
+}
 
 ImVec4 RenderContext::getTypeColor(const std::string& type) {
     if (typeDictColor.find(type) != typeDictColor.end()) {

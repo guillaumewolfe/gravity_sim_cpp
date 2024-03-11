@@ -12,7 +12,8 @@ void NotificationTool::Draw() {
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::Begin("Overlay", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
-
+    //Window focus so it pops
+    ImGui::SetNextWindowFocus();
     // Obtenir la taille de la fenêtre
 
     draw_rect();
@@ -110,6 +111,11 @@ void NotificationTool::draw_rect(){
         progress = 1.0; // Aucune transition
     }
 
+    if(!isTransitioning){
+        if(PhraseText->getSize().x > longueur){
+            longueur = PhraseText->getSize().x * 1.3;
+        }
+    }
     // Calcule la taille actuelle en fonction de la progression de la transition
     float currentHeight = hauteur * progress;
     float currentWidth = longueur * progress;

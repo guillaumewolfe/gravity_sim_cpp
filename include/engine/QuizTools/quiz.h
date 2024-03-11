@@ -20,7 +20,7 @@ public:
     int getCorrectAnswer(int index) const;
     std::string getExplanation(int index) const;
     std::string getHint(int index) const;
-    int getScore() const;
+    float getScore() const;
     int getQuestionSize() const;
     void addScore(int questionTrials);
     int numberOfQuestionsPosed = 10;

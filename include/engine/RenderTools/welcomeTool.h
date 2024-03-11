@@ -61,6 +61,8 @@ private:
     Icon* addPlanetIcon = nullptr;
     Icon* cameraIcon = nullptr;
     Icon* QuizIcon = nullptr;
+    Icon* SearchIcon = nullptr;
+    Icon* SuccessIcon = nullptr;
 
     void initIconsMode1();
     ImFont* gameModeMainFont = nullptr;

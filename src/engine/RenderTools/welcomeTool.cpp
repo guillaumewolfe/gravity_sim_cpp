@@ -10,7 +10,7 @@ WelcomeTool::WelcomeTool(){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     centerPos = ImVec2(winWidth / 2, winHeight / 2);
     longueur = winWidth*0.5;
-    hauteur = winHeight*0.65;
+    hauteur = winHeight*0.70;
 
     topLeft = ImVec2(centerPos.x - longueur / 2, centerPos.y - hauteur / 2);
     bottomRight = ImVec2(centerPos.x + longueur / 2, centerPos.y + hauteur / 2);
@@ -119,10 +119,10 @@ void WelcomeTool::initUI(){
     float taille_y = 0.15;
     
     //Welcome Label
-    title = new Labbel(0.5f,0.25f,ImVec4(255,255,255,255),
+    title = new Labbel(0.5f,0.20f,ImVec4(255,255,255,255),
                                 "Space Query",40.0f,0.6f);
     
-    subTitle = new Labbel(0.5f,0.29f,ImVec4(255,255,255,255),
+    subTitle = new Labbel(0.5f,0.24f,ImVec4(255,255,255,255),
                                     "Options",25.0f,0.4f);
     //imagebuttons
     nextBtn = new ImageButton(nullptr,0.575, 0.775, ImVec2(taille_x*0.225, taille_y*0.225),1.0f,
@@ -224,11 +224,13 @@ void WelcomeTool::drawMode1() {
     addPlanetIcon->Draw();
     cameraIcon->Draw();
     QuizIcon->Draw();
+    SearchIcon->Draw();
+    SuccessIcon->Draw();
 
 //Draw text next to icons : 
 float posXRight = 0.55f;
 float posXLeft = 0.325f;
-float posY = 0.375f;
+float posY = 0.325;
 float diffY = 0.075f;
 float diffyText = 0.02f;
 
@@ -293,6 +295,17 @@ ImGui::PushFont(gameModeSubFont);
 drawList->AddText(ImVec2(savePos.x*winWidth, (savePos.y+diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaSub), subSaveText.c_str());
 ImGui::PopFont();
 
+//Search
+ImVec2 searchPos = ImVec2(posXLeft+diffX, posY+5*diffY);
+ImGui::PushFont(gameModeMainFont);
+std::string searchText = "Search";
+std::string subSearchText = "Search for an object in the simulation";
+drawList->AddText(ImVec2(searchPos.x*winWidth,(searchPos.y-diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaMain), searchText.c_str());
+ImGui::PopFont();
+ImGui::PushFont(gameModeSubFont);
+drawList->AddText(ImVec2(searchPos.x*winWidth, (searchPos.y+diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaSub), subSearchText.c_str());
+ImGui::PopFont();
+
 //Minimap
 ImVec2 miniMapPos = ImVec2(posXRight+diffX, posY);
 ImGui::PushFont(gameModeMainFont);
@@ -348,7 +361,16 @@ ImGui::PushFont(gameModeSubFont);
 drawList->AddText(ImVec2(quizPos.x*winWidth, (quizPos.y+diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaSub), subQuizText.c_str());
 ImGui::PopFont();
 
-
+//Success
+ImVec2 successPos = ImVec2(posXRight+diffX, posY+5*diffY);
+ImGui::PushFont(gameModeMainFont);
+std::string successText = "Success";
+std::string subSuccessText = "View your achievements";
+drawList->AddText(ImVec2(successPos.x*winWidth,(successPos.y-diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaMain), successText.c_str());
+ImGui::PopFont();
+ImGui::PushFont(gameModeSubFont);
+drawList->AddText(ImVec2(successPos.x*winWidth, (successPos.y+diffyText/2)*winHeight-textHeight/2), IM_COL32(255, 255, 255, alphaSub), subSuccessText.c_str());
+ImGui::PopFont();
 
 
 
@@ -365,7 +387,7 @@ void WelcomeTool::initIconsMode1(){
 float posXRight = 0.55f;
 float posXLeft = 0.325f;
 
-float posY = 0.375f;
+float posY = 0.325;
 float diffY = 0.075f;
 
 float taille_x = 0.035f*0.3;
@@ -384,6 +406,7 @@ taille_y *= 1.55;
 resetCameraIcon = new Icon(posXLeft, posY+2*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/resetPosition.png",alpha);
 resetModelIcon = new Icon(posXLeft, posY+3*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/restart.png",alpha);
 SaveIcon = new Icon(posXLeft, posY+4*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/save.png",alpha);
+SearchIcon = new Icon(posXLeft, posY+5*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/search.png",alpha);
 
 
 
@@ -394,6 +417,7 @@ compareSizeIcon = new Icon(posXRight, posY+diffY,ImVec2(taille_x, taille_y),1.0f
 addPlanetIcon = new Icon(posXRight, posY+2*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/planet.png",alpha);
 cameraIcon = new Icon(posXRight, posY+3*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/camera.png",alpha);
 QuizIcon = new Icon(posXRight, posY+4*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/quiz.png",alpha);
+SuccessIcon = new Icon(posXRight, posY+5*diffY,ImVec2(taille_x, taille_y),1.0f,"../assets/button/trophy.png",alpha);
 
 //How to make sure the image is not stretched? It needs to stay the same size and be centered in the icon.
 //919x436

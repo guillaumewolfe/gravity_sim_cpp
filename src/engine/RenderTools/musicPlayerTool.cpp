@@ -49,7 +49,6 @@ void MusicPlayerTool::initSongs() {
     songs.push_back({"../assets/music/oblivious.mp3", "Oblivious","Jonathan Doherty", 154, "../assets/music/albumCover/oblivious.jpg", ImVec4(154,137,127,255)});
     songs.push_back({"../assets/music/oneMomentInTime.mp3", "On Moment In Time","All Good Folks", 171, "../assets/music/albumCover/allGoodFolks.jpg", ImVec4(250,82,50,255)});
 
-
     // Charger les musiques
     for (auto& song : songs) {
         song.music = Mix_LoadMUS(getFullPath(song.path).c_str());
@@ -504,7 +503,6 @@ GLuint MusicPlayerTool::loadTexture(const char* relativeFilename) {
         std::cerr << "Erreur: Image non trouvée " << fullPath << std::endl;
         return 0;
     }
-
     //Change alpha 
 
 

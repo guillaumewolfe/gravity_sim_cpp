@@ -3,6 +3,9 @@
 #include "path_util.h"
 #include "engine/RenderTools/soundTool.h"
 #include "save/saveTool.h"
+#include "engine/RenderTools/SuccessTool.h"
+
+
 
 SaveSimulationTool::SaveSimulationTool(RenderContext* renderContext) : RenderComponent(renderContext){
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
@@ -219,6 +222,7 @@ void SaveSimulationTool::enterLoadSimulationState(){
 
 void SaveSimulationTool::saveCurrentState(){
     saveTool->saveGameState(m_renderContext, stateIDName);
+    m_renderContext->successTool->QUEST_SAVE_LOAD_SIMULATION(true);
     gameStates = saveTool->readAllStates();
     stateIDName = "";
     timeSaveConfirmed = std::chrono::system_clock::now();
@@ -232,6 +236,7 @@ void SaveSimulationTool::LoadSimulationsButton(){
 
 void SaveSimulationTool::load(){
     if (currentLoadState != nullptr) {
+        m_renderContext->successTool->QUEST_SAVE_LOAD_SIMULATION(false);
         saveTool->loadGameState(m_renderContext, currentLoadState);
         std::vector<CelestialObject*> objects = currentLoadState->getCelestialObjects();
         m_renderContext->systemeSolaire->isLoadedState = true;

@@ -19,6 +19,7 @@
 ObjectsTool::ObjectsTool(RenderContext* renderContext, Camera* camera) : RenderComponent(renderContext),m_camera(camera) {
     initPlanetsShaders();
     initStarShaders();
+    initEarthShaders();
 
     for (auto& object : m_renderContext->systemeSolaire->objects) {
         initSphere(*object, 200, 200); 
@@ -63,7 +64,9 @@ void ObjectsTool::Draw() {
         if (object->shouldBeDrawn) {
         if(object->type==1){
             drawStars(object);
-        }else if(object->type>1 || object->type==0){
+        }else if(object->typeName == "Earth"){
+            drawEarth(object);}
+        else if(object->type>1 || object->type==0){
         drawPlanets(object);
     }
     }}
@@ -151,6 +154,59 @@ void ObjectsTool::drawPlanets(CelestialObject* object){
         glUseProgram(0);
 }
 
+void ObjectsTool::drawEarth(CelestialObject* object){
+    glUseProgram(earthShaderProgram);
+    // Update transformation matrices
+    updateLumiere(object);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    m_camera->lookAt();
+    glTranslatef(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
+    glRotatef(object->rotationSid,0,1,0);
+
+    // Activate and bind the day texture to texture unit 0
+    glActiveTexture(GL_TEXTURE0); // Activate texture unit 0
+    glBindTexture(GL_TEXTURE_2D, object->textureID); // Bind the day texture
+    glUniform1i(glGetUniformLocation(earthShaderProgram, "dayTextureSampler"), 0); // Tell the shader the day texture is in texture unit 0
+
+    // Activate and bind the night texture to texture unit 1
+    glActiveTexture(GL_TEXTURE1); // Activate texture unit 1
+    glBindTexture(GL_TEXTURE_2D, object->textureID2); // Bind the night texture
+    glUniform1i(glGetUniformLocation(earthShaderProgram, "nightTextureSampler"), 1); // Tell the shader the night texture is in texture unit 1
+
+    // Bind the VBOs and activate the vertex attributes
+    glBindBuffer(GL_ARRAY_BUFFER, object->vboVertices);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, object->vboNormals);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, object->vboTexCoords);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(2);
+    
+    // Draw the object
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, object->vertexCount);
+    
+    // Disable the vertex attributes
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+
+    glPopMatrix();
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
+}
+
+
 void ObjectsTool::drawEffects(){
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
         if (object->shouldBeDrawn) {
@@ -176,8 +232,6 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
     CelestialObject* sun = m_renderContext->systemeSolaire->getSun(object);
     bool isSunPresent = (sun != nullptr && sun->type == 1);
     CelestialObject* soleil = m_renderContext->systemeSolaire->getSun(object);
-    GLint isThereSunUniform = glGetUniformLocation(shaderProgram, "isThereSun");
-    glUniform1i(isThereSunUniform, isSunPresent ? GL_TRUE : GL_FALSE); 
     if(soleil==nullptr){return;}
     glm::vec3 positionSoleil = soleil->position_simulation.toGlm();
     glm::vec3 positionObjet = glm::vec3(object->position_simulation.x, object->position_simulation.y, object->position_simulation.z);
@@ -192,7 +246,15 @@ void ObjectsTool::updateLumiere(CelestialObject* object){
 
     // Passer la direction de la lumière ajustée au shader
     GLint lightDirUniform = glGetUniformLocation(shaderProgram, "lightDirection");
+    GLint lightDirUniformEarth = glGetUniformLocation(earthShaderProgram, "lightDirection");
     glUniform3f(lightDirUniform, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+    glUniform3f(lightDirUniformEarth, rotatedLightDir.x, rotatedLightDir.y, rotatedLightDir.z);
+
+    GLint isThereSunUniform = glGetUniformLocation(shaderProgram, "isThereSun");
+    GLint isThereSunUniformEarth = glGetUniformLocation(earthShaderProgram, "isThereSun");
+    glUniform1i(isThereSunUniform, isSunPresent ? GL_TRUE : GL_FALSE); 
+    glUniform1i(isThereSunUniformEarth, isSunPresent ? GL_TRUE : GL_FALSE);
+    
 
 }
 
@@ -327,7 +389,35 @@ void ObjectsTool::initStarShaders() {
     glDeleteShader(fragmentShader);
 }
 
+void ObjectsTool::initEarthShaders() {
+    std::string vertexCode = readShaderFile(getFullPath("../src/engine/RenderTools/Shaders/vertex_earth.glsl"));
+    std::string fragmentCode = readShaderFile(getFullPath("../src/engine/RenderTools/Shaders/frag_earth.glsl"));
+    const char* vertexShaderSource = vertexCode.c_str();
+    const char* fragmentShaderSource = fragmentCode.c_str();
 
+    // Compiler le vertex shader
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    checkCompileErrors(vertexShader, "VERTEX");
+
+    // Compiler le fragment shader
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    checkCompileErrors(fragmentShader, "FRAGMENT");
+
+    // Créer le programme shader
+    earthShaderProgram = glCreateProgram();
+    glAttachShader(earthShaderProgram, vertexShader);
+    glAttachShader(earthShaderProgram, fragmentShader);
+    glLinkProgram(earthShaderProgram);
+    checkCompileErrors(earthShaderProgram, "PROGRAM");
+
+    //Delete Shaders 
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
 
 
 

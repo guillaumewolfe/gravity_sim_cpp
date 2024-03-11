@@ -84,6 +84,13 @@ ImVec2 Labbel::getPosition(){
     return position;
 }
 
+ImVec2 Labbel::getSize(){
+    ImGui::PushFont(font);
+    ImVec2 textSize = ImGui::CalcTextSize(label.c_str(), NULL, false, 0.0f);
+    ImGui::PopFont();
+    return textSize;
+}
+
 void Labbel::UpdateColor(ImVec4 newColor){
     color = newColor;
 }

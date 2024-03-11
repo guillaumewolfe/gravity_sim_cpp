@@ -131,6 +131,9 @@ void SystemeSolaire::resetPosition() {
                 setRayon(object);
             }
             object->isDeleted = false;
+            object->showName = true;
+            object->showOrbit = false;
+            object->showPath = true;
         }
     }
 }

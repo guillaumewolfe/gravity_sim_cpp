@@ -23,6 +23,7 @@ public:
     static void initSphere(CelestialObject& object, int lats, int longs);
     void drawPlanets(CelestialObject* object);
     void drawStars(CelestialObject* object);
+    void drawEarth(CelestialObject* object);
     void drawEffects();
     void drawPostTraitement();
     void updateLumiere(CelestialObject* object);
@@ -33,6 +34,7 @@ private:
     //SHADERS:
     GLuint shaderProgram;
     GLuint starShaderProgram;
+    GLuint earthShaderProgram;
 
     Camera* m_camera = nullptr;
 
@@ -42,6 +44,7 @@ private:
 
     void initPlanetsShaders();
     void initStarShaders(); 
+    void initEarthShaders();
     void initFrameBuffer();
 
     int winWidth, winHeight;

@@ -7,8 +7,10 @@ Earth::Earth() : CelestialObject() {
     std::string name_sub = "Earth";
     typeName = "Earth";
     std::string path_sub = "../assets/textures/earth_real.jpg";
+    std::string path_sub_night = "../assets/textures/earth.jpg";
     type = 2;
     textureID = loadTexture(path_sub.c_str());
+    textureID2 = loadTexture(path_sub_night.c_str());
     //TO CHANGE
     double rayon_sub = 1;
     Vec3 position_initiale_sub = Vec3(9,0,0);

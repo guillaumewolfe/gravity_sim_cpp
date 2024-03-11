@@ -13,13 +13,16 @@
 class SimulationState;
 class SoundTool;
 class NotificationTool;
+class SuccessTool;
+class SteamTool;
 
 class RenderContext {
 public: 
 
     RenderContext(float* time, float* tmul ,Camera* currentCam,std::vector<Labbel*>& lbls, std::vector<Button*>& btns,std::vector<ImageButton*>& imgbtns, float* maxsize, bool* showaxe,
     SystemeSolaire* sysSol, int* speedIndice,std::vector<std::pair<int, std::string>> speedList, bool* iscreating, bool* showInfo, bool* showCameraOptions, bool* isLive, bool* showOptions, bool* showSettings, bool* isOrbiting, bool* isPaused, SoundTool* soundTool);
-    
+    ~RenderContext();
+
     float* simulationTime = nullptr;
     float* timeMultiplier = nullptr;
     float* maxSize = nullptr;
@@ -58,13 +61,16 @@ public:
     bool debug = false;
     bool showQuiz = false;
     bool showSaveSimulation = false;
-    bool isCollidingQuest = false;
     bool showWelcomeTool = false;
+    bool showSuccessTool = false;
     ImVec4 getTypeColor(const std::string& type);
     void setCurrentTime(std::chrono::system_clock::time_point time);
     std::chrono::system_clock::time_point getCurrentTime();
     std::string getDateTime();
     std::chrono::system_clock::time_point currentDateTime;
+    SteamTool* steamTool= nullptr;
+    SuccessTool* successTool = nullptr;
+
 
 
 

@@ -11,6 +11,7 @@ namespace fs = std::filesystem;
 
 class GameSettings;
 class RenderContext;
+class Success;
 struct CelestialObjectData;
 
 class SaveTool {
@@ -36,6 +37,13 @@ public:
     std::vector<GameState*> readAllStates();
     std::vector<int> getGameStatesIdsInt();
     void printGameStatesIds();
+    void checkSuccessList(std::vector<Success*>);
+    void SyncSuccessList(std::vector<Success*>);
+    void SaveSuccessList(std::vector<Success*>);
+
+
+    void saveElementsToVerify(const std::vector<std::string>* elementsToVerify, int ID);
+    void loadElementsToVerify(std::vector<std::string>& elementsToVerify, int ID);
 
 
 
@@ -44,9 +52,12 @@ private:
     std::string encryptDecrypt(const std::string& data);
     std::string getSavePath();
     std::string saveFilepath;
+    void checkGameSuccessTag();
+
 
 
 
 };
+
 
 #endif
