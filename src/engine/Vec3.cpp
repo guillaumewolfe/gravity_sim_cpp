@@ -71,3 +71,7 @@ std::string Vec3::print()
 glm::vec3 Vec3::toGlm() {
     return glm::vec3(x, y, z);
 }
+
+glm::vec3 Vec3::toGlm() const {
+    return glm::vec3(x, y, z);
+}

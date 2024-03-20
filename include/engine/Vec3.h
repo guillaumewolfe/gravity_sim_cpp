@@ -22,6 +22,7 @@ public:
     Vec3 operator*=(float scalar);
     Vec3 operator*(float scalar);
     glm::vec3 toGlm();
+    glm::vec3 toGlm() const;
 
     
 

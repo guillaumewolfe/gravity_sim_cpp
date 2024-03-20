@@ -16,6 +16,7 @@ public:
 
 
 private:
+    int winWidth, winHeight;
 
 
 };

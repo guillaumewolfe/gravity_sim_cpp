@@ -11,9 +11,16 @@ SystemeSolaire::SystemeSolaire(){
     initialStateObjects = initSystem();
     objects = initialStateObjects;
     scale = getScale();
-    setRayonInit();
     syncWithNasa();
+    setRayonInit();
+
+    for (auto& object : objects) {
+        if(object->getName()=="Pluto"){
+            std::cout<<"Pluto radius"<<object->getRayon()<<std::endl;
+        }
     }
+    }
+
 // Destructeur
 SystemeSolaire::~SystemeSolaire() {
     for (auto& object : objects) {
@@ -38,6 +45,7 @@ std::vector<CelestialObject*> SystemeSolaire::initSystem(){
     Saturn* saturn = new Saturn();
     Uranus* uranus = new Uranus();
     Neptune* neptune = new Neptune();
+    //Pluto* pluto = new Pluto();
     
 
 
@@ -51,6 +59,7 @@ std::vector<CelestialObject*> SystemeSolaire::initSystem(){
     celestialObjects.push_back(saturn);
     celestialObjects.push_back(uranus);
     celestialObjects.push_back(neptune);
+    //celestialObjects.push_back(pluto);
     return celestialObjects;
 }
 
@@ -58,10 +67,12 @@ void SystemeSolaire::updatePhysics(double dt){}
 
 double SystemeSolaire::getScale(){
     double maxLength = 0;
+    CelestialObject* maxDistanceObject = nullptr;
     for (auto& object : objects){
-        if(object->position_real.norm()>maxLength){maxLength = object->position_real.norm();}
+        if(object->position_real.norm()>maxLength){maxLength = object->position_real.norm(); maxDistanceObject = object;}
     }
     scale = maxSize/maxLength;
+    std::cout << "Max object distance: " << maxDistanceObject->getName() << " " << maxDistanceObject->position_real.norm() << std::endl;
     return scale;
 }
 

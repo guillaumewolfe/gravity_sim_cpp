@@ -31,7 +31,7 @@ public:
     bool zoomChanged = false;
     bool isGlobalFollowing = false;
     double angle_perspective = 0.0;
-    float distanceToFollowedObject; 
+    double distanceToFollowedObject; 
     Camera(const Vec3& pos, const Vec3& tgt, const Vec3& up);
     double orbitalVerticalAngle = 0;
     double orbitalHorizontalAngle =0;
@@ -59,8 +59,8 @@ public:
     bool isTransiting= false;
     double followingDistance = 0.0;
 
-    Vec3 lerp(const Vec3& start, const Vec3& end, float t);
-    float lerp(float start, float end, float t);
+    Vec3 lerp(const Vec3& start, const Vec3& end, double t);
+    double lerp(double start, double end, double t);
     float transitionProgress = 0.0f;
 
     int transitionStep = 0;
@@ -78,8 +78,9 @@ public:
     void zoomFirstPerson(bool in);
     void zoomByDistance(bool in, float speedOffset = 0);
     void checkDistance();
-    float calculateScreenOccupationPercentage(CelestialObject* object);
+    double calculateScreenOccupationPercentage(CelestialObject* object);
     void stopAxisTransition();
+    glm::vec2 convert3DPosToScreenPos(const glm::vec3& pos3D);
     
 
     void rotateHorizontal(float angle);
@@ -92,12 +93,12 @@ public:
     void newFollowObject(CelestialObject* obj);
     void newFirstPersonTarget(CelestialObject* obj);
     void newFollowObjectGlobal(CelestialObject* obj);
-    float calculateGlobalFollowingDistance();
+    double calculateGlobalFollowingDistance();
     void followObject();
 
     //comparer
     bool isComparing = false;
-    float comparingDistance = 0.0f;
+    double comparingDistance = 0.0f;
     bool useCompareDistance = false;
     void applyOffsetProjection();
 
@@ -135,12 +136,12 @@ private:
     RenderContext* m_renderContext = nullptr;
     int currentSimulationSpeedIndexForTransition = 0;
     double currentSimulationSpeedForTransition = 0.0;
-    float firstPersonZoomPercentage = 0.0f;
-    float firstPersonZoomOffset = 0.0f;
-    float maxZoomDistance = 0.0f;
+    double firstPersonZoomPercentage = 0.0f;
+    double firstPersonZoomOffset = 0.0f;
+    double maxZoomDistance = 0.0f;
     bool globalDistanceCalcuated = false;
-    float calculateDistanceForScreenOccupation(float occupationPercentage);
-    float globalFollowingDistance = 0.0f;
+    double calculateDistanceForScreenOccupation(float occupationPercentage);
+    double globalFollowingDistance = 0.0f;
 };
 
 

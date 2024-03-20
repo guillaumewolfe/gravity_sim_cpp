@@ -54,9 +54,6 @@ ObjectsTool::~ObjectsTool() {
 
 
 void ObjectsTool::Draw() {
-    for (const auto& object : m_renderContext->systemeSolaire->objects) {
-            //m_camera->updateObjectVisibility(object);
-        }
 
     glEnable(GL_DEPTH_TEST);
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);

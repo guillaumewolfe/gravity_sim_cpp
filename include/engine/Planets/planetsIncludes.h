@@ -10,6 +10,7 @@
 #include "engine/Planets/Uranus.h"
 #include "engine/Planets/Neptune.h"
 #include "engine/Planets/Moon.h"
+#include "engine/Planets/Pluto.h"   
 
 
 #include "engine/Planets/Ice.h"

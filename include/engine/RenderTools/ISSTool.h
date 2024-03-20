@@ -13,6 +13,12 @@ struct Vertex {
     // Vous pouvez ajouter d'autres attributs ici, comme les normales, les coordonnées de texture, etc.
 };
 
+struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
 
 class ISSTool : public RenderComponent {
 public:
@@ -35,7 +41,9 @@ private:
     Camera* camera;
 
     void loadOBJ();
-
+    void loadMTL(const std::string& mtlPath);
+    Material material;  // The object's material
+    std::map<std::string, Material> materials; 
 };
 
 #endif // ISSTool_H

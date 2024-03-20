@@ -35,16 +35,16 @@ void Camera::Update() {
     lookAt();
 }
 
-float Camera::lerp(float start, float end, float t) {
-    t = glm::clamp(t, 0.0f, 1.0f); // Ensure t is within the range [0, 1]
+double Camera::lerp(double start, double end, double t) {
+    t = glm::clamp(t, 0.0, 1.0); // Ensure t is within the range [0, 1]
     return start + (end - start) * t;
 }
 
-Vec3 Camera::lerp(const Vec3& start, const Vec3& end, float t) {
-    t = glm::clamp(t, 0.0f, 1.0f); // Assurez-vous que t reste dans la plage [0, 1]
+Vec3 Camera::lerp(const Vec3& start, const Vec3& end, double t) {
+    t = glm::clamp(t, 0.0, 1.0); // Assurez-vous que t reste dans la plage [0, 1]
 
     // Réduisez la vitesse de changement de t en multipliant par un facteur de ralentissement
-    float slowdownFactor = 1.0f; // Réglez cette valeur pour contrôler la vitesse de transition
+    double slowdownFactor = 1.0; // Réglez cette valeur pour contrôler la vitesse de transition
     t = glm::pow(t, slowdownFactor);
 
     Vec3 newVec;
@@ -59,8 +59,8 @@ void Camera::transitionToFollowObject() {
    if (!followedObject or isTransitingAxis) {return;}
   
    Vec3 objectPosition = followedObject->getPositionSimulation();
-   float objectRadius;
-   float pourcentOfScreen;
+   double objectRadius;
+   double pourcentOfScreen;
    if(followedObject->type != 1){
        objectRadius = followedObject->getRayon();
        pourcentOfScreen = 0.30f;
@@ -70,8 +70,8 @@ void Camera::transitionToFollowObject() {
        pourcentOfScreen = 0.70f;
    }
    // Calculer la distance de suivi désirée
-   float verticalFOV = angle_perspective * (M_PI / 180.0f);
-   float desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
+   double verticalFOV = angle_perspective * (M_PI / 180.0f);
+   double desiredDistance = objectRadius / (tan(verticalFOV / 2) * pourcentOfScreen); // 20% occupation
 
 
    if(!globalDistanceCalcuated){
@@ -89,7 +89,7 @@ void Camera::transitionToFollowObject() {
 
 
    // Interpolation temporelle
-   float t = (float)transitionStep / transitionThreshold;
+   double t = (double)transitionStep / transitionThreshold;
    position = lerp(position, finalPosition, t);
    target = lerp(target, objectPosition, t);
 
@@ -127,7 +127,7 @@ void Camera::followObject() {
    if (!followedObject) return;
    if (firstPersonModeEnabled) return;
   
-   float distance;
+   double distance;
    if(isGlobalFollowing){
        distance = globalFollowingDistance;
    } else if (isComparing && useCompareDistance){
@@ -153,35 +153,30 @@ void Camera::followObject() {
 
    // Appliquer une matrice de projection personnalisée pour le décalage
    if(isComparing){
-   applyOffsetProjection();}
+   applyOffsetProjection();
+   }
 }
 
 
 void Camera::applyOffsetProjection() {
    int winWidth, winHeight;
    glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
-   float aspectRatio = static_cast<float>(winWidth) / winHeight;
-   float zNear = 0.001;
-   float zFar = 10000;
-   float fovy = angle_perspective * (M_PI / 180.0f);
-   float fH = tan(fovy / 2) * zNear;
-   float fW = fH * aspectRatio;
-
+   double aspectRatio = static_cast<float>(winWidth) / winHeight;
+   double zNear = 0.001;
+   double zFar = 10000;
+   double fovy = angle_perspective * (M_PI / 180.0);
+   double fH = tan(fovy / 2) * zNear;
+   double fW = fH * aspectRatio;
 
    // Calculer la largeur totale du frustum à zNear
-   float totalWidth = 2 * fW;
-
+   double totalWidth = 2 * fW;
 
    // Décalage pour que le bord gauche du frustum soit à 25% de la largeur de l'écran
-   float offsetX = fW - 0.25 * totalWidth;
-
+   double offsetX = fW - 0.25 * totalWidth;
 
    // Ajuster les paramètres left et right du frustum
-   float left = -fW + offsetX;
-   float right = fW + offsetX;
-
-
-
+   double left = -fW + offsetX;
+   double right = fW + offsetX;
 
    // Appliquer la matrice de projection personnalisée
    glMatrixMode(GL_PROJECTION);
@@ -196,11 +191,11 @@ void Camera::applyOffsetProjection() {
 
 
 
-float Camera::calculateGlobalFollowingDistance() {
-    float maxDistance = 0.0f;
-    float minDistance = calculateDistanceForScreenOccupation(80.0f);
-    float verticalFOV = angle_perspective * (M_PI / 180.0f);
-    float halfFOV = tan(verticalFOV / 2);
+double Camera::calculateGlobalFollowingDistance() {
+    double maxDistance = 0.0;
+    double minDistance = calculateDistanceForScreenOccupation(80.0);
+    double verticalFOV = angle_perspective * (M_PI / 180.0);
+    double halfFOV = tan(verticalFOV / 2);
 
     for (const auto& object : m_renderContext->systemeSolaire->objects) {
         Vec3 objectPosition = object->getPositionSimulation();
@@ -210,13 +205,13 @@ float Camera::calculateGlobalFollowingDistance() {
 
         // Utilisez la projection de cette position sur l'axe de la caméra
         Vec3 forward = (target - position).normalize();
-        float distanceAlongCameraAxis = relativePosition.dot(forward); // 'forward' est le vecteur directionnel de la caméra
+        double distanceAlongCameraAxis = relativePosition.dot(forward); // 'forward' est le vecteur directionnel de la caméra
 
         // Calculez la distance perpendiculaire à l'axe de la caméra
-        float perpendicularDistance = sqrt(pow(relativePosition.norm(),2) - pow(distanceAlongCameraAxis, 2));
+        double perpendicularDistance = sqrt(pow(relativePosition.norm(),2) - pow(distanceAlongCameraAxis, 2));
 
         // Calculez la distance maximale à laquelle l'objet est visible
-        float visibleDistance = perpendicularDistance / halfFOV;
+        double visibleDistance = perpendicularDistance / halfFOV;
         
         if (visibleDistance > maxDistance) {
             maxDistance = visibleDistance;
@@ -236,20 +231,20 @@ void Camera::firstPersonMode() {
     Vec3 objectPosition = followedObject->getPositionSimulation();
     Vec3 objToLookAtPosition = firstPersonTargetObject->getPositionSimulation();
     Vec3 directionToObject = (objToLookAtPosition - objectPosition).normalize();
-    float objectRadius = followedObject->getRayon();
-    float heightAboveSurface = objectRadius * 0.01f;
+    double objectRadius = followedObject->getRayon();
+    double heightAboveSurface = objectRadius * 0.01f;
 
     // Déterminer la distance maximale pour 75% d'occupation de l'écran
-    float totalDistance = (firstPersonTargetObject->getPositionSimulation() - followedObject->getPositionSimulation()).norm();
+    double totalDistance = (firstPersonTargetObject->getPositionSimulation() - followedObject->getPositionSimulation()).norm();
 
     // Déterminer la distance pour 75% d'occupation de l'écran
-    float distanceFor75PercScreenOccupation = calculateDistanceForScreenOccupation(30.0f);
+    double distanceFor75PercScreenOccupation = calculateDistanceForScreenOccupation(30.0f);
 
     // maxZoomDistance est la différence entre la distance totale et la distance pour 75% d'occupation
     maxZoomDistance = totalDistance - distanceFor75PercScreenOccupation;
-    maxZoomDistance = std::max(maxZoomDistance, 0.0f);
+    maxZoomDistance = std::max(maxZoomDistance, 0.0);
     // Interpoler entre le point minimal (heightAboveSurface) et le point maximal (maxZoomDistance)
-    float zoomDistance = heightAboveSurface + (maxZoomDistance - heightAboveSurface) * firstPersonZoomPercentage;
+    double zoomDistance = heightAboveSurface + (maxZoomDistance - heightAboveSurface) * firstPersonZoomPercentage;
 
     position = objectPosition + directionToObject * (objectRadius + zoomDistance);
     target = objToLookAtPosition;
@@ -262,22 +257,22 @@ void Camera::firstPersonMode() {
 
 void Camera::zoomFirstPerson(bool in) {
     // Base zoom adjustment factor
-    float baseZoomAdjustmentFactor = 0.0025f; 
+    double baseZoomAdjustmentFactor = 0.0025f; 
 
     // Apply a quadratic scaling to the zoom adjustment factor
-    float zoomAdjustmentFactor = baseZoomAdjustmentFactor * (1.0f - firstPersonZoomPercentage * firstPersonZoomPercentage);
+    double zoomAdjustmentFactor = baseZoomAdjustmentFactor * (1.0f - firstPersonZoomPercentage * firstPersonZoomPercentage);
 
     if (in) {
         // Increase zoom, but not beyond 100%
-        firstPersonZoomPercentage = std::min(firstPersonZoomPercentage + zoomAdjustmentFactor, 1.0f);
+        firstPersonZoomPercentage = std::min(firstPersonZoomPercentage + zoomAdjustmentFactor, 1.0);
     } else {
         // Decrease zoom, but not below 0%
-        firstPersonZoomPercentage = std::max(firstPersonZoomPercentage - zoomAdjustmentFactor, 0.0f);
+        firstPersonZoomPercentage = std::max(firstPersonZoomPercentage - zoomAdjustmentFactor, 0.0);
     }
 }
 
 
-float Camera::calculateDistanceForScreenOccupation(float occupationPercentage) {
+double Camera::calculateDistanceForScreenOccupation(float occupationPercentage) {
     if (!firstPersonTargetObject && followedObject == nullptr) return 0.0f;
 
     CelestialObject* object = firstPersonTargetObject ? firstPersonTargetObject : followedObject;
@@ -296,7 +291,7 @@ float Camera::calculateDistanceForScreenOccupation(float occupationPercentage) {
 
 
 
-float Camera::calculateScreenOccupationPercentage(CelestialObject* object) {
+double Camera::calculateScreenOccupationPercentage(CelestialObject* object) {
     if (!object) return 0.0f;
 
     Vec3 objectPosition = object->getPositionSimulation();
@@ -396,6 +391,7 @@ void Camera::zoomByDistance(bool in, float speedOffset){
 
 
 void Camera::lookAt() {
+
     Vec3 f = (target - position).normalize();
     Vec3 u = up.normalize();
 
@@ -447,8 +443,26 @@ void Camera::creationMode(){
     up=Vec3(0,0,-1);
     angle_perspective = 70;
     setPerspective();
+
 }
 
+glm::vec2 Camera::convert3DPosToScreenPos(const glm::vec3& pos3D) {
+    // Convertir les coordonnées 3D en coordonnées de clip
+    glm::mat4 projectionMatrix = getProjectionMatrix();
+    glm::mat4 viewMatrix = getViewMatrix();
+    int screenWidth, screenHeight;
+    glfwGetWindowSize(glfwGetCurrentContext(), &screenWidth, &screenHeight);
+    glm::vec4 clipCoords = projectionMatrix * viewMatrix * glm::vec4(pos3D, 1.0f);
+    
+    // Convertir en NDC
+    glm::vec3 ndc = glm::vec3(clipCoords) / clipCoords.w;
+
+    // Convertir en coordonnées d'écran en pourcentage
+    float xPercent = (ndc.x + 1.0f) / 2.0f;
+    float yPercent = (1.0f - ndc.y) / 2.0f;
+
+    return glm::vec2(xPercent * screenWidth, yPercent * screenHeight);
+}
 
 void Camera::zoom(bool in) {
     if (firstPersonModeEnabled) {
@@ -544,7 +558,7 @@ void Camera::setPerspective() {
     const GLdouble pi = 3.1415926535897932384626433832795;
     GLdouble fW, fH;
     int winWidth, winHeight;
-    float zNear = 0.001;
+    float zNear = 0.0005;
     float zFar = 10000;
     glfwGetWindowSize(glfwGetCurrentContext(), &winWidth, &winHeight);
     // Calculer la hauteur et la largeur de la fenêtre à la distance de clipping près

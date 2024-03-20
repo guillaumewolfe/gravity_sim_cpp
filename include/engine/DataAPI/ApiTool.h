@@ -50,7 +50,7 @@ private:
     {"Sun", "10"}, // Remplacement de Pluto par le Soleil
     {"Moon", "301"},
     //Pluto:
-    //{"Pluto", "999}
+    {"Pluto", "999"},
     // Ajouter d'autres corps ici si nécessaire
 };
 

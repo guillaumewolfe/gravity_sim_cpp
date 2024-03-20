@@ -148,7 +148,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
     )
 elseif(WIN32)
-add_executable(${PROJECT_NAME}  ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 ########add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Space Query")
 

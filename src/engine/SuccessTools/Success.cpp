@@ -327,12 +327,12 @@ void SuccessTool::initSuccess(){
     saveTool->loadElementsToVerify(elementsToVerify, 0);
 
     m_renderContext->steamTool->syncSuccess(successList);
-    /*
+    
     for(int i = 0; i < successList.size(); i++){
         //successList[i]->isDone = true;
         m_renderContext->steamTool->removeSuccess(successList[i]->id);
     }
-    */
+    
 }
 
 void SuccessTool::QUEST_MINIMAP_TRAVEL(){
